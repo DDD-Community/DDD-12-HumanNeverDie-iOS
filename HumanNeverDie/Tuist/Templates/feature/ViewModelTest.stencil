@@ -1,0 +1,8 @@
+//
+// {{ name }}ViewModelTest.swift
+// {{ name }}
+//
+// Created by {{ author }} on {{ date }}.
+//
+
+@testable import {{ name }}Feature

@@ -1,0 +1,22 @@
+//
+//  {{ name }}UseCase.swift
+//  {{ name }}Domain
+//
+//  Created by {{ author }} on {{ date }}.
+//
+
+import Foundation
+
+public protocol {{ name }}UseCase {
+    // Add your use case methods here
+}
+
+public final class Default{{ name }}UseCase: {{ name }}UseCase {
+    private let repository: {{ name }}Repository
+    
+    public init(repository: {{ name }}Repository) {
+        self.repository = repository
+    }
+    
+    // Implement your use case methods here
+} 

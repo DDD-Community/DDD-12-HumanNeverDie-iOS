@@ -1,0 +1,13 @@
+import ProjectDescription
+
+public extension TargetDependency {
+    enum SPM {}
+}
+
+public extension TargetDependency.SPM {
+    static let swinject = TargetDependency.external(name: "Swinject", condition: .none)
+    static let dependencies = TargetDependency.external(name: "Dependencies", condition: .none)
+    static let alamofire = TargetDependency.external(name: "Alamofire", condition: .none)
+    static let nuke = TargetDependency.external(name: "NukeUI", condition: .none)
+}
+

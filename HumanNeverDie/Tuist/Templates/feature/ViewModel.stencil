@@ -1,0 +1,25 @@
+//
+// {{ name }}ViewModel.swift
+// {{ name }}
+//
+// Created by {{ author }} on {{ date }}.
+//
+
+import Foundation
+import Observation
+
+@Observable
+public final class {{ name }}ViewModel {
+  enum Action {
+    case onAppear
+  }
+  
+  public init() {}
+  
+  func handleAction(action: Action) {
+    switch action {
+    case .onAppear:
+      break
+    }
+  }
+}
