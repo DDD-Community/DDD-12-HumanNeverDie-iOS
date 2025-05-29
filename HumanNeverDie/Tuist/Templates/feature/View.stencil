@@ -1,0 +1,22 @@
+//
+// {{ name }}View.swift
+// {{ name }}
+//
+// Created by {{ author }} on {{ date }}.
+//
+
+import SwiftUI
+
+import CommonFeature
+
+public struct {{ name }}View: View {
+  @State private var viewModel: {{ name }}ViewModel
+  
+  public init(viewModel: {{ name }}ViewModel) {
+    self._viewModel = .init(initialValue: viewModel)
+  }
+  
+  public var body: some View {
+
+  }
+}

@@ -1,0 +1,8 @@
+//
+//  {{ name }}UseCaseTest.swift
+//  {{ name }}DomainTest
+//
+//  Created by {{ author }} on {{ date }}.
+//
+
+@testable import {{ name }}Domain

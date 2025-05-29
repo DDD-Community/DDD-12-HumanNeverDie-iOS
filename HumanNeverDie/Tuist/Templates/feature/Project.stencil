@@ -1,0 +1,16 @@
+//
+// Project.swift
+// {{ name }}
+//
+// Created by {{ author }} on {{ date }}.
+//
+
+import ProjectDescription
+import ProjectDescriptionHelpers
+
+let project = Project.makeFeature(
+    name: Modules.Feature.{{ name }}.rawValue,
+    dependencies: [
+        .commonFeature
+    ]
+)

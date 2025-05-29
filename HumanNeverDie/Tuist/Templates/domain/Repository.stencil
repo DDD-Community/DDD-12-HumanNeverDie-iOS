@@ -1,0 +1,12 @@
+//
+//  {{ name }}Repository.swift
+//  {{ name }}Domain
+//
+//  Created by {{ author }} on {{ date }}.
+//
+
+import Foundation
+
+public protocol {{ name }}Repository {
+    // Add your repository interface methods here
+} 

@@ -1,0 +1,16 @@
+//
+//  Project.swift
+//  {{ name }}Domain
+//
+//  Created by {{ author }} on {{ date }}.
+//
+
+import ProjectDescription
+import ProjectDescriptionHelpers
+
+let project = Project.makeDomain(
+    name: Modules.Domain.{{ name }}.rawValue,
+    dependencies: [
+        .shared
+    ]
+) 
