@@ -14,31 +14,51 @@ import MainDomain
 @MainActor
 public final class MainViewModel {
   enum Action {
-    case onAppear
+    case onGetTapped
+    case onPostTapped
+    case onPutTapped
+    case onPatchTapped
+    case onDeleteTapped
   }
   
-  private(set) var todoData: Todo = .init(userId: 0, id: 0, title: "")
+  private(set) var todoData: Todo = .init(id: 0, userId: 0, title: "")
+  private(set) var todoDataWithTest: Todo = .init(id: 3, userId: 2, title: "dataTest")
+  private(set) var todoDataWithEdit: TodoEditing = .init(id: 5, title: "Edit")
   
   private let mainUseCase: MainUseCase
   public init(mainUseCase: MainUseCase) {
     self.mainUseCase = mainUseCase
   }
   
-  func handleAction(action: Action) {
-    switch action {
-    case .onAppear:
-      Task { await fetchTodo() }
+  func handleAction(_ action: Action) {
+    Task {
+      do {
+        switch action {
+        case .onGetTapped:
+          todoData = try await mainUseCase.fetchTodo(id: todoDataWithTest.id)
+          print("GET 결과:", todoData)
+          
+        case .onPostTapped:
+          todoData = try await mainUseCase.postTodo(todo: todoDataWithTest)
+          print("POST 결과:", todoData)
+          
+        case .onPutTapped:
+          todoData = try await mainUseCase.putTodo(todo: todoDataWithTest)
+          print("PUT 결과:", todoData)
+          
+        case .onPatchTapped:
+          todoData = try await mainUseCase.patchTodo(todoEditing: todoDataWithEdit)
+          print("PATCH 결과:", todoData)
+          
+        case .onDeleteTapped:
+          let result = try await mainUseCase.deleteTodo(id: todoDataWithTest.id)
+          todoData.completed = result
+          print("DELETE 결과:", result)
+        }
+      } catch {
+        print("\(action) 실패:", error)
+      }
     }
   }
   
-  private func fetchTodo() async {
-    do {
-      let todo = try await mainUseCase.fetchTodo()
-      
-      print("네트워크 통신 결과:", todo)
-      todoData = todo
-    } catch {
-      print(error)
-    }
-  }
 }
