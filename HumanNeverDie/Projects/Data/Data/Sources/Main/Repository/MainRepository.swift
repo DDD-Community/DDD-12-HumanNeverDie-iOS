@@ -52,13 +52,13 @@ public final class DefaultMainRepository: MainRepository {
     return try await networkService.request(endpoint: endpoint, responseType: TodoResponse.self).toDomain()
   }
   
-  public func deleteTodo(id: Int) async throws -> Bool {
+  public func deleteTodo(id: Int) async throws -> Todo {
     let endpoint = APIEndpoint(
       baseURL: Config.baseURL,
       path: "/todos/\(id)",
       method: .DELETE
     )
-    return try await networkService.deleteRequest(endpoint: endpoint)
+    return try await networkService.request(endpoint: endpoint, responseType: TodoResponse.self).toDomain()
   }
   
 }
