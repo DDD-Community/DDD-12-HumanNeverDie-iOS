@@ -52,7 +52,6 @@ public final class MainViewModel {
           
         case .onDeleteTapped:
           let result = try await mainUseCase.deleteTodo(id: todoDataWithTest.id)
-          todoData.completed = result
           print("DELETE 결과:", result)
         }
       } catch {
