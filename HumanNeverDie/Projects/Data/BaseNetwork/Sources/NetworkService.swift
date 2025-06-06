@@ -1,69 +1,61 @@
 import Foundation
-
+import Alamofire
 
 public protocol NetworkService {
   func request<Response: Decodable>(endpoint: APIEndpoint, responseType: Response.Type) async throws -> Response
-//  func requestWithBody<Response: Decodable>(endpoint: APIEndpoint, responseType: Response.Type) async throws -> Response
-  func deleteRequest( endpoint: APIEndpoint) async throws -> Bool
 }
 
 public final class DefaultNetworkService: NetworkService {
-  let timeoutInterval: TimeInterval = 5
-  
-  public init() {}
-  
+  private let session: Session
+
+  public init(timeout: TimeInterval = 5) {
+    let configuration = URLSessionConfiguration.default
+    configuration.timeoutIntervalForRequest = timeout
+    self.session = Session(configuration: configuration)
+  }
+
   public func request<Response: Decodable>(
     endpoint: APIEndpoint,
     responseType: Response.Type
   ) async throws -> Response {
-    guard let url = URL(string: endpoint.fullURL) else {
-      throw NetworkError.invalidURL(failedURL: endpoint.fullURL)
-    }
+    let dataTask = session.request(try endpoint.asURLRequest())
+      .validate()
+      .serializingData()
 
-    var request = URLRequest(url: url)
-    request.httpMethod = endpoint.method.rawValue
-    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-    request.timeoutInterval = timeoutInterval
+    let response = await dataTask.response
+    let statusCode = response.response?.statusCode ?? -1
 
-    if let body = endpoint.body {
-      let encodedBody = try JSONEncoder().encode(AnyEncodable(body))
-      request.httpBody = encodedBody
-    }
-    do {
+    switch response.result {
+    case .success(let data):
+      // 바디가 비었거나 {}라면 직접 JSON 제공
+      if data.isEmpty ||
+         String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) == "{}" {
 
-      let (data, response) = try await URLSession.shared.data(for: request)
-      
-      guard let httpResponse = response as? HTTPURLResponse,
-            (200..<300).contains(httpResponse.statusCode) else {
-        throw NetworkError.failed(retryable: false, statusCode: (response as? HTTPURLResponse)?.statusCode ?? -1)
+        let json = """
+        {
+          "id": 0,
+          "userId": 0,
+          "title": "",
+          "completed": true
+        }
+        """
+        let jsonData = json.data(using: .utf8)!
+        return try JSONDecoder().decode(Response.self, from: jsonData)
       }
-      
-      return try JSONDecoder().decode(responseType, from: data)
-    } catch let error as URLError where error.code == .timedOut {
-      throw NetworkError.failed(retryable: true, statusCode: -1001) // -1001: timeout
-    }
-  }
 
-  
-  public func deleteRequest( endpoint: APIEndpoint) async throws -> Bool {
-    guard let url = URL(string: endpoint.fullURL) else {
-      throw NetworkError.invalidURL(failedURL: endpoint.fullURL)
-    }
-
-    var request = URLRequest(url: url)
-    request.httpMethod = "DELETE"
-    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-    request.timeoutInterval = timeoutInterval
-    do {
-      let (_, response) = try await URLSession.shared.data(for: request)
-      
-      guard let httpResponse = response as? HTTPURLResponse else {
-        throw NetworkError.failed(retryable: false, statusCode: -1)
+      do {
+        return try JSONDecoder().decode(Response.self, from: data)
+      } catch {
+        throw NetworkError.failed(retryable: false, statusCode: statusCode)
       }
-      
-      return (200..<300).contains(httpResponse.statusCode)
-    } catch let error as URLError where error.code == .timedOut {
-      throw NetworkError.failed(retryable: true, statusCode: -1001) // -1001: timeout
+
+    case .failure(let error):
+      if let urlError = error.underlyingError as? URLError,
+         urlError.code == .timedOut {
+        throw NetworkError.failed(retryable: true, statusCode: -1001)
+      } else {
+        throw NetworkError.failed(retryable: false, statusCode: statusCode)
+      }
     }
   }
 }
@@ -81,7 +73,5 @@ public struct AnyEncodable: Encodable {
 }
 
 public enum NetworkError: Error {
-  case complet(complet : Bool)
-  case invalidURL(failedURL: String)
   case failed(retryable: Bool, statusCode: Int)
 }

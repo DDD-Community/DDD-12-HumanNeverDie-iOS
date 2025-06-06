@@ -24,6 +24,26 @@ public struct APIEndpoint {
   var fullURL: String {
     return baseURL + path
   }
+  
+  public func asURLRequest() throws -> URLRequest {
+     guard let url = URL(string: fullURL) else {
+       throw NetworkError.failed(retryable: false, statusCode: -1)
+     }
+
+     var request = URLRequest(url: url)
+     request.httpMethod = method.rawValue
+     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+     
+     headers?.forEach {
+       request.setValue($0.value, forHTTPHeaderField: $0.key)
+     }
+
+     if let body = body {
+       request.httpBody = try JSONEncoder().encode(AnyEncodable(body))
+     }
+
+     return request
+   }
 }
 
 

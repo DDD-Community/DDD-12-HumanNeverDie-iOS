@@ -5,7 +5,7 @@ public protocol MainUseCase {
   func postTodo(todo: Todo) async throws -> Todo
   func putTodo(todo: Todo) async throws -> Todo
   func patchTodo(todoEditing: TodoEditing) async throws -> Todo
-  func deleteTodo(id: Int) async throws -> Bool
+  func deleteTodo(id: Int) async throws -> Todo
 }
 
 public final class DefaultMainUseCase: MainUseCase {
@@ -31,7 +31,7 @@ public final class DefaultMainUseCase: MainUseCase {
     return try await repository.patchTodo(todoEditing: todoEditing)
   }
   
-  public func deleteTodo(id: Int) async throws -> Bool {
+  public func deleteTodo(id: Int) async throws -> Todo {
     return try await repository.deleteTodo(id: id)
   }
 }
