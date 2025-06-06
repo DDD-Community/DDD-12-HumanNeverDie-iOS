@@ -5,17 +5,20 @@ public struct APIEndpoint {
   let path: String
   let method: HTTPMethod
   let body: (any Encodable)?
+  public let headers: [String: String]?
   
   public init(
     baseURL: String,
     path: String,
     method: HTTPMethod,
-    body: (any Encodable)? = nil
+    body: (any Encodable)? = nil,
+    headers: [String: String]? = nil
   ) {
     self.baseURL = baseURL
     self.path = path
     self.method = method
     self.body = body
+    self.headers = headers
   }
   
   var fullURL: String {
