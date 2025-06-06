@@ -4,16 +4,18 @@ public struct Todo: Codable, Hashable {
   public let id: Int
   public let userId: Int
   public let title: String
-  public var completed: Bool = false
+  public var completed: Bool
   
   public init(
     id: Int,
     userId: Int,
-    title: String
+    title: String,
+    completed: Bool = false
   ) {
     self.id = id
     self.userId = userId
     self.title = title
+    self.completed = completed
   }
 }
 
