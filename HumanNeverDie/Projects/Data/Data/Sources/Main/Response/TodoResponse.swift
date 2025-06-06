@@ -13,7 +13,7 @@ public struct TodoResponse: Decodable {
   public let id: Int
   public var userId: Int
   public let title: String
-  public let completed: Bool
+  public var completed: Bool
   
   // 전체 이니셜라이저
   public init(id: Int, userId: Int, title: String, completed: Bool) {
@@ -26,6 +26,6 @@ public struct TodoResponse: Decodable {
 
 public extension TodoResponse {
   func toDomain() -> Todo {
-    return Todo(id: id, userId: userId, title: "타이틀은 \(title)")
+    return Todo(id: id, userId: userId, title: "타이틀은 \(title)", completed: completed)
   }
 }
