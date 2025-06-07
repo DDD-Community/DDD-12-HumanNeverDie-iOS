@@ -5,6 +5,6 @@ public protocol MainRepository: AnyObject {
   func postTodo(todo: Todo) async throws -> Todo
   func putTodo(todo: Todo) async throws -> Todo
   func patchTodo(todoEditing: TodoEditing) async throws -> Todo
-  func deleteTodo(id: Int) async throws -> Bool
+  func deleteTodo(id: Int) async throws -> Todo
   
 }
