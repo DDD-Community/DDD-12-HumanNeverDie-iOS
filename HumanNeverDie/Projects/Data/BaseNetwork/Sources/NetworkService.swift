@@ -4,6 +4,7 @@ import Alamofire
 public protocol NetworkService {
     func request<Response: Decodable>(_ target: APIRequestable, as type: Response.Type) async throws -> Response
     func requestDDD<Response: Decodable>(_ target: APIRequestable, as type: Response.Type) async throws -> Response
+    func request(_ target: APIRequestable) async throws
 }
 
 public final class DefaultNetworkService: NetworkService {
@@ -29,20 +30,6 @@ public final class DefaultNetworkService: NetworkService {
 
         switch response.result {
         case .success(let data):
-            if data.isEmpty ||
-                String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) == "{}" {
-                let json = """
-                {
-                  "id": 0,
-                  "userId": 0,
-                  "title": "",
-                  "completed": true
-                }
-                """
-                let jsonData = json.data(using: .utf8)!
-                return try JSONDecoder().decode(Response.self, from: jsonData)
-            }
-
             do {
                 return try JSONDecoder().decode(Response.self, from: data)
             } catch {
@@ -58,6 +45,28 @@ public final class DefaultNetworkService: NetworkService {
             }
         }
     }
+  
+  public func request(_ target: APIRequestable) async throws {
+      let dataTask = session.request(try target.asURLRequest())
+          .validate()
+          .serializingData()
+
+      let response = await dataTask.response
+      let statusCode = response.response?.statusCode ?? -1
+
+      switch response.result {
+      case .success:
+          return
+
+      case .failure(let error):
+          if let urlError = error.underlyingError as? URLError,
+             urlError.code == .timedOut {
+              throw NetworkError.failed(retryable: true, statusCode: -1001)
+          } else {
+              throw NetworkError.failed(retryable: false, statusCode: statusCode)
+          }
+      }
+  }
 
     // ✅ 실사용용 (서버 공통 응답 포맷 사용)
     public func requestDDD<Response: Decodable>(

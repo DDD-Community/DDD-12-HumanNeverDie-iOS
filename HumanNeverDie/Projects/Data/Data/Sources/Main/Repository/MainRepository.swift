@@ -26,8 +26,8 @@ public final class DefaultMainRepository: MainRepository {
         return try await networkService.request(MainTarget.patchTodo(editing: todoEditing), as: TodoResponse.self).toDomain()
     }
 
-    public func deleteTodo(id: Int) async throws -> Todo {
-        return try await networkService.request(MainTarget.deleteTodo(id: id), as: TodoResponse.self).toDomain()
-    }
+  public func deleteTodo(id: Int) async throws {
+      return try await networkService.request(MainTarget.deleteTodo(id: id))
+  }
 }
 
