@@ -3,6 +3,7 @@ import Alamofire
 
 public protocol NetworkService {
     func request<Response: Decodable>(_ target: APIRequestable, as type: Response.Type) async throws -> Response
+    func requestDDD<Response: Decodable>(_ target: APIRequestable, as type: Response.Type) async throws -> Response
 }
 
 public final class DefaultNetworkService: NetworkService {
@@ -14,8 +15,10 @@ public final class DefaultNetworkService: NetworkService {
         self.session = Session(configuration: configuration)
     }
 
+    // 테스트용 / 외부 API 용도
     public func request<Response: Decodable>(
-        _ target: APIRequestable, as type: Response.Type
+        _ target: APIRequestable,
+        as type: Response.Type
     ) async throws -> Response {
         let dataTask = session.request(try target.asURLRequest())
             .validate()
@@ -55,4 +58,52 @@ public final class DefaultNetworkService: NetworkService {
             }
         }
     }
+
+    // ✅ 실사용용 (서버 공통 응답 포맷 사용)
+    public func requestDDD<Response: Decodable>(
+        _ target: APIRequestable,
+        as type: Response.Type
+    ) async throws -> Response {
+        let dataTask = session.request(try target.asURLRequest())
+            .validate()
+            .serializingData()
+
+        let response = await dataTask.response
+        let statusCode = response.response?.statusCode ?? -1
+
+        switch response.result {
+        case .success(let data):
+            do {
+                let decoded = try JSONDecoder().decode(APIResponse<Response>.self, from: data)
+
+                if let result = decoded.data {
+                    return result
+                } else {
+                    throw APIError(
+                        code: decoded.code,
+                        status: decoded.status,
+                        message: "응답 데이터가 없습니다.",
+                        path: nil,
+                        timestamp: nil
+                    )
+                }
+
+            } catch {
+                if let apiError = try? JSONDecoder().decode(APIError.self, from: data) {
+                    throw apiError
+                } else {
+                    throw NetworkError.failed(retryable: false, statusCode: statusCode)
+                }
+            }
+
+        case .failure(let error):
+            if let urlError = error.underlyingError as? URLError,
+               urlError.code == .timedOut {
+                throw NetworkError.failed(retryable: true, statusCode: -1001)
+            } else {
+                throw NetworkError.failed(retryable: false, statusCode: statusCode)
+            }
+        }
+    }
 }
+
