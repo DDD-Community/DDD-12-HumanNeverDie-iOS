@@ -9,6 +9,7 @@ public protocol NetworkService {
 
 public final class DefaultNetworkService: NetworkService {
     private let session: Session
+    private let decoder: JSONDecoder = JSONDecoder()
 
     public init(timeout: TimeInterval = 5) {
         let configuration = URLSessionConfiguration.default
@@ -31,7 +32,7 @@ public final class DefaultNetworkService: NetworkService {
         switch response.result {
         case .success(let data):
             do {
-                return try JSONDecoder().decode(Response.self, from: data)
+               return try decoder.decode(Response.self, from: data)
             } catch {
                 throw AppError.network(retryable: false, statusCode: statusCode)
             }
@@ -83,7 +84,7 @@ public final class DefaultNetworkService: NetworkService {
         switch response.result {
         case .success(let data):
             do {
-                let decoded = try JSONDecoder().decode(APIResponse<Response>.self, from: data)
+              let decoded = try decoder.decode(APIResponse<Response>.self, from: data)
 
                 if let result = decoded.data {
                     return result
@@ -98,9 +99,9 @@ public final class DefaultNetworkService: NetworkService {
                 }
 
             } catch {
-                if let apiError = try? JSONDecoder().decode(APIError.self, from: data) {
-                    throw apiError
-                } else {
+              if let apiError = try? decoder.decode(APIError.self, from: data) {
+                  throw apiError
+              } else {
                     throw AppError.network(retryable: false, statusCode: statusCode)
                 }
             }
