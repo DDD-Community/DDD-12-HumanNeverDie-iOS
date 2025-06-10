@@ -46,7 +46,7 @@ public extension APIRequestable {
         }
 
         if let body = body {
-            request.httpBody = try JSONEncoder().encode(AnyEncodable(body))
+            request.httpBody = try JSONEncoder().encode(body)
         }
 
         return request
