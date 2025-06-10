@@ -33,15 +33,15 @@ public final class DefaultNetworkService: NetworkService {
             do {
                 return try JSONDecoder().decode(Response.self, from: data)
             } catch {
-                throw NetworkError.failed(retryable: false, statusCode: statusCode)
+                throw AppError.network(retryable: false, statusCode: statusCode)
             }
 
         case .failure(let error):
             if let urlError = error.underlyingError as? URLError,
                urlError.code == .timedOut {
-                throw NetworkError.failed(retryable: true, statusCode: -1001)
+                throw AppError.network(retryable: false, statusCode: -1001)
             } else {
-                throw NetworkError.failed(retryable: false, statusCode: statusCode)
+                throw AppError.network(retryable: false, statusCode: statusCode)
             }
         }
     }
@@ -61,9 +61,9 @@ public final class DefaultNetworkService: NetworkService {
       case .failure(let error):
           if let urlError = error.underlyingError as? URLError,
              urlError.code == .timedOut {
-              throw NetworkError.failed(retryable: true, statusCode: -1001)
+              throw AppError.network(retryable: false, statusCode: -1001)
           } else {
-              throw NetworkError.failed(retryable: false, statusCode: statusCode)
+              throw AppError.network(retryable: false, statusCode: statusCode)
           }
       }
   }
@@ -101,16 +101,16 @@ public final class DefaultNetworkService: NetworkService {
                 if let apiError = try? JSONDecoder().decode(APIError.self, from: data) {
                     throw apiError
                 } else {
-                    throw NetworkError.failed(retryable: false, statusCode: statusCode)
+                    throw AppError.network(retryable: false, statusCode: statusCode)
                 }
             }
 
         case .failure(let error):
             if let urlError = error.underlyingError as? URLError,
                urlError.code == .timedOut {
-                throw NetworkError.failed(retryable: true, statusCode: -1001)
+                throw AppError.network(retryable: false, statusCode: -1001)
             } else {
-                throw NetworkError.failed(retryable: false, statusCode: statusCode)
+                throw AppError.network(retryable: false, statusCode: statusCode)
             }
         }
     }
