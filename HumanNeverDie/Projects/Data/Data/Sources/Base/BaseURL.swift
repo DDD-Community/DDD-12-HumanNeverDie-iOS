@@ -8,9 +8,9 @@
 import Foundation
 
 public enum Config {
-    static var baseURL: String {
-        return Bundle.main.infoDictionary?["BASE_URL"] as? String ?? ""
-    }
+  static var baseURL: String {
+    return Bundle.main.infoDictionary?["BASE_URL"] as? String ?? ""
+  }
 }
 
 
