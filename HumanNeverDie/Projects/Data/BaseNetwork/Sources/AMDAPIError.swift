@@ -1,5 +1,5 @@
 //
-//  APIError.swift
+//  AMDAPIError.swift
 //  BaseNetwork
 //
 //  Created by Seulki Lee on 6/8/25.
@@ -13,7 +13,7 @@ enum NetworkStatusCode {
   static let emptyResponse = -2
 }
 
-public struct APIError: Decodable, Error {
+public struct AMDAPIError: Decodable, Error {
   public let code: String
   public let status: Int
   public let message: String
@@ -27,7 +27,7 @@ public struct APIError: Decodable, Error {
 
 public enum AppError: Error {
   case network(statusCode: Int)
-  case api(APIError)
+  case api(AMDAPIError)
   case unknown(Error)
   
   public var userMessage: String {

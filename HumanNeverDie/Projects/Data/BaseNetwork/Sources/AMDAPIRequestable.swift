@@ -1,5 +1,5 @@
 //
-//  APIRequestable.swift
+//  AMDAPIRequestable.swift
 //  BaseNetwork
 //
 //  Created by Seulki Lee on 6/8/25.
@@ -7,10 +7,10 @@
 
 import Foundation
 
-public protocol APIRequestable {
+public protocol AMDAPIRequestable {
   var baseURL: String { get }
   var path: String { get }
-  var method: HTTPMethod { get }
+  var method: AMDHTTPMethod { get }
   var headers: [String: String]? { get }
   var queryParameters: [String: String]? { get }
   var body: Encodable? { get }
@@ -18,7 +18,7 @@ public protocol APIRequestable {
   func asURLRequest() throws -> URLRequest
 }
 
-public extension APIRequestable {
+public extension AMDAPIRequestable {
   func asURLRequest() throws -> URLRequest {
     var urlComponents = URLComponents(string: baseURL + path)
     if let queryParameters = queryParameters {

@@ -17,7 +17,7 @@ public enum MainTarget {
   case deleteTodo(id: Int)
 }
 
-extension MainTarget: APIRequestable {
+extension MainTarget: AMDAPIRequestable {
   public var baseURL: String {
     return Config.baseURL
   }
@@ -32,7 +32,7 @@ extension MainTarget: APIRequestable {
     }
   }
   
-  public var method: HTTPMethod {
+  public var method: AMDHTTPMethod {
     switch self {
     case .getTodo: return .GET
     case .postTodo: return .POST

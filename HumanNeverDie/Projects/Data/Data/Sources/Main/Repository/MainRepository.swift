@@ -4,9 +4,9 @@ import BaseNetwork
 import MainDomain
 
 public final class DefaultMainRepository: MainRepository {
-  private let networkService: NetworkService
+  private let networkService: AMDNetworkService
   
-  public init(networkService: NetworkService) {
+  public init(networkService: AMDNetworkService) {
     self.networkService = networkService
   }
   
