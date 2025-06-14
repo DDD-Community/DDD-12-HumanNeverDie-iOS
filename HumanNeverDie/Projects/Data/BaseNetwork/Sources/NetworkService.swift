@@ -40,7 +40,7 @@ public final class DefaultNetworkService: NetworkService {
     case .failure(let error):
       if let urlError = error.underlyingError as? URLError,
          urlError.code == .timedOut {
-        throw AppError.network(statusCode: -1001)
+        throw AppError.network(statusCode: NetworkStatusCode.timeout)
       } else {
         throw AppError.network(statusCode: statusCode)
       }
@@ -62,7 +62,7 @@ public final class DefaultNetworkService: NetworkService {
     case .failure(let error):
       if let urlError = error.underlyingError as? URLError,
          urlError.code == .timedOut {
-        throw AppError.network(statusCode: -1001)
+        throw AppError.network(statusCode: NetworkStatusCode.timeout)
       } else {
         throw AppError.network(statusCode: statusCode)
       }
@@ -89,13 +89,7 @@ public final class DefaultNetworkService: NetworkService {
         if let result = decoded.data {
           return result
         } else {
-          throw APIError(
-            code: decoded.code,
-            status: decoded.status,
-            message: "응답 데이터가 없습니다.",
-            path: nil,
-            timestamp: nil
-          )
+          throw AppError.network(statusCode: NetworkStatusCode.emptyResponse)
         }
         
       } catch {
@@ -109,7 +103,7 @@ public final class DefaultNetworkService: NetworkService {
     case .failure(let error):
       if let urlError = error.underlyingError as? URLError,
          urlError.code == .timedOut {
-        throw AppError.network(statusCode: -1001)
+        throw AppError.network(statusCode: NetworkStatusCode.timeout)
       } else {
         throw AppError.network(statusCode: statusCode)
       }

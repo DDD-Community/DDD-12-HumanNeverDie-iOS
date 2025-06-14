@@ -28,7 +28,7 @@ public extension APIRequestable {
     }
     
     guard let url = urlComponents?.url else {
-      throw AppError.network(statusCode: -1)
+      throw AppError.network(statusCode: NetworkStatusCode.urlError)
     }
     
     var request = URLRequest(url: url)

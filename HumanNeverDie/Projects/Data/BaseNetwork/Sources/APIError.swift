@@ -7,6 +7,12 @@
 
 import Foundation
 
+enum NetworkStatusCode {
+  static let timeout = -1001
+  static let urlError = -1
+  static let emptyResponse = -2
+}
+
 public struct APIError: Decodable, Error {
   public let code: String
   public let status: Int
@@ -29,7 +35,15 @@ public enum AppError: Error {
     case .api(let apiError):
       return apiError.codeType.userMessage
     case .network(let code):
-      return "네트워크 오류가 발생했습니다 (\(code)). 잠시 후 다시 시도해주세요."
+      if code == NetworkStatusCode.emptyResponse {
+        return "서버로부터 유효한 응답을 받지 못했어요."
+      } else if code == NetworkStatusCode.urlError {
+        return "URL을 확인해주세요."
+      } else if code == NetworkStatusCode.timeout {
+        return "요청 시간이 초과됐어요."
+      } else {
+        return "네트워크 오류가 발생했습니다 (\(code)). 잠시 후 다시 시도해주세요."
+      }
     case .unknown:
       return "알 수 없는 오류가 발생했어요."
     }
