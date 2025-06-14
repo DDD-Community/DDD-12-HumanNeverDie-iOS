@@ -1,7 +1,11 @@
 import Foundation
 
 public protocol MainUseCase {
-  func fetchTodo() async throws -> Todo
+  func fetchTodo(id: Int) async throws -> Todo
+  func postTodo(todo: Todo) async throws -> Todo
+  func putTodo(todo: Todo) async throws -> Todo
+  func patchTodo(todoEditing: TodoEditing) async throws -> Todo
+  func deleteTodo(id: Int) async throws
 }
 
 public final class DefaultMainUseCase: MainUseCase {
@@ -11,7 +15,23 @@ public final class DefaultMainUseCase: MainUseCase {
     self.repository = repository
   }
   
-  public func fetchTodo() async throws -> Todo {
-    return try await repository.fetchTodo()
+  public func fetchTodo(id: Int) async throws -> Todo {
+    return try await repository.fetchTodo(id: id)
+  }
+  
+  public func postTodo(todo: Todo) async throws -> Todo {
+    return try await repository.postTodo(todo: todo)
+  }
+  
+  public func putTodo(todo: Todo) async throws -> Todo {
+    return try await repository.putTodo(todo: todo)
+  }
+  
+  public func patchTodo(todoEditing: TodoEditing) async throws -> Todo {
+    return try await repository.patchTodo(todoEditing: todoEditing)
+  }
+  
+  public func deleteTodo(id: Int) async throws {
+    return try await repository.deleteTodo(id: id)
   }
 }
