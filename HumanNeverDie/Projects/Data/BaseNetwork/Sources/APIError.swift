@@ -42,13 +42,6 @@ public enum AppError: Error {
     default: return nil
     }
   }
-  
-  public var isRetryable: Bool {
-    switch self {
-    case .network(let retryable, _): return retryable
-    default: return false
-    }
-  }
 }
 
 public enum APIErrorCode: Int {
