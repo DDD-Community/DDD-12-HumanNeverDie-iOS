@@ -20,7 +20,7 @@ public struct APIError: Decodable, Error {
 }
 
 public enum AppError: Error {
-  case network(retryable: Bool, statusCode: Int)
+  case network(statusCode: Int)
   case api(APIError)
   case unknown(Error)
   
@@ -28,7 +28,7 @@ public enum AppError: Error {
     switch self {
     case .api(let apiError):
       return apiError.codeType.userMessage
-    case .network(_, let code):
+    case .network(let code):
       return "네트워크 오류가 발생했습니다 (\(code)). 잠시 후 다시 시도해주세요."
     case .unknown:
       return "알 수 없는 오류가 발생했어요."
@@ -38,7 +38,7 @@ public enum AppError: Error {
   public var statusCode: Int? {
     switch self {
     case .api(let apiError): return apiError.status
-    case .network(_, let code): return code
+    case .network(let code): return code
     default: return nil
     }
   }

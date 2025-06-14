@@ -34,15 +34,15 @@ public final class DefaultNetworkService: NetworkService {
       do {
         return try decoder.decode(Response.self, from: data)
       } catch {
-        throw AppError.network(retryable: false, statusCode: statusCode)
+        throw AppError.network(statusCode: statusCode)
       }
       
     case .failure(let error):
       if let urlError = error.underlyingError as? URLError,
          urlError.code == .timedOut {
-        throw AppError.network(retryable: false, statusCode: -1001)
+        throw AppError.network(statusCode: -1001)
       } else {
-        throw AppError.network(retryable: false, statusCode: statusCode)
+        throw AppError.network(statusCode: statusCode)
       }
     }
   }
@@ -62,9 +62,9 @@ public final class DefaultNetworkService: NetworkService {
     case .failure(let error):
       if let urlError = error.underlyingError as? URLError,
          urlError.code == .timedOut {
-        throw AppError.network(retryable: false, statusCode: -1001)
+        throw AppError.network(statusCode: -1001)
       } else {
-        throw AppError.network(retryable: false, statusCode: statusCode)
+        throw AppError.network(statusCode: statusCode)
       }
     }
   }
@@ -102,16 +102,16 @@ public final class DefaultNetworkService: NetworkService {
         if let apiError = try? decoder.decode(APIError.self, from: data) {
           throw apiError
         } else {
-          throw AppError.network(retryable: false, statusCode: statusCode)
+          throw AppError.network(statusCode: statusCode)
         }
       }
       
     case .failure(let error):
       if let urlError = error.underlyingError as? URLError,
          urlError.code == .timedOut {
-        throw AppError.network(retryable: false, statusCode: -1001)
+        throw AppError.network(statusCode: -1001)
       } else {
-        throw AppError.network(retryable: false, statusCode: statusCode)
+        throw AppError.network(statusCode: statusCode)
       }
     }
   }
