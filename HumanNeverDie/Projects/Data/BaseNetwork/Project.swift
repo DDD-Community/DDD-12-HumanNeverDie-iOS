@@ -5,6 +5,7 @@ let project = Project.makeModule(
     name: Modules.BaseNetwork.name,
     product: .staticFramework,
     dependencies: [
-        .SPM.alamofire
+        .SPM.alamofire,
+        .shared
     ]
 )
