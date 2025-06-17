@@ -6,15 +6,17 @@
 //
 
 import Foundation
-import Alamofire
 
-public protocol AMDNetworkService {
+import Alamofire
+import Dependencies
+
+public protocol AMDNetworkServiceProtocol {
   func request<Response: Decodable>(_ target: AMDAPIRequestable, as type: Response.Type) async throws -> Response
   func requestDDD<Response: Decodable>(_ target: AMDAPIRequestable, as type: Response.Type) async throws -> Response
   func request(_ target: AMDAPIRequestable) async throws
 }
 
-public final class DefaultNetworkService: AMDNetworkService {
+public final class AMDNetworkService: AMDNetworkServiceProtocol {
   private let session: Session
   private let decoder: JSONDecoder = JSONDecoder()
   
@@ -41,15 +43,15 @@ public final class DefaultNetworkService: AMDNetworkService {
       do {
         return try decoder.decode(Response.self, from: data)
       } catch {
-        throw AppError.network(statusCode: statusCode)
+        throw AMDNetworkError.network(statusCode: statusCode)
       }
       
     case .failure(let error):
       if let urlError = error.underlyingError as? URLError,
          urlError.code == .timedOut {
-        throw AppError.network(statusCode: NetworkStatusCode.timeout)
+        throw AMDNetworkError.network(statusCode: AMDNetworkStatusCode.timeout)
       } else {
-        throw AppError.network(statusCode: statusCode)
+        throw AMDNetworkError.network(statusCode: statusCode)
       }
     }
   }
@@ -69,9 +71,9 @@ public final class DefaultNetworkService: AMDNetworkService {
     case .failure(let error):
       if let urlError = error.underlyingError as? URLError,
          urlError.code == .timedOut {
-        throw AppError.network(statusCode: NetworkStatusCode.timeout)
+        throw AMDNetworkError.network(statusCode: AMDNetworkStatusCode.timeout)
       } else {
-        throw AppError.network(statusCode: statusCode)
+        throw AMDNetworkError.network(statusCode: statusCode)
       }
     }
   }
@@ -96,23 +98,23 @@ public final class DefaultNetworkService: AMDNetworkService {
         if let result = decoded.data {
           return result
         } else {
-          throw AppError.network(statusCode: NetworkStatusCode.emptyResponse)
+          throw AMDNetworkError.network(statusCode: AMDNetworkStatusCode.emptyResponse)
         }
         
       } catch {
         if let apiError = try? decoder.decode(AMDAPIError.self, from: data) {
           throw apiError
         } else {
-          throw AppError.network(statusCode: statusCode)
+          throw AMDNetworkError.network(statusCode: statusCode)
         }
       }
       
     case .failure(let error):
       if let urlError = error.underlyingError as? URLError,
          urlError.code == .timedOut {
-        throw AppError.network(statusCode: NetworkStatusCode.timeout)
+        throw AMDNetworkError.network(statusCode: AMDNetworkStatusCode.timeout)
       } else {
-        throw AppError.network(statusCode: statusCode)
+        throw AMDNetworkError.network(statusCode: statusCode)
       }
     }
   }

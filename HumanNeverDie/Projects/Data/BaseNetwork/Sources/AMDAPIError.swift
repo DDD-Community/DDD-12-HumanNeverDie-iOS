@@ -7,12 +7,6 @@
 
 import Foundation
 
-enum NetworkStatusCode {
-  static let timeout = -1001
-  static let urlError = -1
-  static let emptyResponse = -2
-}
-
 public struct AMDAPIError: Decodable, Error {
   public let code: String
   public let status: Int
@@ -20,45 +14,12 @@ public struct AMDAPIError: Decodable, Error {
   public let path: String?
   public let timestamp: String?
   
-  public var codeType: APIErrorCode {
-    return APIErrorCode(rawStatus: status)
+  public var codeType: AMDAPIErrorCode {
+    return AMDAPIErrorCode(rawStatus: status)
   }
 }
 
-public enum AppError: Error {
-  case network(statusCode: Int)
-  case api(AMDAPIError)
-  case unknown(Error)
-  
-  public var userMessage: String {
-    switch self {
-    case .api(let apiError):
-      return apiError.codeType.userMessage
-    case .network(let code):
-      if code == NetworkStatusCode.emptyResponse {
-        return "서버로부터 유효한 응답을 받지 못했어요."
-      } else if code == NetworkStatusCode.urlError {
-        return "URL을 확인해주세요."
-      } else if code == NetworkStatusCode.timeout {
-        return "요청 시간이 초과됐어요."
-      } else {
-        return "네트워크 오류가 발생했습니다 (\(code)). 잠시 후 다시 시도해주세요."
-      }
-    case .unknown:
-      return "알 수 없는 오류가 발생했어요."
-    }
-  }
-  
-  public var statusCode: Int? {
-    switch self {
-    case .api(let apiError): return apiError.status
-    case .network(let code): return code
-    default: return nil
-    }
-  }
-}
-
-public enum APIErrorCode: Int {
+public enum AMDAPIErrorCode: Int {
   case badRequest = 400
   case unauthorized = 401
   case forbidden = 403
