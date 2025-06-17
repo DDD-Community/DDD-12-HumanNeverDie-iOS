@@ -9,7 +9,7 @@ import MainDomain
 
 import Dependencies
 
-// MARK: - MainRepository
+// MARK: - MainUseCaseKey
 
 extension MainUseCaseKey: @retroactive DependencyKey {
   public static var liveValue: MainUseCaseProtocol = MainUseCase()
