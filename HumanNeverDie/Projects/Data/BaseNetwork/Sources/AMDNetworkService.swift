@@ -120,3 +120,17 @@ public final class AMDNetworkService: AMDNetworkServiceProtocol {
   }
 }
 
+// MARK: - DependencyKey
+
+private enum AMDNetworkServiceKey: DependencyKey {
+  static let liveValue: AMDNetworkServiceProtocol = AMDNetworkService()
+}
+
+// MARK: - DependencyValues
+
+public extension DependencyValues {
+  var networkService: AMDNetworkServiceProtocol {
+    get { self[AMDNetworkServiceKey.self] }
+    set { self[AMDNetworkServiceKey.self] = newValue }
+  }
+}

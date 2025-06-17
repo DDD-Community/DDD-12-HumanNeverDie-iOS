@@ -24,9 +24,10 @@ public final class MainViewModel {
   private(set) var todoData: Todo = .init(id: 0, userId: 0, title: "")
   private(set) var todoDataWithTest: Todo = .init(id: 3, userId: 2, title: "dataTest")
   private(set) var todoDataWithEdit: TodoEditing = .init(id: 5, title: "Edit")
+  private let mainUseCase: MainUseCaseProtocol
   
-  private let mainUseCase: MainUseCase
-  public init(mainUseCase: MainUseCase) {
+  public init() {
+    @Dependency(\.mainUseCase) var mainUseCase
     self.mainUseCase = mainUseCase
   }
   

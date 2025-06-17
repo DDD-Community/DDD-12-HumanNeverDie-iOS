@@ -9,6 +9,11 @@ public final class DefaultMainRepository: MainRepository {
   public init(networkService: AMDNetworkService) {
     self.networkService = networkService
   }
+import Dependencies
+
+public final class MainRepository: MainRepositoryInterface {
+  @Dependency(\.networkService) private var networkService
+  public init() {}
   
   public func fetchTodo(id: Int) async throws -> Todo {
     return try await networkService.request(MainTarget.getTodo(id: id), as: TodoResponse.self).toDomain()
