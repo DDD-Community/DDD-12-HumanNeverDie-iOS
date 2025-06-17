@@ -19,6 +19,10 @@ public protocol AMDAPIRequestable {
 }
 
 public extension AMDAPIRequestable {
+  var baseURL: String {
+    Bundle.main.infoDictionary?["BASE_URL"] as? String ?? ""
+  }
+  
   func asURLRequest() throws -> URLRequest {
     var urlComponents = URLComponents(string: baseURL + path)
     if let queryParameters = queryParameters {

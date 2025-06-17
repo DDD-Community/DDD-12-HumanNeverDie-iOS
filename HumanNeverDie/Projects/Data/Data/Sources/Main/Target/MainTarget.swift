@@ -17,11 +17,7 @@ public enum MainTarget {
   case deleteTodo(id: Int)
 }
 
-extension MainTarget: AMDAPIRequestable {
-  public var baseURL: String {
-    return Config.baseURL
-  }
-  
+extension MainTarget: AMDAPIRequestable {  
   public var path: String {
     switch self {
     case .getTodo(let id): return "/todos/\(id)"
