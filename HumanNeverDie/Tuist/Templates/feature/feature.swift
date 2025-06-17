@@ -34,6 +34,9 @@ let featureTemplate = Template(
             path: "Projects/Features/\(nameAttribute)Feature/Sources/\(nameAttribute)ViewModel.swift",
             templatePath: "ViewModel.stencil"),
         .file(
+            path: "Projects/Features/\(nameAttribute)Feature/Sources/\(nameAttribute)ViewFactory.swift",
+            templatePath: "ViewFactory.stencil"),
+        .file(
             path: "Projects/Features/\(nameAttribute)Feature/Tests/Sources/\(nameAttribute)ViewModelTest.swift",
             templatePath: "ViewModelTest.stencil")
     ]
