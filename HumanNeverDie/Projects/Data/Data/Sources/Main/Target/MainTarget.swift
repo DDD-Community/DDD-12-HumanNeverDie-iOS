@@ -12,7 +12,7 @@ import MainDomain
 public enum MainTarget {
   case getTodo(id: Int)
   case postTodo(todo: Todo)
-  case patchTodo(editing: TodoEditing)
+  case patchTodo(editing: TodoEditRequest)
   case putTodo(todo: Todo)
   case deleteTodo(id: Int)
 }
