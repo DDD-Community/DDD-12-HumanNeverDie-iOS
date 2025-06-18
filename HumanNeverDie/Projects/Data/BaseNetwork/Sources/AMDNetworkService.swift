@@ -91,7 +91,6 @@ public final class AMDNetworkService: AMDNetworkServiceProtocol {
         }
         
         return result
-        
       } catch {
         throw handleAMDNetworkError(error)
       }
@@ -116,8 +115,7 @@ private extension AMDNetworkService {
   }
   
   func handleAMDNetworkError(_ error: Error) -> AMDNetworkError {
-    guard let afError = error.asAFError,
-          let statusCode = afError.responseCode else {
+    guard let afError = error.asAFError else {
       return .unknown(error)
     }
     
@@ -128,7 +126,7 @@ private extension AMDNetworkService {
         return .parameterEncodingError(afError)
         
       case .jsonEncodingFailed(error: let parameterError), .customEncodingFailed(error: let parameterError):
-        return .parameterEncodingError(error)
+        return .parameterEncodingError(parameterError)
       }
       
     case .responseValidationFailed(let reason):
@@ -143,7 +141,7 @@ private extension AMDNetworkService {
     case .responseSerializationFailed(let reason):
       switch reason {
       case .decodingFailed(let decodeError):
-        return .decodingFailed(error)
+        return .decodingFailed(decodeError)
       default:
         return .decodingFailed(afError)
       }
