@@ -32,7 +32,7 @@ public extension AMDAPIRequestable {
     }
     
     guard let url = urlComponents?.url else {
-      throw AMDNetworkError.network(statusCode: AMDNetworkStatusCode.urlError)
+      throw AMDNetworkError.invaildURL
     }
     
     var request = URLRequest(url: url)

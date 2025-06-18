@@ -7,44 +7,47 @@
 
 import Foundation
 
-public enum AMDNetworkError: Error {
-  case network(statusCode: Int)
+public enum AMDNetworkError: Error, LocalizedError {
+  case invaildURL
+  case emptyResponse
+  case parameterEncodingError(Error)
+  case responseValidationFailed(statusCode: Int)
+  case decodingFailed(Error)
+  case notConnectedNetwork
+  case timeout
   case api(AMDAPIError)
   case unknown(Error)
   
   public var userMessage: String {
     switch self {
+    case .invaildURL:
+      return "유효하지 않은 URL 입니다."
+      
+    case .emptyResponse:
+      return "서버로부터 유효한 응답을 받지 못했어요."
+      
+    case .parameterEncodingError(let parameterError):
+      return "파라미터 인코딩에 실패했어요. \n\(parameterError)"
+                  
+    case .responseValidationFailed(statusCode: let statusCode):
+      return "네트워크 요청 오류가 발생했습니다. \n\(statusCode)."
+      
+    case .decodingFailed(let decodeError):
+      return "디코딩 실패 오류가 발생했습니다. \n\(decodeError)."
+      
+    case .notConnectedNetwork:
+      return "네트워크 연결을 확인해주세요."
+      
+    case .timeout:
+      return "요청 시간이 초과됐어요."
+      
     case .api(let apiError):
       return apiError.codeType.userMessage
       
-    case .network(let code):
-      switch code {
-      case AMDNetworkStatusCode.emptyResponse:
-        return "서버로부터 유효한 응답을 받지 못했어요."
-      case AMDNetworkStatusCode.urlError:
-        return "URL을 확인해주세요."
-      case AMDNetworkStatusCode.timeout:
-        return "요청 시간이 초과됐어요."
-      default:
-        return "네트워크 오류가 발생했습니다 (\(code)). 잠시 후 다시 시도해주세요."
-      }
-      
-    case .unknown:
-      return "알 수 없는 오류가 발생했어요."
-    }
-  }
-  
-  public var statusCode: Int? {
-    switch self {
-    case .api(let apiError): return apiError.status
-    case .network(let code): return code
-    default: return nil
+    case .unknown(let error):
+      return "알 수 없는 오류가 발생했어요. \(error.localizedDescription)"
     }
   }
 }
 
-enum AMDNetworkStatusCode {
-  static let timeout = -1001
-  static let urlError = -1
-  static let emptyResponse = -2
-}
+
