@@ -1,5 +1,5 @@
 //
-//  Font.swift
+//  AMDFont.swift
 //  DesignSystem
 //
 //  Created by 김규철 on 6/17/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public typealias PretendardFont = DesignSystemFontFamily.Pretendard
+private typealias PretendardFont = DesignSystemFontFamily.Pretendard
 
 public enum AMDFont {
   case xxlargeBold
