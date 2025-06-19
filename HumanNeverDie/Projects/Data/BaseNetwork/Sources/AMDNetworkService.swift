@@ -168,10 +168,12 @@ private extension AMDNetworkService {
   }
 }
 
-// MARK: - DependencyKey
+// MARK: - TestDependencyKey
 
-private enum AMDNetworkServiceKey: DependencyKey {
-  static let liveValue: AMDNetworkServiceProtocol = AMDNetworkService()
+public struct AMDNetworkServiceKey: TestDependencyKey {
+  public static var testValue: AMDNetworkServiceProtocol {
+    fatalError("\(AMDNetworkServiceProtocol.self) Implementation not available")
+  }
 }
 
 // MARK: - DependencyValues
