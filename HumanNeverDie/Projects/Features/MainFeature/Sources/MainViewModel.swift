@@ -16,6 +16,9 @@ import Dependencies
 @Observable
 @MainActor
 public final class MainViewModel: ViewModelable {
+  @ObservationIgnored
+  @Dependency(\.mainUseCase) private var mainUseCase
+  
   public struct State: Equatable {
     var todoData: Todo = .init(id: 0, userId: 0, title: "")
   }
@@ -29,12 +32,7 @@ public final class MainViewModel: ViewModelable {
   }
   
   public var state: State = .init()
-  private let mainUseCase: MainUseCaseProtocol
-  
-  public init() {
-    @Dependency(\.mainUseCase) var mainUseCase
-    self.mainUseCase = mainUseCase
-  }
+  public init() {}
   
   public func handleAction(_ action: Action) {
     switch action {
