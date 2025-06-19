@@ -38,7 +38,7 @@ public final class MainUseCase: MainUseCaseProtocol {
 // MARK: - TestDependencyKey
 
 public struct MainUseCaseKey: TestDependencyKey {
-  public static let testValue: MainUseCaseProtocol = MockUseCase()
+  public static let testValue: MainUseCaseProtocol = MockMainUseCase()
 }
 
 // MARK: - DependencyValues
@@ -52,23 +52,11 @@ public extension DependencyValues {
 
 // MARK: - MockMainUseCase
 
-private struct MockUseCase: MainUseCaseProtocol {
-  func fetchTodo(id: Int) async throws -> Todo {
-    return Todo.mock()
-  }
-  
-  func postTodo(todo: Todo) async throws -> Todo {
-    return Todo.mock()
-  }
-  
-  func putTodo(todo: Todo) async throws -> Todo {
-    return Todo.mock()
-  }
-  
-  func patchTodo(todo: Todo) async throws -> Todo {
-    return Todo.mock()
-  }
-  
-  func deleteTodo(id: Int) async throws {
-  }
+private struct MockMainUseCase: MainUseCaseProtocol {
+  func fetchTodo(id: Int) async throws -> Todo { .mock() }
+  func postTodo(todo: Todo) async throws -> Todo { .mock() }
+  func putTodo(todo: Todo) async throws -> Todo { .mock() }
+  func patchTodo(todo: Todo) async throws -> Todo { .mock() }
+  func deleteTodo(id: Int) async throws {}
 }
+

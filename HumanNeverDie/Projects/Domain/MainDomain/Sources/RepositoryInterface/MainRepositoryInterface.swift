@@ -29,22 +29,9 @@ public extension DependencyValues {
 // MARK: - MockMainRepository
 
 private struct MockMainRepository: MainRepositoryInterface {
-  func fetchTodo(id: Int) async throws -> Todo {
-    return Todo.mock()
-  }
-  
-  func postTodo(todo: MainDomain.Todo) async throws -> Todo {
-    return Todo.mock()
-  }
-  
-  func putTodo(todo: MainDomain.Todo) async throws -> Todo {
-    return Todo.mock()
-  }
-  
-  func patchTodo(todo: Todo) async throws -> Todo {
-    return Todo.mock()
-  }
-  
-  func deleteTodo(id: Int) async throws {
-  }
+  func fetchTodo(id: Int) async throws -> Todo { Todo.mock() }
+  func postTodo(todo: MainDomain.Todo) async throws -> Todo { Todo.mock() }
+  func putTodo(todo: MainDomain.Todo) async throws -> Todo { Todo.mock() }
+  func patchTodo(todo: Todo) async throws -> Todo { Todo.mock() }
+  func deleteTodo(id: Int) async throws {}
 }

@@ -13,5 +13,5 @@ import Dependencies
 // MARK: - MainRepository
 
 extension MainRepositoryKey: @retroactive DependencyKey {
-  public static var liveValue: MainRepositoryInterface = MainRepository()
+  public static let liveValue: MainRepositoryInterface = MainRepository()
 }

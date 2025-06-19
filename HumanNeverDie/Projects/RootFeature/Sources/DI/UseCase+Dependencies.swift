@@ -12,5 +12,5 @@ import Dependencies
 // MARK: - MainUseCaseKey
 
 extension MainUseCaseKey: @retroactive DependencyKey {
-  public static var liveValue: MainUseCaseProtocol = MainUseCase()
+  public static let liveValue: MainUseCaseProtocol = MainUseCase()
 }
