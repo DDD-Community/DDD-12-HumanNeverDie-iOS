@@ -41,6 +41,37 @@ public extension Color {
   static let information = AMDColor.information.swiftUIColor
 }
 
+public extension ShapeStyle where Self == Color {
+  static var gray5: Color { .gray5 }
+  static var gray10: Color { .gray10 }
+  static var gray15: Color { .gray15 }
+  static var gray25: Color { .gray25 }
+  static var gray40: Color { .gray40 }
+  static var gray50: Color { .gray50 }
+  static var gray60: Color { .gray60 }
+  static var gray70: Color { .gray70 }
+  static var gray80: Color { .gray80 }
+  static var gray85: Color { .gray85 }
+  static var gray95: Color { .gray95 }
+  static var gray100: Color { .gray100 }
+  static var amdPrimary: Color { .amdPrimary }
+  static var primaryBackground: Color { .primaryBackground }
+  static var primaryDarker: Color { .primaryDarker }
+  static var primaryLighter: Color { .primaryLighter }
+  static var amdRed: Color { .amdRed }
+  static var redBackground: Color { .redBackground }
+  static var redDarker: Color { .redDarker }
+  static var redLighter: Color { .redLighter }
+  static var amdYellow: Color { .amdYellow }
+  static var yellowBackground: Color { .yellowBackground }
+  static var yellowDarker: Color { .yellowDarker }
+  static var yellowLighter: Color { .yellowLighter }
+  static var success: Color { .success }
+  static var danger: Color { .danger }
+  static var dangerBackground: Color { .dangerBackground }
+  static var information: Color { .information }
+}
+
 public extension UIColor {
   static let gray5 = AMDColor.gray5.color
   static let gray10 = AMDColor.gray10.color
