@@ -8,36 +8,36 @@
 import SwiftUI
 
 public enum AMDShadow {
-  case shadow20
-  case shadow20Down
-  case shadow20Up
-  case shadow5
+  case card
+  case fab
+  case tabbar
+  case character
   
   fileprivate var color: Color {
     switch self {
-    case .shadow20, .shadow20Up:
+    case .card, .tabbar:
       return .gray80.opacity(0.08)
-    case .shadow20Down, .shadow5:
+    case .fab, .character:
       return .gray80.opacity(0.1)
     }
   }
   
   fileprivate var radius: CGFloat {
     switch self {
-    case .shadow20, .shadow20Down, .shadow20Up:
+    case .card, .fab, .tabbar:
       return 20
-    case .shadow5:
+    case .character:
       return 5
     }
   }
   
   fileprivate var offset: CGSize {
     switch self {
-    case .shadow20, .shadow5:
+    case .card, .character:
       return CGSize(width: 0, height: 0)
-    case .shadow20Down:
+    case .fab:
       return CGSize(width: 0, height: 4)
-    case .shadow20Up:
+    case .tabbar:
       return CGSize(width: 0, height: -4)
     }
   }
@@ -59,21 +59,21 @@ public extension View {
     RoundedRectangle(cornerRadius: 12)
       .fill(Color.white)
       .frame(width: 200, height: 100)
-      .amdShadow(.shadow20)
+      .amdShadow(.card)
     
     RoundedRectangle(cornerRadius: 12)
       .fill(Color.white)
       .frame(width: 200, height: 100)
-      .amdShadow(.shadow20Down)
+      .amdShadow(.fab)
     
     RoundedRectangle(cornerRadius: 12)
       .fill(Color.white)
       .frame(width: 200, height: 100)
-      .amdShadow(.shadow20Up)
+      .amdShadow(.tabbar)
     
     RoundedRectangle(cornerRadius: 12)
       .fill(Color.white)
       .frame(width: 200, height: 100)
-      .amdShadow(.shadow5)
+      .amdShadow(.character)
   }
 }
