@@ -1,6 +1,7 @@
 import SwiftUI
 
 import HomeFeature
+import HistoryFeature
 import CommonFeature
 import DesignSystem
 
@@ -48,7 +49,7 @@ public struct MainView: View {
       HomeViewFactory.create()
       
     case .history:
-      Color.yellow
+      HistoryViewFactory.create()
     }
   }
   

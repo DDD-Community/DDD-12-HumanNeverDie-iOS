@@ -15,6 +15,7 @@ public extension Modules {
         case Splash
         case Main
         case Home
+        case History
         
         var name: String {
             return "\(rawValue)Feature"
