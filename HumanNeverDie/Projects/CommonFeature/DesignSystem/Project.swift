@@ -7,5 +7,6 @@ let project = Project.makeModule(
     dependencies: [
     ],
     hasTests: false,
-    hasResource: true
+    hasResource: true,
+    hasDemo: true
 )

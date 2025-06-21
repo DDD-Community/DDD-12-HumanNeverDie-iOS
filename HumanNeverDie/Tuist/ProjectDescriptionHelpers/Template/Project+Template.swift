@@ -30,7 +30,7 @@ public extension Project {
             dependencies: dependencies,
             settings: .appSettings
         )
-                
+
         targets.append(appTarget)
         schemes.append(contentsOf: Scheme.makeAppScheme())
         
@@ -140,9 +140,11 @@ public extension Project {
         dependencies: [TargetDependency],
         packages: [Package] = [],
         hasTests: Bool = true,
-        hasResource: Bool = false
+        hasResource: Bool = false,
+        hasDemo: Bool = false
     ) -> Project {
         var targets: [Target] = []
+        var schemes: [Scheme] = []
         
         let moduleTarget = Target.target(
             name: name,
@@ -155,6 +157,7 @@ public extension Project {
             dependencies: dependencies
         )
         targets.append(moduleTarget)
+        
         
         if hasTests {
             let moduleTestTarget = Target.target(
@@ -169,11 +172,28 @@ public extension Project {
             targets.append(moduleTestTarget)
         }
         
+        if hasDemo {
+            let moduleDemoTarget = Target.target(
+                name: "\(name)Demo",
+                destinations: AppConfiguration.destination,
+                product: .app,
+                bundleId: .appBundleID(name: "\(name)Demo"),
+                deploymentTargets: AppConfiguration.deploymentTarget,
+                infoPlist: .default,
+                sources: ["Demo/Sources/**"],
+                dependencies: [.target(name: name)],
+                settings: .appSettings
+            )
+            targets.append(moduleDemoTarget)
+            schemes.append(Scheme.makeDemoScheme(moduleName: name))
+        }
+        
         return Project(
             name: name,
             options: .defaultOption,
             packages: packages,
-            targets: targets
+            targets: targets,
+            schemes: schemes
         )
     }
 }

@@ -31,3 +31,17 @@ extension Scheme {
         ]
     }
 }
+
+extension Scheme {
+    public static func makeDemoScheme(moduleName: String) -> Scheme {
+        return .scheme(
+            name: "\(moduleName)Demo",
+            shared: true,
+            buildAction: .buildAction(targets: ["\(moduleName)Demo"]),
+            runAction: .runAction(configuration: .debug),
+            archiveAction: .archiveAction(configuration: .debug),
+            profileAction: .profileAction(configuration: .debug),
+            analyzeAction: .analyzeAction(configuration: .debug)
+        )
+    }
+}
