@@ -1,0 +1,16 @@
+//
+// {{ name }}ViewFactory.swift
+// {{ name }}
+//
+// Created by {{ author }} on {{ date }}.
+//
+
+import SwiftUI
+
+@MainActor
+public struct {{ name }}ViewFactory {
+  public static func create() -> some View {
+    let viewModel = {{ name }}ViewModel()
+    return {{ name }}View(viewModel: viewModel)
+  }
+}

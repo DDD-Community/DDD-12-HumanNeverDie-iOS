@@ -1,5 +1,5 @@
 //
-//  {{ name }}Repository.swift
+//  {{ name }}RepositoryInterface.swift
 //  {{ name }}Domain
 //
 //  Created by {{ author }} on {{ date }}.
@@ -7,6 +7,6 @@
 
 import Foundation
 
-public protocol {{ name }}Repository {
+public protocol {{ name }}RepositoryInterface {
     // Add your repository interface methods here
 } 

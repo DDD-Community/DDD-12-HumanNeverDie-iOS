@@ -8,15 +8,22 @@
 import Foundation
 import Observation
 
+import CommonFeature
+
 @Observable
-public final class {{ name }}ViewModel {
-  enum Action {
+@MainActor
+public final class {{ name }}ViewModel: ViewModelable {
+  public struct State: Equatable {
+  }
+  
+  public enum Action {
     case onAppear
   }
   
+  public var state: State = .init()
   public init() {}
   
-  func handleAction(action: Action) {
+  public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
       break

@@ -51,7 +51,7 @@ public extension Project {
         name: String,
         dependencies: [TargetDependency],
         packages: [Package] = [],
-        hasTests: Bool = true,
+        hasTests: Bool = true
     ) -> Project {
         var targets: [Target] = []
         
@@ -95,7 +95,7 @@ public extension Project {
         name: String,
         dependencies: [TargetDependency],
         packages: [Package] = [],
-        hasTests: Bool = true,
+        hasTests: Bool = true
     ) -> Project {
         var targets: [Target] = []
         
@@ -173,7 +173,7 @@ public extension Project {
             name: name,
             options: .defaultOption,
             packages: packages,
-            targets: targets,
+            targets: targets
         )
     }
 }

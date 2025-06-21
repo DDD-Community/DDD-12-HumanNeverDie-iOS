@@ -7,14 +7,14 @@
 
 import Foundation
 
-public protocol {{ name }}UseCase {
+public protocol {{ name }}UseCaseProtocol {
     // Add your use case methods here
 }
 
-public final class Default{{ name }}UseCase: {{ name }}UseCase {
-    private let repository: {{ name }}Repository
+public final class {{ name }}UseCase: {{ name }}UseCaseProtocol {
+    private let repository: {{ name }}RepositoryInterface
     
-    public init(repository: {{ name }}Repository) {
+    public init(repository: {{ name }}RepositoryInterface) {
         self.repository = repository
     }
     

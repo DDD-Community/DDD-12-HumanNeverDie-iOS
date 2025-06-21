@@ -8,15 +8,23 @@
 import Foundation
 import Observation
 
+import CommonFeature
+
 @Observable
-public final class SplashViewModel {
-  enum Action {
+@MainActor
+public final class SplashViewModel: ViewModelable {
+  public struct State: Equatable {
+    
+  }
+  
+  public enum Action {
     case onAppear
   }
   
+  public var state: State = .init()
   public init() {}
   
-  func handleAction(action: Action) {
+  public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
       break

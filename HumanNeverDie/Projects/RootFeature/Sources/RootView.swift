@@ -1,11 +1,9 @@
 import SwiftUI
 
-import SplashFeature
 import MainFeature
+import SplashFeature
 import CommonFeature
-import MainDomain
-import BaseNetwork
-import Data
+
 
 public struct RootView: View {
   @State private var router = Router()
@@ -17,16 +15,10 @@ public struct RootView: View {
       ZStack {
         switch router.rootRoute {
         case .splash:
-          let splashViewModel = SplashViewModel()
-          SplashView(viewModel: splashViewModel)
+          SplashViewFactory.create()
           
         case .main:
-          let networkService = DefaultNetworkService()
-          let mainRepository = DefaultMainRepository(networkService: networkService)
-          let mainUseCase = DefaultMainUseCase(repository: mainRepository)
-          let mainViewModel = MainViewModel(mainUseCase: mainUseCase)
-          
-          MainView(viewModel: mainViewModel)
+          MainViewFactory.create()
         }
       }
       .id(router.rootViewId)

@@ -31,7 +31,7 @@ let domainTemplate = Template(
             path: "Projects/Domain/\(nameAttribute)Domain/Sources/UseCases/\(nameAttribute)UseCase.swift",
             templatePath: "UseCase.stencil"),
         .file(
-            path: "Projects/Domain/\(nameAttribute)Domain/Sources/RepositoryInterface/\(nameAttribute)Repository.swift",
+            path: "Projects/Domain/\(nameAttribute)Domain/Sources/RepositoryInterface/\(nameAttribute)RepositoryInterface.swift",
             templatePath: "Repository.stencil"),
         .file(
             path: "Projects/Domain/\(nameAttribute)Domain/Tests/Sources/\(nameAttribute)UseCaseTest.swift",

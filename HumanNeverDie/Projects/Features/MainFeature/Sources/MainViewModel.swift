@@ -8,12 +8,22 @@
 import Foundation
 import Observation
 
+import CommonFeature
 import MainDomain
+
+import Dependencies
 
 @Observable
 @MainActor
-public final class MainViewModel {
-  enum Action {
+public final class MainViewModel: ViewModelable {
+  @ObservationIgnored
+  @Dependency(\.mainUseCase) private var mainUseCase
+  
+  public struct State: Equatable {
+    var todoData: Todo = .init(id: 0, userId: 0, title: "")
+  }
+  
+  public enum Action {
     case onGetTapped
     case onPostTapped
     case onPutTapped
@@ -21,43 +31,76 @@ public final class MainViewModel {
     case onDeleteTapped
   }
   
-  private(set) var todoData: Todo = .init(id: 0, userId: 0, title: "")
-  private(set) var todoDataWithTest: Todo = .init(id: 3, userId: 2, title: "dataTest")
-  private(set) var todoDataWithEdit: TodoEditing = .init(id: 5, title: "Edit")
+  public var state: State = .init()
+  public init() {}
   
-  private let mainUseCase: MainUseCase
-  public init(mainUseCase: MainUseCase) {
-    self.mainUseCase = mainUseCase
+  public func handleAction(_ action: Action) {
+    switch action {
+    case .onGetTapped:
+      Task { await fetchTodo() }
+      
+    case .onPostTapped:
+      Task { await postTodo() }
+      
+    case .onPutTapped:
+      Task { await putTodo() }
+      
+    case .onPatchTapped:
+      Task { await patchTodo() }
+      
+    case .onDeleteTapped:
+      Task { await deleteTodo() }
+    }
   }
-  
-  func handleAction(_ action: Action) {
-    Task {
-      do {
-        switch action {
-        case .onGetTapped:
-          todoData = try await mainUseCase.fetchTodo(id: todoDataWithTest.id)
-          print("GET 결과:", todoData)
-          
-        case .onPostTapped:
-          todoData = try await mainUseCase.postTodo(todo: todoDataWithTest)
-          print("POST 결과:", todoData)
-          
-        case .onPutTapped:
-          todoData = try await mainUseCase.putTodo(todo: todoDataWithTest)
-          print("PUT 결과:", todoData)
-          
-        case .onPatchTapped:
-          todoData = try await mainUseCase.patchTodo(todoEditing: todoDataWithEdit)
-          print("PATCH 결과:", todoData)
-          
-        case .onDeleteTapped:
-          let result = try await mainUseCase.deleteTodo(id: todoDataWithTest.id)
-          print("DELETE 결과:", result)
-        }
-      } catch {
-        print("\(action) 실패:", error)
-      }
+}
+
+private extension MainViewModel {
+  func fetchTodo() async {
+    do {
+      let todo = try await mainUseCase.fetchTodo(id: 3)
+      state.todoData = todo
+      print("GET 결과:", todo)
+    } catch {
+      print(error)
     }
   }
   
+  func postTodo() async {
+    do {
+      let todo = try await mainUseCase.postTodo(todo: .init(id: 3, userId: 2, title: "dataTest"))
+      state.todoData = todo
+      print("POST 결과:", todo)
+    } catch {
+      print("POST 실패:", error)
+    }
+  }
+  
+  func putTodo() async {
+    do {
+      let todo = try await mainUseCase.putTodo(todo: .init(id: 3, userId: 2, title: "dataTest"))
+      state.todoData = todo
+      print("PUT 결과:", todo)
+    } catch {
+      print("PUT 실패:", error)
+    }
+  }
+  
+  func patchTodo() async {
+    do {
+      let todo = try await mainUseCase.patchTodo(todo: .init(id: 5, userId: 0, title: "Edit"))
+      state.todoData = todo
+      print("PATCH 결과:", todo)
+    } catch {
+      print("PATCH 실패:", error)
+    }
+  }
+  
+  func deleteTodo() async {
+    do {
+      try await mainUseCase.deleteTodo(id: 3)
+      print("DELETE 성공")
+    } catch {
+      print("DELETE 실패:", error)
+    }
+  }
 }
