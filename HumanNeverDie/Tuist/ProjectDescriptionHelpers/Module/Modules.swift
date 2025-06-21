@@ -14,7 +14,7 @@ public extension Modules {
     enum Feature: String {
         case Splash
         case Main
-        case Map
+        case Home
         
         var name: String {
             return "\(rawValue)Feature"

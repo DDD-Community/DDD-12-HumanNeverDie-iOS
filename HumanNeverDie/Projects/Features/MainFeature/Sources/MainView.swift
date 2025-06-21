@@ -1,5 +1,6 @@
 import SwiftUI
 
+import HomeFeature
 import CommonFeature
 import DesignSystem
 
@@ -44,7 +45,7 @@ public struct MainView: View {
   private var contentView: some View {
     switch viewModel.selectedTab {
     case .home:
-      Color.pink
+      HomeViewFactory.create()
       
     case .history:
       Color.yellow
