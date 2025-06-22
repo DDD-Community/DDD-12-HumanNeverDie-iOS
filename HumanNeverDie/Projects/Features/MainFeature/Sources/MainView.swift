@@ -1,6 +1,28 @@
 import SwiftUI
 
+import HomeFeature
+import HistoryFeature
 import CommonFeature
+import DesignSystem
+
+public enum AMDTabBarType: String, CaseIterable {
+  case home = "홈"
+  case history = "히스토리"
+  
+  var icon: Image {
+    switch self {
+    case .home: return AMDImage.success24.swiftUIImage
+    case .history: return AMDImage.liked24.swiftUIImage
+    }
+  }
+  
+  var selectedIcon: Image {
+    switch self {
+    case .home: return AMDImage.unliked24.swiftUIImage
+    case .history: return AMDImage.unliked24.swiftUIImage
+    }
+  }
+}
 
 public struct MainView: View {
   @State private var viewModel: MainViewModel
@@ -10,66 +32,54 @@ public struct MainView: View {
     self._viewModel = .init(initialValue: viewModel)
   }
   
-  enum TestAction: String, CaseIterable, Identifiable {
-     case get = "GET"
-     case post = "POST"
-     case put = "PUT"
-     case patch = "PATCH"
-     case delete = "DELETE"
-     
-     var id: String { rawValue }
-     
-     var action: MainViewModel.Action {
-       switch self {
-       case .get: return .onGetTapped
-       case .post: return .onPostTapped
-       case .put: return .onPutTapped
-       case .patch: return .onPatchTapped
-       case .delete: return .onDeleteTapped
-       }
-     }
-   }
-  
   public var body: some View {
-    VStack {
-#if DEBUG
+    ZStack(alignment: .bottom) {
+      contentView
+        .padding(.bottom, 66)
       
-      Text("DEBUG MODE")
-        .foregroundColor(.red)
-        .font(.caption)
-      
-      Text("DEBUG MODE userId: \(viewModel.todoData.userId)")
-      Text("DEBUG MODE id: \(viewModel.todoData.id)")
-      Text("DEBUG MODE title: \(viewModel.todoData.title)")
-      Text("DEBUG MODE completed: \(viewModel.todoData.completed)")
-      
-      // ✅ 네트워크 테스트 레이블
-      Text("🛜 NETWORK API TEST")
-        .font(.headline)
-        .padding(.top, 24)
-      
-      // ✅ 버튼 목록
-      ForEach(TestAction.allCases) { test in
-        Button(action: {
-          print("👉 \(test.rawValue)")
-          viewModel.handleAction(test.action)
-        }) {
-          Text(test.rawValue)
-            .frame(width: 200, height: 25)
-        }
-        .buttonStyle(.borderedProminent)
-        .padding(.bottom, 8)
-      }
-      
-#else
-      Text("Release MODE")
-        .foregroundColor(.blue)
-        .font(.caption)
-      
-      Text("Release MODE userId: \(viewModel.todoData.userId)")
-      Text("Release MODE id: \(viewModel.todoData.id)")
-      Text("Release MODE title: \(viewModel.todoData.title)")
-#endif
+      tabBar
     }
+    .toolbar(.hidden)
+  }
+  
+  @ViewBuilder
+  private var contentView: some View {
+    switch viewModel.selectedTab {
+    case .home:
+      HomeViewFactory.create()
+      
+    case .history:
+      HistoryViewFactory.create()
+    }
+  }
+  
+  private var tabBar: some View {
+    VStack(spacing: 0) {
+      AMDDevider()
+        .amdShadow(.tabbar)
+      
+      HStack(spacing: 0) {
+        ForEach(AMDTabBarType.allCases, id: \.self) { tab in
+          tabBarButton(for: tab)
+        }
+      }
+    }
+    .background(.white)
+  }
+  
+  private func tabBarButton(for tab: AMDTabBarType) -> some View {
+    Button {
+      viewModel.handleAction(.tabBarItemTapped(tab))
+    } label: {
+      VStack(spacing: 2) {
+        tab.icon
+          .foregroundColor(viewModel.selectedTab == tab ? .gray60 : .gray40)
+        
+        Text(tab.rawValue)
+          .amdFont(.xxsmallRegular)
+          .foregroundColor(viewModel.selectedTab == tab ? .gray95 : .gray70)
+      }
+    }
+    .frame(maxWidth: .infinity, minHeight: 65, maxHeight: 65)
   }
 }

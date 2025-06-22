@@ -1,8 +1,8 @@
 //
-//  MainViewModel.swift
-//  MainFeature
+// HomeViewModel.swift
+// Home
 //
-//  Created by 김규철 on 5/25/25.
+// Created by 김규철 on 2025.
 //
 
 import Foundation
@@ -12,13 +12,12 @@ import CommonFeature
 
 @Observable
 @MainActor
-public final class MainViewModel: ViewModelable {
+public final class HomeViewModel: ViewModelable {
   public struct State: Equatable {
-    var selectedTab: AMDTabBarType  = .home
   }
   
   public enum Action {
-    case tabBarItemTapped(AMDTabBarType)
+    case onAppear
   }
   
   public var state: State = .init()
@@ -26,9 +25,8 @@ public final class MainViewModel: ViewModelable {
   
   public func handleAction(_ action: Action) {
     switch action {
-    case .tabBarItemTapped(let tab):
-      state.selectedTab = tab
+    case .onAppear:
+      break
     }
   }
 }
-
