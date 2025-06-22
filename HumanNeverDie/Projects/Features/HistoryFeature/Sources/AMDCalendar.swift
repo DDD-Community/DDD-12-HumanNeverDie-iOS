@@ -67,7 +67,20 @@ struct AMDCalendar: View {
     .onChange(of: currentMonth) {
       //updateing Month
       currentDate = getCurrentMonth()
-    }
+    }.gesture(
+      DragGesture()
+          .onEnded { value in
+              if value.translation.width < -50 {
+                  withAnimation {
+                      currentMonth += 1
+                  }
+              } else if value.translation.width > 50 {
+                  withAnimation {
+                      currentMonth -= 1
+                  }
+              }
+          }
+  )
   }
   
   @ViewBuilder
