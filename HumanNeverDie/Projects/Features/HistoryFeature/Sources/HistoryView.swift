@@ -11,12 +11,23 @@ import CommonFeature
 
 public struct HistoryView: View {
   @State private var viewModel: HistoryViewModel
+  @State var currentDate: Date = Date()
   
   public init(viewModel: HistoryViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
   public var body: some View {
-    Color.green
+    ScrollView(.vertical, showsIndicators: false) {
+      VStack(spacing: 20) {
+        AMDCalendar(currentDate: $currentDate)
+      
+      }
+    }
   }
+}
+
+
+#Preview {
+  HistoryView(viewModel: HistoryViewModel())
 }
