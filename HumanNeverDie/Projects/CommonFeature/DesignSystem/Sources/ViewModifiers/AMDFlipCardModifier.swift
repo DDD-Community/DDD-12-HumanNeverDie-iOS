@@ -21,11 +21,11 @@ private struct AMDFlipCardModifier<BackView: View>: ViewModifier {
   public func body(content: Content) -> some View {
     ZStack {
       backView
-        .rotation3DEffect(.degrees(flip ? 0 : 90), axis: (x: 0, y: 1, z: 0))
+        .rotation3DEffect(.degrees(flip ? 0 : 89.9), axis: (x: 0, y: 1, z: 0), perspective: 0.5)
         .animation(flip ? .linear(duration: 0.2).delay(0.2) : .linear(duration: 0.2), value: flip)
       
       content
-        .rotation3DEffect(.degrees(flip ? -90 : 0), axis: (x: 0, y: 1, z: 0))
+        .rotation3DEffect(.degrees(flip ? -89.9 : 0), axis: (x: 0, y: 1, z: 0), perspective: 0.5)
         .animation(flip ? .linear(duration: 0.2) : .linear(duration: 0.2).delay(0.2), value: flip)
     }
     .gesture(
