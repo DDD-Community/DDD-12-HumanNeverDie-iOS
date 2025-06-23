@@ -16,32 +16,19 @@ struct AMDCalendar: View {
   
   var body: some View {
     VStack(spacing: 20) {
-      HStack(spacing: 20) {
-        
-        Text(extraDate())
-          .amdFont(.xlargeBold)
-          .fontWeight(.semibold)
-        
-        Button {
-          withAnimation {
-            currentMonth -= 1
+      HStack {
+        Button(action: {
+          // selectDatePicker...
+        }) {
+          HStack(spacing: 4) {
+            Text(extraDate()) // "2025.1"
+              .amdFont(.xlargeBold)
+              .foregroundColor(DesignSystemAsset.Colors.gray100.swiftUIColor)
+            
+            Image(systemName: "chevron.down")
+              .foregroundColor(DesignSystemAsset.Colors.gray50.swiftUIColor)
           }
-          
-        } label: {
-          Image(systemName: "chevron.left")
-            .font(.title2)
         }
-        
-        Button {
-          withAnimation {
-            currentMonth += 1
-          }
-          
-        } label: {
-          Image(systemName: "chevron.right")
-            .font(.title2)
-        }
-        
         Spacer()
       }
       .padding(.horizontal)
