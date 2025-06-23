@@ -10,6 +10,7 @@ import Foundation
 enum DesignSystemType: String, CaseIterable {
   case color
   case font
+  case amdGlucoseValueLabel
   
   var title: String {
     self.rawValue.uppercased()
