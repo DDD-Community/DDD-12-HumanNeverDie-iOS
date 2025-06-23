@@ -18,7 +18,7 @@ struct AMDCalendar: View {
       HStack(spacing: 20) {
         
         Text(extraDate())
-          .amdFont(.mediumBold)
+          .amdFont(.xlargeBold)
           .fontWeight(.semibold)
       
         Button {
