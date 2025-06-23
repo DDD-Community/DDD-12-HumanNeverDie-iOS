@@ -6,27 +6,40 @@
 //
 
 import SwiftUI
-
 import CommonFeature
 
 public struct HistoryView: View {
   @State private var viewModel: HistoryViewModel
-  @State var currentDate: Date = Date()
-  
+  @State private var currentDate: Date = Date() // 단일 날짜 선택
+
+  //날짜별 값: [2025-01-01: 12, 2025-01-02: 34, ...]
+  private let sampleData: [Date: Int] = {
+    var dict: [Date: Int] = [:]
+    let calendar = Calendar.current
+    let baseDate = calendar.date(from: DateComponents(year: 2025, month: 5, day: 1))!
+
+    for i in 0..<40 {
+      if let date = calendar.date(byAdding: .day, value: i, to: baseDate) {
+        dict[date] = Int.random(in: 0...50)
+      }
+    }
+    return dict
+  }()
+
   public init(viewModel: HistoryViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
-  
+
   public var body: some View {
-    ScrollView(.vertical, showsIndicators: false) {
-      VStack(spacing: 20) {
-        AMDCalendar(currentDate: $currentDate)
-      
+    VStack(spacing: 20) {
+      AMDCalendar(valueByDate: sampleData, currentDate: $currentDate)
+
+      ScrollView(.vertical, showsIndicators: false) {
+        Color.red // 선택된 날짜 관련 내용
       }
     }
   }
 }
-
 
 #Preview {
   HistoryView(viewModel: HistoryViewModel())

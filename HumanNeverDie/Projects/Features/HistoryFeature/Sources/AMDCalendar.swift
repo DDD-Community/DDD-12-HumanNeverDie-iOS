@@ -10,9 +10,11 @@ import DesignSystem
 
 struct AMDCalendar: View {
   @State var currentMonth: Int = 0
+  let valueByDate: [Date: Int]
   @Binding var currentDate: Date
   @State private var selectedDate: Date? = nil
   let days: [String] = ["일", "월", "화", "수", "목", "금", "토"]
+  let defaultValue = 50
   
   var body: some View {
     VStack(spacing: 20) {
@@ -72,36 +74,58 @@ struct AMDCalendar: View {
   
   @ViewBuilder
   func CardView(value: DateValue) -> some View {
+    let calendar = Calendar.current
+    let weekday = calendar.component(.weekday, from: value.date)
+    let isSelected = selectedDate != nil && calendar.isDate(selectedDate!, inSameDayAs: value.date)
+    let matchingValue = valueByDate.first { calendar.isDate($0.key, inSameDayAs: value.date) }?.value
+    
+    let textColor: Color = {
+      if isSelected && !(weekday == 1 || weekday == 7) {
+        return DesignSystemAsset.Colors.gray100.swiftUIColor
+      } else {
+        return weekdayColor(weekday)
+      }
+    }()
+    
     VStack {
       if value.day != -1 {
-        let weekday = Calendar.current.component(.weekday, from: value.date)
-        let isSelected = selectedDate != nil && Calendar.current.isDate(selectedDate!, inSameDayAs: value.date)
-        
-        // 클릭 시 색상 처리 조건
-        let textColor: Color = {
-          if isSelected && !(weekday == 1 || weekday == 7) {
-            return DesignSystemAsset.Colors.gray100.swiftUIColor
-          } else {
-            return weekdayColor(weekday)
+        ZStack {
+          if let val = matchingValue {
+            getStateIcon(for: val)
+              .resizable()
+              .scaledToFit()
+              .frame(width: 36, height: 36)
           }
-        }()
-        
-        Text("\(value.day)")
-          .amdFont(.mediumMedium)
-          .foregroundColor(textColor)
-          .frame(width: 36, height: 36)
-          .padding(6)
-          .overlay(
-            RoundedRectangle(cornerRadius: 15)
-              .stroke(isSelected ? DesignSystemAsset.Colors.gray25.swiftUIColor : .clear, lineWidth: 1)
-          )
-          .onTapGesture {
-            selectedDate = value.date
-            currentDate = value.date
-          }
+          
+          Text("\(value.day)")
+            .amdFont(.mediumMedium)
+            .foregroundColor(textColor)
+        }
+        .frame(width: 36, height: 36)
+        .padding(6)
+        .overlay(
+          RoundedRectangle(cornerRadius: 15)
+            .stroke(isSelected ? DesignSystemAsset.Colors.gray25.swiftUIColor : .clear, lineWidth: 1)
+        )
+        .onTapGesture {
+          selectedDate = value.date
+          currentDate = value.date
+        }
       }
     }
     .frame(maxWidth: .infinity)
+  }
+  
+  func getStateIcon(for value: Int) -> Image {
+    let percentage = Double(value) / Double(defaultValue) * 100
+    
+    if percentage <= 33 {
+      return Image(uiImage: DesignSystemAsset.Images.stateHealthy.image)
+    } else if percentage <= 66 {
+      return Image(uiImage: DesignSystemAsset.Images.stateWarning.image)
+    } else {
+      return Image(uiImage: DesignSystemAsset.Images.stateDanger.image)
+    }
   }
   
   func weekdayColor(_ weekday: Int) -> Color {
