@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 struct AMDCalendar: View {
   @State var currentMonth: Int = 0
@@ -17,7 +18,7 @@ struct AMDCalendar: View {
       HStack(spacing: 20) {
         
         Text(extraDate())
-          .font(.title)
+          .amdFont(.mediumBold)
           .fontWeight(.semibold)
       
         Button {
@@ -46,12 +47,14 @@ struct AMDCalendar: View {
       
       //Day View..
       HStack(spacing: 0) {
-        ForEach(days, id: \.self) { day in
-          Text(day)
-            .font(.caption)
-            .fontWeight(.semibold)
-            .frame(maxWidth: .infinity)
-        }
+          ForEach(Array(days.enumerated()), id: \.offset) { index, day in
+
+              Text(day)
+                  .font(.caption)
+                  .fontWeight(.semibold)
+                  .foregroundColor(weekdayColor(index + 1))
+                  .frame(maxWidth: .infinity)
+          }
       }
       
       //Dates
@@ -84,15 +87,25 @@ struct AMDCalendar: View {
   }
   
   @ViewBuilder
-  func CardView(value: DateValue)->some View{
-    VStack {
-      if value.day != -1 {
-        Text("\(value.day)")
-          .font(.caption)
+  func CardView(value: DateValue) -> some View {
+      VStack {
+          if value.day != -1 {
+            let weekday = Calendar.current.component(.weekday, from: value.date)
+            
+              Text("\(value.day)")
+              .amdFont(.smallRegular)
+            .foregroundColor(weekdayColor(weekday))
+          }
       }
-    }
-    .padding(.vertical, 8)
-    .frame(height: 20, alignment: .top)
+      .frame(maxWidth: .infinity)
+  }
+  
+  func weekdayColor(_ weekday: Int) -> Color {
+      switch weekday {
+      case 1: return DesignSystemAsset.Colors.danger.swiftUIColor
+      case 7: return DesignSystemAsset.Colors.primaryDarker.swiftUIColor
+      default: return DesignSystemAsset.Colors.gray60.swiftUIColor
+      }
   }
   
   func extraDate() -> String {
