@@ -11,6 +11,7 @@ import DesignSystem
 struct AMDCalendar: View {
   @State var currentMonth: Int = 0
   @Binding var currentDate: Date
+  @State private var selectedDate: Date? = nil
   let days: [String] = ["일", "월", "화", "수", "목", "금", "토"]
   
   var body: some View {
@@ -20,7 +21,7 @@ struct AMDCalendar: View {
         Text(extraDate())
           .amdFont(.xlargeBold)
           .fontWeight(.semibold)
-      
+        
         Button {
           withAnimation {
             currentMonth -= 1
@@ -47,14 +48,14 @@ struct AMDCalendar: View {
       
       //Day View..
       HStack(spacing: 0) {
-          ForEach(Array(days.enumerated()), id: \.offset) { index, day in
-
-              Text(day)
-                  .font(.caption)
-                  .fontWeight(.semibold)
-                  .foregroundColor(weekdayColor(index + 1))
-                  .frame(maxWidth: .infinity)
-          }
+        ForEach(Array(days.enumerated()), id: \.offset) { index, day in
+          
+          Text(day)
+            .amdFont(.mediumMedium)
+            .fontWeight(.semibold)
+            .foregroundColor(weekdayColor(index + 1))
+            .frame(maxWidth: .infinity)
+        }
       }
       
       //Dates
@@ -84,24 +85,44 @@ struct AMDCalendar: View {
   
   @ViewBuilder
   func CardView(value: DateValue) -> some View {
-      VStack {
-          if value.day != -1 {
-            let weekday = Calendar.current.component(.weekday, from: value.date)
-            
-              Text("\(value.day)")
-              .amdFont(.smallRegular)
-            .foregroundColor(weekdayColor(weekday))
+    VStack {
+      if value.day != -1 {
+        let weekday = Calendar.current.component(.weekday, from: value.date)
+        let isSelected = selectedDate != nil && Calendar.current.isDate(selectedDate!, inSameDayAs: value.date)
+        
+        // 클릭 시 색상 처리 조건
+        let textColor: Color = {
+          if isSelected && !(weekday == 1 || weekday == 7) {
+            return DesignSystemAsset.Colors.gray100.swiftUIColor
+          } else {
+            return weekdayColor(weekday)
+          }
+        }()
+        
+        Text("\(value.day)")
+          .amdFont(.mediumMedium)
+          .foregroundColor(textColor)
+          .frame(width: 36, height: 36)
+          .padding(6)
+          .overlay(
+            RoundedRectangle(cornerRadius: 15)
+              .stroke(isSelected ? DesignSystemAsset.Colors.gray25.swiftUIColor : .clear, lineWidth: 1)
+          )
+          .onTapGesture {
+            selectedDate = value.date
+            currentDate = value.date
           }
       }
-      .frame(maxWidth: .infinity)
+    }
+    .frame(maxWidth: .infinity)
   }
   
   func weekdayColor(_ weekday: Int) -> Color {
-      switch weekday {
-      case 1: return DesignSystemAsset.Colors.danger.swiftUIColor
-      case 7: return DesignSystemAsset.Colors.primaryDarker.swiftUIColor
-      default: return DesignSystemAsset.Colors.gray60.swiftUIColor
-      }
+    switch weekday {
+    case 1: return DesignSystemAsset.Colors.redDarker.swiftUIColor
+    case 7: return DesignSystemAsset.Colors.primaryDarker.swiftUIColor
+    default: return DesignSystemAsset.Colors.gray60.swiftUIColor
+    }
   }
   
   func extraDate() -> String {
@@ -161,3 +182,4 @@ extension Date {
 #Preview {
   HistoryView(viewModel: HistoryViewModel())
 }
+
