@@ -179,7 +179,7 @@ public extension Project {
                 product: .app,
                 bundleId: .appBundleID(name: "\(name)Demo"),
                 deploymentTargets: AppConfiguration.deploymentTarget,
-                infoPlist: .default,
+                infoPlist: .extendingDefault(with: InfoPlist.appInfoPlist),
                 sources: ["Demo/Sources/**"],
                 dependencies: [.target(name: name)],
                 settings: .appSettings
