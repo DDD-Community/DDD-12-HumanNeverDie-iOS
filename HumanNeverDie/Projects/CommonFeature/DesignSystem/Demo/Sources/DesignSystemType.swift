@@ -11,6 +11,7 @@ enum DesignSystemType: String, CaseIterable {
   case color
   case font
   case amdGlucoseValueLabel
+  case amdCard
   
   var title: String {
     self.rawValue.uppercased()

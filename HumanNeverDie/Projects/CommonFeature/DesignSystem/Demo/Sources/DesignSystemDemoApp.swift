@@ -47,6 +47,8 @@ private struct DesignSystemDetailView: View {
         FontDemoView()
       case .amdGlucoseValueLabel:
         AMDGlucoseValueLabelDemoView()
+      case .amdCard:
+        AMDCardDemoView()
       }
     }
   }
