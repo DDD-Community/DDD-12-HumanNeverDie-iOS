@@ -19,6 +19,39 @@ public enum AMDGradient {
     startPoint: .leading,
     endPoint: .trailing
   )
+  
+  public static let cardHealthy: LinearGradient = LinearGradient(
+    colors: [.init(hex: "FFFFFF"), .init(hex: "A0E0F4").opacity(0.2), .init(hex: "FFFFFF"), .init(hex: "A0E0F4").opacity(0.2)],
+    startPoint: .topLeading,
+    endPoint: .bottomTrailing
+  )
+  
+  public static let cardWarning: LinearGradient = LinearGradient(
+    colors: [.init(hex: "FFFFFF"), .init(hex: "FAF791").opacity(0.2), .init(hex: "FFFFFF"), .init(hex: "FAF791").opacity(0.2)],
+    startPoint: .topLeading,
+    endPoint: .bottomTrailing
+  )
+  
+  public static let cardDanger: LinearGradient = LinearGradient(
+    colors: [.init(hex: "FFFFFF"), .init(hex: "FFBDDC").opacity(0.2), .init(hex: "FFFFFF"), .init(hex: "FFBDDC").opacity(0.2)],
+    startPoint: .topLeading,
+    endPoint: .bottomTrailing
+  )
+  
+  public static let cardDefault: LinearGradient = LinearGradient(
+    colors: [.init(hex: "FFFFFF"), .init(hex: "F6F7F9").opacity(0.2), .init(hex: "FFFFFF"), .init(hex: "F6F7F9").opacity(0.2)],
+    startPoint: .topLeading,
+    endPoint: .bottomTrailing
+  )
+}
+
+public extension ShapeStyle where Self == LinearGradient {
+  static var phase2: LinearGradient { AMDGradient.phase2 }
+  static var phase3: LinearGradient { AMDGradient.phase3 }
+  static var cardHealthy: LinearGradient { AMDGradient.cardHealthy }
+  static var cardWarning: LinearGradient { AMDGradient.cardWarning }
+  static var cardDanger: LinearGradient { AMDGradient.cardDanger }
+  static var cardDefault: LinearGradient { AMDGradient.cardDefault }
 }
 
 fileprivate extension Color {
