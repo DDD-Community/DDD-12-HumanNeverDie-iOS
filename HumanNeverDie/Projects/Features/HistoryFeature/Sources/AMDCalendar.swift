@@ -44,6 +44,7 @@ struct AMDCalendar: View {
             .fontWeight(.semibold)
             .foregroundColor(weekdayColor(index + 1))
             .frame(maxWidth: .infinity)
+            .frame(height: 20)
         }
       }
       
@@ -54,6 +55,7 @@ struct AMDCalendar: View {
       LazyVGrid(columns: columns, spacing: 15) {
         ForEach(extractDate()) { dateValue in
           CardView(value: dateValue)
+            .frame(width: 44, height: 44)
         }
       }
     }
@@ -94,18 +96,24 @@ struct AMDCalendar: View {
             getStateIcon(for: val)
               .resizable()
               .scaledToFit()
-              .frame(width: 36, height: 36)
+//              .frame(width: 36, height: 36) //디자인 사이즈는 36인데 모양이 다름
           }
           
           Text("\(value.day)")
             .amdFont(.mediumMedium)
             .foregroundColor(textColor)
         }
-        .frame(width: 36, height: 36)
-        .padding(6)
-        .overlay(
-          RoundedRectangle(cornerRadius: 15)
-            .stroke(isSelected ? Color.gray25 : .clear, lineWidth: 1)
+        .frame(width: 44, height: 44)
+        .padding(6) //디자인상은 10인데..?
+        .background(
+          Group {
+            if isSelected {
+              RoundedRectangle(cornerRadius: 15)
+                .fill(Color.gray10)
+            } else {
+              Color.clear
+            }
+          }
         )
         .onTapGesture {
           selectedDate = value.date
