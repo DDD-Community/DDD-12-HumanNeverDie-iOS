@@ -13,8 +13,11 @@ struct AMDCalendar: View {
   let valueByDate: [Date: Int]
   @Binding var currentDate: Date
   @State private var selectedDate: Date? = nil
-  let days: [String] = ["일", "월", "화", "수", "목", "금", "토"]
   let defaultValue = 50
+  let days: [String] = ["일", "월", "화", "수", "목", "금", "토"]
+  var columns: [GridItem] {
+    Array(repeating: GridItem(.flexible()), count: days.count)
+  }
   
   var body: some View {
     VStack(spacing: 20) {
@@ -36,15 +39,13 @@ struct AMDCalendar: View {
       .padding(.horizontal)
       
       //Day View..
-      HStack(spacing: 0) {
+      LazyVGrid(columns: columns, spacing: 15) {
         ForEach(Array(days.enumerated()), id: \.offset) { index, day in
-          
           Text(day)
             .amdFont(.mediumMedium)
             .fontWeight(.semibold)
             .foregroundColor(weekdayColor(index + 1))
-            .frame(maxWidth: .infinity)
-            .frame(height: 20)
+            .frame(width: 44, height: 20)
         }
       }
       
