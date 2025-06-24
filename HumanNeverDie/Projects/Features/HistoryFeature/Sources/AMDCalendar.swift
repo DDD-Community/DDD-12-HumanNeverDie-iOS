@@ -25,10 +25,10 @@ struct AMDCalendar: View {
           HStack(spacing: 4) {
             Text(extraDate()) // "2025.1"
               .amdFont(.xlargeBold)
-              .foregroundColor(DesignSystemAsset.Colors.gray100.swiftUIColor)
+              .foregroundColor(Color.gray100)
             
             Image(systemName: "chevron.down")
-              .foregroundColor(DesignSystemAsset.Colors.gray50.swiftUIColor)
+              .foregroundColor(Color.gray50)
           }
         }
         Spacer()
@@ -81,7 +81,7 @@ struct AMDCalendar: View {
     
     let textColor: Color = {
       if isSelected && !(weekday == 1 || weekday == 7) {
-        return DesignSystemAsset.Colors.gray100.swiftUIColor
+        return Color.gray100
       } else {
         return weekdayColor(weekday)
       }
@@ -105,7 +105,7 @@ struct AMDCalendar: View {
         .padding(6)
         .overlay(
           RoundedRectangle(cornerRadius: 15)
-            .stroke(isSelected ? DesignSystemAsset.Colors.gray25.swiftUIColor : .clear, lineWidth: 1)
+            .stroke(isSelected ? Color.gray25 : .clear, lineWidth: 1)
         )
         .onTapGesture {
           selectedDate = value.date
@@ -130,9 +130,9 @@ struct AMDCalendar: View {
   
   func weekdayColor(_ weekday: Int) -> Color {
     switch weekday {
-    case 1: return DesignSystemAsset.Colors.redDarker.swiftUIColor
-    case 7: return DesignSystemAsset.Colors.primaryDarker.swiftUIColor
-    default: return DesignSystemAsset.Colors.gray60.swiftUIColor
+    case 1: return Color.redDarker
+    case 7: return Color.primaryDarker
+    default: return Color.gray80
     }
   }
   
