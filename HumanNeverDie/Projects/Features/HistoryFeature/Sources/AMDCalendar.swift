@@ -118,10 +118,9 @@ struct AMDCalendar: View {
           }
         )
         .overlay(
-          isToday ?
+          (!isSelected && isToday) ?
             RoundedRectangle(cornerRadius: 15)
-              .stroke(Color.gray25, lineWidth: 1)
-          : nil
+              .stroke(Color.gray25, lineWidth: 1) : nil
         )
         .onTapGesture {
           selectedDate = value.date
