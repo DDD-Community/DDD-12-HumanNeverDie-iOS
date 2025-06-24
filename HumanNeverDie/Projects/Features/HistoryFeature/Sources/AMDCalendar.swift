@@ -120,11 +120,11 @@ struct AMDCalendar: View {
     let percentage = Double(value) / Double(defaultValue) * 100
     
     if percentage <= 33 {
-      return Image(uiImage: DesignSystemAsset.Images.stateHealthy.image)
+      return AMDImage.stateHealthy.swiftUIImage
     } else if percentage <= 66 {
-      return Image(uiImage: DesignSystemAsset.Images.stateWarning.image)
+      return AMDImage.stateWarning.swiftUIImage
     } else {
-      return Image(uiImage: DesignSystemAsset.Images.stateDanger.image)
+      return AMDImage.stateDanger.swiftUIImage
     }
   }
   
