@@ -77,6 +77,7 @@ struct AMDCalendar: View {
   @ViewBuilder
   func CardView(value: DateValue) -> some View {
     let calendar = Calendar.current
+    let isToday = calendar.isDateInToday(value.date)
     let weekday = calendar.component(.weekday, from: value.date)
     let isSelected = selectedDate != nil && calendar.isDate(selectedDate!, inSameDayAs: value.date)
     let matchingValue = valueByDate.first { calendar.isDate($0.key, inSameDayAs: value.date) }?.value
@@ -114,6 +115,12 @@ struct AMDCalendar: View {
               Color.clear
             }
           }
+        )
+        .overlay(
+          isToday ?
+            RoundedRectangle(cornerRadius: 15)
+              .stroke(Color.gray25, lineWidth: 1)
+          : nil
         )
         .onTapGesture {
           selectedDate = value.date
