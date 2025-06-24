@@ -8,7 +8,7 @@
 import Foundation
 
 public enum AMDStatusVariant: String, CaseIterable {
-  case healthy
-  case warning
-  case danger
+  case healthy = "건강"
+  case warning = "경고"
+  case danger = "위험"
 }

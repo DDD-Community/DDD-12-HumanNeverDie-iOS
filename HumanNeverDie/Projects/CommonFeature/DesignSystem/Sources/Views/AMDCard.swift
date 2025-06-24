@@ -11,18 +11,7 @@ public struct AMDCard: View {
   private let consumedGlucose: Double
   private let baseGlucose: Double
   private let variant: AMDStatusVariant
-  
-  private var titleText: String {
-    switch variant {
-    case .healthy:
-      return "건강"
-    case .warning:
-      return "걱정"
-    case .danger:
-      return "위험"
-    }
-  }
-  
+    
   private var characterImage: Image {
     switch variant {
     case .healthy:
@@ -71,7 +60,7 @@ public struct AMDCard: View {
   }
   
   private var title: some View {
-    Text("\(titleText) 고미당")
+    Text("\(variant.rawValue) 고미당")
       .amdFont(.largeBold)
       .foregroundStyle(.gray95)
       .frame(maxWidth: .infinity, alignment: .center)
