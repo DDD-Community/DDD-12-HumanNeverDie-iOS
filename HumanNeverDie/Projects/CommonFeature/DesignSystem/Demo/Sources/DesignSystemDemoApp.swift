@@ -49,6 +49,8 @@ private struct DesignSystemDetailView: View {
         AMDGlucoseValueLabelDemoView()
       case .amdCard:
         AMDCardDemoView()
+      case .amdProgress:
+        AMDProgressDemoView()
       }
     }
   }
