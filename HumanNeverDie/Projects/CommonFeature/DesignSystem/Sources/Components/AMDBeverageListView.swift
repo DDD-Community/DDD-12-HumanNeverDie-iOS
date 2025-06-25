@@ -147,7 +147,6 @@ public struct AMDBeverageListView: View {
           Spacer()
           beverageInfoView
         }
-        
       }
       
       AMDDevider()
@@ -418,4 +417,3 @@ public extension AMDBeverageListView {
     )
   }
 }
-
