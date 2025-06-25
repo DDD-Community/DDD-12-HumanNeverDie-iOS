@@ -24,7 +24,7 @@ struct AMDCalendar: View {
         }) {
           
           HStack(spacing: 4) {
-            Text(viewModel.getTitleDateString())
+            Text(viewModel.titleDateString)
               .amdFont(.xlargeBold)
               .foregroundColor(Color.gray100)
             

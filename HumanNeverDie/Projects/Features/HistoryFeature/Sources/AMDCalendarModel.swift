@@ -24,6 +24,7 @@ final class AMDCalendarViewModel: ObservableObject {
   @Published var currentMonth: Int = 0
   @Published var currentDate: Date
   @Published var selectedDate: Date? = nil
+  private let calendar = Calendar.current
   let valueByDate: [Date: Int]
   let defaultValue: Int
   
@@ -33,30 +34,37 @@ final class AMDCalendarViewModel: ObservableObject {
     self.defaultValue = defaultValue
   }
   
-  var weekdayLabels: [String] {
-    ["일", "월", "화", "수", "목", "금", "토"]
+  var titleDateString: String {
+    Self.titleFormatter.string(from: currentDate)
   }
-  
+
+  private static let titleFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy.MM"
+    return formatter
+  }()
+
   var weekdayItems: [WeekdayValue] {
-    weekdayLabels.enumerated().map { index, weekday in
+    let weekdayLabels = ["일", "월", "화", "수", "목", "금", "토"]
+    
+    return weekdayLabels.enumerated().map { index, weekday in
       let weekdayIndex = index + 1 // Sunday = 1, Saturday = 7
       return WeekdayValue(weekday: weekday, color: weekdayColor(weekdayIndex))
     }
   }
   
   var columns: [GridItem] {
-    Array(repeating: GridItem(.flexible()), count: weekdayLabels.count)
+    Array(repeating: GridItem(.flexible()), count: weekdayItems.count)
   }
   
   func getCurrentMonth() -> Date {
-    Calendar.current.date(byAdding: .month, value: currentMonth, to: Date()) ?? Date()
+    calendar.date(byAdding: .month, value: currentMonth, to: Date()) ?? Date()
   }
   
   func extractDate() -> [DateValue] {
-    let calendar = Calendar.current
     let currentMonth = getCurrentMonth()
     
-    var days = currentMonth.getAllDates().compactMap { date -> DateValue in
+    var days = currentMonth.getAllDates(using: calendar).compactMap { date -> DateValue in
       let day = calendar.component(.day, from: date)
       
       return DateValue(day: day, date: date)
@@ -89,13 +97,6 @@ final class AMDCalendarViewModel: ObservableObject {
     }
   }
   
-  func getTitleDateString() -> String {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy.MM"
-    
-    return formatter.string(from: currentDate)
-  }
-  
   func handleDragGesture(_ translation: CGSize) {
     if translation.width < -50 {
       moveMonth(by: 1)
@@ -111,20 +112,20 @@ final class AMDCalendarViewModel: ObservableObject {
   }
   
   func isToday(_ date: Date) -> Bool {
-    Calendar.current.isDateInToday(date)
+    calendar.isDateInToday(date)
   }
 
   func isSelected(_ date: Date) -> Bool {
     guard let selected = selectedDate else { return false }
-    return Calendar.current.isDate(selected, inSameDayAs: date)
+    return calendar.isDate(selected, inSameDayAs: date)
   }
 
   func matchingValue(for date: Date) -> Int? {
-    valueByDate.first { Calendar.current.isDate($0.key, inSameDayAs: date) }?.value
+    valueByDate.first { calendar.isDate($0.key, inSameDayAs: date) }?.value
   }
 
   func textColor(for date: Date) -> Color {
-    let weekday = Calendar.current.component(.weekday, from: date)
+    let weekday = calendar.component(.weekday, from: date)
     if isSelected(date) && weekday != 1 && weekday != 7 {
       return Color.gray100
     } else {
@@ -140,13 +141,12 @@ final class AMDCalendarViewModel: ObservableObject {
 }
 
 extension Date {
-  func getAllDates()->[Date] {
-    let calender = Calendar.current
-    let startDate = calender.date(from: Calendar.current.dateComponents([.year, .month], from: self))!
-    let range = calender.range(of: .day, in: .month, for: startDate)!
+  func getAllDates(using calendar: Calendar) -> [Date] {
+    let startDate = calendar.date(from: Calendar.current.dateComponents([.year, .month], from: self))!
+    let range = calendar.range(of: .day, in: .month, for: startDate)!
     
     return range.compactMap { day -> Date in
-      return calender.date(byAdding: .day, value: day - 1, to: startDate)!
+      return calendar.date(byAdding: .day, value: day - 1, to: startDate)!
     }
   }
 }
