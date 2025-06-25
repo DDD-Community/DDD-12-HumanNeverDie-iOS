@@ -12,12 +12,12 @@ public struct AMDCalendarFactory {
   public static func create(
     currentDate: Date,
     valueByDate: [Date: Int],
-    defaultValue: Int
+    userSugarTargetValue: Int
   ) -> some View {
     let viewModel = AMDCalendarViewModel(
       currentDate: currentDate,
       valueByDate: valueByDate,
-      defaultValue: defaultValue
+      userSugarTargetValue: userSugarTargetValue
     )
     return AMDCalendar(viewModel: viewModel)
   }

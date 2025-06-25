@@ -26,12 +26,12 @@ final class AMDCalendarViewModel: ObservableObject {
   private var currentDate: Date
   private let calendar = Calendar.current
   private let valueByDate: [Date: Int]
-  private let defaultValue: Int
+  private let userSugarTargetValue: Int
   
-  init(currentDate: Date, valueByDate: [Date: Int], defaultValue : Int) {
+  init(currentDate: Date, valueByDate: [Date: Int], userSugarTargetValue : Int) {
     self.currentDate = currentDate
     self.valueByDate = valueByDate
-    self.defaultValue = defaultValue
+    self.userSugarTargetValue = userSugarTargetValue
   }
   
   var titleDateString: String {
@@ -86,7 +86,7 @@ final class AMDCalendarViewModel: ObservableObject {
   }
   
   func getStateIcon(for value: Int) -> Image {
-    let percentage = Double(value) / Double(defaultValue) * 100
+    let percentage = Double(value) / Double(userSugarTargetValue) * 100
     
     if percentage <= 33 {
       return AMDImage.stateHealthy.swiftUIImage

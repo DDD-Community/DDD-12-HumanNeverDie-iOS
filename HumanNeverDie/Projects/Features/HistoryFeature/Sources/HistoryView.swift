@@ -15,7 +15,7 @@ public struct HistoryView: View {
     AMDCalendarFactory.create(
       currentDate: currentDate,
       valueByDate: sampleData,
-      defaultValue: 50
+      userSugarTargetValue: 50
     )
   }
 
