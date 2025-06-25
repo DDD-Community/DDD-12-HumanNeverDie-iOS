@@ -51,6 +51,8 @@ private struct DesignSystemDetailView: View {
         AMDCardDemoView()
       case .amdProgress:
         AMDProgressDemoView()
+      case .amdChip:
+        AMDChipDemoView()
       }
     }
   }
