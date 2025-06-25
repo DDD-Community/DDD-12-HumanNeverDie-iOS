@@ -9,15 +9,13 @@ import SwiftUI
 import DesignSystem
 
 struct AMDCalendar: View {
-  @State var currentMonth: Int = 0
-  let valueByDate: [Date: Int]
-  @Binding var currentDate: Date
-  @State private var selectedDate: Date? = nil
-  let defaultValue = 50
-  let days: [String] = ["일", "월", "화", "수", "목", "금", "토"]
-  var columns: [GridItem] {
-    Array(repeating: GridItem(.flexible()), count: days.count)
+  @StateObject private var viewModel: AMDCalendarViewModel
+  
+
+  init(viewModel: AMDCalendarViewModel) {
+    _viewModel = StateObject(wrappedValue: viewModel)
   }
+  
   
   var body: some View {
     VStack(spacing: 20) {
@@ -26,7 +24,7 @@ struct AMDCalendar: View {
           // selectDatePicker...
         }) {
           HStack(spacing: 4) {
-            Text(extraDate()) // "2025.1"
+            Text(extraDate())
               .amdFont(.xlargeBold)
               .foregroundColor(Color.gray100)
             
@@ -38,13 +36,12 @@ struct AMDCalendar: View {
       }
       .padding(.horizontal)
       
-      //Day View..
-      LazyVGrid(columns: columns, spacing: 15) {
-        ForEach(Array(days.enumerated()), id: \.offset) { index, day in
+      LazyVGrid(columns: viewModel.columns, spacing: 15) {
+        ForEach(Array(viewModel.days.enumerated()), id: \.offset) { index, day in
           Text(day)
             .amdFont(.mediumMedium)
             .fontWeight(.semibold)
-            .foregroundColor(weekdayColor(index + 1))
+            .foregroundColor(viewModel.weekdayColor(index + 1))
             .frame(width: 44, height: 20)
         }
       }
@@ -54,22 +51,22 @@ struct AMDCalendar: View {
       let columns = Array(repeating: GridItem(.flexible()), count: 7)
       
       LazyVGrid(columns: columns, spacing: 15) {
-        ForEach(extractDate()) { dateValue in
+        ForEach(viewModel.extractDate()) { dateValue in
           CardView(value: dateValue)
             .frame(width: 44, height: 44)
         }
       }
     }
-    .onChange(of: currentMonth) {
+    .onChange(of: viewModel.currentMonth) {
       //updateing Month
-      currentDate = getCurrentMonth()
+      viewModel.currentDate = viewModel.getCurrentMonth()
     }.highPriorityGesture(
       DragGesture()
         .onEnded { value in
           if value.translation.width < -50 {
-            withAnimation { currentMonth += 1 }
+            withAnimation { viewModel.currentMonth += 1 }
           } else if value.translation.width > 50 {
-            withAnimation { currentMonth -= 1 }
+            withAnimation { viewModel.currentMonth -= 1 }
           }
         }
     )
@@ -80,14 +77,14 @@ struct AMDCalendar: View {
     let calendar = Calendar.current
     let isToday = calendar.isDateInToday(value.date)
     let weekday = calendar.component(.weekday, from: value.date)
-    let isSelected = selectedDate != nil && calendar.isDate(selectedDate!, inSameDayAs: value.date)
-    let matchingValue = valueByDate.first { calendar.isDate($0.key, inSameDayAs: value.date) }?.value
+    let isSelected = viewModel.selectedDate != nil && calendar.isDate(viewModel.selectedDate!, inSameDayAs: value.date)
+    let matchingValue = viewModel.valueByDate.first { calendar.isDate($0.key, inSameDayAs: value.date) }?.value
     
     let textColor: Color = {
       if isSelected && !(weekday == 1 || weekday == 7) {
         return Color.gray100
       } else {
-        return weekdayColor(weekday)
+        return viewModel.weekdayColor(weekday)
       }
     }()
     
@@ -95,7 +92,7 @@ struct AMDCalendar: View {
       if value.day != -1 {
         ZStack {
           if let val = matchingValue {
-            getStateIcon(for: val)
+            viewModel.getStateIcon(for: val)
               .resizable()
               .scaledToFit()
 //              .frame(width: 36, height: 36) //디자인 사이즈는 36인데 모양이 다름
@@ -123,70 +120,32 @@ struct AMDCalendar: View {
               .stroke(Color.gray25, lineWidth: 1) : nil
         )
         .onTapGesture {
-          selectedDate = value.date
-          currentDate = value.date
+          viewModel.selectedDate = value.date
+          viewModel.currentDate = value.date
         }
       }
     }
     .frame(maxWidth: .infinity)
   }
   
-  func getStateIcon(for value: Int) -> Image {
-    let percentage = Double(value) / Double(defaultValue) * 100
-    
-    if percentage <= 33 {
-      return AMDImage.stateHealthy.swiftUIImage
-    } else if percentage <= 66 {
-      return AMDImage.stateWarning.swiftUIImage
-    } else {
-      return AMDImage.stateDanger.swiftUIImage
-    }
-  }
-  
-  func weekdayColor(_ weekday: Int) -> Color {
-    switch weekday {
-    case 1: return Color.redDarker
-    case 7: return Color.primaryDarker
-    default: return Color.gray80
-    }
-  }
-  
   func extraDate() -> String {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy.MM"
     
-    return formatter.string(from: currentDate)
+    return formatter.string(from: viewModel.currentDate)
   }
   
   func getCurrentMonth() -> Date {
     let calender = Calendar.current
     
-    guard let currentMonth = calender.date(byAdding: .month, value: self.currentMonth, to: Date()) else {
+    guard let currentMonth = calender.date(byAdding: .month, value: viewModel.currentMonth, to: Date()) else {
       return Date()
     }
     
     return currentMonth
   }
   
-  
-  func extractDate() -> [DateValue] {
-    let calendar = Calendar.current
-    
-    let currentMonth = getCurrentMonth()
-    
-    var days = currentMonth.getAllDates().compactMap { date -> DateValue in
-      let day = calendar.component(.day, from: date)
-      
-      return DateValue(day: day, date: date)
-    }
-    
-    //adding offset days get exact wook day
-    let firstWeekday = calendar.component(.weekday, from: days.first?.date ?? Date())
-    for _ in 0..<firstWeekday - 1 {
-      days.insert(DateValue(day: -1, date: Date()), at: 0)
-    }
-    return days
-  }
+
 }
 
 extension Date {
@@ -202,10 +161,3 @@ extension Date {
     }
   }
 }
-
-
-
-#Preview {
-  HistoryView(viewModel: HistoryViewModel())
-}
-

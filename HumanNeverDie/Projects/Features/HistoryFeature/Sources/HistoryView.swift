@@ -11,8 +11,14 @@ import CommonFeature
 public struct HistoryView: View {
   @State private var viewModel: HistoryViewModel
   @State private var currentDate: Date = Date() // 단일 날짜 선택
+  var calendarView: some View {
+    AMDCalendarFactory.create(
+      currentDate: currentDate,
+      valueByDate: sampleData,
+      defaultValue: 50
+    )
+  }
 
-  //날짜별 값: [2025-01-01: 12, 2025-01-02: 34, ...]
   private let sampleData: [Date: Int] = {
     var dict: [Date: Int] = [:]
     let calendar = Calendar.current
@@ -32,7 +38,7 @@ public struct HistoryView: View {
 
   public var body: some View {
     VStack(spacing: 20) {
-      AMDCalendar(valueByDate: sampleData, currentDate: $currentDate)
+      calendarView
 
       ScrollView(.vertical, showsIndicators: false) {
         Color.red // 선택된 날짜 관련 내용
