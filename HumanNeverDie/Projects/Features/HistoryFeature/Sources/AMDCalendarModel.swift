@@ -28,7 +28,7 @@ struct DateValue: Identifiable {
 final class AMDCalendarViewModel: ObservableObject {
   @Published var currentMonth: Int = 0
   @Published private var selectedDate: Date? = nil
-  private var currentDate: Date
+  @Published private var currentDate: Date
   private let calendar = Calendar.current
   private let sugarIntakeRecordData: [SugarIntakeRecord]
   private let userSugarTargetValue: Int
