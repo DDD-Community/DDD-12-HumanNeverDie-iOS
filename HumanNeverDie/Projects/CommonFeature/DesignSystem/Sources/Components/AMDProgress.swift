@@ -36,10 +36,7 @@ public struct AMDProgress: View {
       case .medium:
         Capsule()
           .fill(.white)
-          .overlay(
-            Capsule()
-              .stroke(.gray15, lineWidth: 1)
-          )
+          .amdStrokeBorder(.gray15)
       }
     }
   }
