@@ -35,7 +35,7 @@ final class AMDCalendarViewModel: ObservableObject {
   }
   
   var titleDateString: String {
-    Self.titleFormatter.string(from: currentDate)
+    DateFormatter.calendarTitleFormat.string(from: currentDate)
   }
 
   private static let titleFormatter: DateFormatter = {
@@ -153,4 +153,12 @@ extension Date {
       return calendar.date(byAdding: .day, value: day - 1, to: startDate)!
     }
   }
+}
+
+extension DateFormatter {
+  static let calendarTitleFormat: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy.MM"
+    return formatter
+  }()
 }
