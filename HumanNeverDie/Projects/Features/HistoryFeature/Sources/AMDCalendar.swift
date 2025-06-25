@@ -16,7 +16,6 @@ struct AMDCalendar: View {
     _viewModel = StateObject(wrappedValue: viewModel)
   }
   
-  
   var body: some View {
     VStack(spacing: 20) {
       HStack {
@@ -24,7 +23,7 @@ struct AMDCalendar: View {
           // selectDatePicker...
         }) {
           HStack(spacing: 4) {
-            Text(extraDate())
+            Text(viewModel.getTitleDateString())
               .amdFont(.xlargeBold)
               .foregroundColor(Color.gray100)
             
@@ -47,10 +46,7 @@ struct AMDCalendar: View {
       }
       
       //Dates
-      //Lazy Grid
-      let columns = Array(repeating: GridItem(.flexible()), count: 7)
-      
-      LazyVGrid(columns: columns, spacing: 15) {
+      LazyVGrid(columns: viewModel.columns, spacing: 15) {
         ForEach(viewModel.extractDate()) { dateValue in
           CardView(value: dateValue)
             .frame(width: 44, height: 44)
@@ -58,7 +54,6 @@ struct AMDCalendar: View {
       }
     }
     .onChange(of: viewModel.currentMonth) {
-      //updateing Month
       viewModel.currentDate = viewModel.getCurrentMonth()
     }.highPriorityGesture(
       DragGesture()
@@ -119,38 +114,5 @@ struct AMDCalendar: View {
       }
     }
     .frame(maxWidth: .infinity)
-  }
-  
-  func extraDate() -> String {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy.MM"
-    
-    return formatter.string(from: viewModel.currentDate)
-  }
-  
-  func getCurrentMonth() -> Date {
-    let calender = Calendar.current
-    
-    guard let currentMonth = calender.date(byAdding: .month, value: viewModel.currentMonth, to: Date()) else {
-      return Date()
-    }
-    
-    return currentMonth
-  }
-  
-
-}
-
-extension Date {
-  func getAllDates()->[Date] {
-    let calender = Calendar.current
-    let startDate = calender.date(from: Calendar.current.dateComponents([.year, .month], from: self))!
-    
-    let range = calender.range(of: .day, in: .month, for: startDate)!
-    
-    //getting date..
-    return range.compactMap { day -> Date in
-      return calender.date(byAdding: .day, value: day - 1, to: startDate)!
-    }
   }
 }

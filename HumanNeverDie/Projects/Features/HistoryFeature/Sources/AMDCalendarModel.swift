@@ -82,11 +82,24 @@ final class AMDCalendarViewModel: ObservableObject {
       return AMDImage.stateDanger.swiftUIImage
     }
   }
-  
-  func extraDateString() -> String {
+  func getTitleDateString() -> String {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy.MM"
+    
     return formatter.string(from: currentDate)
   }
 }
 
+extension Date {
+  func getAllDates()->[Date] {
+    let calender = Calendar.current
+    let startDate = calender.date(from: Calendar.current.dateComponents([.year, .month], from: self))!
+    
+    let range = calender.range(of: .day, in: .month, for: startDate)!
+    
+    //getting date..
+    return range.compactMap { day -> Date in
+      return calender.date(byAdding: .day, value: day - 1, to: startDate)!
+    }
+  }
+}
