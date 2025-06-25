@@ -284,7 +284,6 @@ private extension AMDBeverageListView {
         }
         
         Spacer()
-        
         kcalText
       }
       
