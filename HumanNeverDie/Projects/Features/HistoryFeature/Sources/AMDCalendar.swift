@@ -79,14 +79,7 @@ struct AMDCalendar: View {
     let weekday = calendar.component(.weekday, from: value.date)
     let isSelected = viewModel.selectedDate != nil && calendar.isDate(viewModel.selectedDate!, inSameDayAs: value.date)
     let matchingValue = viewModel.valueByDate.first { calendar.isDate($0.key, inSameDayAs: value.date) }?.value
-    
-    let textColor: Color = {
-      if isSelected && !(weekday == 1 || weekday == 7) {
-        return Color.gray100
-      } else {
-        return viewModel.weekdayColor(weekday)
-      }
-    }()
+    let textColor = viewModel.weekdayColor(weekday)
     
     VStack {
       if value.day != -1 {
