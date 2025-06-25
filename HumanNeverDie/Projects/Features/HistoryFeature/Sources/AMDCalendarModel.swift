@@ -136,11 +136,7 @@ final class AMDCalendarViewModel: ObservableObject {
 
   func textColor(for date: Date) -> Color {
     let weekday = calendar.component(.weekday, from: date)
-    if isSelected(date) && weekday != 1 && weekday != 7 {
-      return Color.gray100
-    } else {
-      return weekdayColor(weekday)
-    }
+    return weekdayColor(weekday)
   }
   
   func selectDate(_ date: Date) {
