@@ -18,41 +18,11 @@ struct AMDCalendar: View {
   
   var body: some View {
     VStack(spacing: 20) {
-      HStack {
-        Button(action: {
-          // selectDatePicker...
-        }) {
-          
-          HStack(spacing: 4) {
-            Text(viewModel.titleDateString)
-              .amdFont(.xlargeBold)
-              .foregroundColor(Color.gray100)
-            
-            Image(systemName: "chevron.down")
-              .foregroundColor(Color.gray50)
-          }
-        }
-        Spacer()
-      }
-      .padding(.horizontal)
       
-      LazyVGrid(columns: viewModel.columns, spacing: 15) {
-        ForEach(viewModel.weekdayItems) { weekday in
-          Text(weekday.label)
-            .amdFont(.mediumMedium)
-            .fontWeight(.semibold)
-            .foregroundColor(weekday.color)
-            .frame(width: 44, height: 20)
-        }
-      }
-      
-      //Dates
-      LazyVGrid(columns: viewModel.columns, spacing: 15) {
-        ForEach(viewModel.extractDate()) { dateValue in
-          DayView(value: dateValue)
-            .frame(width: 44, height: 44)
-        }
-      }
+      TitleView()
+      WeekView()
+      DateView()
+    
     }
     .onChange(of: viewModel.currentMonth) {
       viewModel.updateCurrentDateToCurrentMonth()
@@ -63,6 +33,50 @@ struct AMDCalendar: View {
           viewModel.handleDragGesture(value.translation)
         }
     )
+  }
+  
+  @ViewBuilder
+  private func TitleView() -> some View {
+    HStack {
+      Button(action: {
+        // selectDatePicker...
+      }) {
+        
+        HStack(spacing: 4) {
+          Text(viewModel.titleDateString)
+            .amdFont(.xlargeBold)
+            .foregroundColor(Color.gray100)
+          
+          Image(systemName: "chevron.down")
+            .foregroundColor(Color.gray50)
+        }
+      }
+      Spacer()
+    }
+    .padding(.horizontal)
+  }
+  
+  @ViewBuilder
+  func WeekView() -> some View {
+    LazyVGrid(columns: viewModel.columns, spacing: 15) {
+      ForEach(viewModel.weekdayItems) { weekday in
+        Text(weekday.label)
+          .amdFont(.mediumMedium)
+          .fontWeight(.semibold)
+          .foregroundColor(weekday.color)
+          .frame(width: 44, height: 20)
+      }
+    }
+  }
+  
+  @ViewBuilder
+  func DateView() -> some View {
+    LazyVGrid(columns: viewModel.columns, spacing: 15) {
+      ForEach(viewModel.extractDate()) { dateValue in
+        DayView(value: dateValue)
+          .frame(width: 44, height: 44)
+      }
+    }
   }
   
   @ViewBuilder
