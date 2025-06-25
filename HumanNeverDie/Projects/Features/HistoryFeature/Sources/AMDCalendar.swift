@@ -37,11 +37,11 @@ struct AMDCalendar: View {
       .padding(.horizontal)
       
       LazyVGrid(columns: viewModel.columns, spacing: 15) {
-        ForEach(Array(viewModel.days.enumerated()), id: \.offset) { index, day in
-          Text(day)
+        ForEach(viewModel.weekdayItems) { weekday in
+          Text(weekday.weekday)
             .amdFont(.mediumMedium)
             .fontWeight(.semibold)
-            .foregroundColor(viewModel.weekdayColor(index + 1))
+            .foregroundColor(weekday.color)
             .frame(width: 44, height: 20)
         }
       }
@@ -49,7 +49,7 @@ struct AMDCalendar: View {
       //Dates
       LazyVGrid(columns: viewModel.columns, spacing: 15) {
         ForEach(viewModel.extractDate()) { dateValue in
-          CardView(value: dateValue)
+          DayView(value: dateValue)
             .frame(width: 44, height: 44)
         }
       }
@@ -66,13 +66,11 @@ struct AMDCalendar: View {
   }
   
   @ViewBuilder
-  func CardView(value: DateValue) -> some View {
-    let calendar = Calendar.current
-    let isToday = calendar.isDateInToday(value.date)
-    let weekday = calendar.component(.weekday, from: value.date)
-    let isSelected = viewModel.selectedDate != nil && calendar.isDate(viewModel.selectedDate!, inSameDayAs: value.date)
-    let matchingValue = viewModel.valueByDate.first { calendar.isDate($0.key, inSameDayAs: value.date) }?.value
-    let textColor = viewModel.weekdayColor(weekday)
+  func DayView(value: DateValue) -> some View {
+    let isToday = viewModel.isToday(value.date)
+    let isSelected = viewModel.isSelected(value.date)
+    let textColor = viewModel.textColor(for: value.date)
+    let matchingValue = viewModel.matchingValue(for: value.date)
     
     VStack {
       if value.day != -1 {
@@ -106,8 +104,7 @@ struct AMDCalendar: View {
               .stroke(Color.gray25, lineWidth: 1) : nil
         )
         .onTapGesture {
-          viewModel.selectedDate = value.date
-          viewModel.currentDate = value.date
+          viewModel.selectDate(value.date)
         }
       }
     }

@@ -8,9 +8,9 @@
 import SwiftUI
 import DesignSystem
 
-struct WeekdayInfo: Identifiable {
+struct WeekdayValue: Identifiable {
   let id = UUID()
-  let name: String
+  let weekday: String
   let color: Color
 }
 
@@ -33,12 +33,19 @@ final class AMDCalendarViewModel: ObservableObject {
     self.defaultValue = defaultValue
   }
   
-  var days: [String] {
+  var weekdayLabels: [String] {
     ["일", "월", "화", "수", "목", "금", "토"]
   }
   
+  var weekdayItems: [WeekdayValue] {
+    weekdayLabels.enumerated().map { index, weekday in
+      let weekdayIndex = index + 1 // Sunday = 1, Saturday = 7
+      return WeekdayValue(weekday: weekday, color: weekdayColor(weekdayIndex))
+    }
+  }
+  
   var columns: [GridItem] {
-    Array(repeating: GridItem(.flexible()), count: days.count)
+    Array(repeating: GridItem(.flexible()), count: weekdayLabels.count)
   }
   
   func getCurrentMonth() -> Date {
@@ -47,7 +54,6 @@ final class AMDCalendarViewModel: ObservableObject {
   
   func extractDate() -> [DateValue] {
     let calendar = Calendar.current
-    
     let currentMonth = getCurrentMonth()
     
     var days = currentMonth.getAllDates().compactMap { date -> DateValue in
@@ -103,6 +109,34 @@ final class AMDCalendarViewModel: ObservableObject {
       currentMonth += offset
     }
   }
+  
+  func isToday(_ date: Date) -> Bool {
+    Calendar.current.isDateInToday(date)
+  }
+
+  func isSelected(_ date: Date) -> Bool {
+    guard let selected = selectedDate else { return false }
+    return Calendar.current.isDate(selected, inSameDayAs: date)
+  }
+
+  func matchingValue(for date: Date) -> Int? {
+    valueByDate.first { Calendar.current.isDate($0.key, inSameDayAs: date) }?.value
+  }
+
+  func textColor(for date: Date) -> Color {
+    let weekday = Calendar.current.component(.weekday, from: date)
+    if isSelected(date) && weekday != 1 && weekday != 7 {
+      return Color.gray100
+    } else {
+      return weekdayColor(weekday)
+    }
+  }
+  
+  func selectDate(_ date: Date) {
+    selectedDate = date
+    currentDate = date
+  }
+  
 }
 
 extension Date {
