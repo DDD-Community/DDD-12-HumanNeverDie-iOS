@@ -22,11 +22,11 @@ struct DateValue: Identifiable {
 
 final class AMDCalendarViewModel: ObservableObject {
   @Published var currentMonth: Int = 0
-  @Published var currentDate: Date
-  @Published var selectedDate: Date? = nil
+  @Published private var selectedDate: Date? = nil
+  private var currentDate: Date
   private let calendar = Calendar.current
-  let valueByDate: [Date: Int]
-  let defaultValue: Int
+  private let valueByDate: [Date: Int]
+  private let defaultValue: Int
   
   init(currentDate: Date, valueByDate: [Date: Int], defaultValue : Int) {
     self.currentDate = currentDate
@@ -109,6 +109,10 @@ final class AMDCalendarViewModel: ObservableObject {
     withAnimation {
       currentMonth += offset
     }
+  }
+  
+  func updateCurrentDateToCurrentMonth() {
+    currentDate = getCurrentMonth()
   }
   
   func isToday(_ date: Date) -> Bool {

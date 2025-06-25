@@ -55,7 +55,7 @@ struct AMDCalendar: View {
       }
     }
     .onChange(of: viewModel.currentMonth) {
-      viewModel.currentDate = viewModel.getCurrentMonth()
+      viewModel.updateCurrentDateToCurrentMonth()
     }.highPriorityGesture(
       
       DragGesture()
