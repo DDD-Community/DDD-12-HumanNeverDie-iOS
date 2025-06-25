@@ -10,10 +10,12 @@ import DesignSystem
 
 struct AMDCalendar: View {
   @StateObject private var viewModel: AMDCalendarViewModel
+  @Binding var selectedDate: Date?
   
 
-  init(viewModel: AMDCalendarViewModel) {
+  init(viewModel: AMDCalendarViewModel, selectedDate: Binding<Date?>) {
     _viewModel = StateObject(wrappedValue: viewModel)
+    _selectedDate = selectedDate
   }
   
   var body: some View {
@@ -118,6 +120,7 @@ struct AMDCalendar: View {
               .stroke(Color.gray25, lineWidth: 1) : nil
         )
         .onTapGesture {
+          selectedDate = value.date
           viewModel.selectDate(value.date)
         }
       }

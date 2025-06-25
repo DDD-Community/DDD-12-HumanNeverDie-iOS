@@ -11,11 +11,14 @@ import CommonFeature
 public struct HistoryView: View {
   @State private var viewModel: HistoryViewModel
   @State private var currentDate: Date = Date() // 단일 날짜 선택
+  @State private var selectedDate: Date? = nil
+  
   var calendarView: some View {
     AMDCalendarFactory.create(
       currentDate: currentDate,
       sugarIntakeRecordData: sampleData,
-      userSugarTargetValue: 50
+      userSugarTargetValue: 50,
+      selectedDate: $selectedDate
     )
   }
 
@@ -42,6 +45,13 @@ public struct HistoryView: View {
 
       ScrollView(.vertical, showsIndicators: false) {
         Color.red // 선택된 날짜 관련 내용
+        if let selected = selectedDate {
+          Text("선택한 날짜: \(selected)")
+            .padding()
+        } else {
+          Text("날짜를 선택해주세요.")
+            .padding()
+        }
       }
     }
   }
