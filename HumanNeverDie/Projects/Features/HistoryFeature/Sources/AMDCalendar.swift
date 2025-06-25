@@ -38,7 +38,7 @@ struct AMDCalendar: View {
       
       LazyVGrid(columns: viewModel.columns, spacing: 15) {
         ForEach(viewModel.weekdayItems) { weekday in
-          Text(weekday.weekday)
+          Text(weekday.label)
             .amdFont(.mediumMedium)
             .fontWeight(.semibold)
             .foregroundColor(weekday.color)

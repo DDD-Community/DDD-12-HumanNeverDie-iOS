@@ -10,7 +10,7 @@ import DesignSystem
 
 struct WeekdayValue: Identifiable {
   let id = UUID()
-  let weekday: String
+  let label: String
   let color: Color
 }
 
@@ -49,7 +49,7 @@ final class AMDCalendarViewModel: ObservableObject {
     
     return weekdayLabels.enumerated().map { index, weekday in
       let weekdayIndex = index + 1 // Sunday = 1, Saturday = 7
-      return WeekdayValue(weekday: weekday, color: weekdayColor(weekdayIndex))
+      return WeekdayValue(label: weekday, color: weekdayColor(weekdayIndex))
     }
   }
   
