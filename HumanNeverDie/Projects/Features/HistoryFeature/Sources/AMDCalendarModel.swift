@@ -82,11 +82,26 @@ final class AMDCalendarViewModel: ObservableObject {
       return AMDImage.stateDanger.swiftUIImage
     }
   }
+  
   func getTitleDateString() -> String {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy.MM"
     
     return formatter.string(from: currentDate)
+  }
+  
+  func handleDragGesture(_ translation: CGSize) {
+    if translation.width < -50 {
+      moveMonth(by: 1)
+    } else if translation.width > 50 {
+      moveMonth(by: -1)
+    }
+  }
+
+  func moveMonth(by offset: Int) {
+    withAnimation {
+      currentMonth += offset
+    }
   }
 }
 
@@ -94,10 +109,8 @@ extension Date {
   func getAllDates()->[Date] {
     let calender = Calendar.current
     let startDate = calender.date(from: Calendar.current.dateComponents([.year, .month], from: self))!
-    
     let range = calender.range(of: .day, in: .month, for: startDate)!
     
-    //getting date..
     return range.compactMap { day -> Date in
       return calender.date(byAdding: .day, value: day - 1, to: startDate)!
     }

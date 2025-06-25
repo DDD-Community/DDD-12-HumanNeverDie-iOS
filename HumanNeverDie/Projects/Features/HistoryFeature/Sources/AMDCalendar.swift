@@ -22,6 +22,7 @@ struct AMDCalendar: View {
         Button(action: {
           // selectDatePicker...
         }) {
+          
           HStack(spacing: 4) {
             Text(viewModel.getTitleDateString())
               .amdFont(.xlargeBold)
@@ -56,13 +57,10 @@ struct AMDCalendar: View {
     .onChange(of: viewModel.currentMonth) {
       viewModel.currentDate = viewModel.getCurrentMonth()
     }.highPriorityGesture(
+      
       DragGesture()
         .onEnded { value in
-          if value.translation.width < -50 {
-            withAnimation { viewModel.currentMonth += 1 }
-          } else if value.translation.width > 50 {
-            withAnimation { viewModel.currentMonth -= 1 }
-          }
+          viewModel.handleDragGesture(value.translation)
         }
     )
   }
