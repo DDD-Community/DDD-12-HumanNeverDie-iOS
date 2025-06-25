@@ -63,7 +63,7 @@ final class AMDCalendarViewModel: ObservableObject {
   }
   
   func getCurrentMonth() -> Date {
-    calendar.date(byAdding: .month, value: currentMonth, to: Date()) ?? Date()
+    calendar.date(byAdding: .month, value: currentMonth, to: currentDate) ?? currentDate
   }
   
   func extractDate() -> [DateValue] {
@@ -118,6 +118,7 @@ final class AMDCalendarViewModel: ObservableObject {
   
   func updateCurrentDateToCurrentMonth() {
     currentDate = getCurrentMonth()
+    currentMonth = 0
   }
   
   func isToday(_ date: Date) -> Bool {
@@ -144,7 +145,7 @@ final class AMDCalendarViewModel: ObservableObject {
   
   func selectDate(_ date: Date) {
     selectedDate = date
-    currentDate = date
+//    currentDate = date
   }
   
 }
