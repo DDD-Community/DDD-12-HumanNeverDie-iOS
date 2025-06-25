@@ -11,12 +11,12 @@ import SwiftUI
 public struct AMDCalendarFactory {
   public static func create(
     currentDate: Date,
-    valueByDate: [Date: Int],
+    sugarIntakeRecordData: [SugarIntakeRecord],
     userSugarTargetValue: Int
   ) -> some View {
     let viewModel = AMDCalendarViewModel(
       currentDate: currentDate,
-      valueByDate: valueByDate,
+      sugarIntakeRecordData: sugarIntakeRecordData,
       userSugarTargetValue: userSugarTargetValue
     )
     return AMDCalendar(viewModel: viewModel)

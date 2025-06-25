@@ -14,22 +14,22 @@ public struct HistoryView: View {
   var calendarView: some View {
     AMDCalendarFactory.create(
       currentDate: currentDate,
-      valueByDate: sampleData,
+      sugarIntakeRecordData: sampleData,
       userSugarTargetValue: 50
     )
   }
 
-  private let sampleData: [Date: Int] = {
-    var dict: [Date: Int] = [:]
+  private let sampleData: [SugarIntakeRecord] = {
+    var array: [SugarIntakeRecord] = []
     let calendar = Calendar.current
     let baseDate = calendar.date(from: DateComponents(year: 2025, month: 5, day: 1))!
 
     for i in 0..<40 {
       if let date = calendar.date(byAdding: .day, value: i, to: baseDate) {
-        dict[date] = Int.random(in: 0...50)
+        array.append(SugarIntakeRecord(date: date, value: Int.random(in: 0...50)))
       }
     }
-    return dict
+    return array
   }()
 
   public init(viewModel: HistoryViewModel) {

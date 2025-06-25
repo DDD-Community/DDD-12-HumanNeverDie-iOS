@@ -8,6 +8,11 @@
 import SwiftUI
 import DesignSystem
 
+public struct SugarIntakeRecord {
+  let date: Date
+  let value: Int
+}
+
 struct WeekdayValue: Identifiable {
   let id = UUID()
   let label: String
@@ -25,12 +30,12 @@ final class AMDCalendarViewModel: ObservableObject {
   @Published private var selectedDate: Date? = nil
   private var currentDate: Date
   private let calendar = Calendar.current
-  private let valueByDate: [Date: Int]
+  private let sugarIntakeRecordData: [SugarIntakeRecord]
   private let userSugarTargetValue: Int
   
-  init(currentDate: Date, valueByDate: [Date: Int], userSugarTargetValue : Int) {
+  init(currentDate: Date, sugarIntakeRecordData: [SugarIntakeRecord], userSugarTargetValue : Int) {
     self.currentDate = currentDate
-    self.valueByDate = valueByDate
+    self.sugarIntakeRecordData = sugarIntakeRecordData
     self.userSugarTargetValue = userSugarTargetValue
   }
   
@@ -125,7 +130,7 @@ final class AMDCalendarViewModel: ObservableObject {
   }
 
   func matchingValue(for date: Date) -> Int? {
-    valueByDate.first { calendar.isDate($0.key, inSameDayAs: date) }?.value
+    sugarIntakeRecordData.first { calendar.isDate($0.date, inSameDayAs: date) }?.value
   }
 
   func textColor(for date: Date) -> Color {
