@@ -20,7 +20,7 @@ public struct AMDCalendarFactory {
       sugarIntakeRecordData: sugarIntakeRecordData,
       userSugarTargetValue: userSugarTargetValue
     )
-    return AMDCalendar(viewModel: viewModel, selectedDate: selectedDate)
+    return AMDCalendarView(viewModel: viewModel, selectedDate: selectedDate)
   }
   
   public static func createWeekly(
