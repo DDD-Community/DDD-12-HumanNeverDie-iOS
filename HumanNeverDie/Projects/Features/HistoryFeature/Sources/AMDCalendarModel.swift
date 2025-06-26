@@ -13,8 +13,8 @@ public struct SugarIntakeRecord {
   let value: Int
 }
 
-struct WeekdayValue: Identifiable {
-  let id = UUID()
+public struct WeekdayValue: Identifiable {
+  public let id = UUID()
   let label: String
   let color: Color
 }

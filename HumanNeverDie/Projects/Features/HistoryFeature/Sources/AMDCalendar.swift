@@ -21,8 +21,7 @@ struct AMDCalendar: View {
   var body: some View {
     VStack(spacing: 20) {
       
-      TitleView()
-      WeekView()
+      calendarCommonView()
       DateView()
     
     }
@@ -38,37 +37,17 @@ struct AMDCalendar: View {
   }
   
   @ViewBuilder
-  private func TitleView() -> some View {
-    HStack {
-      Button(action: {
-        // selectDatePicker...
-      }) {
-        
-        HStack(spacing: 4) {
-          Text(viewModel.titleDateString)
-            .amdFont(.xlargeBold)
-            .foregroundColor(Color.gray100)
-          
-          Image(systemName: "chevron.down")
-            .foregroundColor(Color.gray50)
-        }
-      }
-      Spacer()
+  private func calendarCommonView() -> some View {
+    CalendarTitleView(
+      title: viewModel.titleDateString
+    ) {
+      //데이터피커
     }
-    .padding(.horizontal)
-  }
-  
-  @ViewBuilder
-  func WeekView() -> some View {
-    LazyVGrid(columns: viewModel.columns, spacing: 15) {
-      ForEach(viewModel.weekdayItems) { weekday in
-        Text(weekday.label)
-          .amdFont(.mediumMedium)
-          .fontWeight(.semibold)
-          .foregroundColor(weekday.color)
-          .frame(width: 44, height: 20)
-      }
-    }
+
+    CalendarWeekdayView(
+      items: viewModel.weekdayItems,
+      columns: viewModel.columns
+    )
   }
   
   @ViewBuilder
