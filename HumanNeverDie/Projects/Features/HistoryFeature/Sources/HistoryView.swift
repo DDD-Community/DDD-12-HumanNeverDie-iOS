@@ -62,6 +62,13 @@ public struct HistoryView: View {
             .padding()
         }
         calendarWeekView
+        
+        if let selected = selectedDate {
+          Text("선택한 날짜: \(DateFormatter.calendarDayFormat.string(from: selected))")
+        } else {
+          Text("날짜를 선택해주세요.")
+            .padding()
+        }
       }
     }
   }

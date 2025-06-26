@@ -28,7 +28,8 @@ struct DateValue: Identifiable {
 final class AMDCalendarViewModel: ObservableObject {
   @Published var currentMonth: Int = 0
   @Published private var selectedDate: Date? = nil
-  @Published private var currentDate: Date
+  @Published private var currentDate: Date //월간 사용
+  @Published private var currentWeekStartDate: Date = Date().startOfWeek() //주간 사용
   private let calendar = Calendar.current
   private let sugarIntakeRecordData: [SugarIntakeRecord]
   private let userSugarTargetValue: Int
@@ -42,6 +43,7 @@ final class AMDCalendarViewModel: ObservableObject {
   var titleDateString: String {
     DateFormatter.calendarTitleFormat.string(from: currentDate)
   }
+  
 
   private static let titleFormatter: DateFormatter = {
     let formatter = DateFormatter()
@@ -144,6 +146,29 @@ final class AMDCalendarViewModel: ObservableObject {
 //    currentDate = date
   }
   
+  func getCurrentWeekDates() -> [Date] {
+    (0..<7).compactMap { offset in
+      calendar.date(byAdding: .day, value: offset, to: currentWeekStartDate)
+    }
+  }
+
+  func moveWeek(by weeks: Int) {
+    if let newWeek = calendar.date(byAdding: .weekOfYear, value: weeks, to: currentWeekStartDate) {
+      currentWeekStartDate = newWeek
+    }
+  }
+  
+  func getWeekCalendarDay(from date: Date) -> Int {
+    calendar.component(.day, from: date)
+  }
+  
+  func handleWeekDragGesture(_ translation: CGSize) {
+    if translation.width < -50 {
+      moveWeek(by: 1)
+    } else if translation.width > 50 {
+      moveWeek(by: -1)
+    }
+  }
 }
 
 extension Date {
@@ -154,6 +179,11 @@ extension Date {
     return range.compactMap { day -> Date in
       return calendar.date(byAdding: .day, value: day - 1, to: startDate)!
     }
+  }
+  
+  func startOfWeek(using calendar: Calendar = .current) -> Date {
+    let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self)
+    return calendar.date(from: components)!
   }
 }
 
