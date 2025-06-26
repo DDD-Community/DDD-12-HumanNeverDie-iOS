@@ -55,6 +55,8 @@ private struct DesignSystemDetailView: View {
         AMDChipDemoView()
       case .AMDBeverageList:
         AMDBeverageListDemoView()
+      case .amdPicker:
+        AMDPickerDemoView()
       }
     }
   }
