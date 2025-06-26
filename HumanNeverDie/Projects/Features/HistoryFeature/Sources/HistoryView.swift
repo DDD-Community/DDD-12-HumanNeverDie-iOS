@@ -22,6 +22,15 @@ public struct HistoryView: View {
       selectedDate: $selectedDate
     )
   }
+  
+  var calendarWeekView: some View {
+    AMDCalendarFactory.createWeekly(
+      currentDate: currentDate,
+      sugarIntakeRecordData: sampleData,
+      userSugarTargetValue: 50,
+      selectedDate: $selectedDate
+    )
+  }
 
   private let sampleData: [SugarIntakeRecord] = {
     var array: [SugarIntakeRecord] = []
@@ -52,6 +61,7 @@ public struct HistoryView: View {
           Text("날짜를 선택해주세요.")
             .padding()
         }
+        calendarWeekView
       }
     }
   }

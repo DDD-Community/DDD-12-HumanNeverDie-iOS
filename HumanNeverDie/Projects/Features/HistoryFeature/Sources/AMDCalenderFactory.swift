@@ -22,4 +22,18 @@ public struct AMDCalendarFactory {
     )
     return AMDCalendar(viewModel: viewModel, selectedDate: selectedDate)
   }
+  
+  public static func createWeekly(
+    currentDate: Date,
+    sugarIntakeRecordData: [SugarIntakeRecord],
+    userSugarTargetValue: Int,
+    selectedDate: Binding<Date?>
+  ) -> some View {
+    let viewModel = AMDCalendarViewModel(
+      currentDate: currentDate,
+      sugarIntakeRecordData: sugarIntakeRecordData,
+      userSugarTargetValue: userSugarTargetValue
+    )
+    return AMDWeekCalendar(viewModel: viewModel, selectedDate: selectedDate)
+  }
 }
