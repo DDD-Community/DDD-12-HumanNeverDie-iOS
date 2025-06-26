@@ -36,6 +36,7 @@ final class AMDCalendarViewModel: ObservableObject {
   
   init(currentDate: Date, sugarIntakeRecordData: [SugarIntakeRecord], userSugarTargetValue : Int) {
     self.currentDate = currentDate
+    self.currentWeekStartDate = currentDate.startOfWeek()
     self.sugarIntakeRecordData = sugarIntakeRecordData
     self.userSugarTargetValue = userSugarTargetValue
   }
@@ -146,9 +147,19 @@ final class AMDCalendarViewModel: ObservableObject {
 //    currentDate = date
   }
   
-  func getCurrentWeekDates() -> [Date] {
+//Week사용 함수
+  var weekTitleDateString: String {
+    DateFormatter.calendarTitleFormat.string(from: currentWeekStartDate)
+  }
+  
+  func getCurrentWeekDates() -> [DateValue] {
     (0..<7).compactMap { offset in
-      calendar.date(byAdding: .day, value: offset, to: currentWeekStartDate)
+      guard let date = calendar.date(byAdding: .day, value: offset, to: currentWeekStartDate) else {
+        return nil
+      }
+
+      let day = calendar.component(.day, from: date)
+      return DateValue(day: day, date: date)
     }
   }
 
