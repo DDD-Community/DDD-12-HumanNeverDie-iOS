@@ -34,6 +34,6 @@ public struct AMDCalendarFactory {
       sugarIntakeRecordData: sugarIntakeRecordData,
       userSugarTargetValue: userSugarTargetValue
     )
-    return AMDWeekCalendar(viewModel: viewModel, selectedDate: selectedDate)
+    return AMDWeekCalendarView(viewModel: viewModel, selectedDate: selectedDate)
   }
 }
