@@ -15,7 +15,7 @@ enum DesignSystemType: String, CaseIterable {
   case amdProgress
   case amdChip
   case AMDBeverageList
-  case amdPicker
+  case amdDatePicker
   
   var title: String {
     self.rawValue.uppercased()

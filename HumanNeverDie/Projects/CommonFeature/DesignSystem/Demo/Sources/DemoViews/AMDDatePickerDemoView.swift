@@ -1,5 +1,5 @@
 //
-//  AMDPickerDemoView.swift
+//  AMDDatePickerDemoView.swift
 //  DesignSystem
 //
 //  Created by 김규철 on 6/26/25.
@@ -9,7 +9,7 @@ import SwiftUI
 
 import DesignSystem
 
-struct AMDPickerDemoView: View {
+struct AMDDatePickerDemoView: View {
   @State private var yearMonthDate = Date()
   @State private var yearMonthDayDate = Date()
   @State private var timeDate = Date()
@@ -33,7 +33,7 @@ struct AMDPickerDemoView: View {
         .foregroundColor(.gray60)
       
       VStack(spacing: 16) {
-        AMDPicker(
+        AMDDatePicker(
           selectedDate: $yearMonthDate,
           pickerType: .yearMonth
         )
@@ -56,7 +56,7 @@ struct AMDPickerDemoView: View {
         .foregroundColor(.gray60)
       
       VStack(spacing: 16) {
-        AMDPicker(
+        AMDDatePicker(
           selectedDate: $yearMonthDayDate,
           pickerType: .yearMonthDay
         )
@@ -79,7 +79,7 @@ struct AMDPickerDemoView: View {
         .foregroundColor(.gray60)
       
       VStack(spacing: 16) {
-        AMDPicker(
+        AMDDatePicker(
           selectedDate: $timeDate,
           pickerType: .time
         )
