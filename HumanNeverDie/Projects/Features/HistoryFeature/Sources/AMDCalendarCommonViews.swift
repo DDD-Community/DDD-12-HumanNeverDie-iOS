@@ -35,7 +35,7 @@ public struct CalendarTitleView: View {
   }
 }
 
-public struct CalendarWeekdayView: View {
+public struct CalendarWeekdayTitleView: View {
   let items: [WeekdayValue]
   let columns: [GridItem]
 

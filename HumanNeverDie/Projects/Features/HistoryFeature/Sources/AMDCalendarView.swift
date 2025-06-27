@@ -44,7 +44,7 @@ struct AMDCalendarView: View {
       //데이터피커
     }
 
-    CalendarWeekdayView(
+    CalendarWeekdayTitleView(
       items: viewModel.weekdayItems,
       columns: viewModel.columns
     )
