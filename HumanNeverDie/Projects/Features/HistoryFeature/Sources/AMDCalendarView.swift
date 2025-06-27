@@ -19,7 +19,7 @@ struct AMDCalendarView: View {
   }
   
   var body: some View {
-    VStack(spacing: 20) {
+    VStack(spacing: 10) {
       
       calendarCommonView()
       DateView()
@@ -33,7 +33,7 @@ struct AMDCalendarView: View {
         .onEnded { value in
           viewModel.handleDragGesture(value.translation)
         }
-    )
+    ).padding()
   }
   
   @ViewBuilder

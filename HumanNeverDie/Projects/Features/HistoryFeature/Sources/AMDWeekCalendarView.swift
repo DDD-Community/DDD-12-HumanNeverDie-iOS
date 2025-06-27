@@ -25,7 +25,6 @@ struct AMDWeekCalendarView: View {
       HStack {
         ForEach(viewModel.getCurrentWeekDates()) { dateValue in
           DayView(value: dateValue)
-            .frame(width: 44, height: 44)
         }
       }.highPriorityGesture(
         DragGesture()
@@ -62,9 +61,7 @@ struct AMDWeekCalendarView: View {
         ZStack {
           if let val = matchingValue {
             viewModel.getStateIcon(for: val)
-              .resizable()
-              .scaledToFit()
-//              .frame(width: 36, height: 36) //디자인 사이즈는 36인데 모양이 다름
+              .frame(width: 36, height: 36)
           }
           
           Text("\(value.day)")
@@ -72,11 +69,11 @@ struct AMDWeekCalendarView: View {
             .foregroundColor(textColor)
         }
         .frame(width: 44, height: 44)
-        .padding(6) //디자인상은 10인데..?
+        .padding(2)
         .background(
           Group {
             if isSelected {
-              RoundedRectangle(cornerRadius: 15)
+              RoundedRectangle(cornerRadius: 13)
                 .fill(Color.gray10)
             } else {
               Color.clear
@@ -85,7 +82,7 @@ struct AMDWeekCalendarView: View {
         )
         .overlay(
           (!isSelected && isToday) ?
-            RoundedRectangle(cornerRadius: 15)
+            RoundedRectangle(cornerRadius: 13)
               .stroke(Color.gray25, lineWidth: 1) : nil
         )
         .onTapGesture {
