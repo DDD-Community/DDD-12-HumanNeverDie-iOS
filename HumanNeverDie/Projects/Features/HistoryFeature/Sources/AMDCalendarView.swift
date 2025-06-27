@@ -55,7 +55,6 @@ struct AMDCalendarView: View {
     LazyVGrid(columns: viewModel.columns, spacing: 15) {
       ForEach(viewModel.extractDate()) { dateValue in
         DayView(value: dateValue)
-          .frame(width: 44, height: 44)
       }
     }
   }
@@ -72,9 +71,7 @@ struct AMDCalendarView: View {
         ZStack {
           if let val = matchingValue {
             viewModel.getStateIcon(for: val)
-              .resizable()
-              .scaledToFit()
-//              .frame(width: 36, height: 36) //디자인 사이즈는 36인데 모양이 다름
+              .frame(width: 36, height: 36)
           }
           
           Text("\(value.day)")
@@ -82,11 +79,11 @@ struct AMDCalendarView: View {
             .foregroundColor(textColor)
         }
         .frame(width: 44, height: 44)
-        .padding(6) //디자인상은 10인데..?
+        .padding(2)
         .background(
           Group {
             if isSelected {
-              RoundedRectangle(cornerRadius: 15)
+              RoundedRectangle(cornerRadius: 13)
                 .fill(Color.gray10)
             } else {
               Color.clear
@@ -95,7 +92,7 @@ struct AMDCalendarView: View {
         )
         .overlay(
           (!isSelected && isToday) ?
-            RoundedRectangle(cornerRadius: 15)
+            RoundedRectangle(cornerRadius: 13)
               .stroke(Color.gray25, lineWidth: 1) : nil
         )
         .onTapGesture {
