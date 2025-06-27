@@ -1,5 +1,5 @@
 //
-//  AMDCalendarModel.swift
+//  AMDCalendarViewModel.swift
 //  HistoryFeature
 //
 //  Created by Seulki Lee on 6/25/25.
