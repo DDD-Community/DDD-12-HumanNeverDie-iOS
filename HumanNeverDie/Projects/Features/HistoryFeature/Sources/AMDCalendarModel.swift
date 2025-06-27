@@ -19,8 +19,8 @@ public struct WeekdayValue: Identifiable {
   let color: Color
 }
 
-struct DateValue: Identifiable {
-  var id: UUID = UUID()
+public struct DateValue: Identifiable {
+  public var id: UUID = UUID()
   var day: Int
   var date : Date
 }
