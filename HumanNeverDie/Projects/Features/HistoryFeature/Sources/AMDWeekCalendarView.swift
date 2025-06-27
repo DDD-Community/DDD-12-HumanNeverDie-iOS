@@ -15,7 +15,6 @@ struct AMDWeekCalendarView: View {
     _viewModel = StateObject(wrappedValue: viewModel)
     _selectedDate = selectedDate
   }
-
   
   var body: some View {
     VStack(spacing: 10) {

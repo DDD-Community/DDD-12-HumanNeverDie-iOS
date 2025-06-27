@@ -11,7 +11,6 @@ import DesignSystem
 struct AMDCalendarView: View {
   @StateObject private var viewModel: AMDCalendarViewModel
   @Binding var selectedDate: Date?
-  
 
   init(viewModel: AMDCalendarViewModel, selectedDate: Binding<Date?>) {
     _viewModel = StateObject(wrappedValue: viewModel)
