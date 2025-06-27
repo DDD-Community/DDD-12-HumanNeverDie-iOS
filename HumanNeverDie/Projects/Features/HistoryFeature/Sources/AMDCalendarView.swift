@@ -21,7 +21,7 @@ struct AMDCalendarView: View {
   var body: some View {
     VStack(spacing: 10) {
       
-      calendarCommonView()
+      calendarHeaderView()
       DateView()
     
     }
@@ -37,7 +37,7 @@ struct AMDCalendarView: View {
   }
   
   @ViewBuilder
-  private func calendarCommonView() -> some View {
+  private func calendarHeaderView() -> some View {
     CalendarTitleView(
       title: viewModel.titleDateString
     ) {

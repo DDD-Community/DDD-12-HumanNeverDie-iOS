@@ -19,7 +19,7 @@ struct AMDWeekCalendarView: View {
   
   var body: some View {
     VStack(spacing: 10) {
-      calendarCommonView()
+      calendarHeaderView()
       
       HStack {
         ForEach(viewModel.getCurrentWeekDates()) { dateValue in
@@ -35,7 +35,7 @@ struct AMDWeekCalendarView: View {
     .padding()
   }
   @ViewBuilder
-  private func calendarCommonView() -> some View {
+  private func calendarHeaderView() -> some View {
     CalendarTitleView(
       title: viewModel.weekTitleDateString
     ) {

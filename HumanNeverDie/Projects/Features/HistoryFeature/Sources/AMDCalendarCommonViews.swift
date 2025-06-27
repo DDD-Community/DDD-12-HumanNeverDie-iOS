@@ -83,7 +83,6 @@ public struct CalendarDayView: View {
   }
 
   public var body: some View {
-    
     VStack {
       if value.day != -1 {
         ZStack {
