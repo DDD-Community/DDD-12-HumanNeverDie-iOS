@@ -1,5 +1,5 @@
 //
-//  AMDCalenderFactory.swift
+//  AMDCalendarFactory.swift
 //  HistoryFeature
 //
 //  Created by Seulki Lee on 6/26/25.
