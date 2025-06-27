@@ -53,26 +53,21 @@ struct AMDCalendarView: View {
   @ViewBuilder
   func DateView() -> some View {
     LazyVGrid(columns: viewModel.columns, spacing: 15) {
-      ForEach(viewModel.extractDate()) { dateValue in
-        DayView(value: dateValue)
+      ForEach(viewModel.extractDate()) { value in
+        CalendarDayView(
+          value: value,
+          isToday: viewModel.isToday(value.date),
+          isSelected: viewModel.isSelected(value.date),
+          textColor: viewModel.textColor(for: value.date),
+          stateIcon: viewModel.matchingValue(for: value.date).map {
+            viewModel.getStateIcon(for: $0)
+          },
+          onTap: {
+            selectedDate = value.date
+            viewModel.selectDate(value.date)
+          }
+        )
       }
     }
-  }
-  
-  @ViewBuilder
-  func DayView(value: DateValue) -> some View {
-    CalendarDayView(
-      value: value,
-      isToday: viewModel.isToday(value.date),
-      isSelected: viewModel.isSelected(value.date),
-      textColor: viewModel.textColor(for: value.date),
-      stateIcon: viewModel.matchingValue(for: value.date).map {
-        viewModel.getStateIcon(for: $0)
-      },
-      onTap: {
-        selectedDate = value.date
-        viewModel.selectDate(value.date)
-      }
-    )
   }
 }

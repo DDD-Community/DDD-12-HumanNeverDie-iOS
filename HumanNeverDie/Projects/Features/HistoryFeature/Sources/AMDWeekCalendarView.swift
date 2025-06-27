@@ -21,10 +21,9 @@ struct AMDWeekCalendarView: View {
     VStack(spacing: 10) {
       calendarCommonView()
       
-      // 주간 날짜 표시
       HStack {
         ForEach(viewModel.getCurrentWeekDates()) { dateValue in
-          DayView(value: dateValue)
+          DateView(value: dateValue)
         }
       }.highPriorityGesture(
         DragGesture()
@@ -50,7 +49,7 @@ struct AMDWeekCalendarView: View {
   }
   
   @ViewBuilder
-  func DayView(value: DateValue) -> some View {
+  func DateView(value: DateValue) -> some View {
     CalendarDayView(
       value: value,
       isToday: viewModel.isToday(value.date),
