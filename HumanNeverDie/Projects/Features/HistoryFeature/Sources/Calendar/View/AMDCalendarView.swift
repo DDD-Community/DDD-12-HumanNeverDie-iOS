@@ -30,7 +30,10 @@ struct AMDCalendarView: View {
       
       DragGesture()
         .onEnded { value in
-          viewModel.handleDragGesture(value.translation)
+          withAnimation(.easeInOut) {
+            viewModel.handleDragGesture(value.translation)
+          }
+          
         }
     ).padding()
   }

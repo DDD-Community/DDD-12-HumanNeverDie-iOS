@@ -27,7 +27,9 @@ struct AMDWeekCalendarView: View {
       }.highPriorityGesture(
         DragGesture()
           .onEnded { value in
-            viewModel.handleWeekDragGesture(value.translation)
+            withAnimation(.easeInOut) {
+              viewModel.handleWeekDragGesture(value.translation)
+            }
           }
       )
     }
