@@ -22,7 +22,7 @@ struct AMDCalendarView: View {
     VStack(spacing: 10) {
       
       calendarHeaderView()
-      DateView()
+      calendarDayCellView()
     
     }
     .onChange(of: viewModel.currentMonth) {
@@ -51,7 +51,7 @@ struct AMDCalendarView: View {
   }
   
   @ViewBuilder
-  func DateView() -> some View {
+  func calendarDayCellView() -> some View {
     LazyVGrid(columns: viewModel.columns, spacing: 15) {
       ForEach(viewModel.extractDate()) { value in
         CalendarDayView(
