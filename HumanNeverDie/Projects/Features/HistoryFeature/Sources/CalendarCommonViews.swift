@@ -58,3 +58,67 @@ public struct CalendarWeekdayView: View {
 }
 
 
+public struct CalendarDayView: View {
+  public let value: DateValue
+  public let isToday: Bool
+  public let isSelected: Bool
+  public let textColor: Color
+  public let stateIcon: Image?
+  public let onTap: () -> Void
+
+  public init(
+    value: DateValue,
+    isToday: Bool,
+    isSelected: Bool,
+    textColor: Color,
+    stateIcon: Image? = nil,
+    onTap: @escaping () -> Void
+  ) {
+    self.value = value
+    self.isToday = isToday
+    self.isSelected = isSelected
+    self.textColor = textColor
+    self.stateIcon = stateIcon
+    self.onTap = onTap
+  }
+
+  public var body: some View {
+    
+    VStack {
+      if value.day != -1 {
+        ZStack {
+          if let icon = stateIcon {
+            icon
+              .resizable()
+              .frame(width: 36, height: 36)
+          }
+          
+          Text("\(value.day)")
+            .amdFont(.mediumMedium)
+            .foregroundColor(textColor)
+        }
+        .frame(width: 44, height: 44)
+        .padding(2)
+        .background(
+          Group {
+            if isSelected {
+              RoundedRectangle(cornerRadius: 13)
+                .fill(Color.gray10)
+            } else {
+              Color.clear
+            }
+          }
+        )
+        .overlay(
+          (!isSelected && isToday) ?
+          RoundedRectangle(cornerRadius: 13)
+            .stroke(Color.gray25, lineWidth: 1) : nil
+        )
+        .onTapGesture {
+          onTap()
+        }
+      }
+    }
+    .frame(maxWidth: .infinity)
+  }
+}

@@ -51,47 +51,19 @@ struct AMDWeekCalendarView: View {
   
   @ViewBuilder
   func DayView(value: DateValue) -> some View {
-    let isToday = viewModel.isToday(value.date)
-    let isSelected = viewModel.isSelected(value.date)
-    let textColor = viewModel.textColor(for: value.date)
-    let matchingValue = viewModel.matchingValue(for: value.date)
-    
-    VStack {
-      if value.day != -1 {
-        ZStack {
-          if let val = matchingValue {
-            viewModel.getStateIcon(for: val)
-              .frame(width: 36, height: 36)
-          }
-          
-          Text("\(value.day)")
-            .amdFont(.mediumMedium)
-            .foregroundColor(textColor)
-        }
-        .frame(width: 44, height: 44)
-        .padding(2)
-        .background(
-          Group {
-            if isSelected {
-              RoundedRectangle(cornerRadius: 13)
-                .fill(Color.gray10)
-            } else {
-              Color.clear
-            }
-          }
-        )
-        .overlay(
-          (!isSelected && isToday) ?
-            RoundedRectangle(cornerRadius: 13)
-              .stroke(Color.gray25, lineWidth: 1) : nil
-        )
-        .onTapGesture {
-          selectedDate = value.date
-          viewModel.selectDate(value.date)
-        }
+    CalendarDayView(
+      value: value,
+      isToday: viewModel.isToday(value.date),
+      isSelected: viewModel.isSelected(value.date),
+      textColor: viewModel.textColor(for: value.date),
+      stateIcon: viewModel.matchingValue(for: value.date).map {
+        viewModel.getStateIcon(for: $0)
+      },
+      onTap: {
+        selectedDate = value.date
+        viewModel.selectDate(value.date)
       }
-    }
-    .frame(maxWidth: .infinity)
+    )
   }
 }
 
