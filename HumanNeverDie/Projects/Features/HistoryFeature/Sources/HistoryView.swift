@@ -10,8 +10,7 @@ import CommonFeature
 
 public struct HistoryView: View {
   @State private var viewModel: HistoryViewModel
-  @State private var currentDate = Calendar.current.date(from: DateComponents(year: 2025, month: 3, day: 1))!
-
+  @State private var currentDate = Date()
   @State private var selectedDate: Date? = nil
   
   var calendarView: some View {
@@ -51,16 +50,10 @@ public struct HistoryView: View {
 
   public var body: some View {
     VStack(spacing: 20) {
-      calendarView
-
       ScrollView(.vertical, showsIndicators: false) {
-        Color.red // 선택된 날짜 관련 내용
-        if let selected = selectedDate {
-          Text("선택한 날짜: \(DateFormatter.calendarDayFormat.string(from: selected))")
-        } else {
-          Text("날짜를 선택해주세요.")
-            .padding()
-        }
+        
+        calendarView
+        Color.gray // 선택된 날짜 관련 내용
         calendarWeekView
         
         if let selected = selectedDate {
@@ -72,7 +65,6 @@ public struct HistoryView: View {
       }
     }
   }
-
 }
 
 extension DateFormatter {
