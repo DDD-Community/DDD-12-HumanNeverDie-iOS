@@ -16,13 +16,15 @@ final class AMDCalendarViewModel: ObservableObject {
   private let sugarIntakeRecordData: [SugarIntakeRecord]
   private let userSugarTargetValue: Int
   private let dragThreshold: CGFloat = 50
-  
+  @Published var dayModels: [CalendarDayModel] = []
   
   init(currentDate: Date, sugarIntakeRecordData: [SugarIntakeRecord], userSugarTargetValue : Int) {
     self.currentDate = currentDate
     self.currentWeekStartDate = currentDate.startOfWeek()
     self.sugarIntakeRecordData = sugarIntakeRecordData
     self.userSugarTargetValue = userSugarTargetValue
+    
+    updateDayModels()
   }
   
   var titleDateString: String {
@@ -71,6 +73,7 @@ final class AMDCalendarViewModel: ObservableObject {
   func moveMonth(by offset: Int) {
     withAnimation {
       currentMonth += offset
+      updateDayModels()
     }
   }
   
@@ -132,6 +135,19 @@ final class AMDCalendarViewModel: ObservableObject {
       moveWeek(by: 1)
     } else if translation.width > dragThreshold {
       moveWeek(by: -1)
+    }
+  }
+  
+  func updateDayModels() {
+    let extracted = extractDate()
+    dayModels = extracted.map { value in
+      CalendarDayModel(
+        value: value,
+        isToday: isToday(value.date),
+        isSelected: isSelected(value.date),
+        textColor: textColor(for: value.date),
+        stateIcon: matchingValue(for: value.date).map { getStateIcon(for: $0) }
+      )
     }
   }
 }

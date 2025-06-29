@@ -85,3 +85,14 @@ enum AMDWeekdayTile: Int, CaseIterable, Identifiable{
     }
   }
 }
+
+public struct CalendarDayModel: Identifiable {
+  public let id = UUID()
+  public let value: DateValue
+  public let isToday: Bool
+  public let isSelected: Bool
+  public let textColor: Color
+  public let stateIcon: Image?
+}
+
+
