@@ -27,13 +27,6 @@ final class AMDCalendarViewModel: ObservableObject {
   var titleDateString: String {
     DateFormatter.calendarTitleFormat.string(from: currentDate)
   }
-  
-
-  private static let titleFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy.MM"
-    return formatter
-  }()
 
   let weekdayItems: [AMDWeekdayTile] = AMDWeekdayTile.allCases
   
@@ -105,7 +98,6 @@ final class AMDCalendarViewModel: ObservableObject {
   
   func selectDate(_ date: Date) {
     selectedDate = date
-//    currentDate = date
   }
   
 //Week사용 함수
