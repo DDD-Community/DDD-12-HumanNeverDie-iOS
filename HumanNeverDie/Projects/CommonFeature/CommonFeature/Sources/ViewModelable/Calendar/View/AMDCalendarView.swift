@@ -9,10 +9,10 @@ import SwiftUI
 import DesignSystem
 
 struct AMDCalendarView: View {
-  @StateObject private var viewModel: AMDCalendarViewModel
+  @StateObject private var viewModel: AMDMonthCalendarViewModel
   @Binding var selectedDate: Date?
 
-  init(viewModel: AMDCalendarViewModel, selectedDate: Binding<Date?>) {
+  init(viewModel: AMDMonthCalendarViewModel, selectedDate: Binding<Date?>) {
     _viewModel = StateObject(wrappedValue: viewModel)
     _selectedDate = selectedDate
   }
@@ -41,7 +41,7 @@ struct AMDCalendarView: View {
   @ViewBuilder
   private func calendarHeaderView() -> some View {
     CalendarTitleView(
-      title: viewModel.titleDateString
+      title: viewModel.MonthTitleDateString
     ) {
       //데이터피커
     }

@@ -15,7 +15,7 @@ public struct AMDCalendarFactory {
     userSugarTargetValue: Int,
     selectedDate: Binding<Date?>
   ) -> some View {
-    let viewModel = AMDCalendarViewModel(
+    let viewModel = AMDMonthCalendarViewModel(
       currentDate: currentDate,
       sugarIntakeRecordData: sugarIntakeRecordData,
       userSugarTargetValue: userSugarTargetValue
@@ -29,7 +29,7 @@ public struct AMDCalendarFactory {
     userSugarTargetValue: Int,
     selectedDate: Binding<Date?>
   ) -> some View {
-    let viewModel = AMDCalendarViewModel(
+    let viewModel = AMDWeekCalendarViewModel(
       currentDate: currentDate,
       sugarIntakeRecordData: sugarIntakeRecordData,
       userSugarTargetValue: userSugarTargetValue

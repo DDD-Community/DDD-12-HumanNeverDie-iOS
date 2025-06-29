@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct AMDWeekCalendarView: View {
-  @StateObject private var viewModel: AMDCalendarViewModel
+  @StateObject private var viewModel: AMDWeekCalendarViewModel
   @Binding var selectedDate: Date?
 
-  init(viewModel: AMDCalendarViewModel, selectedDate: Binding<Date?>) {
+  init(viewModel: AMDWeekCalendarViewModel, selectedDate: Binding<Date?>) {
     _viewModel = StateObject(wrappedValue: viewModel)
     _selectedDate = selectedDate
   }
@@ -21,14 +21,12 @@ struct AMDWeekCalendarView: View {
       calendarHeaderView()
       
       HStack(spacing: 0) {
-        ForEach(viewModel.getCurrentWeekDates()) { dateValue in
-          calendarDayCellView(value: dateValue)
-        }
+          calendarDayCellView()
       }.highPriorityGesture(
         DragGesture()
           .onEnded { value in
             withAnimation(.easeInOut) {
-              viewModel.handleWeekDragGesture(value.translation)
+              viewModel.handleDragGesture(value.translation)
             }
           }
       )
@@ -50,20 +48,21 @@ struct AMDWeekCalendarView: View {
   }
   
   @ViewBuilder
-  func calendarDayCellView(value: DateValue) -> some View {
-    CalendarDayView(
-      value: value,
-      isToday: viewModel.isToday(value.date),
-      isSelected: viewModel.isSelected(value.date),
-      textColor: viewModel.textColor(for: value.date),
-      stateIcon: viewModel.matchingValue(for: value.date).map {
-        viewModel.getStateIcon(for: $0)
-      },
-      onTap: {
-        selectedDate = value.date
-        viewModel.selectDate(value.date)
-      }
-    )
+  func calendarDayCellView() -> some View {
+    ForEach(viewModel.dayModels) { model in
+         CalendarDayView(
+           value: model.value,
+           isToday: model.isToday,
+           isSelected: model.isSelected,
+           textColor: model.textColor,
+           stateIcon: model.stateIcon,
+           onTap: {
+             selectedDate = model.value.date
+             viewModel.selectDate(model.value.date)
+             viewModel.updateDayModels()
+           }
+         )
+       }
   }
 }
 
