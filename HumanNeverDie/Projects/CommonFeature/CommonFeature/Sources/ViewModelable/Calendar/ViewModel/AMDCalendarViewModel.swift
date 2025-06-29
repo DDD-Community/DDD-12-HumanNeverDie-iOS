@@ -7,17 +7,16 @@
 
 import SwiftUI
 
-@Observable
-@MainActor
-final class AMDCalendarViewModel {
-  private(set) var currentMonth: Int = 0
-  private var selectedDate: Date? = nil
-  private var currentDate: Date //월간 사용
-  private var currentWeekStartDate: Date = Date().startOfWeek() //주간 사용
+final class AMDCalendarViewModel: ObservableObject {
+  @Published private(set) var currentMonth: Int = 0
+  @Published private var selectedDate: Date? = nil
+  @Published private var currentDate: Date //월간 사용
+  @Published private var currentWeekStartDate: Date = Date().startOfWeek() //주간 사용
   private let calendar = Calendar.current
   private let sugarIntakeRecordData: [SugarIntakeRecord]
   private let userSugarTargetValue: Int
   private let dragThreshold: CGFloat = 50
+  
   
   init(currentDate: Date, sugarIntakeRecordData: [SugarIntakeRecord], userSugarTargetValue : Int) {
     self.currentDate = currentDate
