@@ -6,24 +6,6 @@
 //
 
 import SwiftUI
-import DesignSystem
-
-public struct SugarIntakeRecord {
-  let date: Date
-  let value: Int
-}
-
-public struct WeekdayValue: Identifiable {
-  public let id = UUID()
-  let label: String
-  let color: Color
-}
-
-public struct DateValue: Identifiable {
-  public var id: UUID = UUID()
-  var day: Int
-  var date : Date
-}
 
 final class AMDCalendarViewModel: ObservableObject {
   @Published var currentMonth: Int = 0
@@ -94,15 +76,8 @@ final class AMDCalendarViewModel: ObservableObject {
   }
   
   func getStateIcon(for value: Int) -> Image {
-    let percentage = Double(value) / Double(userSugarTargetValue) * 100
-    
-    if percentage <= 33 {
-      return AMDImage.stateHealthy.swiftUIImage
-    } else if percentage <= 66 {
-      return AMDImage.stateWarning.swiftUIImage
-    } else {
-      return AMDImage.stateDanger.swiftUIImage
-    }
+    let sugerValue = Double(value) / Double(userSugarTargetValue) * 100
+    return AMDStateIcon(percentage: sugerValue).icon
   }
   
   func handleDragGesture(_ translation: CGSize) {
