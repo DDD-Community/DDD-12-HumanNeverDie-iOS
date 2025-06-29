@@ -22,10 +22,10 @@ public struct CalendarTitleView: View {
         HStack(spacing: 0) {
           Text(title)
             .amdFont(.xlargeBold)
-            .foregroundColor(Color.gray100)
+            .foregroundColor(.gray100)
 
           Image(systemName: "chevron.down")
-            .foregroundColor(Color.gray50)
+            .foregroundColor(.gray50)
             .padding(9)
           
           Spacer()
@@ -99,7 +99,7 @@ public struct CalendarDayView: View {
           Group {
             if isSelected {
               RoundedRectangle(cornerRadius: 13)
-                .fill(Color.gray10)
+                .fill(.gray10)
             } else {
               Color.clear
             }
@@ -108,7 +108,7 @@ public struct CalendarDayView: View {
         .overlay(
           (!isSelected && isToday) ?
           RoundedRectangle(cornerRadius: 13)
-            .stroke(Color.gray25, lineWidth: 1) : nil
+            .stroke(.gray25, lineWidth: 1) : nil
         )
         .onTapGesture {
           onTap()
