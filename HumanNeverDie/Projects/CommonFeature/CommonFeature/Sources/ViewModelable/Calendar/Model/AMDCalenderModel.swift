@@ -10,8 +10,13 @@ import DesignSystem
 import SwiftUICore
 
 public struct SugarIntakeRecord {
-  let date: Date
-  let value: Int
+  public let date: Date
+  public let value: Int
+
+  public init(date: Date, value: Int) {
+    self.date = date
+    self.value = value
+  }
 }
 
 public struct DateValue: Identifiable {
