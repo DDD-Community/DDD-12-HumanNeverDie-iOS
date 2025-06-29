@@ -63,9 +63,9 @@ final class AMDCalendarViewModel: ObservableObject {
   }
   
   func handleDragGesture(_ translation: CGSize) {
-    if translation.width < -50 {
+    if translation.width < -dragThreshold {
       moveMonth(by: 1)
-    } else if translation.width > 50 {
+    } else if translation.width > dragThreshold {
       moveMonth(by: -1)
     }
   }
