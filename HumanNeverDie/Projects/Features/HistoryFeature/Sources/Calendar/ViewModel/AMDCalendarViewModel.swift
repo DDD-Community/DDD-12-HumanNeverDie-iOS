@@ -8,7 +8,7 @@
 import SwiftUI
 
 final class AMDCalendarViewModel: ObservableObject {
-  @Published var currentMonth: Int = 0
+  @Published private(set) var currentMonth: Int = 0
   @Published private var selectedDate: Date? = nil
   @Published private var currentDate: Date //월간 사용
   @Published private var currentWeekStartDate: Date = Date().startOfWeek() //주간 사용
