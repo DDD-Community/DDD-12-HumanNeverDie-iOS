@@ -36,17 +36,12 @@ public struct CalendarTitleView: View {
 }
 
 public struct CalendarWeekdayTitleView: View {
-  let items: [WeekdayValue]
+  let items: [AMDWeekdayTile]
   let columns: [GridItem]
-
-  public init(items: [WeekdayValue], columns: [GridItem]) {
-    self.items = items
-    self.columns = columns
-  }
 
   public var body: some View {
     LazyVGrid(columns: columns, spacing: 15) {
-      ForEach(items, id: \.id) { weekday in
+      ForEach(items) { weekday in
         Text(weekday.label)
           .amdFont(.mediumMedium)
           .fontWeight(.semibold)

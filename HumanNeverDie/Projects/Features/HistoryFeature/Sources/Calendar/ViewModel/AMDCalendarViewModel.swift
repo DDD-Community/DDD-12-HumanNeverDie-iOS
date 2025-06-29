@@ -34,14 +34,7 @@ final class AMDCalendarViewModel: ObservableObject {
     return formatter
   }()
 
-  var weekdayItems: [WeekdayValue] {
-    let weekdayLabels = ["일", "월", "화", "수", "목", "금", "토"]
-    
-    return weekdayLabels.enumerated().map { index, weekday in
-      let weekdayIndex = index + 1 // Sunday = 1, Saturday = 7
-      return WeekdayValue(label: weekday, color: weekdayColor(weekdayIndex))
-    }
-  }
+  let weekdayItems: [AMDWeekdayTile] = AMDWeekdayTile.allCases
   
   var columns: [GridItem] {
     Array(repeating: GridItem(.flexible()), count: weekdayItems.count)
@@ -65,14 +58,6 @@ final class AMDCalendarViewModel: ObservableObject {
       days.insert(DateValue(day: -1, date: Date()), at: 0)
     }
     return days
-  }
-  
-  func weekdayColor(_ weekday: Int) -> Color {
-    switch weekday {
-    case 1: return Color.redDarker
-    case 7: return Color.primaryDarker
-    default: return Color.gray80
-    }
   }
   
   func getStateIcon(for value: Int) -> Image {
@@ -114,7 +99,7 @@ final class AMDCalendarViewModel: ObservableObject {
 
   func textColor(for date: Date) -> Color {
     let weekday = calendar.component(.weekday, from: date)
-    return weekdayColor(weekday)
+    return AMDWeekdayTile(weekday).color
   }
   
   func selectDate(_ date: Date) {
