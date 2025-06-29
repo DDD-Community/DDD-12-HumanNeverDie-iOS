@@ -9,12 +9,12 @@ import SwiftUI
 import DesignSystem
 
 struct AMDCalendarView: View {
-  @StateObject private var viewModel: AMDCalendarViewModel
+  @Bindable var viewModel: AMDCalendarViewModel
   @Binding var selectedDate: Date?
 
-  init(viewModel: AMDCalendarViewModel, selectedDate: Binding<Date?>) {
-    _viewModel = StateObject(wrappedValue: viewModel)
-    _selectedDate = selectedDate
+  init(viewModel: Bindable<AMDCalendarViewModel>, selectedDate: Binding<Date?>) {
+    self._viewModel = viewModel
+    self._selectedDate = selectedDate
   }
   
   var body: some View {
