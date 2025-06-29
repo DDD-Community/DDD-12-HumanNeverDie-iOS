@@ -15,6 +15,7 @@ final class AMDCalendarViewModel: ObservableObject {
   private let calendar = Calendar.current
   private let sugarIntakeRecordData: [SugarIntakeRecord]
   private let userSugarTargetValue: Int
+  private let dragThreshold: CGFloat = 50
   
   init(currentDate: Date, sugarIntakeRecordData: [SugarIntakeRecord], userSugarTargetValue : Int) {
     self.currentDate = currentDate
@@ -134,9 +135,9 @@ final class AMDCalendarViewModel: ObservableObject {
   }
   
   func handleWeekDragGesture(_ translation: CGSize) {
-    if translation.width < -50 {
+    if translation.width < -dragThreshold {
       moveWeek(by: 1)
-    } else if translation.width > 50 {
+    } else if translation.width > dragThreshold {
       moveWeek(by: -1)
     }
   }
