@@ -17,10 +17,10 @@ struct AMDWeekCalendarView: View {
   }
   
   var body: some View {
-    VStack(spacing: 10) {
+    VStack(spacing: 0) {
       calendarHeaderView()
       
-      HStack {
+      HStack(spacing: 0) {
         ForEach(viewModel.getCurrentWeekDates()) { dateValue in
           calendarDayCellView(value: dateValue)
         }

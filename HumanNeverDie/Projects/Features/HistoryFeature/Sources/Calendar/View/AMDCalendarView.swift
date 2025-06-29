@@ -18,7 +18,7 @@ struct AMDCalendarView: View {
   }
   
   var body: some View {
-    VStack(spacing: 10) {
+    VStack(spacing: 0) {
       
       calendarHeaderView()
       calendarDayCellView()

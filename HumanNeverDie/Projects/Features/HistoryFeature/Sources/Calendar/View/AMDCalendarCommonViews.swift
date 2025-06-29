@@ -18,21 +18,23 @@ public struct CalendarTitleView: View {
   }
 
   public var body: some View {
-    HStack {
       Button(action: onTap) {
-        HStack(spacing: 4) {
+        HStack(spacing: 0) {
           Text(title)
             .amdFont(.xlargeBold)
             .foregroundColor(Color.gray100)
 
           Image(systemName: "chevron.down")
             .foregroundColor(Color.gray50)
+            .padding(9)
+          
+          Spacer()
         }
       }
-      Spacer()
+      .frame(maxWidth: .infinity)
+      .padding(.vertical, 14)
     }
-    .padding(.horizontal)
-  }
+    
 }
 
 public struct CalendarWeekdayTitleView: View {
@@ -78,7 +80,7 @@ public struct CalendarDayView: View {
   }
 
   public var body: some View {
-    VStack {
+    VStack(spacing: 0) {
       if value.day != -1 {
         ZStack {
           if let icon = stateIcon {
