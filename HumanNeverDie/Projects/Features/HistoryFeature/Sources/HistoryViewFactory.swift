@@ -11,6 +11,6 @@ import SwiftUI
 public struct HistoryViewFactory {
   public static func create() -> some View {
     let viewModel = HistoryViewModel()
-    return HistoryView(viewModel: Bindable(viewModel))
+    return HistoryView(viewModel: viewModel)
   }
 }

@@ -9,10 +9,10 @@ import SwiftUI
 import CommonFeature
 
 public struct HistoryView: View {
-  @Bindable private var viewModel: HistoryViewModel
+  @State private var viewModel: HistoryViewModel
   
-  public init(viewModel: Bindable<HistoryViewModel>) {
-    self._viewModel = viewModel
+  public init(viewModel: HistoryViewModel) {
+    self._viewModel = .init(initialValue: viewModel)
   }
 
   public var body: some View {
@@ -54,5 +54,5 @@ extension DateFormatter {
 }
 
 #Preview {
-  HistoryView(viewModel: Bindable(HistoryViewModel()))
+  HistoryView(viewModel: HistoryViewModel())
 }
