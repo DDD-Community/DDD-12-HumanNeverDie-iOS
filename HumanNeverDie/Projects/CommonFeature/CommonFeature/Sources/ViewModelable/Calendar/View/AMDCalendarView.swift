@@ -6,15 +6,14 @@
 //
 
 import SwiftUI
-import DesignSystem
 
 struct AMDCalendarView: View {
-  @StateObject private var viewModel: AMDMonthCalendarViewModel
+  @State private var viewModel: AMDMonthCalendarViewModel
   @Binding var selectedDate: Date?
 
   init(viewModel: AMDMonthCalendarViewModel, selectedDate: Binding<Date?>) {
-    _viewModel = StateObject(wrappedValue: viewModel)
-    _selectedDate = selectedDate
+    self.viewModel = viewModel
+    self._selectedDate = selectedDate
   }
   
   var body: some View {
@@ -33,7 +32,6 @@ struct AMDCalendarView: View {
           withAnimation(.easeInOut) {
             viewModel.handleDragGesture(value.translation)
           }
-          
         }
     ).padding()
   }

@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct AMDWeekCalendarView: View {
-  @StateObject private var viewModel: AMDWeekCalendarViewModel
+  @State private var viewModel: AMDWeekCalendarViewModel
   @Binding var selectedDate: Date?
 
   init(viewModel: AMDWeekCalendarViewModel, selectedDate: Binding<Date?>) {
-    _viewModel = StateObject(wrappedValue: viewModel)
-    _selectedDate = selectedDate
+    self.viewModel = viewModel
+    self._selectedDate = selectedDate
   }
   
   var body: some View {
@@ -33,6 +33,7 @@ struct AMDWeekCalendarView: View {
     }
     .padding()
   }
+  
   @ViewBuilder
   private func calendarHeaderView() -> some View {
     CalendarTitleView(

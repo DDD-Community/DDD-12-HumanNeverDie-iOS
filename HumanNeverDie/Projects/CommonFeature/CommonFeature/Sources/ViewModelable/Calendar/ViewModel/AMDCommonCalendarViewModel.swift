@@ -7,11 +7,10 @@
 
 import SwiftUI
 
-class AMDCommonCalendarViewModel: ObservableObject {
-  @Published public var currentMonth: Int = 0
-  @Published private var selectedDate: Date? = nil
-  @Published public var currentDate: Date
-  @Published private var currentWeekStartDate: Date = Date().startOfWeek() //주간 사용
+@Observable class AMDCommonCalendarViewModel {
+  var currentMonth: Int = 0
+  var selectedDate: Date? = nil
+  var currentDate: Date
   let calendar = Calendar.current
   let sugarIntakeRecordData: [SugarIntakeRecord]
   let userSugarTargetValue: Int
