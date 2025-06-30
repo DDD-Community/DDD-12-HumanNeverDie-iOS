@@ -9,7 +9,7 @@ import SwiftUI
 
 @MainActor
 public struct AMDCalendarFactory {
-  public static func create(
+  public static func createMonth(
     currentDate: Date,
     sugarIntakeRecordData: [SugarIntakeRecord],
     userSugarTargetValue: Int,
@@ -20,7 +20,7 @@ public struct AMDCalendarFactory {
       sugarIntakeRecordData: sugarIntakeRecordData,
       userSugarTargetValue: userSugarTargetValue
     )
-    return AMDCalendarView(viewModel: viewModel, selectedDate: selectedDate)
+    return AMDMonthCalendarView(viewModel: viewModel, selectedDate: selectedDate)
   }
   
   public static func createWeekly(

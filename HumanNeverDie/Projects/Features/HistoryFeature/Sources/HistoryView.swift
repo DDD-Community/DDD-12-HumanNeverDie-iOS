@@ -18,7 +18,7 @@ public struct HistoryView: View {
   public var body: some View {
     VStack(spacing: 20) {
       ScrollView(.vertical, showsIndicators: false) {
-        AMDCalendarFactory.create(
+        AMDCalendarFactory.createMonth(
           currentDate: viewModel.currentDate,
           sugarIntakeRecordData: viewModel.sugarIntakeRecordData,
           userSugarTargetValue: 50,

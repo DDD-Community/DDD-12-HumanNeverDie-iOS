@@ -1,5 +1,5 @@
 //
-//  AMDCalendarView.swift
+//  AMDMonthCalendarView.swift
 //  HistoryFeature
 //
 //  Created by Seulki Lee on 6/23/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AMDCalendarView: View {
+struct AMDMonthCalendarView: View {
   @State private var viewModel: AMDMonthCalendarViewModel
   @Binding var selectedDate: Date?
   
