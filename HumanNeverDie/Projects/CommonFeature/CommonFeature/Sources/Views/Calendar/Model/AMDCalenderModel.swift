@@ -21,8 +21,8 @@ public struct SugarIntakeRecord {
 
 public struct DateValue: Identifiable {
   public var id: UUID = UUID()
-  var day: Int
-  var date : Date
+  public var day: Int
+  public var date : Date
 }
 
 public enum AMDStateIcon {
@@ -41,7 +41,7 @@ public enum AMDStateIcon {
     }
   }
   
-  var icon: Image {
+  public var icon: Image {
     switch self {
     case .healthy: return AMDImage.stateHealthy.swiftUIImage
     case .warning: return AMDImage.stateWarning.swiftUIImage
@@ -50,7 +50,7 @@ public enum AMDStateIcon {
   }
 }
 
-enum AMDWeekdayTile: Int, CaseIterable, Identifiable{
+public enum AMDWeekdayTile: Int, CaseIterable, Identifiable{
   case sunday
   case monday
   case tuesday
