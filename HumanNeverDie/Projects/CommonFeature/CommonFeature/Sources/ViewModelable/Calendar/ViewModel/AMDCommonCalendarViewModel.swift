@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@Observable class AMDCommonCalendarViewModel {
+class AMDCommonCalendarViewModel {
   var currentMonth: Int = 0
   var selectedDate: Date? = nil
   var currentDate: Date

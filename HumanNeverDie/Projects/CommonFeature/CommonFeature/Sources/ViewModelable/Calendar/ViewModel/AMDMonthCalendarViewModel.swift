@@ -7,8 +7,9 @@
 
 import SwiftUI
 
+@Observable
 class AMDMonthCalendarViewModel: AMDCommonCalendarViewModel {
-  @Published var dayModels: [CalendarDayModel] = []
+  var dayModels: [CalendarDayModel] = []
   
   override init(
     currentDate: Date,
