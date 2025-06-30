@@ -9,8 +9,8 @@ import SwiftUI
 
 @Observable
 class AMDMonthCalendarViewModel: AMDCommonCalendarViewModel {
-  var currentMonth: Int = 0
-  var dayModels: [CalendarDayModel] = []
+  private(set) var currentMonth: Int = 0
+  private(set) var dayModels: [CalendarDayModel] = []
   
   override init(
     currentDate: Date,
