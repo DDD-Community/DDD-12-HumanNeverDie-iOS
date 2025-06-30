@@ -12,7 +12,7 @@ import SwiftUICore
 public struct SugarIntakeRecord {
   public let date: Date
   public let value: Int
-
+  
   public init(date: Date, value: Int) {
     self.date = date
     self.value = value
@@ -29,7 +29,7 @@ public enum AMDStateIcon {
   case healthy
   case warning
   case danger
-
+  
   init(percentage: Double) {
     switch percentage {
     case ...33:
@@ -40,7 +40,7 @@ public enum AMDStateIcon {
       self = .danger
     }
   }
-
+  
   var icon: Image {
     switch self {
     case .healthy: return AMDImage.stateHealthy.swiftUIImage
@@ -76,7 +76,7 @@ enum AMDWeekdayTile: Int, CaseIterable, Identifiable{
     case .saturday: return "토"
     }
   }
-
+  
   public var color: Color {
     switch self {
     case .sunday: return .redDarker

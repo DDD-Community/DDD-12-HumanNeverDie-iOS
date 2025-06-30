@@ -36,7 +36,7 @@ class AMDWeekCalendarViewModel: AMDCommonCalendarViewModel {
       guard let date = calendar.date(byAdding: .day, value: offset, to: currentWeekStartDate) else {
         return nil
       }
-
+      
       let day = calendar.component(.day, from: date)
       return DateValue(day: day, date: date)
     }
@@ -49,7 +49,7 @@ class AMDWeekCalendarViewModel: AMDCommonCalendarViewModel {
       moveWeek(by: -1)
     }
   }
-
+  
   func moveWeek(by weeks: Int) {
     if let newWeek = calendar.date(byAdding: .weekOfYear, value: weeks, to: currentWeekStartDate) {
       currentWeekStartDate = newWeek

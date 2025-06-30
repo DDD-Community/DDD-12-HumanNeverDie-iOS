@@ -20,7 +20,7 @@ class AMDCommonCalendarViewModel {
     self.sugarIntakeRecordData = sugarIntakeRecordData
     self.userSugarTargetValue = userSugarTargetValue
   }
-
+  
   let weekdayItems: [AMDWeekdayTile] = AMDWeekdayTile.allCases
   
   var columns: [GridItem] {
@@ -30,7 +30,7 @@ class AMDCommonCalendarViewModel {
   func titleDateString(titleDate : Date) -> String {
     DateFormatter.calendarTitleFormat.string(from: titleDate)
   }
-
+  
   func getStateIcon(for value: Int) -> Image {
     let sugerValue = Double(value) / Double(userSugarTargetValue) * 100
     return AMDStateIcon(percentage: sugerValue).icon
@@ -39,16 +39,16 @@ class AMDCommonCalendarViewModel {
   func isToday(_ date: Date) -> Bool {
     calendar.isDateInToday(date)
   }
-
+  
   func isSelected(_ date: Date) -> Bool {
     guard let selected = selectedDate else { return false }
     return calendar.isDate(selected, inSameDayAs: date)
   }
-
+  
   func matchingValue(for date: Date) -> Int? {
     sugarIntakeRecordData.first { calendar.isDate($0.date, inSameDayAs: date) }?.value
   }
-
+  
   func textColor(for date: Date) -> Color {
     let weekday = calendar.component(.weekday, from: date)
     return AMDWeekdayTile(weekday).color

@@ -10,7 +10,7 @@ import SwiftUI
 struct AMDWeekCalendarView: View {
   @State private var viewModel: AMDWeekCalendarViewModel
   @Binding var selectedDate: Date?
-
+  
   init(viewModel: AMDWeekCalendarViewModel, selectedDate: Binding<Date?>) {
     self.viewModel = viewModel
     self._selectedDate = selectedDate
@@ -21,7 +21,7 @@ struct AMDWeekCalendarView: View {
       calendarHeaderView()
       
       HStack(spacing: 0) {
-          calendarDayCellView()
+        calendarDayCellView()
       }.highPriorityGesture(
         DragGesture()
           .onEnded { value in
@@ -41,7 +41,7 @@ struct AMDWeekCalendarView: View {
     ) {
       //데이터피커
     }
-
+    
     CalendarWeekdayTitleView(
       items: viewModel.weekdayItems,
       columns: viewModel.columns
@@ -51,19 +51,19 @@ struct AMDWeekCalendarView: View {
   @ViewBuilder
   func calendarDayCellView() -> some View {
     ForEach(viewModel.dayModels) { model in
-         CalendarDayView(
-           value: model.value,
-           isToday: model.isToday,
-           isSelected: model.isSelected,
-           textColor: model.textColor,
-           stateIcon: model.stateIcon,
-           onTap: {
-             selectedDate = model.value.date
-             viewModel.selectDate(model.value.date)
-             viewModel.updateDayModels()
-           }
-         )
-       }
+      CalendarDayView(
+        value: model.value,
+        isToday: model.isToday,
+        isSelected: model.isSelected,
+        textColor: model.textColor,
+        stateIcon: model.stateIcon,
+        onTap: {
+          selectedDate = model.value.date
+          viewModel.selectDate(model.value.date)
+          viewModel.updateDayModels()
+        }
+      )
+    }
   }
 }
 

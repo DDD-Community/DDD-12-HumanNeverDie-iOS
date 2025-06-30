@@ -10,7 +10,7 @@ import SwiftUI
 struct AMDCalendarView: View {
   @State private var viewModel: AMDMonthCalendarViewModel
   @Binding var selectedDate: Date?
-
+  
   init(viewModel: AMDMonthCalendarViewModel, selectedDate: Binding<Date?>) {
     self.viewModel = viewModel
     self._selectedDate = selectedDate
@@ -21,7 +21,7 @@ struct AMDCalendarView: View {
       
       calendarHeaderView()
       calendarDayCellView()
-    
+      
     }
     .onChange(of: viewModel.currentMonth) {
       viewModel.updateCurrentDateToCurrentMonth()
@@ -43,7 +43,7 @@ struct AMDCalendarView: View {
     ) {
       //데이터피커
     }
-
+    
     CalendarWeekdayTitleView(
       items: viewModel.weekdayItems,
       columns: viewModel.columns
@@ -54,19 +54,19 @@ struct AMDCalendarView: View {
   func calendarDayCellView() -> some View {
     LazyVGrid(columns: viewModel.columns, spacing: 15) {
       ForEach(viewModel.dayModels) { model in
-           CalendarDayView(
-             value: model.value,
-             isToday: model.isToday,
-             isSelected: model.isSelected,
-             textColor: model.textColor,
-             stateIcon: model.stateIcon,
-             onTap: {
-               selectedDate = model.value.date
-               viewModel.selectDate(model.value.date)
-               viewModel.updateDayModels()
-             }
-           )
-         }
+        CalendarDayView(
+          value: model.value,
+          isToday: model.isToday,
+          isSelected: model.isSelected,
+          textColor: model.textColor,
+          stateIcon: model.stateIcon,
+          onTap: {
+            selectedDate = model.value.date
+            viewModel.selectDate(model.value.date)
+            viewModel.updateDayModels()
+          }
+        )
+      }
     }
   }
 }

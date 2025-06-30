@@ -11,36 +11,36 @@ import DesignSystem
 public struct CalendarTitleView: View {
   let title: String
   let onTap: () -> Void
-
+  
   public init(title: String, onTap: @escaping () -> Void) {
     self.title = title
     self.onTap = onTap
   }
-
+  
   public var body: some View {
-      Button(action: onTap) {
-        HStack(spacing: 0) {
-          Text(title)
-            .amdFont(.xlargeBold)
-            .foregroundColor(.gray100)
-
-          Image(systemName: "chevron.down")
-            .foregroundColor(.gray50)
-            .padding(9)
-          
-          Spacer()
-        }
+    Button(action: onTap) {
+      HStack(spacing: 0) {
+        Text(title)
+          .amdFont(.xlargeBold)
+          .foregroundColor(.gray100)
+        
+        Image(systemName: "chevron.down")
+          .foregroundColor(.gray50)
+          .padding(9)
+        
+        Spacer()
       }
-      .frame(maxWidth: .infinity)
-      .padding(.vertical, 14)
     }
-    
+    .frame(maxWidth: .infinity)
+    .padding(.vertical, 14)
+  }
+  
 }
 
 public struct CalendarWeekdayTitleView: View {
   let items: [AMDWeekdayTile]
   let columns: [GridItem]
-
+  
   public var body: some View {
     LazyVGrid(columns: columns, spacing: 15) {
       ForEach(items) { weekday in
@@ -62,7 +62,7 @@ public struct CalendarDayView: View {
   public let textColor: Color
   public let stateIcon: Image?
   public let onTap: () -> Void
-
+  
   public init(
     value: DateValue,
     isToday: Bool,
@@ -78,7 +78,7 @@ public struct CalendarDayView: View {
     self.stateIcon = stateIcon
     self.onTap = onTap
   }
-
+  
   public var body: some View {
     VStack(spacing: 0) {
       if value.day != -1 {

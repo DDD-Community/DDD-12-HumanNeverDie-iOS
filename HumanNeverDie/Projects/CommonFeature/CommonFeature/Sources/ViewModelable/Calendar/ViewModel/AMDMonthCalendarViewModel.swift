@@ -22,7 +22,7 @@ class AMDMonthCalendarViewModel: AMDCommonCalendarViewModel {
       sugarIntakeRecordData: sugarIntakeRecordData,
       userSugarTargetValue: userSugarTargetValue
     )
-
+    
     updateDayModels()
   }
   
