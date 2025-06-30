@@ -13,9 +13,9 @@ import CommonFeature
 @Observable
 @MainActor
 public final class HistoryViewModel {
-  var currentDate: Date = Date()
+  private(set) var currentDate: Date = Date()
+  private(set) var sugarIntakeRecordData: [SugarIntakeRecord] = HistoryViewModel.sampleData
   var selectedDate: Date? = nil
-  var sugarIntakeRecordData: [SugarIntakeRecord] = HistoryViewModel.sampleData
   
   public struct State: Equatable {
   }
