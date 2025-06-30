@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AMDWeekCalendarView: View {
   @State private var viewModel: AMDWeekCalendarViewModel
-  @Binding var selectedDate: Date?
+  @Binding private(set) var selectedDate: Date?
   
   init(viewModel: AMDWeekCalendarViewModel, selectedDate: Binding<Date?>) {
     self.viewModel = viewModel
