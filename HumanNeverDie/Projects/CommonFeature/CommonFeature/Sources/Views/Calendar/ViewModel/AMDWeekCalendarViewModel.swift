@@ -9,8 +9,8 @@ import SwiftUI
 
 @Observable
 class AMDWeekCalendarViewModel: AMDCommonCalendarViewModel {
-  var currentWeekStartDate: Date = Date().startOfWeek()
-  var dayModels: [CalendarDayModel] = []
+  private var currentWeekStartDate: Date = Date().startOfWeek()
+  private(set) var dayModels: [CalendarDayModel] = []
   
   override init(
     currentDate: Date,
