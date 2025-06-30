@@ -8,12 +8,16 @@
 import SwiftUI
 
 class AMDCommonCalendarViewModel {
-  var selectedDate: Date? = nil
-  var currentDate: Date
+  private var selectedDate: Date? = nil
+  private(set) var currentDate: Date
+  private let sugarIntakeRecordData: [SugarIntakeRecord]
+  private let userSugarTargetValue: Int
   let calendar = Calendar.current
-  let sugarIntakeRecordData: [SugarIntakeRecord]
-  let userSugarTargetValue: Int
   let dragThreshold: CGFloat = 50
+  let weekdayItems: [AMDWeekdayTile] = AMDWeekdayTile.allCases
+  var columns: [GridItem] {
+    Array(repeating: GridItem(.flexible()), count: weekdayItems.count)
+  }
   
   init(currentDate: Date, sugarIntakeRecordData: [SugarIntakeRecord], userSugarTargetValue: Int) {
     self.currentDate = currentDate
@@ -21,10 +25,8 @@ class AMDCommonCalendarViewModel {
     self.userSugarTargetValue = userSugarTargetValue
   }
   
-  let weekdayItems: [AMDWeekdayTile] = AMDWeekdayTile.allCases
-  
-  var columns: [GridItem] {
-    Array(repeating: GridItem(.flexible()), count: weekdayItems.count)
+  func updateCurrentDate(to date : Date) {
+    currentDate = date
   }
   
   func titleDateString(titleDate : Date) -> String {

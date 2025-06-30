@@ -35,7 +35,7 @@ class AMDMonthCalendarViewModel: AMDCommonCalendarViewModel {
   }
   
   func updateCurrentDateToCurrentMonth() {
-    currentDate = getCurrentMonth()
+    updateCurrentDate(to: getCurrentMonth())
     currentMonth = 0
   }
   
