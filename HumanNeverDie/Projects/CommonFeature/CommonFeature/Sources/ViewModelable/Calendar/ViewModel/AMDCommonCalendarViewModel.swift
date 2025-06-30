@@ -8,7 +8,6 @@
 import SwiftUI
 
 class AMDCommonCalendarViewModel {
-  var currentMonth: Int = 0
   var selectedDate: Date? = nil
   var currentDate: Date
   let calendar = Calendar.current
@@ -31,20 +30,10 @@ class AMDCommonCalendarViewModel {
   func titleDateString(titleDate : Date) -> String {
     DateFormatter.calendarTitleFormat.string(from: titleDate)
   }
-  
-  func getCurrentMonth() -> Date {
-    calendar.date(byAdding: .month, value: currentMonth, to: currentDate) ?? currentDate
-  }
-  
+
   func getStateIcon(for value: Int) -> Image {
     let sugerValue = Double(value) / Double(userSugarTargetValue) * 100
     return AMDStateIcon(percentage: sugerValue).icon
-  }
-
-  
-  func updateCurrentDateToCurrentMonth() {
-    currentDate = getCurrentMonth()
-    currentMonth = 0
   }
   
   func isToday(_ date: Date) -> Bool {

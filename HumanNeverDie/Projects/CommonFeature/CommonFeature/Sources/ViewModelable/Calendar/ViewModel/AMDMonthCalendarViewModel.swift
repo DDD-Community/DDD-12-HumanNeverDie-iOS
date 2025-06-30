@@ -9,6 +9,7 @@ import SwiftUI
 
 @Observable
 class AMDMonthCalendarViewModel: AMDCommonCalendarViewModel {
+  var currentMonth: Int = 0
   var dayModels: [CalendarDayModel] = []
   
   override init(
@@ -27,6 +28,15 @@ class AMDMonthCalendarViewModel: AMDCommonCalendarViewModel {
   
   var MonthTitleDateString: String {
     titleDateString(titleDate: currentDate)
+  }
+  
+  func getCurrentMonth() -> Date {
+    calendar.date(byAdding: .month, value: currentMonth, to: currentDate) ?? currentDate
+  }
+  
+  func updateCurrentDateToCurrentMonth() {
+    currentDate = getCurrentMonth()
+    currentMonth = 0
   }
   
   func extractDate() -> [DateValue] {
