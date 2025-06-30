@@ -57,6 +57,8 @@ private struct DesignSystemDetailView: View {
         AMDBeverageListDemoView()
       case .amdDatePicker:
         AMDDatePickerDemoView()
+      case .amdTextField:
+        AMDTextFieldDemoView()
       }
     }
   }
