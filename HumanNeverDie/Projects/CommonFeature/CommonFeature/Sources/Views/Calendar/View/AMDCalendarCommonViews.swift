@@ -9,8 +9,8 @@ import SwiftUI
 import DesignSystem
 
 public struct CalendarTitleView: View {
-  let title: String
-  let onTap: () -> Void
+  private let title: String
+  private let onTap: () -> Void
   
   public init(title: String, onTap: @escaping () -> Void) {
     self.title = title
@@ -38,8 +38,13 @@ public struct CalendarTitleView: View {
 }
 
 public struct CalendarWeekdayTitleView: View {
-  let items: [AMDWeekdayTile]
-  let columns: [GridItem]
+  private let items: [AMDWeekdayTile]
+  private let columns: [GridItem]
+  
+  public init(items: [AMDWeekdayTile], columns: [GridItem]) {
+    self.items = items
+    self.columns = columns
+  }
   
   public var body: some View {
     LazyVGrid(columns: columns, spacing: 15) {
@@ -56,12 +61,12 @@ public struct CalendarWeekdayTitleView: View {
 
 
 public struct CalendarDayView: View {
-  public let value: DateValue
-  public let isToday: Bool
-  public let isSelected: Bool
-  public let textColor: Color
-  public let stateIcon: Image?
-  public let onTap: () -> Void
+  private let value: DateValue
+  private let isToday: Bool
+  private let isSelected: Bool
+  private let textColor: Color
+  private let stateIcon: Image?
+  private let onTap: () -> Void
   
   public init(
     value: DateValue,
