@@ -34,8 +34,6 @@ public struct MainView: View {
   public var body: some View {
     ZStack(alignment: .bottom) {
       contentView
-        .padding(.bottom, 66)
-      
       tabBar
     }
     .toolbarVisibility(.hidden, for: .tabBar)
@@ -44,13 +42,16 @@ public struct MainView: View {
   
   @ViewBuilder
   private var contentView: some View {
-    switch viewModel.selectedTab {
-    case .home:
-      HomeViewFactory.create()
-      
-    case .history:
-      HistoryViewFactory.create()
+    Group {
+      switch viewModel.selectedTab {
+      case .home:
+        HomeViewFactory.create()
+        
+      case .history:
+        HistoryViewFactory.create()
+      }
     }
+    .padding(.bottom, 92)
   }
   
   private var tabBar: some View {
