@@ -1,9 +1,7 @@
 import SwiftUI
 
-import MainFeature
 import SplashFeature
 import CommonFeature
-
 
 public struct RootView: View {
   @State private var router = Router()
