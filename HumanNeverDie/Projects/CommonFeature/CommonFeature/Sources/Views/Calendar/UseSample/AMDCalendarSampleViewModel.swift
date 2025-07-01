@@ -1,22 +1,17 @@
 //
-// HistoryViewModel.swift
-// History
+//  AMDCalendarSampleViewModel.swift
+//  CommonFeature
 //
-// Created by 김규철 on 2025.
+//  Created by Seulki Lee on 7/1/25.
 //
-
 import Foundation
 import Observation
 
-import CommonFeature
-
 @Observable
 @MainActor
-public final class HistoryViewModel :ViewModelable {
-  @ObservationIgnored
+public final class AMDCalendarSampleViewModel {
   private(set) var currentDate: Date = Date()
-  @ObservationIgnored
-  private(set) var sugarIntakeRecordData: [SugarIntakeRecord] = HistoryViewModel.sampleData
+  private(set) var sugarIntakeRecordData: [SugarIntakeRecord] = AMDCalendarSampleViewModel.sampleData
   var selectedDate: Date? = nil
   
   public struct State: Equatable {
@@ -36,7 +31,6 @@ public final class HistoryViewModel :ViewModelable {
     }
   }
   
-  @ObservationIgnored
   public static var sampleData: [SugarIntakeRecord] {
     let calendar = Calendar.current
     let baseDate = calendar.date(from: DateComponents(year: 2025, month: 5, day: 1))!
@@ -46,3 +40,4 @@ public final class HistoryViewModel :ViewModelable {
     }
   }
 }
+
