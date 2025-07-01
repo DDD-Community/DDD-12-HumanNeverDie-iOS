@@ -10,6 +10,8 @@ import CommonFeature
 
 public struct HistoryView: View {
   @State private var viewModel: HistoryViewModel
+  @State private var isDatePickerPresented = false
+  @State private var tempDate = Date()
   
   public init(viewModel: HistoryViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -22,8 +24,34 @@ public struct HistoryView: View {
           currentDate: viewModel.currentDate,
           sugarIntakeRecordData: viewModel.sugarIntakeRecordData,
           userSugarTargetValue: 50,
-          selectedDate: $viewModel.selectedDate
-        )
+          selectedDate: $viewModel.selectedDate,
+          onTapTitle: {
+            tempDate = viewModel.selectedDate ?? Date()
+            isDatePickerPresented = true
+          }
+        ).sheet(isPresented: $isDatePickerPresented) {
+          VStack(spacing: 20) {
+            DatePicker(
+              "날짜 선택",
+              selection: $tempDate,
+              displayedComponents: [.date]
+            )
+            .datePickerStyle(.wheel)
+            .labelsHidden()
+
+            Button("확인") {
+              viewModel.selectedDate = tempDate
+              isDatePickerPresented = false
+            }
+
+            Button("닫기") {
+              isDatePickerPresented = false
+            }
+            .foregroundColor(.red)
+          }
+          .padding()
+        }
+
         
         Color.gray // 선택된 날짜 관련 내용
         
