@@ -12,8 +12,10 @@ import CommonFeature
 
 @Observable
 @MainActor
-public final class HistoryViewModel {
+public final class HistoryViewModel :ViewModelable {
+  @ObservationIgnored
   private(set) var currentDate: Date = Date()
+  @ObservationIgnored
   private(set) var sugarIntakeRecordData: [SugarIntakeRecord] = HistoryViewModel.sampleData
   var selectedDate: Date? = nil
   
@@ -34,6 +36,7 @@ public final class HistoryViewModel {
     }
   }
   
+  @ObservationIgnored
   public static var sampleData: [SugarIntakeRecord] {
     let calendar = Calendar.current
     let baseDate = calendar.date(from: DateComponents(year: 2025, month: 5, day: 1))!
