@@ -12,7 +12,7 @@ public enum AMDRadius: CaseIterable {
   case medium
   case large
   
-  fileprivate var value: CGFloat {
+  var value: CGFloat {
     switch self {
     case .small:
       return 8

@@ -5,8 +5,7 @@ let project = Project.makeModule(
     name: Modules.ThirdParty.name,
     product: .framework,
     dependencies: [
-        .SPM.dependencies,
-        .SPM.nuke
+        .SPM.dependencies
     ],
     hasTests: false
 )

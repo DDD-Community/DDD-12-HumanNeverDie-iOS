@@ -49,6 +49,20 @@ private struct DesignSystemDetailView: View {
         AMDGlucoseValueLabelDemoView()
       case .amdCard:
         AMDCardDemoView()
+      case .amdProgress:
+        AMDProgressDemoView()
+      case .amdChip:
+        AMDChipDemoView()
+      case .AMDBeverageList:
+        AMDBeverageListDemoView()
+      case .amdDatePicker:
+        AMDDatePickerDemoView()
+      case .amdTextField:
+        AMDTextFieldDemoView()
+      case .amdButton:
+        AMDButtonDemoView()
+      case .amdFloatingButton:
+        AMDFloatingButtonDemoView()
       }
     }
   }
