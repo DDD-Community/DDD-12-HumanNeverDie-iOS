@@ -24,7 +24,7 @@ public enum AMDFont {
   case xsmallRegular
   case xxsmallRegular
   
-  fileprivate var uiFont: UIFont {
+  var uiFont: UIFont {
     switch self {
     case .xxlargeBold:
       return PretendardFont.bold.font(size: 24)
@@ -55,7 +55,7 @@ public enum AMDFont {
     }
   }
   
-  fileprivate var swiftUIFont: Font {
+  var swiftUIFont: Font {
     Font(uiFont)
   }
   

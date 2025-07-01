@@ -55,6 +55,14 @@ private struct DesignSystemDetailView: View {
         AMDChipDemoView()
       case .AMDBeverageList:
         AMDBeverageListDemoView()
+      case .amdDatePicker:
+        AMDDatePickerDemoView()
+      case .amdTextField:
+        AMDTextFieldDemoView()
+      case .amdButton:
+        AMDButtonDemoView()
+      case .amdFloatingButton:
+        AMDFloatingButtonDemoView()
       }
     }
   }
