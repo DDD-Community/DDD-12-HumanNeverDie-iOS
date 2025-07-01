@@ -13,7 +13,6 @@ public extension Modules {
 public extension Modules {
     enum Feature: String {
         case Splash
-        case Main
         case Home
         case History
         

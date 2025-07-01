@@ -1,6 +1,5 @@
 import SwiftUI
 
-import MainFeature
 import SplashFeature
 import CommonFeature
 

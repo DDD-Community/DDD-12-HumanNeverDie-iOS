@@ -11,22 +11,21 @@ public enum AMDTabBarType: String, CaseIterable {
   
   var icon: Image {
     switch self {
-    case .home: return AMDImage.success24.swiftUIImage
-    case .history: return AMDImage.liked24.swiftUIImage
+    case .home: return AMDImage.homeOff24.swiftUIImage
+    case .history: return AMDImage.calendarOff24.swiftUIImage
     }
   }
   
   var selectedIcon: Image {
     switch self {
-    case .home: return AMDImage.unliked24.swiftUIImage
-    case .history: return AMDImage.unliked24.swiftUIImage
+    case .home: return AMDImage.home24.swiftUIImage
+    case .history: return AMDImage.calendar24.swiftUIImage
     }
   }
 }
 
 public struct MainView: View {
   @State private var viewModel: MainViewModel
-  @Environment(Router.self) private var router
   
   public init(viewModel: MainViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -39,7 +38,8 @@ public struct MainView: View {
       
       tabBar
     }
-    .toolbar(.hidden)
+    .toolbarVisibility(.hidden, for: .tabBar)
+    .ignoresSafeArea(edges: .bottom)
   }
   
   @ViewBuilder
@@ -56,15 +56,17 @@ public struct MainView: View {
   private var tabBar: some View {
     VStack(spacing: 0) {
       AMDDevider()
-        .amdShadow(.tabbar)
       
       HStack(spacing: 0) {
         ForEach(AMDTabBarType.allCases, id: \.self) { tab in
           tabBarButton(for: tab)
         }
       }
+      .padding(.vertical, 5)
     }
+    .frame(minHeight: 92, maxHeight: 92, alignment: .top)
     .background(.white)
+    .amdShadow(.tabbar)
   }
   
   private func tabBarButton(for tab: AMDTabBarType) -> some View {
@@ -72,14 +74,21 @@ public struct MainView: View {
       viewModel.handleAction(.tabBarItemTapped(tab))
     } label: {
       VStack(spacing: 2) {
-        tab.icon
-          .foregroundColor(viewModel.selectedTab == tab ? .gray60 : .gray40)
+        Group {
+          if viewModel.selectedTab == tab {
+            tab.selectedIcon
+          } else {
+            tab.icon
+          }
+        }
         
         Text(tab.rawValue)
           .amdFont(.xxsmallRegular)
-          .foregroundColor(viewModel.selectedTab == tab ? .gray95 : .gray70)
+          .foregroundStyle(viewModel.selectedTab == tab ? .gray95 : .gray60)
       }
+      .padding(.vertical, 8)
+      .padding(.horizontal, 16)
     }
-    .frame(maxWidth: .infinity, minHeight: 65, maxHeight: 65)
+    .frame(maxWidth: .infinity)
   }
 }
