@@ -28,13 +28,14 @@ public struct AMDCalendarFactory {
     currentDate: Date,
     sugarIntakeRecordData: [SugarIntakeRecord],
     userSugarTargetValue: Int,
-    selectedDate: Binding<Date?>
+    selectedDate: Binding<Date?>,
+    onTapTitle: @escaping () -> Void
   ) -> some View {
     let viewModel = AMDWeekCalendarViewModel(
       currentDate: currentDate,
       sugarIntakeRecordData: sugarIntakeRecordData,
       userSugarTargetValue: userSugarTargetValue
     )
-    return AMDWeekCalendarView(viewModel: viewModel, selectedDate: selectedDate)
+    return AMDWeekCalendarView(viewModel: viewModel, selectedDate: selectedDate, onTapTitle: onTapTitle)
   }
 }

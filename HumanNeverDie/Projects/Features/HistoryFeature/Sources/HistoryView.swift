@@ -10,7 +10,8 @@ import CommonFeature
 
 public struct HistoryView: View {
   @State private var viewModel: HistoryViewModel
-  @State private var isDatePickerPresented = false
+  @State private var isMonthPickerPresented = false
+  @State private var isWeekPickerPresented = false
   @State private var tempDate = Date()
   
   public init(viewModel: HistoryViewModel) {
@@ -27,9 +28,9 @@ public struct HistoryView: View {
           selectedDate: $viewModel.selectedDate,
           onTapTitle: {
             tempDate = viewModel.selectedDate ?? Date()
-            isDatePickerPresented = true
+            isMonthPickerPresented = true
           }
-        ).sheet(isPresented: $isDatePickerPresented) {
+        ).sheet(isPresented: $isMonthPickerPresented) {
           VStack(spacing: 20) {
             DatePicker(
               "날짜 선택",
@@ -41,11 +42,11 @@ public struct HistoryView: View {
 
             Button("확인") {
               viewModel.selectedDate = tempDate
-              isDatePickerPresented = false
+              isMonthPickerPresented = false
             }
 
             Button("닫기") {
-              isDatePickerPresented = false
+              isMonthPickerPresented = false
             }
             .foregroundColor(.red)
           }
@@ -59,8 +60,34 @@ public struct HistoryView: View {
           currentDate: viewModel.currentDate,
           sugarIntakeRecordData: viewModel.sugarIntakeRecordData,
           userSugarTargetValue: 50,
-          selectedDate: $viewModel.selectedDate
-        )
+          selectedDate: $viewModel.selectedDate,
+          onTapTitle: {
+            tempDate = viewModel.selectedDate ?? Date()
+            isWeekPickerPresented = true
+          }
+        ).sheet(isPresented: $isWeekPickerPresented) {
+          VStack(spacing: 20) {
+            DatePicker(
+              "날짜 선택",
+              selection: $tempDate,
+              displayedComponents: [.date]
+            )
+            .datePickerStyle(.wheel)
+            .labelsHidden()
+
+            Button("확인") {
+              viewModel.selectedDate = tempDate
+              isWeekPickerPresented = false
+            }
+
+            Button("닫기") {
+              isWeekPickerPresented = false
+            }
+            .foregroundColor(.red)
+          }
+          .padding()
+        }
+
         
         if let selected = viewModel.selectedDate {
           Text("선택한 날짜: \(DateFormatter.calendarDayFormat.string(from: selected))")

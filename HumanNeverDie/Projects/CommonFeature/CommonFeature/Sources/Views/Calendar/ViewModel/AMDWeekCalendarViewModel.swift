@@ -57,6 +57,13 @@ class AMDWeekCalendarViewModel: AMDCommonCalendarViewModel {
     }
   }
   
+  func applySelectedDate(_ date: Date) {
+    if (isUpdateForSelectedDate(date)) {
+      self.currentWeekStartDate = currentDate.startOfWeek()
+      updateDayModels()
+    }
+  }
+  
   func updateDayModels() {
     let extracted = extractDate()
     dayModels = extracted.map { value in

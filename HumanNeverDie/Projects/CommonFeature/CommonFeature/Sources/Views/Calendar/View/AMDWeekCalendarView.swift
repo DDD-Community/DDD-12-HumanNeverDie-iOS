@@ -9,11 +9,13 @@ import SwiftUI
 
 struct AMDWeekCalendarView: View {
   @State private var viewModel: AMDWeekCalendarViewModel
-  @Binding private(set) var selectedDate: Date?
+  @Binding var selectedDate: Date?
+  private let onTapTitle: () -> Void
   
-  init(viewModel: AMDWeekCalendarViewModel, selectedDate: Binding<Date?>) {
+  init(viewModel: AMDWeekCalendarViewModel, selectedDate: Binding<Date?>, onTapTitle: @escaping () -> Void) {
     self.viewModel = viewModel
     self._selectedDate = selectedDate
+    self.onTapTitle = onTapTitle
   }
   
   var body: some View {
@@ -37,9 +39,12 @@ struct AMDWeekCalendarView: View {
   @ViewBuilder
   private func calendarHeaderView() -> some View {
     CalendarTitleView(
-      title: viewModel.weekTitleDateString
-    ) {
-      //데이터피커
+      title: viewModel.weekTitleDateString,
+      onTap: onTapTitle
+    ).onChange(of: selectedDate) {
+      if let date = selectedDate {
+        viewModel.applySelectedDate(date)
+      }
     }
     
     CalendarWeekdayTitleView(
