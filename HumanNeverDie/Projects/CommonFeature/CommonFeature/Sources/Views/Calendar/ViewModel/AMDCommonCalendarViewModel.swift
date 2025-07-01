@@ -60,6 +60,13 @@ class AMDCommonCalendarViewModel {
     selectedDate = date
   }
   
+  func isUpdateForSelectedDate(_ date: Date) -> Bool{
+    if (selectedDate == date) { return false }
+    
+    updateCurrentDate(to: date)
+    selectDate(date)
+    return true
+  }
 }
 
 extension DateFormatter {

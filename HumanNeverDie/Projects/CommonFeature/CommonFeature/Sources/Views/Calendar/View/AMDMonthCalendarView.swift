@@ -45,9 +45,7 @@ struct AMDMonthCalendarView: View {
       onTap: onTapTitle
     ).onChange(of: selectedDate) {
       if let date = selectedDate {
-        viewModel.updateCurrentDate(to: date)
-        viewModel.selectDate(date)
-        viewModel.updateDayModels()
+        viewModel.applySelectedDate(date)
       }
     }
     
@@ -69,8 +67,7 @@ struct AMDMonthCalendarView: View {
           stateIcon: model.stateIcon,
           onTap: {
             selectedDate = model.value.date
-            viewModel.selectDate(model.value.date)
-            viewModel.updateDayModels()
+            viewModel.applySelectedDate(model.value.date)
           }
         )
       }

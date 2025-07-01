@@ -70,6 +70,12 @@ class AMDMonthCalendarViewModel: AMDCommonCalendarViewModel {
     }
   }
   
+  func applySelectedDate(_ date: Date) {
+    if (isUpdateForSelectedDate(date)) {
+      updateDayModels()
+    }
+  }
+  
   func updateDayModels() {
     let extracted = extractDate()
     dayModels = extracted.map { value in
