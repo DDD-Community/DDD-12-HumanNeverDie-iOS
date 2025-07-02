@@ -90,7 +90,7 @@ public struct BeverageRecordListView: View {
     .padding(.horizontal, 20)
   }
   
-  private var sugerProgressView: some View {
+  private var sugarProgressView: some View {
     AMDSugarStatusView(
       variant: .healthy,
       sugar: 50,
