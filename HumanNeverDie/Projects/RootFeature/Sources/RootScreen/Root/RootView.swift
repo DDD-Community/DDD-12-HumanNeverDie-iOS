@@ -2,6 +2,7 @@ import SwiftUI
 
 import SplashFeature
 import CommonFeature
+import BeverageRecordListFeature
 
 public struct RootView: View {
   @State private var router = Router()
@@ -23,8 +24,8 @@ public struct RootView: View {
       .navigationBarBackButtonHidden(true)
       .navigationDestination(for: Route.self) { route in
         switch route {
-        case .map:
-          Color.blue
+        case .beverageRecordList:
+          BeverageRecordListViewFactory.create()
         }
       }
     }

@@ -8,5 +8,5 @@
 import Foundation
 
 public enum Route: Hashable {
-  case map
+  case beverageRecordList
 }

@@ -8,15 +8,24 @@
 import SwiftUI
 
 import CommonFeature
+import DesignSystem
 
 public struct HomeView: View {
   @State private var viewModel: HomeViewModel
+  @Environment(Router.self) private var router
   
   public init(viewModel: HomeViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
   public var body: some View {
-    Color.pink
+    ZStack {
+      Color.pink
+      
+      AMDFloatingButton(
+        title: "음료 기록하기",
+        action: { router.push(to: .beverageRecordList) }
+      )
+    }
   }
 }
