@@ -26,7 +26,7 @@ public struct BeverageRecordListView: View {
   
   private enum Constants {
     static let navigationBarHeight: CGFloat = 56
-    static let sugerProgressViewHeight: CGFloat = 110
+    static let sugarProgressViewHeight: CGFloat = 110
     static let beverageFilterChipViewHeight: CGFloat = 68
     static let beverageSearchViewHeight: CGFloat = 36
   }
@@ -96,7 +96,7 @@ public struct BeverageRecordListView: View {
       sugar: 50,
       baseSugar: 100
     )
-    .frame(minHeight: 110, maxHeight: 110, alignment: .top)
+    .frame(minHeight: Constants.sugarProgressViewHeight, maxHeight: Constants.sugarProgressViewHeight, alignment: .top)
   }
 }
 
@@ -155,7 +155,7 @@ private extension BeverageRecordListView {
     }
     .scrollIndicators(.hidden)
     .scrollDismissesKeyboard(.immediately)
-    .padding(.bottom, Constants.sugerProgressViewHeight)
+    .padding(.bottom, Constants.sugarProgressViewHeight)
   }
   
   private var beverageListEmptyView: some View {
