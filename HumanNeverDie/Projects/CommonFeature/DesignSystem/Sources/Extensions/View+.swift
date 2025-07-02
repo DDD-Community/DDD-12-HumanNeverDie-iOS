@@ -59,3 +59,23 @@ public extension View {
       }
   }
 }
+
+public extension View {
+  func amdDivider(
+    type: AMDDeviderType = .list,
+    isTop: Bool = false,
+    isBottom: Bool = true
+  ) -> some View {
+    VStack(spacing: 0) {
+      if isTop { AMDDevider(type: type) }
+      
+      Spacer()
+      
+      self
+      
+      Spacer()
+      
+      if isBottom { AMDDevider(type: type) }
+    }
+  }
+}
