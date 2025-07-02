@@ -155,6 +155,7 @@ private extension BeverageRecordListView {
     }
     .scrollIndicators(.hidden)
     .scrollDismissesKeyboard(.immediately)
+    .padding(.bottom, Constants.sugerProgressViewHeight)
   }
   
   private func beverageListEmptyView(_ height: CGFloat) -> some View {
