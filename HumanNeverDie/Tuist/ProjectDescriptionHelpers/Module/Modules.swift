@@ -15,6 +15,7 @@ public extension Modules {
         case Splash
         case Home
         case History
+        case BeverageRecordList
         
         var name: String {
             return "\(rawValue)Feature"
@@ -41,6 +42,7 @@ public extension Modules {
     
     enum Domain: String {
         case Main
+        case Beverage
         
         var name: String {
             return "\(rawValue)Domain"

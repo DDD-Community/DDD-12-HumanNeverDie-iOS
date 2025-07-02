@@ -7,6 +7,7 @@ let project = Project.makeModule(
     dependencies: [.data,
         .feature(module: .Splash),
         .feature(module: .Home),
-        .feature(module: .History)
+        .feature(module: .History),
+        .feature(module: .BeverageRecordList)
     ]
 )

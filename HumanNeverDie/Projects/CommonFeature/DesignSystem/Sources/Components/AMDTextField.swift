@@ -29,9 +29,8 @@ public enum AMDTextFieldRightAreaButtonType {
 }
 
 public struct AMDTextField: View {
-  @FocusState private var isFocused: Bool
-  
   @Binding private var text: String
+  private var isFocused: FocusState<Bool>.Binding?
   private let title: String?
   private let placeholder: String?
   private let hiddenClearButton: Bool
@@ -41,8 +40,11 @@ public struct AMDTextField: View {
   private let errorMessage: String?
   private let helperMessage: String?
   
+  @FocusState private var internalFocus: Bool
+  
   public init(
     text: Binding<String>,
+    isFocused: FocusState<Bool>.Binding? = nil,
     title: String? = nil,
     placeholder: String? = nil,
     hiddenClearButton: Bool = true,
@@ -53,6 +55,7 @@ public struct AMDTextField: View {
     helperMessage: String? = nil
   ) {
     self._text = text
+    self.isFocused = isFocused
     self.title = title
     self.placeholder = placeholder
     self.hiddenClearButton = hiddenClearButton
@@ -112,10 +115,10 @@ public struct AMDTextField: View {
       .amdFont(.mediumMedium)
       .foregroundStyle(.gray85)
       .tint(.gray85)
-      .focused($isFocused)
+      .focused(isFocused ?? $internalFocus)
       .frame(height: 24)
       
-      if !hiddenClearButton && isFocused {
+      if !hiddenClearButton && (isFocused?.wrappedValue ?? internalFocus) {
         Button {
           text.removeAll()
         } label: {

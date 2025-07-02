@@ -41,6 +41,17 @@ public struct AMDBeverageListView: View {
     case medium
     case large
     
+    fileprivate var height: CGFloat {
+      switch self {
+      case .small:
+        return 89
+      case .medium:
+        return 98
+      case .large:
+        return 124
+      }
+    }
+    
     fileprivate var topPadding: CGFloat {
       switch self {
       case .small:
@@ -152,6 +163,7 @@ public struct AMDBeverageListView: View {
       AMDDevider()
     }
     .padding(.top, 12)
+    .frame(minHeight: type.height, maxHeight: type.height)
   }
 }
 
