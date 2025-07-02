@@ -43,7 +43,7 @@ public struct BeverageRecordListView: View {
       }
     }
     .overlay(alignment: .bottom) {
-      sugerProgressView
+      sugarProgressView
     }
     .ignoresSafeArea([.keyboard, .container], edges: .bottom)
     .toolbarVisibility(.hidden, for: .navigationBar)
@@ -106,7 +106,7 @@ private extension BeverageRecordListView {
   private func beverageListView(_ height: CGFloat) -> some View {
     Group {
       if viewModel.beverageList.isEmpty {
-        beverageListEmptyView(height)
+        beverageListEmptyView
       } else {
         VStack(spacing: 0) {
           beverageFilterChipView
@@ -158,7 +158,7 @@ private extension BeverageRecordListView {
     .padding(.bottom, Constants.sugerProgressViewHeight)
   }
   
-  private func beverageListEmptyView(_ height: CGFloat) -> some View {
+  private var beverageListEmptyView: some View {
     VStack(alignment: .center) {
       Spacer()
       
