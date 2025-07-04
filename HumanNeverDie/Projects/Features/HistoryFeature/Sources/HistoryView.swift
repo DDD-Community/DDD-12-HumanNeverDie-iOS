@@ -62,7 +62,7 @@ public struct HistoryView: View {
         VStack(alignment: .leading, spacing: 0) {
           AMDSugarStatusView(
             variant: .healthy,
-            style: .history(drinkCount: 2, sugar: 100, baseSugar: 50)
+            style: .history(drinkCount: 2, sugar: 50, baseSugar: 100)
           )
           addDrinkButton
         }

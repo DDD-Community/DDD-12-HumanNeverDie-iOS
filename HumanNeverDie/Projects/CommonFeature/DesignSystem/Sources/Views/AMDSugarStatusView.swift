@@ -37,21 +37,21 @@ public struct AMDSugarStatusView: View {
   
   public var body: some View {
     switch style {
-    case .main(let base, let sugar):
-      mainStyleBody(baseSugar: base, sugar: sugar)
+    case .main(let sugar, let baseSugar,):
+      mainStyleBody(sugar: sugar, baseSugar: baseSugar)
       
-    case .history(let drinkCount, let baseSugar, let sugar):
-      historyStyleBody(drinkCount: drinkCount, baseSugar: baseSugar, sugar: sugar)
+    case .history(let drinkCount, let sugar, let baseSugar):
+      historyStyleBody(drinkCount: drinkCount,sugar: sugar, baseSugar: baseSugar)
     }
   }
   
-  private func mainStyleBody(baseSugar: Int, sugar: Int) -> some View {
+  private func mainStyleBody( sugar: Int, baseSugar: Int) -> some View {
     HStack(alignment: .center, spacing: 18) {
       characterImage
       
       VStack(spacing: 10) {
-        contentMainView(baseSugar: baseSugar, sugar: sugar)
-        progressBar(baseSugar: baseSugar, sugar: sugar)
+        contentMainView(sugar: sugar, baseSugar: baseSugar)
+        progressBar(sugar: sugar, baseSugar: baseSugar)
       }
     }
     .padding(.horizontal, 20)
@@ -61,7 +61,7 @@ public struct AMDSugarStatusView: View {
     .amdShadow(.tabbar)
   }
   
-  private func contentMainView(baseSugar: Int, sugar: Int) -> some View {
+  private func contentMainView(sugar: Int, baseSugar: Int) -> some View {
     HStack {
       HStack(spacing: 4) {
         Text("\(baseSugar - sugar)g")
@@ -84,15 +84,15 @@ public struct AMDSugarStatusView: View {
     }
   }
   
-  private func historyStyleBody(drinkCount: Int, baseSugar: Int, sugar: Int) -> some View {
+  private func historyStyleBody(drinkCount: Int, sugar: Int, baseSugar: Int) -> some View {
     VStack(spacing:0) {
       VStack(alignment: .center, spacing: 4) {
         HStack(spacing: 10) {
           characterImage
-          contentHistoryView(drinkCount: drinkCount, baseSugar: baseSugar, sugar: sugar)
+          contentHistoryView(drinkCount: drinkCount, sugar: sugar, baseSugar: baseSugar)
       
         }
-        progressBar(baseSugar: baseSugar, sugar: sugar)
+        progressBar(sugar: sugar, baseSugar: baseSugar)
       }
       .frame(minHeight: 87, maxHeight: 87)
       
@@ -101,7 +101,7 @@ public struct AMDSugarStatusView: View {
     .background(Color.white)
   }
   
-  private func contentHistoryView(drinkCount: Int, baseSugar: Int, sugar: Int) -> some View {
+  private func contentHistoryView(drinkCount: Int, sugar: Int, baseSugar: Int) -> some View {
     HStack(spacing: 4.5){
       HStack(spacing: 2) {
         Text("총 ")
@@ -134,7 +134,7 @@ public struct AMDSugarStatusView: View {
     }
   }
   
-  private func progressBar(baseSugar: Int, sugar: Int) -> some View {
+  private func progressBar(sugar: Int, baseSugar: Int) -> some View {
     AMDProgress(
       glucose: Double(sugar) / Double(baseSugar),
       isStatusLabelHidden: true,
