@@ -10,6 +10,7 @@ import DesignSystem
 import CommonFeature
 
 public struct HistoryView: View {
+  @Environment(Router.self) private var router
   @State private var viewModel: HistoryViewModel
   @State private var isMonthPickerPresented = false
   @State private var tempDate = Date()
@@ -75,6 +76,7 @@ public struct HistoryView: View {
   
   private var addDrinkButton: some View {
     Button(action: {
+      router.push(to: .beverageRecordList) 
       print("음료 추가하기 눌림")
     }) {
       HStack(spacing: 8) {
