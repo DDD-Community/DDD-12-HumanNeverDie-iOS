@@ -76,8 +76,7 @@ public struct HistoryView: View {
   
   private var addDrinkButton: some View {
     Button(action: {
-      router.push(to: .beverageRecordList) 
-      print("음료 추가하기 눌림")
+      router.push(to: .beverageRecordList)
     }) {
       HStack(spacing: 8) {
         Image(systemName: "plus.circle")
@@ -118,14 +117,6 @@ public struct HistoryView: View {
     .padding(.vertical, 8)
     }
   }
-}
-
-extension DateFormatter {
-  static let calendarDayFormat: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy.MM.dd"
-    return formatter
-  }()
 }
 
 #Preview {
