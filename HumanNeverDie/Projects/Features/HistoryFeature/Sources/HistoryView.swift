@@ -13,15 +13,15 @@ private enum Constants {
   static let sugarProgressViewHeight: CGFloat = 110
 }
 
-private var sugarProgressView: some View {
-  AMDSugarStatusView(
-    variant: .healthy,
-    sugar: 50,
-    baseSugar: 100,
-    drinkCount: 2
-  )
-  .frame(minHeight: Constants.sugarProgressViewHeight, maxHeight: Constants.sugarProgressViewHeight, alignment: .top)
-}
+//private var sugarProgressView: some View {
+//  AMDSugarStatusView(
+//    variant: .healthy,
+//    sugar: 50,
+//    baseSugar: 100,
+//    drinkCount: 2
+//  )
+//  .frame(minHeight: Constants.sugarProgressViewHeight, maxHeight: Constants.sugarProgressViewHeight, alignment: .top)
+//}
 
 public struct HistoryView: View {
   @State private var viewModel: HistoryViewModel
@@ -67,7 +67,7 @@ public struct HistoryView: View {
       }
       
       VStack(alignment: .leading, spacing: 0) {
-        sugarProgressView
+        AMDSugarStatusView(variant: .healthy, style: .history(drinkCount: 2, sugar: 100, baseSugar: 50))
         addDrinkButton
         mediumSampleSection
       }
