@@ -67,7 +67,7 @@ public struct HistoryView: View {
           addDrinkButton
         }
         .padding(.horizontal, 20)
-        mediumSampleSection
+        selectedDateBeverageSection
         
       }
     }
@@ -96,29 +96,26 @@ public struct HistoryView: View {
     .padding(.vertical, 10) // 버튼 외부 여백
   }
   
-  private var mediumSampleSection: some View {
-    VStack(alignment: .leading, spacing: 0) {        LazyVStack(spacing: 20) {
-      ForEach(3..<30, id: \.self) { index in
-        AMDBeverageListView.medium(
-          thumbnailURL: "https://picsum.photos/200/300?random=\(index)",
-          brandTitle: "Brand \(index + 1)",
-          beverageSize: "Tall",
-          beverageTitle: "Medium Beverage \(index + 1)",
-          glucose: Double(30 + index * 15),
-          kcal: Double(80 + index * 30),
-          sugarFreeVariant: index % 3 == 0 ? nil : (index % 3 == 1 ? .zero : .low),
-          menuAction: {
-            print("Menu tapped for medium item \(index)")
-          }
-        )
-        .padding(.horizontal, 20)
+  private var selectedDateBeverageSection: some View {
+    VStack(alignment: .leading, spacing: 0) {
+      LazyVStack(spacing: 20) {
+        ForEach(viewModel.frequentBeverageList, id: \.productID) { beverage in
+          AMDBeverageListView.medium(
+            thumbnailURL: beverage.thumbnailURL,
+            brandTitle: beverage.brandName,
+            beverageSize: "Tall", // 필요하다면 beverage.size로 교체 가능
+            beverageTitle: beverage.name,
+            glucose: Double(beverage.sugar),
+            kcal: Double(beverage.kcal),
+            sugarFreeVariant: beverage.sugarFreeType?.sugarFreeVariant,
+            menuAction: {
+              viewModel.handleAction(.beverageListInfoTapped(beverage.productID))
+            }
+          )
+          .padding(.horizontal, 20)
+        }
       }
-    }
-    .padding(.vertical, 8)
+      .padding(.vertical, 8)
     }
   }
-}
-
-#Preview {
-  HistoryView(viewModel: HistoryViewModel())
 }

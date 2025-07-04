@@ -9,6 +9,7 @@ import Foundation
 import Observation
 
 import CommonFeature
+import BeverageDomain
 
 @Observable
 @MainActor
@@ -20,10 +21,13 @@ public final class HistoryViewModel :ViewModelable {
   var selectedDate: Date? = nil
   
   public struct State: Equatable {
+    var frequentBeverageList: [Beverage] = Beverage.frequentMockData
   }
   
   public enum Action {
     case onAppear
+    case beverageListFavoriteTapped(Bool, String)
+    case beverageListInfoTapped(String)
   }
   
   public var state: State = .init()
@@ -32,6 +36,10 @@ public final class HistoryViewModel :ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
+      break
+    case .beverageListFavoriteTapped(_, _):
+      break
+    case .beverageListInfoTapped(_):
       break
     }
   }
