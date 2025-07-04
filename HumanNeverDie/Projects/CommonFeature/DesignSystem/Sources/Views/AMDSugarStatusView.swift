@@ -94,12 +94,10 @@ public struct AMDSugarStatusView: View {
         }
         progressBar(baseSugar: baseSugar, sugar: sugar)
       }
-      .padding(.vertical, 10)
       .frame(minHeight: 87, maxHeight: 87)
       
     }
-    .amdDivider(isTop: true, isBottom: false)
-    .padding(.horizontal, 8)
+    .padding(.vertical, 10)
     .background(Color.white)
   }
   
