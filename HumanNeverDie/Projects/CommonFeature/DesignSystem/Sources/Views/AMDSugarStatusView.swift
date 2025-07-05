@@ -51,7 +51,7 @@ public struct AMDSugarStatusView: View {
       
       VStack(spacing: 10) {
         contentMainView(sugar: sugar, baseSugar: baseSugar)
-        progressBar(sugar: sugar, baseSugar: baseSugar)
+        progressBar(sugar: sugar, baseSugar: baseSugar, isStatusLavbledHidden: true)
       }
     }
     .padding(.horizontal, 20)
@@ -92,7 +92,7 @@ public struct AMDSugarStatusView: View {
           contentHistoryView(drinkCount: drinkCount, sugar: sugar, baseSugar: baseSugar)
       
         }
-        progressBar(sugar: sugar, baseSugar: baseSugar)
+        progressBar(sugar: sugar, baseSugar: baseSugar, isStatusLavbledHidden: false)
       }
       .frame(minHeight: 87, maxHeight: 87)
       
@@ -134,10 +134,10 @@ public struct AMDSugarStatusView: View {
     }
   }
   
-  private func progressBar(sugar: Int, baseSugar: Int) -> some View {
+  private func progressBar(sugar: Int, baseSugar: Int, isStatusLavbledHidden: Bool) -> some View {
     AMDProgress(
       glucose: Double(sugar) / Double(baseSugar),
-      isStatusLabelHidden: true,
+      isStatusLabelHidden: isStatusLavbledHidden,
       type: .small,
       variant: variant
     )
