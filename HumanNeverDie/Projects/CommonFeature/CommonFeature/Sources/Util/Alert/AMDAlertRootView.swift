@@ -1,5 +1,5 @@
 //
-//  AMDAlertView.swift
+//  AMDAlertRootView.swift
 //  CommonFeature
 //
 //  Created by 김규철 on 7/4/25.

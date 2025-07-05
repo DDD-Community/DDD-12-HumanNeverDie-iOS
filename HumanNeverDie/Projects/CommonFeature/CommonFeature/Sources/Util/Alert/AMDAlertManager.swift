@@ -14,17 +14,17 @@ import DesignSystem
 final class AMDAlertManager {
   static let shared = AMDAlertManager()
   
-  private var alertWindow: UIWindow?
   var isPresented = false
+  private var alertWindow: UIWindow?
   
   private init() {
-    createAlertWindoww()
+    createAlertWindow()
   }
   
   func showAlert(_ property: AMDAlertProperty) {
     self.showAlertWindow(property)
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
       withAnimation(.easeIn(duration: 0.2)) {
         self.isPresented = true
       }
@@ -39,7 +39,7 @@ final class AMDAlertManager {
     }
   }
   
-  private func createAlertWindoww() {
+  private func createAlertWindow() {
     guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
       alertWindow = nil
       return
