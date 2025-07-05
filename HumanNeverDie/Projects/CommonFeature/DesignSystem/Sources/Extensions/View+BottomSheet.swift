@@ -10,15 +10,15 @@ import SwiftUI
 public extension View {
   func amdBottomSheet<Content: View>(
     isPresented: Binding<Bool>,
-    height: CGFloat,
+    detents: Set<PresentationDetent>,
     dimOpacity: Double = 0.5,
     @ViewBuilder content: @escaping () -> Content
   ) -> some View {
     self.sheet(isPresented: isPresented) {
       content()
-        .presentationDetents([.height(height)])
+        .presentationDetents(detents)
         .presentationDragIndicator(.visible)
-        .presentationBackground(.black.opacity(dimOpacity))
+        .presentationBackground(.white)
         .presentationCornerRadius(16)
     }
   }
