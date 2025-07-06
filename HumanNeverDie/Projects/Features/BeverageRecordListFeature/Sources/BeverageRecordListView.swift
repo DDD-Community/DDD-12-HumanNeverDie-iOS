@@ -93,8 +93,7 @@ public struct BeverageRecordListView: View {
   private var sugarProgressView: some View {
     AMDSugarStatusView(
       variant: .healthy,
-      sugar: 50,
-      baseSugar: 100
+      style: .main(sugar: 50, baseSugar: 100)
     )
     .frame(minHeight: Constants.sugarProgressViewHeight, maxHeight: Constants.sugarProgressViewHeight, alignment: .top)
   }
