@@ -14,62 +14,68 @@ public struct HistoryView: View {
   @State private var viewModel: HistoryViewModel
   @State private var isMonthPickerPresented = false
   @State private var tempDate = Date()
+  @State private var popupPosition: CGPoint? = nil
   
   public init(viewModel: HistoryViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
   public var body: some View {
-    ScrollView(.vertical, showsIndicators: false) {
-      VStack(spacing: 0) {
-        AMDCalendarFactory.createMonth(
-          currentDate: viewModel.currentDate,
-          sugarIntakeRecordData: viewModel.sugarIntakeRecordData,
-          userSugarTargetValue: 50,
-          selectedDate: $viewModel.selectedDate,
-          onTapTitle: {
-            tempDate = viewModel.selectedDate ?? Date()
-            isMonthPickerPresented = true
-          }
-        )
-        .sheet(isPresented: $isMonthPickerPresented) {
-          VStack(spacing: 20) {
-            DatePicker(
-              "날짜 선택",
-              selection: $tempDate,
-              displayedComponents: [.date]
-            )
-            .datePickerStyle(.wheel)
-            .labelsHidden()
-            
-            Button("확인") {
-              viewModel.selectedDate = tempDate
-              isMonthPickerPresented = false
+    ZStack(alignment: .top) {
+      ScrollView(.vertical, showsIndicators: false) {
+        VStack(spacing: 0) {
+          AMDCalendarFactory.createMonth(
+            currentDate: viewModel.currentDate,
+            sugarIntakeRecordData: viewModel.sugarIntakeRecordData,
+            userSugarTargetValue: 50,
+            selectedDate: $viewModel.selectedDate,
+            onTapTitle: {
+              tempDate = viewModel.selectedDate ?? Date()
+              isMonthPickerPresented = true
             }
-            
-            Button("닫기") {
-              isMonthPickerPresented = false
-            }
-            .foregroundColor(.red)
-          }
-          .padding()
-        }
-        
-        Rectangle()
-          .fill(.gray10)
-          .frame(height: 8)
-        
-        VStack(alignment: .leading, spacing: 0) {
-          AMDSugarStatusView(
-            variant: .healthy,
-            style: .history(drinkCount: 2, sugar: 50, baseSugar: 100)
           )
-          addDrinkButton
+          .sheet(isPresented: $isMonthPickerPresented) {
+            VStack(spacing: 20) {
+              DatePicker(
+                "날짜 선택",
+                selection: $tempDate,
+                displayedComponents: [.date]
+              )
+              .datePickerStyle(.wheel)
+              .labelsHidden()
+              
+              Button("확인") {
+                viewModel.selectedDate = tempDate
+                isMonthPickerPresented = false
+              }
+              
+              Button("닫기") {
+                isMonthPickerPresented = false
+              }
+              .foregroundColor(.red)
+            }
+            .padding()
+          }
+          
+          Rectangle()
+            .fill(.gray10)
+            .frame(height: 8)
+          
+          VStack(alignment: .leading, spacing: 0) {
+            AMDSugarStatusView(
+              variant: .healthy,
+              style: .history(drinkCount: 2, sugar: 50, baseSugar: 100)
+            )
+            addDrinkButton
+          }
+          .padding(.horizontal, 20)
+          selectedDateBeverageSection
+          
         }
-        .padding(.horizontal, 20)
-        selectedDateBeverageSection
-        
       }
+      
+      popupBackgroundOverlay()
+      popupMenu()
     }
   }
   
@@ -113,9 +119,82 @@ public struct HistoryView: View {
             }
           )
           .padding(.horizontal, 20)
+          .background(
+            GeometryReader { geo in
+              Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture {
+                  let frame = geo.frame(in: .global)
+                  self.popupPosition = CGPoint(x: frame.maxX - 100, y: frame.midY - 60)
+                  viewModel.state.selectedBeverageID = beverage.productID
+                }
+            }
+          )
         }
       }
       .padding(.vertical, 8)
     }
   }
+  
+  @ViewBuilder
+  private func popupBackgroundOverlay() -> some View {
+    if viewModel.selectedBeverageID != nil {
+      Color.black.opacity(0.001)
+        .ignoresSafeArea()
+        .onTapGesture {
+          viewModel.state.selectedBeverageID  = nil
+        }
+        .zIndex(0)
+    }
+  }
+  
+  @ViewBuilder
+  private func popupMenu() -> some View {
+    if let popupPosition, let productID = viewModel.selectedBeverageID {
+      VStack(spacing: 0) {
+        Button {
+          viewModel.handleAction(.beverageListInfoTapped(productID))
+          viewModel.state.selectedBeverageID  = nil
+        } label: {
+          HStack(spacing: 8) {
+            Image(systemName: "info.circle")
+              .foregroundStyle(.gray80)
+              .amdFont(.mediumMedium)
+            Text("영양정보")
+              .foregroundStyle(.gray80)
+              .amdFont(.mediumMedium)
+          }
+          .padding(.vertical, 13)
+          .padding(.horizontal, 20)
+          .frame(maxWidth: .infinity, alignment: .leading)
+        }
+
+        Divider()
+
+        Button {
+          viewModel.state.selectedBeverageID = nil
+        } label: {
+          HStack(spacing: 8) {
+            Image(systemName: "trash")
+              .foregroundStyle(.danger)
+              .amdFont(.mediumMedium)
+            Text("기록 삭제")
+              .foregroundStyle(.danger)
+              .amdFont(.mediumMedium)
+          }
+          .padding(.vertical, 13)
+          .padding(.horizontal, 20)
+          .frame(maxWidth: .infinity, alignment: .leading)
+        }
+      }
+      .frame(width: 130)
+      .background(Color.white)
+      .clipShape(RoundedRectangle(cornerRadius: 12))
+      .shadow(radius: 4)
+      .position(x: popupPosition.x, y: popupPosition.y)
+      .zIndex(1)
+    }
+  }
+
+
 }

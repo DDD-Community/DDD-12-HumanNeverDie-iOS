@@ -22,6 +22,7 @@ public final class HistoryViewModel :ViewModelable {
   
   public struct State: Equatable {
     var frequentBeverageList: [Beverage] = Beverage.frequentMockData
+    var selectedBeverageID: String? = nil
   }
   
   public enum Action {
@@ -39,7 +40,8 @@ public final class HistoryViewModel :ViewModelable {
       break
     case .beverageListFavoriteTapped(_, _):
       break
-    case .beverageListInfoTapped(_):
+    case .beverageListInfoTapped(let id):
+      state.selectedBeverageID = id
       break
     }
   }
