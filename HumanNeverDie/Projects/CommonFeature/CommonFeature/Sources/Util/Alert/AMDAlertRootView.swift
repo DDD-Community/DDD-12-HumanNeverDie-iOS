@@ -21,7 +21,7 @@ struct AMDAlertRootView: View {
     ZStack(alignment: .center) {
       if alertManager.isPresented {
         Color.black
-          .opacity(0.5)
+          .opacity(0.3)
           .ignoresSafeArea(.all)
           .onTapGesture {
             alertManager.hideAlert()
