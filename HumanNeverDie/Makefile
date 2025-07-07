@@ -42,7 +42,7 @@ generate:
 	@$(TUIST_ENV) tuist generate
 	
 open_xcode:
-	@open Modulerproject.xcworkspace
+	@open AhMatdang.xcworkspace
 	
 close_xcode:
 	-@pkill -x Xcode

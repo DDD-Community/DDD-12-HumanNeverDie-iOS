@@ -1,0 +1,8 @@
+git_url("https://github.com/kimkyuchul/HumanNeverDie-iOS-Certificates.git")
+
+storage_mode("git")
+
+type("development")
+
+app_identifier(["com.ahMatdang.ddd"])
+
