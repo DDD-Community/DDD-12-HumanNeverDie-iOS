@@ -1,0 +1,61 @@
+//
+//  AMDatePickerView.swift
+//  DesignSystem
+//
+//  Created by 김규철 on 7/5/25.
+//
+
+import SwiftUI
+
+public struct AMDDatePickerView: View {
+  private let title: String
+  private let type: AMDDatePicker.PickerType
+  private let action: (Date) -> Void
+  
+  @State private var date: Date = Date()
+  
+  public init(
+    title: String,
+    type: AMDDatePicker.PickerType,
+    action: @escaping (Date) -> Void
+  ) {
+    self.title = title
+    self.type = type
+    self.action = action
+  }
+  
+  public var body: some View {
+    VStack(spacing: 10) {
+      titleView
+      datePickerView
+      buttonView
+    }
+    .padding(.vertical, 10)
+    .padding(.horizontal, 20)
+    .ignoresSafeArea(edges: .bottom)
+  }
+  
+  private var titleView: some View {
+    Text(title)
+      .amdFont(.largeBold)
+      .foregroundStyle(.gray85)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .multilineTextAlignment(.leading)
+  }
+  
+  private var datePickerView: some View {
+    AMDDatePicker(
+      selectedDate: $date,
+      pickerType: type
+    )
+    .frame(maxWidth: .infinity, minHeight: 184, maxHeight: 184)
+  }
+  
+  private var buttonView: some View {
+    AMDButton(
+      type: .default,
+      title: "확인",
+      action: { action(date) }
+    )
+  }
+}
