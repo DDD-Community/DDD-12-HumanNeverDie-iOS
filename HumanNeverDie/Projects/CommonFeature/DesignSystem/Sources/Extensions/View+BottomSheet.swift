@@ -11,7 +11,6 @@ public extension View {
   func amdBottomSheet<Content: View>(
     isPresented: Binding<Bool>,
     detents: Set<PresentationDetent>,
-    dimOpacity: Double = 0.5,
     @ViewBuilder content: @escaping () -> Content
   ) -> some View {
     self.sheet(isPresented: isPresented) {
