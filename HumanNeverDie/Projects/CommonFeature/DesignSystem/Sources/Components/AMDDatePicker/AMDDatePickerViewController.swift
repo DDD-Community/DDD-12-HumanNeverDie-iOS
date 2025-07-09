@@ -52,8 +52,6 @@ public final class AMDDatePickerViewController: UIViewController {
   
   public override func viewWillLayoutSubviews() {
     super.viewWillLayoutSubviews()
-    
-    picker.subviews[1].backgroundColor = .clear
   }
   
   private func setupPickerView() {
@@ -294,8 +292,6 @@ extension AMDDatePickerViewController: UIPickerViewDataSource, UIPickerViewDeleg
     }
     
     let isSelected = pickerView.selectedRow(inComponent: component) == row
-    
-    label.backgroundColor = isSelected ? .gray15 : UIColor.clear
     label.textColor = isSelected ? .gray85 : .gray60
     
     return containerView
