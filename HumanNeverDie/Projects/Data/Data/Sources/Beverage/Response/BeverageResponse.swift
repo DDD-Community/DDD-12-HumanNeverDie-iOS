@@ -44,7 +44,7 @@ struct BeverageResponse: Decodable {
   let name: String?
   let imgUrl: String?
   let beverageType: String?
-  let cafeStoreDto: CafeStoreDto?
+  let cafeStoreDto: CafeStoreResponse?
   let isLiked: Bool?
   
   init(
@@ -52,7 +52,7 @@ struct BeverageResponse: Decodable {
     name: String?,
     imgUrl: String?,
     beverageType: String?,
-    cafeStoreDto: CafeStoreDto?,
+    cafeStoreDto: CafeStoreResponse?,
     isLiked: Bool?
   ) {
     self.productId = productId
@@ -64,7 +64,7 @@ struct BeverageResponse: Decodable {
   }
 }
 
-struct CafeStoreDto: Decodable {
+struct CafeStoreResponse: Decodable {
   let cafeBrand: String?
   
   init(cafeBrand: String?) {

@@ -27,4 +27,5 @@ public extension DependencyValues {
 private struct MockBeverageUseCase: BeverageUseCaseProtocol {
   func getBeverageCount() async throws -> BeverageCount { BeverageCount.mock() }
   func getBeverageList(cursor: String?) async throws -> BeverageList { BeverageList.mock() }
+  func getBeverageDetail(productID: String) async throws -> BeverageDetail { BeverageDetail.mock() }
 }

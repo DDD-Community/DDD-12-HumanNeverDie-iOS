@@ -10,4 +10,5 @@ import Foundation
 public protocol BeverageRepositoryInterface {
   func getBeverageCount() async throws -> BeverageCount
   func getBeverageList(cursor: String?) async throws -> BeverageList
+  func getBeverageDetail(productID: String) async throws -> BeverageDetail
 }

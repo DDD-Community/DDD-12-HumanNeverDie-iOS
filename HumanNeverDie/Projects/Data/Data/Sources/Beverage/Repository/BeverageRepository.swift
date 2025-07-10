@@ -37,4 +37,15 @@ public final class BeverageRepository: BeverageRepositoryInterface {
     
     return response.toDomain()
   }
+  
+  public func getBeverageDetail(productID: String) async throws -> BeverageDetail {
+    let target = BeverageDetailTarget(productID: productID)
+    let result = try await networkService.requestDDD(target)
+    
+    guard let response = result.data else {
+      throw AMDNetworkError.emptyResponse
+    }
+    
+    return response.toDomain()
+  }
 }
