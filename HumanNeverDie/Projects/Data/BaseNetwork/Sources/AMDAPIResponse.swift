@@ -12,3 +12,5 @@ public struct AMDAPIResponse<T: Decodable>: Decodable {
   public let status: Int?
   public let data: T?
 }
+
+public struct AMDEmptyResponse: Decodable {}
