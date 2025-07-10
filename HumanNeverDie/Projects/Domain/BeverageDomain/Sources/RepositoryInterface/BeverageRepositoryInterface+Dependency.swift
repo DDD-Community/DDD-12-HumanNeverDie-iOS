@@ -26,4 +26,5 @@ public extension DependencyValues {
 
 private struct MockBeverageRepository: BeverageRepositoryInterface {
   func getBeverageCount() async throws -> BeverageCount { BeverageCount.mock() }
+  func getBeverageList(cursor: String?) async throws -> BeverageList { BeverageList.mock() }
 }
