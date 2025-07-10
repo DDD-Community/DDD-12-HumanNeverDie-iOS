@@ -8,5 +8,5 @@
 import Foundation
 
 public protocol BeverageRepositoryInterface {
-    // Add your repository interface methods here
-} 
+  func getBeverageCount() async throws -> BeverageCount
+}
