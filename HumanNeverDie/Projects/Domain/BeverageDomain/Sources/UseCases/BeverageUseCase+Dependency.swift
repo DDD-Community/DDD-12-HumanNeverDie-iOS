@@ -29,4 +29,5 @@ private struct MockBeverageUseCase: BeverageUseCaseProtocol {
   func getBeverageList(cursor: String?) async throws -> BeverageList { BeverageList.mock() }
   func getBeverageDetail(productID: String) async throws -> BeverageDetail { BeverageDetail.mock() }
   func likeBeverage(productID: String) async throws -> BeverageLike { BeverageLike.mock() }
+  func unLikeBeverage(productID: String) async throws -> BeverageLike { BeverageLike.mock() }
 }

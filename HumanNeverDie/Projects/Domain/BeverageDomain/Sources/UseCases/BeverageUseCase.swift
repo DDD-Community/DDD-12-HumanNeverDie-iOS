@@ -7,6 +7,7 @@ public protocol BeverageUseCaseProtocol {
   func getBeverageList(cursor: String?) async throws -> BeverageList
   func getBeverageDetail(productID: String) async throws -> BeverageDetail
   func likeBeverage(productID: String) async throws -> BeverageLike
+  func unLikeBeverage(productID: String) async throws -> BeverageLike
 }
 
 public final class BeverageUseCase: BeverageUseCaseProtocol {
@@ -27,5 +28,9 @@ public final class BeverageUseCase: BeverageUseCaseProtocol {
   
   public func likeBeverage(productID: String) async throws -> BeverageLike {
     return try await beverageRepository.likeBeverage(productID: productID)
+  }
+  
+  public func unLikeBeverage(productID: String) async throws -> BeverageLike {
+    return try await beverageRepository.unLikeBeverage(productID: productID)
   }
 }
