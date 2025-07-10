@@ -48,4 +48,15 @@ public final class BeverageRepository: BeverageRepositoryInterface {
     
     return response.toDomain()
   }
+  
+  public func likeBeverage(productID: String) async throws -> BeverageLike {
+    let target = BeverageLikeTarget(productID: productID)
+    let result = try await networkService.requestDDD(target)
+    
+    guard let response = result.data else {
+      throw AMDNetworkError.emptyResponse
+    }
+    
+    return response.toDomain()
+  }
 }

@@ -11,4 +11,5 @@ public protocol BeverageRepositoryInterface {
   func getBeverageCount() async throws -> BeverageCount
   func getBeverageList(cursor: String?) async throws -> BeverageList
   func getBeverageDetail(productID: String) async throws -> BeverageDetail
+  func likeBeverage(productID: String) async throws -> BeverageLike
 }
