@@ -8,6 +8,7 @@
 import Foundation
 
 public protocol AMDAPIRequestable {
+  associatedtype Response: Decodable
   var baseURL: String { get }
   var path: String { get }
   var method: AMDHTTPMethod { get }
@@ -15,7 +16,7 @@ public protocol AMDAPIRequestable {
   var queryParameters: [String: String]? { get }
   var body: Encodable? { get }
   
-  func asURLRequest() throws -> URLRequest
+  func asURLRequest() throws(AMDNetworkError) -> URLRequest
 }
 
 public extension AMDAPIRequestable {
@@ -23,8 +24,9 @@ public extension AMDAPIRequestable {
     Bundle.main.infoDictionary?["BASE_URL"] as? String ?? ""
   }
   
-  func asURLRequest() throws -> URLRequest {
+  func asURLRequest() throws(AMDNetworkError) -> URLRequest {
     var urlComponents = URLComponents(string: baseURL + path)
+    
     if let queryParameters = queryParameters {
       urlComponents?.queryItems = queryParameters.map {
         URLQueryItem(name: $0.key, value: $0.value)
@@ -44,7 +46,7 @@ public extension AMDAPIRequestable {
     }
     
     if let body = body {
-      request.httpBody = try JSONEncoder().encode(body)
+      request.httpBody = try? JSONEncoder().encode(body)
     }
     
     return request
