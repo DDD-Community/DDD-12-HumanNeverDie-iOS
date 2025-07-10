@@ -21,7 +21,11 @@ public final class AMDNetworkService: AMDNetworkServiceProtocol {
   public init(timeout: TimeInterval = 5) {
     let configuration = URLSessionConfiguration.default
     configuration.timeoutIntervalForRequest = timeout
-    self.session = Session(configuration: configuration)
+    let logger = AMDNetworkLogger()
+    self.session = Session(
+      configuration: configuration,
+      eventMonitors: [logger]
+    )
   }
     
   public func requestDDD<R: AMDAPIRequestable>(_ target: R) async throws(AMDNetworkError) -> R.Response {
