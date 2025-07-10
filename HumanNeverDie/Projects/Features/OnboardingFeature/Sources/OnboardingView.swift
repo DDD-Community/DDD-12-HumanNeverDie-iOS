@@ -93,13 +93,14 @@ public struct OnboardingView: View {
       Button(action: {
         // 시작하기 액션
       }) {
-        Text("아맞당 시작하기")
-          .amdFont(.largeBold)
-          .foregroundColor(.gray5)
-          .frame(maxWidth: .infinity)
-          .frame(height: 52)
-          .background(.amdPrimary)
-          .cornerRadius(13)
+        
+        AMDButton(
+          type: .default,
+          title: "아맞당 시작하기"
+        ) {
+          print("기본 버튼 탭됨")
+        }
+//        .disabled(!isEnabled)
       }
       .padding(.horizontal, 20)
       .opacity(currentPage == totalPages - 1 ? 1 : 0)
