@@ -6,12 +6,8 @@
 //
 
 import Data
-import MainDomain
 
 import Dependencies
 
-// MARK: - MainRepository
 
-extension MainRepositoryKey: @retroactive DependencyKey {
-  public static let liveValue: MainRepositoryInterface = MainRepository()
 }

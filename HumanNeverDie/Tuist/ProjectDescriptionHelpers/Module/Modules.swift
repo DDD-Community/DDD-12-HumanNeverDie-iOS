@@ -41,7 +41,6 @@ public extension Modules {
     }
     
     enum Domain: String {
-        case Main
         case Beverage
         
         var name: String {
