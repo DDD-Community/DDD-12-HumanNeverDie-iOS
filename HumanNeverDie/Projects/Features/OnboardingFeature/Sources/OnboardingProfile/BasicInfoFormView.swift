@@ -12,23 +12,25 @@ import DesignSystem
 struct BasicInfoFormView: View {
   @State private var nickname: String = ""
   @State private var birthDate: String = ""
-  @State private var selectedGender: Gender = .male
   @State private var showAlert = false
+  @State private var selectedGender: Gender = .none
   
   enum Gender: String, CaseIterable {
+    case none = ""
     case male = "남성"
     case female = "여성"
+    
+    var isSelected: Bool {
+      return self != .none
+    }
   }
   
   var body: some View {
     VStack(spacing: 0) {
-
+      
       topHeaderView()
-      
       contentView()
-      
       Spacer()
-    
       bottomButtonView()
     }
     .background(Color.white)
@@ -58,17 +60,16 @@ struct BasicInfoFormView: View {
   private func contentView() -> some View {
     VStack(spacing: 30) {
       
-      nicknameInputView()
-      birthDateInputView()
-      genderSelectionView()
+      nicknameSection()
+      birthDateSection()
+      genderSection()
     }
     .padding(.horizontal, 20)
     .padding(.top, 48)
   }
   
-  // MARK: - Nickname Input
   @ViewBuilder
-  private func nicknameInputView() -> some View {
+  private func nicknameSection() -> some View {
     VStack(alignment: .leading, spacing: 12) {
       AMDTextField(
         text: $nickname,
@@ -80,24 +81,36 @@ struct BasicInfoFormView: View {
   }
   
   @ViewBuilder
-  private func birthDateInputView() -> some View {
-    VStack(alignment: .leading, spacing: 12) {
-      
-      AMDTextField(
-        text: $birthDate,
-        title: "생년월일",
-        placeholder: "생년월일을 입력해 주세요",
-        rightButtonType: .date,
-        rightButtonAction: {
-          showAlert = true
-        }
-      )
-    }
+  private func birthDateSection() -> some View {
+    AMDTextField(
+      text: $birthDate,
+      title: "생년월일",
+      placeholder: "생년월일을 입력해 주세요",
+      rightButtonType: .date,
+      rightButtonAction: {
+        showAlert = true
+      }
+    )
   }
   
   @ViewBuilder
-  private func genderSelectionView() -> some View {
-  
+  private func genderSection() -> some View {
+    VStack(alignment: .leading, spacing: 0) {
+      AMDTextField.titleLabel("성별")
+      
+      HStack(spacing: 12) {
+        ForEach([Gender.male, Gender.female], id: \.self) { gender in
+          AMDChipButton(
+            title: gender.rawValue,
+            isSelected: selectedGender == gender
+          ) {
+            selectedGender = gender
+          }
+        }
+        
+        Spacer()
+      }
+    }
   }
   
   @ViewBuilder
@@ -115,7 +128,6 @@ struct BasicInfoFormView: View {
     .padding(.horizontal, 20)
     .padding(.bottom, 50)
   }
-  
 }
 
 struct BasicInfoFormView_Previews: PreviewProvider {
