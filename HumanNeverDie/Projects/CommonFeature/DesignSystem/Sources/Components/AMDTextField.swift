@@ -80,14 +80,18 @@ public struct AMDTextField: View {
     }
   }
   
+  public static func titleLabel(_ title: String) -> some View {
+    Text(title)
+      .amdFont(.smallBold)
+      .foregroundStyle(.gray80)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(.bottom, 8)
+  }
+  
   @ViewBuilder
   private var titleView: some View {
     if let title {
-      Text(title)
-        .amdFont(.smallBold)
-        .foregroundStyle(.gray80)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.bottom, 8)
+      Self.titleLabel(title)
     }
   }
   
