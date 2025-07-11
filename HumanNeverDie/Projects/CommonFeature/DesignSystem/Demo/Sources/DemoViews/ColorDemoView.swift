@@ -29,6 +29,7 @@ struct ColorDemoView: View {
         .font(.headline)
       
       LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+        ColorItem(name: "gray0", color: Color.gray0)
         ColorItem(name: "gray5", color: Color.gray5)
         ColorItem(name: "gray10", color: Color.gray10)
         ColorItem(name: "gray15", color: Color.gray15)
