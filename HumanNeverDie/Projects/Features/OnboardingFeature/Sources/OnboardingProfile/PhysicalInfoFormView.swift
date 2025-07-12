@@ -9,20 +9,14 @@ import SwiftUI
 import DesignSystem
 
 struct PhysicalInfoFormView: View {
+  @State private var viewModel: OnboardingProfileViewModel
   @State private var userHeight: String = ""
   @State private var userWeight: String = ""
   @State private var selectedActivity: ActivityLevel = .none
   @State private var showAlert = false
   
-  enum ActivityLevel: String, CaseIterable {
-    case none = ""
-    case low = "높은 편"
-    case medium = "보통"
-    case high = "낮은 편"
-    
-    var isSelected: Bool {
-      return self != .none
-    }
+  public init(viewModel: OnboardingProfileViewModel) {
+    self._viewModel = .init(initialValue: viewModel)
   }
   
   var body: some View {
@@ -121,7 +115,7 @@ extension PhysicalInfoFormView {
         type: .default,
         title: "다음"
       ) {
-        print("다음 탭됨")
+        viewModel.handleAction(.moveToNextStep)
       }
     }
     .padding(.horizontal, 20)
@@ -155,13 +149,5 @@ struct ActivityOptionView: View {
           .stroke(isSelected ? .amdPrimary : .gray25, lineWidth: 1)
       )
     }
-  }
-}
-
- 
-// MARK: - Preview
-struct PhysicalInfoFormView_Previews: PreviewProvider {
-  static var previews: some View {
-    PhysicalInfoFormView()
   }
 }

@@ -10,19 +10,14 @@ import SwiftUI
 import DesignSystem
 
 struct BasicInfoFormView: View {
+  @State private var viewModel: OnboardingProfileViewModel
   @State private var nickname: String = ""
   @State private var birthDate: String = ""
   @State private var showAlert = false
   @State private var selectedGender: Gender = .none
   
-  enum Gender: String, CaseIterable {
-    case none = ""
-    case male = "남성"
-    case female = "여성"
-    
-    var isSelected: Bool {
-      return self != .none
-    }
+  public init(viewModel: OnboardingProfileViewModel) {
+    self._viewModel = .init(initialValue: viewModel)
   }
   
   var body: some View {
@@ -122,16 +117,10 @@ struct BasicInfoFormView: View {
         type: .default,
         title: "다음"
       ) {
-        print("다음 탭됨")
+        viewModel.handleAction(.moveToNextStep)
       }
     }
     .padding(.horizontal, 20)
     .padding(.bottom, 50)
-  }
-}
-
-struct BasicInfoFormView_Previews: PreviewProvider {
-  static var previews: some View {
-    BasicInfoFormView()
   }
 }

@@ -9,35 +9,11 @@ import SwiftUI
 import DesignSystem
 
 struct DailySugarGoalView: View {
+  @State private var viewModel: OnboardingProfileViewModel
   @State private var selectedGoal: SugarGoal = .none
   
-  enum SugarGoal: String, CaseIterable {
-    case none = ""
-    case easy = "쉬움"
-    case normal = "보통"
-    case hard = "어려움"
-    
-    var description: String {
-      switch self {
-      case .none: return ""
-      case .easy: return "권장량의 100% 이내 섭취"
-      case .normal: return "권장량의 50% 이내 섭취"
-      case .hard: return "권장량의 20% 이내 섭취"
-      }
-    }
-    
-    var targetAmount: String {
-      switch self {
-      case .none: return ""
-      case .easy: return "하루 200g"
-      case .normal: return "하루 100g"
-      case .hard: return "하루 40g"
-      }
-    }
-    
-    var isSelected: Bool {
-      return self != .none
-    }
+  public init(viewModel: OnboardingProfileViewModel) {
+    self._viewModel = .init(initialValue: viewModel)
   }
   
   var body: some View {
@@ -146,7 +122,7 @@ extension DailySugarGoalView {
       type: .default,
       title: "다음"
     ) {
-      //다음이벤트
+      viewModel.handleAction(.moveToNextStep)
     }
     .padding(.horizontal, 20)
     .padding(.bottom, 50)
@@ -154,7 +130,7 @@ extension DailySugarGoalView {
 }
 
 private struct SugarGoalOptionView: View {
-  let goal: DailySugarGoalView.SugarGoal
+  let goal: SugarGoal
   let isSelected: Bool
   let action: () -> Void
   
@@ -189,11 +165,5 @@ private struct SugarGoalOptionView: View {
           .stroke(isSelected ? .amdPrimary : .gray25, lineWidth: 1)
       )
     }
-  }
-}
-
-struct DailySugarGoalView_Previews: PreviewProvider {
-  static var previews: some View {
-    DailySugarGoalView()
   }
 }

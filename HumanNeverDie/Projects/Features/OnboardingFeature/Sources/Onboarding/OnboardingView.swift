@@ -12,6 +12,7 @@ import CommonFeature
 
 public struct OnboardingView: View {
   @State private var viewModel: OnboardingViewModel
+  @Environment(Router.self) private var router
   @State private var currentPage = 0
   let totalPages = 3
   
@@ -98,9 +99,8 @@ public struct OnboardingView: View {
           type: .default,
           title: "아맞당 시작하기"
         ) {
-          print("기본 버튼 탭됨")
+          router.push(to: .onboardingProfile)
         }
-//        .disabled(!isEnabled)
       }
       .padding(.horizontal, 20)
       .opacity(currentPage == totalPages - 1 ? 1 : 0)

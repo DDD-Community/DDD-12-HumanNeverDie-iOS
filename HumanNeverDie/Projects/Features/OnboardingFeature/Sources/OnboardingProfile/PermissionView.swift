@@ -9,6 +9,12 @@ import SwiftUI
 import DesignSystem
 
 struct PermissionView: View {
+  @State private var viewModel: OnboardingProfileViewModel
+  
+  public init(viewModel: OnboardingProfileViewModel) {
+    self._viewModel = .init(initialValue: viewModel)
+  }
+  
   
   var body: some View {
     VStack(spacing: 0) {
@@ -55,14 +61,5 @@ extension PermissionView {
         .foregroundColor(.gray80)
     }
     .multilineTextAlignment(.center)
-  }
-}
-
-struct NotificationPermissionView_Previews: PreviewProvider {
-  static var previews: some View {
-    Group {
-      PermissionView()
-        .previewDisplayName("Static")
-    }
   }
 }
