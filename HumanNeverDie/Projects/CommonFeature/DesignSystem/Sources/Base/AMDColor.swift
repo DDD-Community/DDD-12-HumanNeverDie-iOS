@@ -43,6 +43,7 @@ public extension Color {
 }
 
 public extension ShapeStyle where Self == Color {
+  static var gray0: Color { .gray0 }
   static var gray5: Color { .gray5 }
   static var gray10: Color { .gray10 }
   static var gray15: Color { .gray15 }
