@@ -21,7 +21,7 @@ public final class OnboardingProfileViewModel: ViewModelable {
     var birthDate: String = ""
     var selectedGender: Gender = .none
     
-
+    // PhysicalInfo Actions
     var height: String = ""
     var weight: String = ""
     var selectedActivity: ActivityLevel = .none
@@ -41,6 +41,11 @@ public final class OnboardingProfileViewModel: ViewModelable {
     case updateNickname(String)
     case updateBirthDate(String)
     case updateGender(Gender)
+    
+    // PhysicalInfo Actions
+    case updateHeight(String)
+    case updateWeight(String)
+    case updateActivity(ActivityLevel)
   }
   
   public var state: State = .init()
@@ -61,6 +66,15 @@ public final class OnboardingProfileViewModel: ViewModelable {
       
     case .updateGender(let gender):
       state.selectedGender = gender
+      
+    case .updateHeight(let height):
+      state.height = height
+      
+    case .updateWeight(let weight):
+      state.weight = weight
+      
+    case .updateActivity(let activity):
+      state.selectedActivity = activity
     }
   }
   
@@ -112,6 +126,63 @@ extension OnboardingProfileViewModel {
   }
 }
 
+//PhysicalInfoFormView
+extension OnboardingProfileViewModel {
+  
+  var isValidPhysicalInfo: Bool {
+    return isValidHeight && isValidWeight && isValidActivity
+  }
+  
+  var isValidHeight: Bool {
+    guard !state.height.isEmpty else { return false }
+    guard let heightValue = Int(state.height) else { return false }
+    return heightValue > 0 && heightValue <= 300
+  }
+  
+  var isValidWeight: Bool {
+    guard !state.weight.isEmpty else { return false }
+    guard let weightValue = Int(state.weight) else { return false }
+    return weightValue > 0 && weightValue <= 300
+  }
+  
+  var isValidActivity: Bool {
+    return state.selectedActivity.isSelected
+  }
+  
+  public var heightErrorMessage: String? {
+    if state.height.isEmpty {
+      return nil
+    }
+    
+    guard let heightValue = Int(state.height) else {
+      return "키는 0-300 사이의 숫자를 입력해주세요"
+    }
+    
+    if heightValue <= 0 || heightValue > 300 {
+      return "키는 0-300 사이의 숫자를 입력해주세요"
+    }
+    
+    return nil
+  }
+  
+  public var weightErrorMessage: String? {
+    if state.weight.isEmpty {
+      return nil
+    }
+    
+    guard let weightValue = Int(state.weight) else {
+      return "몸무게는 0-300 사이의 숫자를 입력해주세요"
+    }
+    
+    if weightValue <= 0 || weightValue > 300 {
+      return "몸무게는 0-300 사이의 숫자를 입력해주세요"
+    }
+    
+    return nil
+  }
+}
+
+ 
 extension String {
   var isValidNicknameFormat: Bool {
     let regex = "^[가-힣a-zA-Z0-9]{1,10}$"

@@ -10,9 +10,6 @@ import DesignSystem
 
 struct PhysicalInfoFormView: View {
   @State private var viewModel: OnboardingProfileViewModel
-  @State private var userHeight: String = ""
-  @State private var userWeight: String = ""
-  @State private var selectedActivity: ActivityLevel = .none
   @State private var showAlert = false
   
   public init(viewModel: OnboardingProfileViewModel) {
@@ -39,48 +36,46 @@ extension PhysicalInfoFormView {
       stepText: "2/3"
     )
   }
-}
-
-extension PhysicalInfoFormView {
+  
   @ViewBuilder
   private func contentView() -> some View {
     VStack(spacing: 30) {
-      heightSection()
-      weightSection()
-      activitySection()
+      AMDTextField(
+        text: Binding(
+          get: { viewModel.state.height },
+          set: { viewModel.handleAction(.updateHeight($0)) }
+        ),
+        title: "키",
+        placeholder: "키를 입력해주세요",
+        rightButtonType: .none,
+        rightButtonAction: {
+          showAlert = true
+        },
+        errorMessage: viewModel.heightErrorMessage
+      )
+      
+      AMDTextField(
+        text: Binding(
+          get: { viewModel.state.weight },
+          set: { viewModel.handleAction(.updateWeight($0)) }
+        ),
+        title: "몸무게",
+        placeholder: "몸무게를 입력해주세요",
+        rightButtonType: .none,
+        rightButtonAction: {
+          showAlert = true
+        },
+        errorMessage: viewModel.weightErrorMessage
+      )
+      
+      contentActivitySection()
     }
     .padding(.horizontal, 20)
     .padding(.top, 48)
   }
   
   @ViewBuilder
-  private func heightSection() -> some View {
-    AMDTextField(
-      text: $userHeight,
-      title: "키",
-      placeholder: "키를 입력해주세요",
-      rightButtonType: .none,
-      rightButtonAction: {
-        showAlert = true
-      }
-    )
-  }
-  
-  @ViewBuilder
-  private func weightSection() -> some View {
-    AMDTextField(
-      text: $userWeight,
-      title: "몸무게",
-      placeholder: "몸무게를 입력해주세요",
-      rightButtonType: .none,
-      rightButtonAction: {
-        showAlert = true
-      }
-    )
-  }
-  
-  @ViewBuilder
-  private func activitySection() -> some View {
+  private func contentActivitySection() -> some View {
     VStack(alignment: .leading, spacing: 0) {
       AMDTextField.titleLabel("활동량")
       
@@ -88,9 +83,9 @@ extension PhysicalInfoFormView {
         ForEach([ActivityLevel.high, ActivityLevel.medium, ActivityLevel.low], id: \.self) { activity in
           ActivityOptionView(
             title: activity.rawValue,
-            isSelected: selectedActivity == activity
+            isSelected: viewModel.state.selectedActivity == activity
           ) {
-            selectedActivity = activity
+            viewModel.handleAction(.updateActivity(activity))
           }
         }
       }
@@ -100,38 +95,39 @@ extension PhysicalInfoFormView {
   @ViewBuilder
   private func bottomButtonView() -> some View {
     OnboardingBottomButton(
-      type: .default
+      type: viewModel.isValidPhysicalInfo ? .default : .secondary
     ) {
+      guard viewModel.isValidPhysicalInfo else { return }
       viewModel.handleAction(.moveToNextStep)
     }
   }
-}
-
-struct ActivityOptionView: View {
-  let title: String
-  let isSelected: Bool
-  let action: () -> Void
   
-  var body: some View {
-    Button(action: action) {
-      HStack {
-        Image(systemName: isSelected ? "largecircle.fill.circle" : "circle")
-          .foregroundColor(isSelected ? .amdPrimary : .gray25)
-          .font(.system(size: 24))
-        
-        Text(title)
-          .amdFont(.mediumBold)
-          .foregroundColor(.gray85)
-        
-        Spacer()
+  private struct ActivityOptionView: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+      Button(action: action) {
+        HStack {
+          Image(systemName: isSelected ? "largecircle.fill.circle" : "circle")
+            .foregroundColor(isSelected ? .amdPrimary : .gray25)
+            .font(.system(size: 24))
+          
+          Text(title)
+            .amdFont(.mediumBold)
+            .foregroundColor(.gray85)
+          
+          Spacer()
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
+        .background(
+          RoundedRectangle(cornerRadius: 12)
+            .fill(isSelected ? .amdPrimary.opacity(0.1) : .gray0)
+            .stroke(isSelected ? .amdPrimary : .gray25, lineWidth: 1)
+        )
       }
-      .padding(.horizontal, 20)
-      .padding(.vertical, 16)
-      .background(
-        RoundedRectangle(cornerRadius: 12)
-          .fill(isSelected ? .amdPrimary.opacity(0.1) : .gray0)
-          .stroke(isSelected ? .amdPrimary : .gray25, lineWidth: 1)
-      )
     }
   }
 }
