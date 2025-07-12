@@ -28,13 +28,4 @@ struct OnboardingProfileView: View {
       PermissionView(viewModel: viewModel)
     }
   }
-  
-  private func moveToNext() {
-    viewModel.handleAction(.moveToNextStep)
-  }
-  
-  private func completeOnboarding() {
-    // 온보딩 완료 후 메인으로 이동
-    router.setRoute(.main)
-  }
 }
