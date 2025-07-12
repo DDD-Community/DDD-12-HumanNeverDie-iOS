@@ -12,9 +12,9 @@ import CommonFeature
 
 public struct OnboardingView: View {
   @State private var viewModel: OnboardingViewModel
-  @Environment(Router.self) private var router
   @State private var currentPage = 0
-  let totalPages = 3
+  @Environment(Router.self) private var router
+  private let totalPages = 3
   
   public init(viewModel: OnboardingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -26,9 +26,12 @@ public struct OnboardingView: View {
       pageContentView()
       bottomNavigationView()
     }
-    .background(Color.white)
+    .background(.gray0)
     .ignoresSafeArea(edges: .bottom)
   }
+}
+
+extension OnboardingView {
   
   @ViewBuilder
   private func topNavigationView() -> some View {
@@ -37,12 +40,12 @@ public struct OnboardingView: View {
         ForEach(0..<totalPages, id: \.self) { index in
           if currentPage != index {
             Circle()
-              .fill(index == currentPage ? Color.cyan : .gray40)
+              .fill(.gray40)
               .frame(width: 8, height: 8)
               .animation(.easeInOut(duration: 0.3), value: currentPage)
           } else {
             RoundedRectangle(cornerRadius: 15)
-              .fill(index <= currentPage ? .amdPrimary : .gray40)
+              .fill(.amdPrimary)
               .frame(width: 17, height: 8)
               .animation(.easeInOut(duration: 0.3), value: currentPage)
           }
@@ -51,10 +54,12 @@ public struct OnboardingView: View {
       
       HStack {
         Spacer()
+        
         Button("건너뛰기") {
-          // 건너뛰기 액션
+          pushProfileView()
         }
-        .foregroundColor(.amdPrimary)
+        .opacity(currentPage == totalPages - 1 ? 0 : 1)
+        .foregroundColor(.primaryDarker)
         .amdFont(.mediumRegular)
       }
     }
@@ -67,7 +72,7 @@ public struct OnboardingView: View {
   private func pageContentView() -> some View {
     TabView(selection: $currentPage) {
       OnboardingPageView(
-        title: "아맞당에서는 커피 음료에\n숨겨진 당류를 확인할 수 있당!",
+        title: "아맞당에서는 카페 음료에\n숨겨진 당류를 확인할 수 있당!",
         pageNumber: 0
       )
       .tag(0)
@@ -91,16 +96,11 @@ public struct OnboardingView: View {
   @ViewBuilder
   private func bottomNavigationView() -> some View {
     VStack(spacing: 20) {
-      Button(action: {
-        // 시작하기 액션
-      }) {
-        
-        AMDButton(
-          type: .default,
-          title: "아맞당 시작하기"
-        ) {
-          router.push(to: .onboardingProfile)
-        }
+      AMDButton(
+        type: .default,
+        title: "아맞당 시작하기"
+      ) {
+        pushProfileView()
       }
       .padding(.horizontal, 20)
       .opacity(currentPage == totalPages - 1 ? 1 : 0)
@@ -109,9 +109,7 @@ public struct OnboardingView: View {
     }
     .padding(.bottom, 36)
   }
-}
-
-extension OnboardingView {
+  
   struct OnboardingPageView: View {
     let title: String
     let pageNumber: Int
@@ -121,8 +119,8 @@ extension OnboardingView {
         Spacer()
         
         Text(title)
-          .font(.system(size: 24, weight: .bold))
-          .foregroundColor(.black)
+          .amdFont(.xxlargeBold)
+          .foregroundColor(.gray80)
           .multilineTextAlignment(.center)
           .lineSpacing(4)
           .padding(.horizontal, 40)
@@ -139,6 +137,10 @@ extension OnboardingView {
         Spacer()
       }
     }
+  }
+  
+  private func pushProfileView() {
+    router.push(to: .onboardingProfile)
   }
 }
 
