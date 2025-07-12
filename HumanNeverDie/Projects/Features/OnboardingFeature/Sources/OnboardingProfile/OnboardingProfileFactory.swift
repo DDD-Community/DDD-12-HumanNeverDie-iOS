@@ -11,6 +11,6 @@ import SwiftUI
 public struct OnboardingProfileFactory {
   public static func create() -> some View {
     let viewModel = OnboardingProfileViewModel()
-    return OnboardingContainerView(viewModel: viewModel)
+    return OnboardingProfileView(viewModel: viewModel)
   }
 }

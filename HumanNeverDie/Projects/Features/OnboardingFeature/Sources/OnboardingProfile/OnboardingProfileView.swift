@@ -1,5 +1,5 @@
 //
-//  OnboardingProfileContainerView.swift
+//  OnboardingProfileView.swift
 //  OnboardingFeature
 //
 //  Created by Seulki Lee on 7/13/25.
@@ -8,7 +8,7 @@
 import SwiftUI
 import CommonFeature
 
-struct OnboardingContainerView: View {
+struct OnboardingProfileView: View {
   @State private var viewModel: OnboardingProfileViewModel
   @Environment(Router.self) private var router
   
