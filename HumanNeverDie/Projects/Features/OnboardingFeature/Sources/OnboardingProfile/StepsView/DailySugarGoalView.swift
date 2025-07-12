@@ -10,7 +10,6 @@ import DesignSystem
 
 struct DailySugarGoalView: View {
   @State private var viewModel: OnboardingProfileViewModel
-  @State private var selectedGoal: SugarGoal = .none
   
   public init(viewModel: OnboardingProfileViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -79,12 +78,12 @@ extension DailySugarGoalView {
   @ViewBuilder
   private func goalSelectionView() -> some View {
     VStack(spacing: 10) {
-      ForEach([SugarGoal.easy, SugarGoal.normal, SugarGoal.hard], id: \.self) { goal in
+      ForEach([SugarGoal.easy, SugarGoal.normal, SugarGoal.hard], id: \.self) { dailyGoal in
         SugarGoalOptionView(
-          goal: goal,
-          isSelected: selectedGoal == goal
+          dailyGoal: dailyGoal,
+          isSelected: viewModel.state.selectedDailySugarGoal == dailyGoal
         ) {
-          selectedGoal = goal
+          viewModel.handleAction(.updateDailySugarGoal(dailyGoal))
         }
       }
     }
@@ -108,15 +107,16 @@ extension DailySugarGoalView {
   @ViewBuilder
   private func bottomButtonView() -> some View {
     OnboardingBottomButton(
-      type: .default
+      type: viewModel.isValidDailySugarGoal ? .default : .secondary
     ) {
+      guard viewModel.isValidDailySugarGoal else { return }
       viewModel.handleAction(.moveToNextStep)
     }
   }
 }
 
 private struct SugarGoalOptionView: View {
-  let goal: SugarGoal
+  let dailyGoal: SugarGoal
   let isSelected: Bool
   let action: () -> Void
   
@@ -128,18 +128,18 @@ private struct SugarGoalOptionView: View {
           .font(.system(size: 24))
         
         VStack(alignment: .leading, spacing: 4) {
-          Text(goal.rawValue)
+          Text(dailyGoal.rawValue)
             .amdFont(.mediumBold)
             .foregroundColor(.gray85)
           
-          Text(goal.description)
+          Text(dailyGoal.description)
             .amdFont(.smallRegular)
             .foregroundColor(.gray60)
         }
         
         Spacer()
         
-        Text(goal.targetAmount)
+        Text(dailyGoal.targetAmount)
           .amdFont(.mediumRegular)
           .foregroundColor(.primaryDarker)
       }

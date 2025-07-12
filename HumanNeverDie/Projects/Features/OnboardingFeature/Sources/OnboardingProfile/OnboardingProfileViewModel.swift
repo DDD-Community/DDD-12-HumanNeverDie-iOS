@@ -26,10 +26,9 @@ public final class OnboardingProfileViewModel: ViewModelable {
     var weight: String = ""
     var selectedActivity: ActivityLevel = .none
     
-
-    var selectedGoal: SugarGoal = .none
+    //DailySugarGoalView
+    var selectedDailySugarGoal: SugarGoal = .none
     
-
     var isPermissionGranted: Bool = false
   }
   
@@ -46,6 +45,8 @@ public final class OnboardingProfileViewModel: ViewModelable {
     case updateHeight(String)
     case updateWeight(String)
     case updateActivity(ActivityLevel)
+    
+    case updateDailySugarGoal(SugarGoal)
   }
   
   public var state: State = .init()
@@ -75,6 +76,9 @@ public final class OnboardingProfileViewModel: ViewModelable {
       
     case .updateActivity(let activity):
       state.selectedActivity = activity
+      
+    case .updateDailySugarGoal(let activity):
+      state.selectedDailySugarGoal = activity
     }
   }
   
@@ -182,7 +186,15 @@ extension OnboardingProfileViewModel {
   }
 }
 
- 
+//DailySugarGoalView
+extension OnboardingProfileViewModel {
+  
+  var isValidDailySugarGoal: Bool {
+    return state.selectedDailySugarGoal.isSelected
+  }
+}
+
+
 extension String {
   var isValidNicknameFormat: Bool {
     let regex = "^[가-힣a-zA-Z0-9]{1,10}$"
