@@ -34,21 +34,10 @@ struct BasicInfoFormView: View {
   
   @ViewBuilder
   private func topHeaderView() -> some View {
-    VStack(spacing: 0) {
-      HStack {
-        Text("기본 정보를 입력해주세요")
-          .font(.system(size: 24, weight: .bold))
-          .foregroundColor(.black)
-        
-        Spacer()
-        
-        Text("1/3")
-          .font(.system(size: 16))
-          .foregroundColor(.gray)
-      }
-      .padding(.horizontal, 20)
-      .padding(.top, 30)
-    }
+    OnboardingTopHeaderView(
+      title: "기본 정보를 입력해주세요",
+      stepText: "1/3"
+    )
   }
   
   @ViewBuilder
@@ -110,17 +99,10 @@ struct BasicInfoFormView: View {
   
   @ViewBuilder
   private func bottomButtonView() -> some View {
-    Button(action: {
-      // 다음 단계로 이동
-    }) {
-      AMDButton(
-        type: .default,
-        title: "다음"
-      ) {
-        viewModel.handleAction(.moveToNextStep)
-      }
+    OnboardingBottomButton(
+      type: .default
+    ) {
+      viewModel.handleAction(.moveToNextStep)
     }
-    .padding(.horizontal, 20)
-    .padding(.bottom, 50)
   }
 }

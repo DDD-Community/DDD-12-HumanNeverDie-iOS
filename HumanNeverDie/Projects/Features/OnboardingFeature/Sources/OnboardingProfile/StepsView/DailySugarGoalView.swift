@@ -32,21 +32,10 @@ struct DailySugarGoalView: View {
 extension DailySugarGoalView {
   @ViewBuilder
   private func topHeaderView() -> some View {
-    HStack(alignment: .lastTextBaseline) {
-      Text("일일 당 섭취량 목표를\n정해주세요")
-        .amdFont(.xxlargeBold)
-        .foregroundColor(.gray80)
-        .multilineTextAlignment(.leading)
-      
-      Spacer()
-      
-      Text("3/3")
-        .amdFont(.smallRegular)
-        .foregroundColor(.gray50)
-        .multilineTextAlignment(.trailing)
-    }
-    .padding(.horizontal, 20)
-    .padding(.top, 30)
+    OnboardingTopHeaderView(
+      title: "일일 당 섭취량 목표를\n정해주세요",
+      stepText: "3/3"
+    )
   }
   
   @ViewBuilder
@@ -118,14 +107,11 @@ extension DailySugarGoalView {
   
   @ViewBuilder
   private func bottomButtonView() -> some View {
-    AMDButton(
-      type: .default,
-      title: "다음"
+    OnboardingBottomButton(
+      type: .default
     ) {
       viewModel.handleAction(.moveToNextStep)
     }
-    .padding(.horizontal, 20)
-    .padding(.bottom, 50)
   }
 }
 

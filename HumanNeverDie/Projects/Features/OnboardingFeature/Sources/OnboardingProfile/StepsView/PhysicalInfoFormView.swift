@@ -34,19 +34,10 @@ struct PhysicalInfoFormView: View {
 extension PhysicalInfoFormView {
   @ViewBuilder
   private func topHeaderView() -> some View {
-    HStack {
-      Text("신체 정보를 입력해주세요")
-        .amdFont(.xxlargeBold)
-        .foregroundColor(.gray80)
-      
-      Spacer()
-      
-      Text("2/3")
-        .amdFont(.smallRegular)
-        .foregroundColor(.gray50)
-    }
-    .padding(.horizontal, 20)
-    .padding(.top, 30)
+    OnboardingTopHeaderView(
+      title: "신체 정보를 입력해주세요",
+      stepText: "2/3"
+    )
   }
 }
 
@@ -108,18 +99,11 @@ extension PhysicalInfoFormView {
   
   @ViewBuilder
   private func bottomButtonView() -> some View {
-    Button(action: {
-      // 다음 단계로 이동
-    }) {
-      AMDButton(
-        type: .default,
-        title: "다음"
-      ) {
-        viewModel.handleAction(.moveToNextStep)
-      }
+    OnboardingBottomButton(
+      type: .default
+    ) {
+      viewModel.handleAction(.moveToNextStep)
     }
-    .padding(.horizontal, 20)
-    .padding(.bottom, 50)
   }
 }
 
