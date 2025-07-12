@@ -11,10 +11,7 @@ import DesignSystem
 
 struct BasicInfoFormView: View {
   @State private var viewModel: OnboardingProfileViewModel
-  @State private var nickname: String = ""
-  @State private var birthDate: String = ""
   @State private var showAlert = false
-  @State private var selectedGender: Gender = .none
   
   public init(viewModel: OnboardingProfileViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -31,11 +28,14 @@ struct BasicInfoFormView: View {
     .background(Color.white)
     .ignoresSafeArea(edges: .bottom)
   }
+}
+
+extension BasicInfoFormView {
   
   @ViewBuilder
   private func topHeaderView() -> some View {
     OnboardingTopHeaderView(
-      title: "기본 정보를 입력해주세요",
+      title: "기본 정보를 입력해주세요.",
       stepText: "1/3"
     )
   }
@@ -44,41 +44,37 @@ struct BasicInfoFormView: View {
   private func contentView() -> some View {
     VStack(spacing: 30) {
       
-      nicknameSection()
-      birthDateSection()
-      genderSection()
+      AMDTextField(
+        text: Binding(
+          get: { viewModel.state.nickname },
+          set: { viewModel.handleAction(.updateNickname($0)) }
+        ),
+        title: "닉네임",
+        placeholder: "닉네임을 입력해주세요.",
+        errorMessage: viewModel.nicknameErrorMessage
+      )
+      
+      AMDTextField(
+        text: Binding(
+          get: { viewModel.state.birthDate },
+          set: { viewModel.handleAction(.updateBirthDate($0)) }
+        ),
+        title: "생년월일",
+        placeholder: "생년월일을 입력해 주세요",
+        rightButtonType: .date,
+        rightButtonAction: {
+          showAlert = true
+        }
+      )
+      
+      contentGenderSection()
     }
     .padding(.horizontal, 20)
     .padding(.top, 48)
   }
   
   @ViewBuilder
-  private func nicknameSection() -> some View {
-    VStack(alignment: .leading, spacing: 12) {
-      AMDTextField(
-        text: $nickname,
-        title: "닉네임",
-        placeholder: "닉네임을 입력해주세요",
-        errorMessage: "특수문자 및 공백은 사용할 수 없어요."
-      )
-    }
-  }
-  
-  @ViewBuilder
-  private func birthDateSection() -> some View {
-    AMDTextField(
-      text: $birthDate,
-      title: "생년월일",
-      placeholder: "생년월일을 입력해 주세요",
-      rightButtonType: .date,
-      rightButtonAction: {
-        showAlert = true
-      }
-    )
-  }
-  
-  @ViewBuilder
-  private func genderSection() -> some View {
+  private func contentGenderSection() -> some View {
     VStack(alignment: .leading, spacing: 0) {
       AMDTextField.titleLabel("성별")
       
@@ -86,13 +82,11 @@ struct BasicInfoFormView: View {
         ForEach([Gender.male, Gender.female], id: \.self) { gender in
           AMDChipButton(
             title: gender.rawValue,
-            isSelected: selectedGender == gender
+            isSelected: viewModel.state.selectedGender  == gender
           ) {
-            selectedGender = gender
+            viewModel.state.selectedGender  = gender
           }
         }
-        
-        Spacer()
       }
     }
   }
@@ -100,8 +94,9 @@ struct BasicInfoFormView: View {
   @ViewBuilder
   private func bottomButtonView() -> some View {
     OnboardingBottomButton(
-      type: .default
+      type: viewModel.isValidBasicInfo ? .default : .secondary
     ) {
+      guard viewModel.isValidBasicInfo else { return }
       viewModel.handleAction(.moveToNextStep)
     }
   }

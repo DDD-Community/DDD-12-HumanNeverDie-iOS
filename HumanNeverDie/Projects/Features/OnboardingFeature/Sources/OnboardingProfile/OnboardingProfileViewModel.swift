@@ -13,29 +13,34 @@ import CommonFeature
 @Observable
 @MainActor
 public final class OnboardingProfileViewModel: ViewModelable {
-  var currentStep: OnboardingStep = .basicInfo
+  private(set) var currentStep: OnboardingStep = .basicInfo
   
   public struct State: Equatable {
-    // 기본 정보
+    //BasicInfoFormView
     var nickname: String = ""
     var birthDate: String = ""
     var selectedGender: Gender = .none
     
-    // 신체 정보
+
     var height: String = ""
     var weight: String = ""
     var selectedActivity: ActivityLevel = .none
     
-    // 목표 설정
+
     var selectedGoal: SugarGoal = .none
     
-    // 권한
+
     var isPermissionGranted: Bool = false
   }
   
   public enum Action {
     case onAppear
     case moveToNextStep
+    
+    // BasicInfo Actions
+    case updateNickname(String)
+    case updateBirthDate(String)
+    case updateGender(Gender)
   }
   
   public var state: State = .init()
@@ -48,7 +53,14 @@ public final class OnboardingProfileViewModel: ViewModelable {
       
     case .moveToNextStep:
       moveToNextStep()
-      break
+    case .updateNickname(let nickname):
+      state.nickname = nickname
+      
+    case .updateBirthDate(let birthDate):
+      state.birthDate = birthDate
+      
+    case .updateGender(let gender):
+      state.selectedGender = gender
     }
   }
   
@@ -64,4 +76,48 @@ public final class OnboardingProfileViewModel: ViewModelable {
     }
   }
 }
+
+//BasicInfoFormView
+extension OnboardingProfileViewModel {
+  
+  var isValidBasicInfo: Bool {
+    return isValidNickname  && isValidBirthDate && isValidGender
+  }
+  
+  var isValidNickname: Bool {
+    let trimmedNickname = state.nickname.trimmingCharacters(in: .whitespacesAndNewlines)
+    return !trimmedNickname.isEmpty &&
+    trimmedNickname.count <= 10 &&
+    trimmedNickname.isValidNicknameFormat
+  }
+  
+  var isValidBirthDate: Bool {
+    return true
+  }
+  
+  var isValidGender: Bool {
+    return state.selectedGender.isSelected
+  }
+  
+  public var nicknameErrorMessage: String? {
+    if state.nickname.isEmpty {
+      return "닉네임을 입력해주세요."
+    }
+    
+    if !state.nickname.isValidNicknameFormat {
+      return "특수문자 및 공백은 사용할 수 없어요."
+    }
+    
+    return nil
+  }
+}
+
+extension String {
+  var isValidNicknameFormat: Bool {
+    let regex = "^[가-힣a-zA-Z0-9]{1,10}$"
+    let test = NSPredicate(format: "SELF MATCHES %@", regex)
+    return test.evaluate(with: self)
+  }
+}
+
 
