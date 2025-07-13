@@ -27,9 +27,9 @@ public enum Gender: String, CaseIterable {
 
 public enum ActivityLevel: String, CaseIterable {
   case none = ""
-  case low = "높은 편"
+  case low = "낮은 편"
   case medium = "보통"
-  case high = "낮은 편"
+  case high = "높은 편"
   
   var isSelected: Bool {
     return self != .none
