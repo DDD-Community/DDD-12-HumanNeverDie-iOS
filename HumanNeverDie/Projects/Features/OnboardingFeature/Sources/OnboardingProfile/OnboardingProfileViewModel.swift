@@ -96,22 +96,22 @@ public final class OnboardingProfileViewModel: ViewModelable {
 //BasicInfoFormView
 extension OnboardingProfileViewModel {
   
-  var isValidBasicInfo: Bool {
+  public var isValidBasicInfo: Bool {
     return isValidNickname  && isValidBirthDate && isValidGender
   }
   
-  var isValidNickname: Bool {
+  private var isValidNickname: Bool {
     let trimmedNickname = state.nickname.trimmingCharacters(in: .whitespacesAndNewlines)
     return !trimmedNickname.isEmpty &&
     trimmedNickname.count <= 10 &&
     trimmedNickname.isValidNicknameFormat
   }
   
-  var isValidBirthDate: Bool {
+  private var isValidBirthDate: Bool {
     return true
   }
   
-  var isValidGender: Bool {
+  private var isValidGender: Bool {
     return state.selectedGender.isSelected
   }
   
@@ -127,23 +127,23 @@ extension OnboardingProfileViewModel {
 //PhysicalInfoFormView
 extension OnboardingProfileViewModel {
   
-  var isValidPhysicalInfo: Bool {
+  public var isValidPhysicalInfo: Bool {
     return isValidHeight && isValidWeight && isValidActivity
   }
   
-  var isValidHeight: Bool {
+  private var isValidHeight: Bool {
     guard !state.height.isEmpty else { return false }
     guard let heightValue = Int(state.height) else { return false }
     return heightValue > 0 && heightValue <= 300
   }
   
-  var isValidWeight: Bool {
+  private var isValidWeight: Bool {
     guard !state.weight.isEmpty else { return false }
     guard let weightValue = Int(state.weight) else { return false }
     return weightValue > 0 && weightValue <= 300
   }
   
-  var isValidActivity: Bool {
+  private var isValidActivity: Bool {
     return state.selectedActivity.isSelected
   }
   
@@ -183,14 +183,14 @@ extension OnboardingProfileViewModel {
 //DailySugarGoalView
 extension OnboardingProfileViewModel {
   
-  var isValidDailySugarGoal: Bool {
+  public var isValidDailySugarGoal: Bool {
     return state.selectedDailySugarGoal.isSelected
   }
 }
 
 
 extension String {
-  var isValidNicknameFormat: Bool {
+  public var isValidNicknameFormat: Bool {
     let regex = "^[가-힣a-zA-Z0-9]{1,10}$"
     let test = NSPredicate(format: "SELF MATCHES %@", regex)
     return test.evaluate(with: self)

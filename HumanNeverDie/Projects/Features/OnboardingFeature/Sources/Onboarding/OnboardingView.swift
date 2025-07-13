@@ -110,7 +110,7 @@ extension OnboardingView {
     .padding(.bottom, 36)
   }
   
-  struct OnboardingPageView: View {
+  private struct OnboardingPageView: View {
     let title: String
     let pageNumber: Int
     

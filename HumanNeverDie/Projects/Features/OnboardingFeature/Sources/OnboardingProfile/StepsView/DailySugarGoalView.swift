@@ -90,7 +90,7 @@ extension DailySugarGoalView {
     
   }
   
-  struct SpeechBubbleTriangle: Shape {
+  private struct SpeechBubbleTriangle: Shape {
     func path(in rect: CGRect) -> Path {
       var path = Path()
       path.move(to: CGPoint(x: rect.midX, y: rect.minY))

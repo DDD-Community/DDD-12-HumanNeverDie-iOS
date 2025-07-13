@@ -8,11 +8,11 @@
 import SwiftUI
 import DesignSystem
 
-struct OnboardingTopHeaderView: View {
-  let title: String
-  let stepText: String
+public struct OnboardingTopHeaderView: View {
+  public let title: String
+  public let stepText: String
   
-  var body: some View {
+  public var body: some View {
     HStack(alignment: .lastTextBaseline) {
       Text(title)
         .amdFont(.xxlargeBold)
@@ -30,11 +30,11 @@ struct OnboardingTopHeaderView: View {
   }
 }
 
-struct OnboardingBottomButton: View {
-  let type: AMDButton.AMDButtonType
-  let action: () -> Void
+public struct OnboardingBottomButton: View {
+  public let type: AMDButton.AMDButtonType
+  public let action: () -> Void
 
-  var body: some View {
+  public var body: some View {
     AMDButton(
       type: type,
       title: "다음",
