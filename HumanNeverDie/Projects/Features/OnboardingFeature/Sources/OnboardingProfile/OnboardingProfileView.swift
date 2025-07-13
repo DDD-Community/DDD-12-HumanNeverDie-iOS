@@ -10,7 +10,6 @@ import CommonFeature
 
 struct OnboardingProfileView: View {
   @State private var viewModel: OnboardingProfileViewModel
-  @Environment(Router.self) private var router
   
   init(viewModel: OnboardingProfileViewModel) {
     self._viewModel = State(initialValue: viewModel)

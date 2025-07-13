@@ -29,6 +29,7 @@ public final class OnboardingProfileViewModel: ViewModelable {
     //DailySugarGoalView
     var selectedDailySugarGoal: SugarGoal = .none
     
+    //PermissionView
     var isPermissionGranted: Bool = false
   }
   
@@ -88,9 +89,6 @@ public final class OnboardingProfileViewModel: ViewModelable {
     if let currentIndex = allSteps.firstIndex(of: currentStep),
        currentIndex < allSteps.count - 1 {
       currentStep = allSteps[currentIndex + 1]
-      print("다음 단계로 이동: \(currentStep)")
-    } else {
-      print("메인 뷰 이동")
     }
   }
 }

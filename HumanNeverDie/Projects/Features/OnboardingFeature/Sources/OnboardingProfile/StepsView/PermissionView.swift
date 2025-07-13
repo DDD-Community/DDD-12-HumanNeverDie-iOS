@@ -7,21 +7,25 @@
 
 import SwiftUI
 import DesignSystem
+import CommonFeature
 
 struct PermissionView: View {
   @State private var viewModel: OnboardingProfileViewModel
+  @Environment(Router.self) private var router
   
   public init(viewModel: OnboardingProfileViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
-  
-  
+    
   var body: some View {
     VStack(spacing: 0) {
       contentView()
     }
     .background(Color.white)
     .ignoresSafeArea(edges: .all)
+    .onTapGesture {
+      router.setRoute(.main)
+     }
   }
 }
 
@@ -47,7 +51,6 @@ extension PermissionView {
 
     }
   }
-  
   
   @ViewBuilder
   private func messageView() -> some View {
