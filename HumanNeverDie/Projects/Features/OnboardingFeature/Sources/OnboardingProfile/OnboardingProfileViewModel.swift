@@ -116,8 +116,20 @@ extension OnboardingProfileViewModel {
   }
   
   public var nicknameErrorMessage: String? {
-    if !state.nickname.isValidNicknameFormat && !state.nickname.isEmpty {
-      return "특수문자 및 공백은 사용할 수 없어요."
+    if state.nickname.isEmpty {
+      return nil
+    }
+    
+    if state.nickname.count < 2 {
+      return "닉네임은 2자 이상 입력해주세요."
+    }
+    
+    if state.nickname.count > 10 {
+      return "닉네임은 10자 이하로 입력해주세요."
+    }
+    
+    if !state.nickname.isValidNicknameFormat {
+      return "닉네임은 띄어쓰기 없이 한글, 영문, 숫자로 입력해주세요."
     }
     
     return nil

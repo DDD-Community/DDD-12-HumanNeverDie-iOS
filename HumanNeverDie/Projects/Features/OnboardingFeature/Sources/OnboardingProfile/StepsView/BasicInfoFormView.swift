@@ -35,7 +35,7 @@ extension BasicInfoFormView {
   @ViewBuilder
   private func topHeaderView() -> some View {
     OnboardingTopHeaderView(
-      title: "기본 정보를 입력해주세요.",
+      title: "기본 정보를 입력해주세요",
       stepText: "1/3"
     )
   }
@@ -50,7 +50,7 @@ extension BasicInfoFormView {
           set: { viewModel.handleAction(.updateNickname($0)) }
         ),
         title: "닉네임",
-        placeholder: "닉네임을 입력해주세요.",
+        placeholder: "닉네임을 입력해주세요",
         errorMessage: viewModel.nicknameErrorMessage
       )
       

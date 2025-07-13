@@ -25,7 +25,7 @@ struct PermissionView: View {
     .ignoresSafeArea(edges: .all)
     .onTapGesture {
       withAnimation(.easeInOut) {
-        router.setRoute(.main)
+        router.setRoute(.main) 
       }
      }
   }
