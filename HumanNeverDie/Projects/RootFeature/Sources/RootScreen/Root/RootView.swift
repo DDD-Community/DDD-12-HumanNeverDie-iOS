@@ -1,6 +1,7 @@
 import SwiftUI
 
 import SplashFeature
+import OnboardingFeature
 import CommonFeature
 import BeverageRecordListFeature
 
@@ -13,6 +14,9 @@ public struct RootView: View {
     NavigationStack(path: $router.path) {
       ZStack {
         switch router.rootRoute {
+        case .onboarding:
+          OnboardingViewFactory.create()
+          
         case .splash:
           SplashViewFactory.create()
           
@@ -26,6 +30,8 @@ public struct RootView: View {
         switch route {
         case .beverageRecordList:
           BeverageRecordListViewFactory.create()
+        case .onboardingProfile:
+          OnboardingProfileFactory.create()
         }
       }
     }

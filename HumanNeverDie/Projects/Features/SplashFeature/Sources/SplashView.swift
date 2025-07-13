@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+import DesignSystem
 import CommonFeature
 
 public struct SplashView: View {
@@ -19,31 +19,15 @@ public struct SplashView: View {
   
   public var body: some View {
     ZStack {
-      Color.pink
-        .ignoresSafeArea()
-      
-      VStack {
-        Image(systemName: "star.fill")
-          .font(.system(size: 80))
-          .foregroundColor(.white)
-        
-        Text("휴먼네버다이")
-          .font(.title)
-          .fontWeight(.bold)
-          .foregroundColor(.white)
-          .padding(.top, 16)
-        
-        Text("스플래시 화면 입니다.")
-          .font(.title)
-          .fontWeight(.bold)
-          .foregroundColor(.white)
-          .padding(.top, 16)
-      }
+      AMDImage.splash.swiftUIImage
+        .resizable()
+        .scaledToFill()
+        .ignoresSafeArea(.all)
     }
     .onAppear {
       DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
         withAnimation {
-          router.setRoute(.main)
+          router.setRoute(.onboarding)
         }
       }
     }
