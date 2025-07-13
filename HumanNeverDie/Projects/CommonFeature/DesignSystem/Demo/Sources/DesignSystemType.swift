@@ -19,6 +19,7 @@ enum DesignSystemType: String, CaseIterable {
   case amdTextField
   case amdButton
   case amdFloatingButton
+  case amdOptionButton
   
   var title: String {
     self.rawValue.uppercased()

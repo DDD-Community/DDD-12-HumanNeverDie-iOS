@@ -105,8 +105,10 @@ extension DailySugarGoalView {
   private func goalSelectionView() -> some View {
     VStack(spacing: 10) {
       ForEach([SugarGoal.easy, SugarGoal.normal, SugarGoal.hard], id: \.self) { dailyGoal in
-        SugarGoalOptionView(
-          dailyGoal: dailyGoal,
+        AMDOptionButton(
+          title: dailyGoal.rawValue,
+          subtitle: dailyGoal.description,
+          trailingText: dailyGoal.targetAmount,
           isSelected: viewModel.state.selectedDailySugarGoal == dailyGoal
         ) {
           viewModel.handleAction(.updateDailySugarGoal(dailyGoal))
@@ -137,45 +139,6 @@ extension DailySugarGoalView {
     ) {
       guard viewModel.isValidDailySugarGoal else { return }
       viewModel.handleAction(.moveToNextStep)
-    }
-  }
-}
-
-private struct SugarGoalOptionView: View {
-  let dailyGoal: SugarGoal
-  let isSelected: Bool
-  let action: () -> Void
-  
-  var body: some View {
-    Button(action: action) {
-      HStack(spacing: 16) {
-        Image(systemName: isSelected ? "largecircle.fill.circle" : "circle")
-          .foregroundColor(isSelected ? .amdPrimary : .gray25)
-          .font(.system(size: 24))
-        
-        VStack(alignment: .leading, spacing: 4) {
-          Text(dailyGoal.rawValue)
-            .amdFont(.mediumBold)
-            .foregroundColor(.gray85)
-          
-          Text(dailyGoal.description)
-            .amdFont(.smallRegular)
-            .foregroundColor(.gray60)
-        }
-        
-        Spacer()
-        
-        Text(dailyGoal.targetAmount)
-          .amdFont(.mediumRegular)
-          .foregroundColor(.primaryDarker)
-      }
-      .padding(.horizontal, 20)
-      .padding(.vertical, 16)
-      .background(
-        RoundedRectangle(cornerRadius: 12)
-          .fill(isSelected ? .amdPrimary.opacity(0.1) : .gray0)
-          .stroke(isSelected ? .amdPrimary : .gray25, lineWidth: 1)
-      )
     }
   }
 }

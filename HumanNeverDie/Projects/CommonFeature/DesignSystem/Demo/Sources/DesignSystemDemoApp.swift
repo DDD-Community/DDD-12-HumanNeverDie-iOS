@@ -63,6 +63,8 @@ private struct DesignSystemDetailView: View {
         AMDButtonDemoView()
       case .amdFloatingButton:
         AMDFloatingButtonDemoView()
+      case .amdOptionButton:
+        AMDOptionButtonView()
       }
     }
   }

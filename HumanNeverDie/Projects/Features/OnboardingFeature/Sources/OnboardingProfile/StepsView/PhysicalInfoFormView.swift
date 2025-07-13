@@ -83,7 +83,7 @@ extension PhysicalInfoFormView {
       
       VStack(spacing: 12) {
         ForEach([ActivityLevel.high, ActivityLevel.medium, ActivityLevel.low], id: \.self) { activity in
-          ActivityOptionView(
+          AMDOptionButton(
             title: activity.rawValue,
             isSelected: viewModel.state.selectedActivity == activity
           ) {
@@ -101,35 +101,6 @@ extension PhysicalInfoFormView {
     ) {
       guard viewModel.isValidPhysicalInfo else { return }
       viewModel.handleAction(.moveToNextStep)
-    }
-  }
-  
-  struct ActivityOptionView: View {
-    let title: String
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-      Button(action: action) {
-        HStack {
-          Image(systemName: isSelected ? "largecircle.fill.circle" : "circle")
-            .foregroundColor(isSelected ? .amdPrimary : .gray25)
-            .font(.system(size: 24))
-          
-          Text(title)
-            .amdFont(.mediumBold)
-            .foregroundColor(.gray85)
-          
-          Spacer()
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 16)
-        .background(
-          RoundedRectangle(cornerRadius: 12)
-            .fill(isSelected ? .amdPrimary.opacity(0.1) : .gray0)
-            .stroke(isSelected ? .amdPrimary : .gray25, lineWidth: 1)
-        )
-      }
     }
   }
 }
