@@ -42,7 +42,7 @@ extension DailySugarGoalView {
     VStack(spacing: 32) {
       VStack(spacing: 0) {
         characterImageView()
-        recommendationTextView()
+        speechbubbleTextView()
       }
       goalSelectionView()
     }
@@ -59,19 +59,45 @@ extension DailySugarGoalView {
   }
   
   @ViewBuilder
-  private func recommendationTextView() -> some View {
-    HStack(spacing: 0) {
-      Text("**님의 일일 권장 당 섭취량은 ")
-        .amdFont(.largeRegular)
-        .foregroundColor(.gray80)
+  private func speechbubbleTextView() -> some View {
+    let baseTextColor = Color.gray80
+    ZStack(alignment: .top) {
       
-      Text("200g")
-        .amdFont(.largeBold)
-        .foregroundColor(.gray80)
+      SpeechBubbleTriangle()
+        .fill(Color.gray10)
+        .frame(width: 24, height: 22)
+        .offset(y: -13)
       
-      Text("이당!")
-        .amdFont(.largeRegular)
-        .foregroundColor(.gray80)
+      HStack(spacing: 0) {
+        Text("\(viewModel.nickname)님의 일일 권장 당 섭취량은 ")
+          .amdFont(.largeRegular)
+          .foregroundColor(baseTextColor)
+        
+        Text("200g")
+          .amdFont(.largeBold)
+          .foregroundColor(baseTextColor)
+        
+        Text("이당!")
+          .amdFont(.largeRegular)
+          .foregroundColor(baseTextColor)
+      }
+      .padding(.horizontal, 20)
+      .padding(.vertical, 12)
+      .background(Color.gray10)
+      .cornerRadius(16)
+    }
+    .padding(.top, 12)
+    
+  }
+  
+  struct SpeechBubbleTriangle: Shape {
+    func path(in rect: CGRect) -> Path {
+      var path = Path()
+      path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+      path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+      path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+      path.closeSubpath()
+      return path
     }
   }
   
