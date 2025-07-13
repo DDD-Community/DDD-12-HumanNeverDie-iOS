@@ -32,6 +32,7 @@ public struct AMDTextField: View {
   @Binding private var text: String
   private var isFocused: FocusState<Bool>.Binding?
   private let title: String?
+  private let titleSuffix: String?
   private let placeholder: String?
   private let hiddenClearButton: Bool
   private let maxCount: Int?
@@ -46,6 +47,7 @@ public struct AMDTextField: View {
     text: Binding<String>,
     isFocused: FocusState<Bool>.Binding? = nil,
     title: String? = nil,
+    titleSuffix: String? = nil,
     placeholder: String? = nil,
     hiddenClearButton: Bool = true,
     maxCount: Int? = nil,
@@ -57,6 +59,7 @@ public struct AMDTextField: View {
     self._text = text
     self.isFocused = isFocused
     self.title = title
+    self.titleSuffix = titleSuffix
     self.placeholder = placeholder
     self.hiddenClearButton = hiddenClearButton
     self.maxCount = maxCount
@@ -97,7 +100,11 @@ public struct AMDTextField: View {
   
   private var textFieldView: some View {
     HStack(spacing: 10) {
-      textField
+      if let titleSuffix, !titleSuffix.isEmpty {
+        textFieldWithtitleSuffix
+      } else {
+        textField
+      }
       textCountView
       rightAreaButtonView
     }
@@ -128,9 +135,43 @@ public struct AMDTextField: View {
         } label: {
           AMDImage.delete24.swiftUIImage
         }
+        .padding(.leading, 8)
       }
     }
   }
+  
+  private var textFieldWithtitleSuffix: some View {
+    ZStack(alignment: .leading) {
+      TextField(
+        "",
+        text: $text
+      )
+      .keyboardType(.numberPad)
+      .focused(isFocused ?? $internalFocus)
+      .foregroundColor(.clear)
+      .accentColor(.black)
+      .padding(.trailing, 30)
+
+      HStack(spacing: 0) {
+        if text.isEmpty {
+          Text(placeholder ?? "")
+            .amdFont(.mediumRegular)
+            .foregroundStyle(.gray60)
+        } else {
+          Text(text)
+            .amdFont(.mediumRegular)
+            .foregroundStyle(.gray80)
+
+          if let titleSuffix {
+            Text(titleSuffix)
+              .amdFont(.mediumRegular)
+              .foregroundStyle(.gray80)
+          }
+        }
+      }
+    }
+  }
+
   
   @ViewBuilder
   private var textCountView: some View {

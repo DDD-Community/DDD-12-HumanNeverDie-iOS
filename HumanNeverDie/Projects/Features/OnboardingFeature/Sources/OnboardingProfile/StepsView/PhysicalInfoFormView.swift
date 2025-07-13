@@ -46,6 +46,7 @@ extension PhysicalInfoFormView {
           set: { viewModel.handleAction(.updateHeight($0)) }
         ),
         title: "키",
+        titleSuffix: "cm",
         placeholder: "키를 입력해주세요",
         rightButtonType: .none,
         rightButtonAction: {
@@ -60,6 +61,7 @@ extension PhysicalInfoFormView {
           set: { viewModel.handleAction(.updateWeight($0)) }
         ),
         title: "몸무게",
+        titleSuffix: "kg",
         placeholder: "몸무게를 입력해주세요",
         rightButtonType: .none,
         rightButtonAction: {
@@ -102,7 +104,7 @@ extension PhysicalInfoFormView {
     }
   }
   
-  private struct ActivityOptionView: View {
+  struct ActivityOptionView: View {
     let title: String
     let isSelected: Bool
     let action: () -> Void
