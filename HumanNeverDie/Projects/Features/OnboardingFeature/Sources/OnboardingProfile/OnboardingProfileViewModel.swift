@@ -116,11 +116,7 @@ extension OnboardingProfileViewModel {
   }
   
   public var nicknameErrorMessage: String? {
-    if state.nickname.isEmpty {
-      return "닉네임을 입력해주세요."
-    }
-    
-    if !state.nickname.isValidNicknameFormat {
+    if !state.nickname.isValidNicknameFormat && !state.nickname.isEmpty {
       return "특수문자 및 공백은 사용할 수 없어요."
     }
     
