@@ -100,7 +100,9 @@ extension PhysicalInfoFormView {
       type: viewModel.isValidPhysicalInfo ? .default : .secondary
     ) {
       guard viewModel.isValidPhysicalInfo else { return }
-      viewModel.handleAction(.moveToNextStep)
+      withAnimation(.easeInOut) {
+        viewModel.handleAction(.moveToNextStep)
+      }
     }
   }
 }

@@ -97,7 +97,9 @@ extension BasicInfoFormView {
       type: viewModel.isValidBasicInfo ? .default : .secondary
     ) {
       guard viewModel.isValidBasicInfo else { return }
-      viewModel.handleAction(.moveToNextStep)
+      withAnimation(.easeInOut) {
+        viewModel.handleAction(.moveToNextStep)
+      }
     }
   }
 }

@@ -138,7 +138,9 @@ extension DailySugarGoalView {
       type: viewModel.isValidDailySugarGoal ? .default : .secondary
     ) {
       guard viewModel.isValidDailySugarGoal else { return }
-      viewModel.handleAction(.moveToNextStep)
+      withAnimation(.easeInOut) {
+        viewModel.handleAction(.moveToNextStep)
+      }
     }
   }
 }
