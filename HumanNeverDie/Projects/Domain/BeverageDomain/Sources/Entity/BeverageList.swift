@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct BeverageList: Equatable {
+public struct BeverageList: Equatable, Sendable {
   public let items: [Beverage]
   public let nextCursor: String?
   public let hasNext: Bool

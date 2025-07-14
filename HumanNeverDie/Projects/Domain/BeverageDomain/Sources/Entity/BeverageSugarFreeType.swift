@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum BeverageSugarFreeType {
+public enum BeverageSugarFreeType: Sendable {
   case lowSugar
   case zeroSugar
   

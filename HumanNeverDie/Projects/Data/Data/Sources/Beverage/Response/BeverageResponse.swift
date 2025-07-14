@@ -82,7 +82,7 @@ extension BeverageResponse {
       sugar: 0, // 서버 리스폰스 값 추가 예정
       brandName: cafeStoreDto?.cafeBrand ?? "",
       sugarFreeType: BeverageSugarFreeType(sugar: 0), // 서버 리스폰스 값 추가 반영 예정
-      isFavorite: isLiked ?? false
+      isLiked: isLiked ?? false
     )
   }
 }

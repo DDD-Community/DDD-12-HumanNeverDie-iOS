@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct BeverageLike: Equatable {
+public struct BeverageLike: Equatable, Sendable {
   public let productID: String
   public let isLiked: Bool
   public let likeCount: Int

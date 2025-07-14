@@ -7,21 +7,21 @@
 
 import Foundation
 
-public enum BeverageFilterType: CaseIterable {
+public enum BeverageFilterType: CaseIterable, Sendable {
   case all
-  case lowSugar
-  case zeroSugar
-  case favorite
+  case zero
+  case low
+  case like
   
   public var title: String? {
     switch self {
     case .all:
       return "전체"
-    case .lowSugar:
-      return "저당"
-    case .zeroSugar:
+    case .zero:
       return "무당"
-    case .favorite:
+    case .low:
+      return "저당"
+    case .like:
       return nil
     }
   }

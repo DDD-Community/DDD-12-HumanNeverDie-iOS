@@ -19,19 +19,19 @@ public struct AMDBeverageListView: View {
   private let kcal: Double
   private let sugarFreeVariant: AMDSugarFreeVariant?
   
-  private let favoriteState: FavoriteState?
+  private let likeState: LikeState?
   private let infoAction: (() -> Void)?
   private let menuAction: (() -> Void)?
   
-  public struct FavoriteState {
-    public let isFavorite: Bool
+  public struct LikeState {
+    public let isLiked: Bool
     public let action: () -> Void
     
     public init(
-      isFavorite: Bool,
+      isLiked: Bool,
       action: @escaping () -> Void
     ) {
-      self.isFavorite = isFavorite
+      self.isLiked = isLiked
       self.action = action
     }
   }
@@ -127,7 +127,7 @@ public struct AMDBeverageListView: View {
     glucose: Double,
     kcal: Double,
     sugarFreeVariant: AMDSugarFreeVariant?,
-    favoriteState: FavoriteState?,
+    likeState: LikeState?,
     infoAction: (() -> Void)? = nil,
     menuAction: (() -> Void)? = nil
   ) {
@@ -139,7 +139,7 @@ public struct AMDBeverageListView: View {
     self.glucose = glucose
     self.kcal = kcal
     self.sugarFreeVariant = sugarFreeVariant
-    self.favoriteState = favoriteState
+    self.likeState = likeState
     self.infoAction = infoAction
     self.menuAction = menuAction
   }
@@ -205,16 +205,16 @@ private extension AMDBeverageListView {
   
   @ViewBuilder
   private var favoriteButton: some View {
-    if let favoriteState {
-      Button(action: favoriteState.action) {
+    if let likeState {
+      Button(action: likeState.action) {
         Group {
-          if favoriteState.isFavorite {
+          if likeState.isLiked {
             AMDImage.liked24.swiftUIImage
           } else {
             AMDImage.unliked24.swiftUIImage
           }
         }
-        .animation(.bouncy(duration: 0.6, extraBounce: 0.2), value: favoriteState.isFavorite)
+        .animation(.bouncy(duration: 0.6, extraBounce: 0.2), value: likeState.isLiked)
       }
     } else {
       EmptyView()
@@ -373,7 +373,7 @@ public extension AMDBeverageListView {
       glucose: glucose,
       kcal: kcal,
       sugarFreeVariant: sugarFreeVariant,
-      favoriteState: nil,
+      likeState: nil,
       infoAction: nil,
       menuAction: nil
     )
@@ -398,7 +398,7 @@ public extension AMDBeverageListView {
       glucose: glucose,
       kcal: kcal,
       sugarFreeVariant: sugarFreeVariant,
-      favoriteState: nil,
+      likeState: nil,
       infoAction: nil,
       menuAction: menuAction
     )
@@ -411,7 +411,7 @@ public extension AMDBeverageListView {
     glucose: Double,
     kcal: Double,
     sugarFreeVariant: AMDSugarFreeVariant?,
-    favoriteState: FavoriteState,
+    likeState: LikeState,
     infoAction: @escaping () -> Void
   ) -> AMDBeverageListView {
     return AMDBeverageListView(
@@ -423,7 +423,7 @@ public extension AMDBeverageListView {
       glucose: glucose,
       kcal: kcal,
       sugarFreeVariant: sugarFreeVariant,
-      favoriteState: favoriteState,
+      likeState: likeState,
       infoAction: infoAction,
     )
   }
