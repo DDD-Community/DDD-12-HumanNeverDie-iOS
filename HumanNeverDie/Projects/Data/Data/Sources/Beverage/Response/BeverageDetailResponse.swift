@@ -67,6 +67,7 @@ extension BeverageDetailResponse {
       thumbnailURL: imgUrl ?? "",
       kcal: beverageNutrition?.servingKcal ?? 0,
       sugar: beverageNutrition?.sugarG ?? 0,
+      protein: beverageNutrition?.proteinG ?? 0,
       saturatedFat: beverageNutrition?.saturatedFatG ?? 0,
       sodium: beverageNutrition?.sodiumMg ?? 0,
       caffeine: beverageNutrition?.caffeineMg ?? 0,
