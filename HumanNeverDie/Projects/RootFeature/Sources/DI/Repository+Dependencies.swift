@@ -6,12 +6,12 @@
 //
 
 import Data
-import MainDomain
+import BeverageDomain
 
 import Dependencies
 
-// MARK: - MainRepository
+// MARK: - BeverageRepository
 
-extension MainRepositoryKey: @retroactive DependencyKey {
-  public static let liveValue: MainRepositoryInterface = MainRepository()
+extension BeverageRepositoryKey: @retroactive DependencyKey {
+  public static let liveValue: BeverageRepositoryInterface = BeverageRepository()
 }

@@ -10,14 +10,14 @@ import SwiftUI
 public struct AMDFilterChip: View {
   private let icon: Image?
   private let title: String?
-  private let count: Int
+  private let count: Int?
   private let isSelected: Bool
   private let action: () -> Void
   
   public init(
     icon: Image? = nil,
     title: String? = nil,
-    count: Int,
+    count: Int? = nil,
     isSelected: Bool,
     action: @escaping () -> Void
   ) {
@@ -38,10 +38,13 @@ public struct AMDFilterChip: View {
         chipTitle(title)
       }
       
-      chipCount
+      if let count {
+        chipCount(count)
+      }
     }
     .padding(.horizontal, 12)
     .frame(height: 36)
+    .background(.white)
     .amdStrokeBorder(strokeBorderColor(isSelected))
     .onTapGesture {
       withAnimation(.bouncy(duration: 0.6, extraBounce: 0.2)) {
@@ -63,7 +66,7 @@ public struct AMDFilterChip: View {
       .foregroundStyle(foregroundColor(isSelected))
   }
   
-  private var chipCount: some View {
+  private func chipCount(_ count: Int) -> some View {
     Text("\(count)")
       .amdFont(.smallRegular)
       .foregroundStyle(.gray60)

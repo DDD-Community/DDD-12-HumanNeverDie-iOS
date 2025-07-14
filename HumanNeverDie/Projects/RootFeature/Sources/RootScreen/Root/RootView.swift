@@ -30,6 +30,10 @@ public struct RootView: View {
         switch route {
         case .beverageRecordList:
           BeverageRecordListViewFactory.create()
+          
+        case .BeverageSearch:
+          BeverageSearchViewFactory.create()
+          
         case .onboardingProfile:
           OnboardingProfileFactory.create()
         }

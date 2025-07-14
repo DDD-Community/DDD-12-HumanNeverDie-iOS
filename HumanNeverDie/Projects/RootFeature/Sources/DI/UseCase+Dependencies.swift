@@ -5,12 +5,12 @@
 //  Created by 김규철 on 6/17/25.
 //
 
-import MainDomain
+import BeverageDomain
 
 import Dependencies
 
-// MARK: - MainUseCaseKey
+// MARK: - BeverageUseCase
 
-extension MainUseCaseKey: @retroactive DependencyKey {
-  public static let liveValue: MainUseCaseProtocol = MainUseCase()
+extension BeverageUseCaseKey: @retroactive DependencyKey {
+  public static let liveValue: BeverageUseCaseProtocol = BeverageUseCase()
 }

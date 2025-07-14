@@ -8,7 +8,9 @@
 import Foundation
 
 public struct AMDAPIResponse<T: Decodable>: Decodable {
-  public let code: String
-  public let status: Int
+  public let code: String?
+  public let status: Int?
   public let data: T?
 }
+
+public struct AMDEmptyResponse: Decodable {}
