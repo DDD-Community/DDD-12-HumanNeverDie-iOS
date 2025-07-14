@@ -17,6 +17,7 @@ public extension Modules {
         case Home
         case History
         case BeverageRecordList
+        case Setting
         
         var name: String {
             return "\(rawValue)Feature"
