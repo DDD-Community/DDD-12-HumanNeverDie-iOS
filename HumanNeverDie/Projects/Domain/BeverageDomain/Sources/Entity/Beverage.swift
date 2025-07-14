@@ -7,7 +7,8 @@
 
 import Foundation
 
-public struct Beverage: Hashable {
+public struct Beverage: Identifiable, Hashable, Sendable {
+  public let id: String = UUID().uuidString
   public let name: String
   public let productID: String
   public let thumbnailURL: String
@@ -15,7 +16,7 @@ public struct Beverage: Hashable {
   public let sugar: Int
   public let brandName: String
   public let sugarFreeType: BeverageSugarFreeType?
-  public var isFavorite: Bool
+  public var isLiked: Bool
   
   public init(
     name: String,
@@ -25,7 +26,7 @@ public struct Beverage: Hashable {
     sugar: Int,
     brandName: String,
     sugarFreeType: BeverageSugarFreeType?,
-    isFavorite: Bool
+    isLiked: Bool
   ) {
     self.name = name
     self.productID = productID
@@ -34,7 +35,7 @@ public struct Beverage: Hashable {
     self.sugar = sugar
     self.brandName = brandName
     self.sugarFreeType = sugarFreeType
-    self.isFavorite = isFavorite
+    self.isLiked = isLiked
   }
 }
 
@@ -49,7 +50,7 @@ public extension Beverage {
         sugar: 0,
         brandName: "스타벅스",
         sugarFreeType: .zeroSugar,
-        isFavorite: true
+        isLiked: true
       ),
       Beverage(
         name: "카페라떼",
@@ -59,7 +60,7 @@ public extension Beverage {
         sugar: 14,
         brandName: "스타벅스",
         sugarFreeType: nil,
-        isFavorite: false
+        isLiked: false
       ),
       Beverage(
         name: "카라멜 마키아토",
@@ -69,7 +70,7 @@ public extension Beverage {
         sugar: 25,
         brandName: "스타벅스",
         sugarFreeType: nil,
-        isFavorite: true
+        isLiked: true
       ),
       Beverage(
         name: "바닐라 라떼",
@@ -79,7 +80,7 @@ public extension Beverage {
         sugar: 35,
         brandName: "스타벅스",
         sugarFreeType: .lowSugar,
-        isFavorite: false
+        isLiked: false
       ),
       Beverage(
         name: "자바칩 프라푸치노",
@@ -89,7 +90,7 @@ public extension Beverage {
         sugar: 60,
         brandName: "스타벅스",
         sugarFreeType: nil,
-        isFavorite: true
+        isLiked: true
       ),
       Beverage(
         name: "콜드브루",
@@ -99,7 +100,7 @@ public extension Beverage {
         sugar: 0,
         brandName: "스타벅스",
         sugarFreeType: nil,
-        isFavorite: false
+        isLiked: false
       ),
       Beverage(
         name: "돌체 라떼 (무설탕)",
@@ -109,7 +110,7 @@ public extension Beverage {
         sugar: 0,
         brandName: "스타벅스",
         sugarFreeType: .lowSugar,
-        isFavorite: true
+        isLiked: true
       ),
       Beverage(
         name: "그린티 라떼",
@@ -119,7 +120,7 @@ public extension Beverage {
         sugar: 32,
         brandName: "스타벅스",
         sugarFreeType: nil,
-        isFavorite: false
+        isLiked: false
       ),
       Beverage(
         name: "아이스 블랙티",
@@ -129,7 +130,7 @@ public extension Beverage {
         sugar: 8,
         brandName: "스타벅스",
         sugarFreeType: nil,
-        isFavorite: false
+        isLiked: false
       ),
       Beverage(
         name: "화이트 초콜릿 모카",
@@ -139,7 +140,7 @@ public extension Beverage {
         sugar: 53,
         brandName: "스타벅스",
         sugarFreeType: .lowSugar,
-        isFavorite: true
+        isLiked: true
       )
     ]
   }

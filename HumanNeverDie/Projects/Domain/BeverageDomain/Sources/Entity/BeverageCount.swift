@@ -7,15 +7,15 @@
 
 import Foundation
 
-public struct BeverageCount: Equatable {
-  public let totalCount: String
-  public let zeroCount: String
-  public let lowCount: String
+public struct BeverageCount: Equatable, Sendable {
+  public let totalCount: Int
+  public let zeroCount: Int
+  public let lowCount: Int
   
   public init(
-    totalCount: String,
-    zeroCount: String,
-    lowCount: String
+    totalCount: Int,
+    zeroCount: Int,
+    lowCount: Int
   ) {
     self.totalCount = totalCount
     self.zeroCount = zeroCount
@@ -26,9 +26,9 @@ public struct BeverageCount: Equatable {
 extension BeverageCount {
   static func mock() -> BeverageCount {
     return .init(
-      totalCount: "0",
-      zeroCount: "0",
-      lowCount: "0"
+      totalCount: 0,
+      zeroCount: 0,
+      lowCount: 0
     )
   }
 }
