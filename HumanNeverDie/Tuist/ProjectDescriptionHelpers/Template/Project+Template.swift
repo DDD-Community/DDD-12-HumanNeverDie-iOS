@@ -83,6 +83,7 @@ public extension Project {
             name: "\(name)Feature",
             options: .defaultOption,
             packages: packages,
+            settings: .moduleSettings,
             targets: targets
         )
     }
@@ -127,6 +128,7 @@ public extension Project {
             name: "\(name)Domain",
             options: .defaultOption,
             packages: packages,
+            settings: .moduleSettings,
             targets: targets
         )
     }
@@ -192,6 +194,7 @@ public extension Project {
             name: name,
             options: .defaultOption,
             packages: packages,
+            settings: .moduleSettings,
             targets: targets,
             schemes: schemes
         )

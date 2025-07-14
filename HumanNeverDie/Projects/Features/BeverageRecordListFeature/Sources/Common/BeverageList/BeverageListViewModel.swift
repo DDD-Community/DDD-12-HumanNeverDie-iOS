@@ -52,8 +52,6 @@ public final class BeverageListViewModel: ViewModelable {
     var isBevarageDetailPresented: Bool = false
     
     var isLoading: Bool = false
-    
-    var delegateAction: DelegateAction?
   }
   
   public enum Action {
@@ -74,6 +72,7 @@ public final class BeverageListViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.beverageUseCase) private var beverageUseCase
   
+  var delegateAction: ((DelegateAction?) -> Void)?
   public var state: State = .init()
   init() {
   }
@@ -108,7 +107,7 @@ public final class BeverageListViewModel: ViewModelable {
       state.isBevarageDetailPresented = true
       
     case let .beverageListItemTapped(item):
-      state.delegateAction = .beverageListItemTapped(item)
+      delegateAction?(.beverageListItemTapped(item))
       
     case .addBeverageButtonTapped:
       break

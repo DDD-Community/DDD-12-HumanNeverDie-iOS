@@ -10,7 +10,7 @@ import Foundation
 import Alamofire
 import Dependencies
 
-public protocol AMDNetworkServiceProtocol {
+public protocol AMDNetworkServiceProtocol: Sendable {
   func requestDDD<R: AMDAPIRequestable>(_ target: R) async throws(AMDNetworkError) -> R.Response
 }
 

@@ -11,15 +11,15 @@ import DesignSystem
 
 import Dependencies
 
-public struct AMDToastClient {
+public struct AMDToastClient: Sendable {
   public var showToast: @Sendable (_ property: AMDToastProperty) async -> Void
 }
 
 extension AMDToastClient: DependencyKey {
   public static var liveValue: AMDToastClient {
     return Self(
-      showToast: { property in
-        await AMDToastManager.shared.showToast(property)
+      showToast: { @MainActor property in
+        AMDToastManager.shared.showToast(property)
       }
     )
   }

@@ -48,7 +48,7 @@ public final class BeverageSearchViewModel: ViewModelable {
   
   public var state: State = .init()
   public init() {
-    delegateTracking()
+    delegate()
   }
   
   deinit {
@@ -80,17 +80,9 @@ public final class BeverageSearchViewModel: ViewModelable {
 }
 
 private extension BeverageSearchViewModel {
-  func delegateTracking() {
-    Task { @MainActor [weak self] in
-      await self?.withObservationTracking(
-        tracking: { [weak self] in
-          _ = self?.listViewModel.delegateAction
-        },
-        didChange: { [weak self] in
-          let action = self?.listViewModel.delegateAction
-          self?.handleAction(.delegateAction(action))
-        }
-      )
+  func delegate() {
+    listViewModel.delegateAction = { [weak self] action in
+      self?.handleAction(.delegateAction(action))
     }
   }
 }
