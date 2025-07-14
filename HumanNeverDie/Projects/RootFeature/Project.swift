@@ -8,6 +8,7 @@ let project = Project.makeModule(
         .feature(module: .Splash),
         .feature(module: .Home),
         .feature(module: .History),
-        .feature(module: .BeverageRecordList)
+        .feature(module: .BeverageRecordList),
+        .feature(module: .Onboarding)
     ]
 )

@@ -10,4 +10,5 @@ import Foundation
 public enum Route: Hashable {
   case beverageRecordList
   case BeverageSearch
+  case onboardingProfile
 }

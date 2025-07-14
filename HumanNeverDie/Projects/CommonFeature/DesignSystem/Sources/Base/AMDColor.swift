@@ -11,6 +11,7 @@ import UIKit
 public typealias AMDColor = DesignSystemAsset.Colors
 
 public extension Color {
+  static let gray0 = AMDColor.gray0.swiftUIColor
   static let gray5 = AMDColor.gray5.swiftUIColor
   static let gray10 = AMDColor.gray10.swiftUIColor
   static let gray15 = AMDColor.gray15.swiftUIColor
@@ -42,6 +43,7 @@ public extension Color {
 }
 
 public extension ShapeStyle where Self == Color {
+  static var gray0: Color { .gray0 }
   static var gray5: Color { .gray5 }
   static var gray10: Color { .gray10 }
   static var gray15: Color { .gray15 }

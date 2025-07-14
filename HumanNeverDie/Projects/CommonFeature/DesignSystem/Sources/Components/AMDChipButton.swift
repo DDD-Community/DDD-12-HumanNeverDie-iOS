@@ -45,7 +45,11 @@ fileprivate struct AMDChipButtonStyle: ButtonStyle {
       .frame(height: 48)
       .padding(.horizontal, 13)
       .background(backgroundColor(isSelected))
-      .amdStrokeBorder(strokeBorderColor(isSelected))
+      .amdStrokeBorder(
+        strokeBorderColor(isSelected),
+        radius: .medium,
+        corners: [.allCorners]
+      )
       .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
       .animation(.bouncy(duration: 0.6, extraBounce: 0.2), value: configuration.isPressed)
   }
