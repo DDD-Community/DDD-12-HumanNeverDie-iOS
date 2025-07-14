@@ -60,7 +60,6 @@ public final class BeverageRecordListViewModel: ViewModelable {
     }
   }
   
-  
   private func getBeverage() async {
     do {
       async let beverageListResponse = try beverageUseCase.getBeverageList(cursor: nil)
