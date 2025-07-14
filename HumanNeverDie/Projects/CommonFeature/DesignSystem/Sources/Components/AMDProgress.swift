@@ -26,6 +26,7 @@ public struct AMDProgress: View {
       }
     }
     
+    @MainActor
     @ViewBuilder
     fileprivate var baseProgress: some View {
       switch self {

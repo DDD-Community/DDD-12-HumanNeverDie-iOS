@@ -30,4 +30,12 @@ extension ProjectDescription.Settings {
             ]
         )
     }
+    
+    public static var moduleSettings: Self {
+        return .settings(
+            base: [
+                "SWIFT_VERSION": .string("6.0")
+            ]
+        )
+    }
 }

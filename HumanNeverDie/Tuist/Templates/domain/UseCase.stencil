@@ -7,11 +7,11 @@
 
 import Foundation
 
-public protocol {{ name }}UseCaseProtocol {
+public protocol {{ name }}UseCaseProtocol: Sendable {
     // Add your use case methods here
 }
 
-public final class {{ name }}UseCase: {{ name }}UseCaseProtocol {
+public final class {{ name }}UseCase: {{ name }}UseCaseProtocol, @unchecked Sendable {
     private let repository: {{ name }}RepositoryInterface
     
     public init(repository: {{ name }}RepositoryInterface) {

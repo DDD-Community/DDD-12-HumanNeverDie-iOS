@@ -11,7 +11,7 @@ import DesignSystem
 
 import Dependencies
 
-public struct AMDAlertClient {
+public struct AMDAlertClient: Sendable {
   public var showAlert: @Sendable (_ property: AMDAlertProperty) async -> Void
   public var hideAlert: @Sendable () async -> Void
 }
@@ -19,8 +19,8 @@ public struct AMDAlertClient {
 extension AMDAlertClient: DependencyKey {
   public static var liveValue: AMDAlertClient {
     return Self(
-      showAlert: { property in
-        await AMDAlertManager.shared.showAlert(property)
+      showAlert: { @MainActor property in
+        AMDAlertManager.shared.showAlert(property)
       },
       hideAlert: {
         await AMDAlertManager.shared.hideAlert()

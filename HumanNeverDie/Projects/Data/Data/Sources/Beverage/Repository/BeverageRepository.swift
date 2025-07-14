@@ -12,7 +12,7 @@ import BeverageDomain
 
 import Dependencies
 
-public final class BeverageRepository: BeverageRepositoryInterface {
+public final class BeverageRepository: BeverageRepositoryInterface, @unchecked Sendable {
   @Dependency(\.networkService) private var networkService
   public init() {}
   

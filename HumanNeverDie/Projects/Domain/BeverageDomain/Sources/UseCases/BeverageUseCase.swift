@@ -2,7 +2,7 @@ import Foundation
 
 import Dependencies
 
-public protocol BeverageUseCaseProtocol {
+public protocol BeverageUseCaseProtocol: Sendable {
   func getBeverageCount() async throws -> BeverageCount
   func getBeverageList(cursor: String?) async throws -> BeverageList
   func getBeverageDetail(productID: String) async throws -> BeverageDetail
@@ -10,7 +10,7 @@ public protocol BeverageUseCaseProtocol {
   func unLikeBeverage(productID: String) async throws -> BeverageLike
 }
 
-public final class BeverageUseCase: BeverageUseCaseProtocol {
+public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable {
   @Dependency(\.beverageRepository) private var beverageRepository
   public init() {}
   
