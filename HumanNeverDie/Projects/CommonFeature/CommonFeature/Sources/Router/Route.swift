@@ -11,4 +11,5 @@ public enum Route: Hashable {
   case beverageRecordList
   case BeverageSearch
   case onboardingProfile
+  case Setting
 }

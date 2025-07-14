@@ -4,6 +4,7 @@ import SplashFeature
 import OnboardingFeature
 import CommonFeature
 import BeverageRecordListFeature
+import SettingFeature
 
 public struct RootView: View {
   @State private var router = Router()
@@ -36,6 +37,9 @@ public struct RootView: View {
           
         case .onboardingProfile:
           OnboardingProfileFactory.create()
+          
+        case .Setting:
+          SettingViewFactory.create()
         }
       }
     }
