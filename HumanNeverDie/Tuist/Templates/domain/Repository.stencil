@@ -7,6 +7,6 @@
 
 import Foundation
 
-public protocol {{ name }}RepositoryInterface {
+public protocol {{ name }}RepositoryInterface: Sendable {
     // Add your repository interface methods here
 } 
