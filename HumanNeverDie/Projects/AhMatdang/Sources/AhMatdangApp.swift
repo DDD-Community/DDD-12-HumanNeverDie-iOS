@@ -4,7 +4,7 @@ import RootFeature
 import DesignSystem
 
 @main
-struct HumanNeverDieApp: App {
+struct AhMatdangApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
   
   init() {
