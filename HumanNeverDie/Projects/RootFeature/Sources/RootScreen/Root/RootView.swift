@@ -40,6 +40,9 @@ public struct RootView: View {
           
         case .Setting:
           SettingViewFactory.create()
+          
+        case .SettingAccountInfoView:
+          AccountInfoViewFactory.create()
         }
       }
     }

@@ -1,5 +1,5 @@
 //
-//  accountInfoView.swift
+//  AccountInfoView.swift
 //  SettingFeature
 //
 //  Created by Seulki Lee on 7/16/25.
@@ -7,12 +7,16 @@
 
 import SwiftUI
 
-struct accountInfoView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+public struct AccountInfoView: View {
+  @State private var viewModel: AccountInfoViewModel
+  public init(viewModel: AccountInfoViewModel) {
+    self._viewModel = .init(initialValue: viewModel)
+  }
+  
+  public var body: some View {
+    ScrollView {
+  
     }
+  }
 }
 
-#Preview {
-    accountInfoView()
-}

@@ -7,15 +7,14 @@
 
 import Foundation
 
-public enum SettingItem: String, CaseIterable {
+public enum SettingItem: String, CaseIterable, Hashable {
   case accountInfo = "정보 관리"
   case goalSetting = "목표 설정"
   case notificationSetting = "알림 수신 설정"
   case feedback = "의견 남기기"
   case terms = "약관 및 정책"
   
-  var title: String {
-    rawValue
+  public var title: String {
+    return rawValue
   }
 }
-

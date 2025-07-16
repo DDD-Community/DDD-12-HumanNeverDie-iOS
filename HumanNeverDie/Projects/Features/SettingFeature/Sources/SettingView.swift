@@ -11,6 +11,7 @@ import CommonFeature
 
 public struct SettingView: View {
   @State private var viewModel: SettingViewModel
+  @Environment(Router.self) private var router
   
   public init(viewModel: SettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -61,8 +62,23 @@ public struct SettingView: View {
 }
 
 extension SettingView {
+  
   private func handleItemTap(_ item: SettingItem) {
-    viewModel.handleAction(.moveToNextStep(item))
+    switch item {
+    case .accountInfo:
+      router.push(to: .SettingAccountInfoView)
+    case .goalSetting:
+      break
+      
+    case .notificationSetting:
+      break
+      
+    case .feedback:
+      break
+      
+    case .terms:
+      break
+    }
   }
   
   
@@ -84,7 +100,7 @@ extension SettingView {
   private struct SettingsRow: View {
     let item: SettingItem
     let onTap: (SettingItem) -> Void
-
+    
     var body: some View {
       HStack {
         Text(item.title)
