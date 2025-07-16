@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+
+import CommonFeature
 import DesignSystem
 
 struct PhysicalInfoFormView: View {

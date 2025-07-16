@@ -8,6 +8,7 @@
 import SwiftUI
 
 import DesignSystem
+import CommonFeature
 
 struct BasicInfoFormView: View {
   @State private var viewModel: OnboardingProfileViewModel
