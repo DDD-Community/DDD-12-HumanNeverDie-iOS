@@ -16,7 +16,7 @@ public struct AccountInfoView: View {
   public var body: some View {
     ScrollView {
   
-    }
+    }.commonToolbar(item: .accountInfo)
   }
 }
 

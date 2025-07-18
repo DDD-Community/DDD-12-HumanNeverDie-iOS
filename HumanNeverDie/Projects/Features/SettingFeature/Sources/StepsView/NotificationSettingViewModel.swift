@@ -1,8 +1,8 @@
 //
-//  AccountInfoViewModel.swift
+//  NotificationSettingViewModel.swift
 //  SettingFeature
 //
-//  Created by Seulki Lee on 7/16/25.
+//  Created by Seulki Lee on 7/19/25.
 //
 
 import Foundation
@@ -11,7 +11,7 @@ import CommonFeature
 
 @Observable
 @MainActor
-public final class AccountInfoViewModel: ViewModelable {
+public final class NotificationSettingViewModel: ViewModelable {
   public struct State: Equatable {}
 
   public enum Action {

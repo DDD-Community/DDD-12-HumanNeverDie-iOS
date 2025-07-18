@@ -41,8 +41,20 @@ public struct RootView: View {
         case .Setting:
           SettingViewFactory.create()
           
-        case .SettingAccountInfoView:
+        case .SettingAccountInfo:
           AccountInfoViewFactory.create()
+          
+        case .SettingGoalSetting:
+          GoalSettingViewFactory.create()
+          
+        case .SettingNotificationSetting:
+          NotificationSettingFactory.create()
+        
+        case .SettingFeedback:
+          FeedbackFactory.create()
+          
+        case .SettingTerms:
+          TermsFactory.create()
         }
       }
     }

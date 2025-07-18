@@ -51,13 +51,7 @@ public struct SettingView: View {
     }
     .listStyle(.plain)
     .listRowSeparator(.hidden)
-    .toolbar {
-      ToolbarItem(placement: .principal) {
-        Text("설정")
-          .amdFont(.mediumRegular)
-          .foregroundStyle(.gray85)
-      }
-    }
+    .commonToolbar(title: "설정")
   }
 }
 
@@ -66,17 +60,20 @@ extension SettingView {
   private func handleItemTap(_ item: SettingItem) {
     switch item {
     case .accountInfo:
-      router.push(to: .SettingAccountInfoView)
+      router.push(to: .SettingAccountInfo)
+      
     case .goalSetting:
-      break
+      router.push(to: .SettingGoalSetting)
       
     case .notificationSetting:
-      break
+      router.push(to: .SettingNotificationSetting)
       
     case .feedback:
+      router.push(to: .SettingFeedback)
       break
       
     case .terms:
+      router.push(to: .SettingTerms)
       break
     }
   }

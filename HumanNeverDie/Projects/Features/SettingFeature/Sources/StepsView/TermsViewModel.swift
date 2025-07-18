@@ -1,17 +1,16 @@
 //
-//  AccountInfoViewModel.swift
+//  TermsViewModel.swift
 //  SettingFeature
 //
-//  Created by Seulki Lee on 7/16/25.
+//  Created by Seulki Lee on 7/19/25.
 //
 
 import Foundation
-
 import CommonFeature
 
 @Observable
 @MainActor
-public final class AccountInfoViewModel: ViewModelable {
+public final class TermsViewModel: ViewModelable {
   public struct State: Equatable {}
 
   public enum Action {
@@ -28,4 +27,3 @@ public final class AccountInfoViewModel: ViewModelable {
     }
   }
 }
-
