@@ -51,7 +51,7 @@ public struct SettingView: View {
     }
     .listStyle(.plain)
     .listRowSeparator(.hidden)
-    .commonToolbar(title: "설정")
+    .commonToolbar(item: .settingTitle)
   }
 }
 
@@ -70,10 +70,11 @@ extension SettingView {
       
     case .feedback:
       router.push(to: .SettingFeedback)
-      break
       
     case .terms:
       router.push(to: .SettingTerms)
+      
+    case .settingTitle:
       break
     }
   }

@@ -8,6 +8,7 @@
 import Foundation
 
 public enum SettingItem: String, CaseIterable, Hashable {
+  case settingTitle = "설정"
   case accountInfo = "정보 관리"
   case goalSetting = "목표 설정"
   case notificationSetting = "알림 수신 설정"
