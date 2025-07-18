@@ -15,7 +15,6 @@ public enum Route: Hashable {
   case SettingAccountInfo
   case SettingGoalSetting
   case SettingNotificationSetting
-  case SettingFeedback
   case SettingTerms
   
 }

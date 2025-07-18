@@ -50,9 +50,6 @@ public struct RootView: View {
           
         case .SettingNotificationSetting:
           NotificationSettingView(viewModel: settingViewModel)
-        
-        case .SettingFeedback:
-          FeedbackView(viewModel: settingViewModel)
           
         case .SettingTerms:
           TermsView(viewModel: settingViewModel)

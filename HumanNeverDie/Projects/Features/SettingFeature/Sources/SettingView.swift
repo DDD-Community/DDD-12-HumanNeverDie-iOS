@@ -68,8 +68,8 @@ extension SettingView {
     case .notificationSetting:
       router.push(to: .SettingNotificationSetting)
       
-    case .feedback:
-      router.push(to: .SettingFeedback)
+    case .feedback: break
+      //앱스토어 리뷰이동
       
     case .terms:
       router.push(to: .SettingTerms)
