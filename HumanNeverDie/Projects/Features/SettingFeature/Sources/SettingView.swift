@@ -79,14 +79,6 @@ extension SettingView {
     }
   }
   
-  
-  private func sectionDivider() -> some View {
-    Divider()
-      .listRowSeparator(.hidden)
-      .listRowInsets(EdgeInsets())
-      .listRowBackground(Color.clear)
-  }
-  
   private func sectionTitle(title:String) -> some View {
     Text(title)
       .amdFont(.smallBold)

@@ -25,8 +25,14 @@ public struct AccountInfoView: View {
   public var body: some View {
     ScrollView {
       contentBasicInfoFormView()
+        .padding(.bottom, 30)
+      
+      sectionDivider()
+      
       contentPhysicalInfoView()
+      
       Spacer()
+      
       bottomButtonView()
         .padding(.top, 30)
   

@@ -31,3 +31,10 @@ public extension View {
     modifier(CommonToolbarModifier(title: item.title))
   }
 }
+
+public func sectionDivider() -> some View {
+  Divider()
+    .listRowSeparator(.hidden)
+    .listRowInsets(EdgeInsets())
+    .listRowBackground(Color.clear)
+}
