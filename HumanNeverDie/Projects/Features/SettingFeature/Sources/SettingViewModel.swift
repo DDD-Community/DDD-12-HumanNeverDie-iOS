@@ -14,12 +14,10 @@ import CommonFeature
 public final class SettingViewModel: ViewModelable {
   
   public struct State: Equatable {
-    //BasicInfoFormView
-    var nickname: String = "이슬기"
+    //AccountInfoView
+    var nickname: String = ""
     var birthDate: String = ""
     var selectedGender: Gender = .none
-    
-    // PhysicalInfo Actions
     var height: String = ""
     var weight: String = ""
     var selectedActivity: ActivityLevel = .none
@@ -34,27 +32,43 @@ public final class SettingViewModel: ViewModelable {
   public enum Action {
     case onAppear
     
-    // BasicInfo Actions
+    // AccountInfoView
     case updateNickname(String)
     case updateBirthDate(String)
     case updateGender(Gender)
-    
-    // PhysicalInfo Actions
     case updateHeight(String)
     case updateWeight(String)
     case updateActivity(ActivityLevel)
+    
+    case updateAccountInfoUserInfo
     
     case updateDailySugarGoal(SugarGoal)
   }
   
   public var state: State = .init()
-  public init() {}
+  private var originalState: State
+
+  public init() {
+    // 초기값 설정 (예: 서버에서 불러온 사용자 정보)
+    let initialState = State(
+      nickname: "아맞당",
+      birthDate: "2025-07-25",
+      selectedGender: .female,
+      height: "150",
+      weight: "50",
+      selectedActivity: .low,
+      selectedDailySugarGoal: .normal,
+      isPermissionGranted: false
+    )
+    
+    self.state = initialState
+    self.originalState = initialState
+  }
   
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
       break
-    
     case .updateNickname(let nickname):
       state.nickname = nickname
       
@@ -73,17 +87,19 @@ public final class SettingViewModel: ViewModelable {
     case .updateActivity(let activity):
       state.selectedActivity = activity
       
+    case .updateAccountInfoUserInfo:
+      break
+      
     case .updateDailySugarGoal(let activity):
       state.selectedDailySugarGoal = activity
     }
   }
 }
 
-//BasicInfoFormView
+//AccountInfoView
 extension SettingViewModel {
-  
-  public var isValidBasicInfo: Bool {
-    return isValidNickname  && isValidBirthDate && isValidGender
+  public var isChangedAccountInfo: Bool {
+    return state != originalState
   }
   
   private var isValidNickname: Bool {
@@ -119,14 +135,6 @@ extension SettingViewModel {
     }
     
     return nil
-  }
-}
-
-//PhysicalInfoFormView
-extension SettingViewModel {
-  
-  public var isValidPhysicalInfo: Bool {
-    return isValidHeight && isValidWeight && isValidActivity
   }
   
   private var isValidHeight: Bool {
