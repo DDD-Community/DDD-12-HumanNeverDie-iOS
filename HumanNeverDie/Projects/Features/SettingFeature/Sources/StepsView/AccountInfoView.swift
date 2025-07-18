@@ -8,13 +8,15 @@
 import SwiftUI
 
 public struct AccountInfoView: View {
-  @State private var viewModel: AccountInfoViewModel
-  public init(viewModel: AccountInfoViewModel) {
+  @State public var viewModel: SettingViewModel
+  
+  public init(viewModel: SettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
   public var body: some View {
     ScrollView {
+      
   
     }.commonToolbar(item: .accountInfo)
   }

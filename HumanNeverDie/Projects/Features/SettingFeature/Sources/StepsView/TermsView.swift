@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct TermsView: View {
-  @State private var viewModel: TermsViewModel
+public struct TermsView: View {
+  @State public var viewModel: SettingViewModel
   
-  public init(viewModel: TermsViewModel) {
+  public init(viewModel: SettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
-    var body: some View {
+  public var body: some View {
       VStack{
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
       }.commonToolbar(item: .terms)

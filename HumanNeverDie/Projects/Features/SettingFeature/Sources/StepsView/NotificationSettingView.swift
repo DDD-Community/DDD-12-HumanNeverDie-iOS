@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct NotificationSettingView: View {
-  @State private var viewModel: NotificationSettingViewModel
+public struct NotificationSettingView: View {
+  @State public var viewModel: SettingViewModel
   
-  public init(viewModel: NotificationSettingViewModel) {
+  public init(viewModel: SettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
-    var body: some View {
+  public var body: some View {
       VStack{
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
       }.commonToolbar(item: .notificationSetting)
