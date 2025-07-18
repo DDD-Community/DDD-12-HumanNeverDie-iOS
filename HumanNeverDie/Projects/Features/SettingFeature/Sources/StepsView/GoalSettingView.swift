@@ -11,6 +11,7 @@ import DesignSystem
 
 public struct GoalSettingView: View {
   @State public var viewModel: SettingViewModel
+  @Environment(\.dismiss) private var dismiss
   
   public init(viewModel: SettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -129,11 +130,12 @@ extension GoalSettingView {
   @ViewBuilder
   private func bottomButtonView() -> some View {
     SettingBottomButton(
-      type: viewModel.isValidDailySugarGoal ? .default : .secondary
+      type: viewModel.isChangedAccountInfo ? .default : .secondary
     ) {
-      guard viewModel.isValidDailySugarGoal else { return }
+      guard viewModel.isChangedAccountInfo else { return }
       withAnimation(.easeInOut) {
-//        viewModel.handleAction(.moveToNextStep)
+        viewModel.handleAction(.updateAccountInfoUserInfo)
+        dismiss()
       }
     }
   }

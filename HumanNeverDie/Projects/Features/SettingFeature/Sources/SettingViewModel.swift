@@ -186,14 +186,6 @@ extension SettingViewModel {
   }
 }
 
-//DailySugarGoalView
-extension SettingViewModel {
-  
-  public var isValidDailySugarGoal: Bool {
-    return state.selectedDailySugarGoal.isSelected
-  }
-}
-
 
 extension String {
   public var isValidNicknameFormat: Bool {
