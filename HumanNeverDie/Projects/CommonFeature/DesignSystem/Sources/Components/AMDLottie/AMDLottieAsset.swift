@@ -11,8 +11,4 @@ public enum AMDLottieAsset: String, CaseIterable {
   case honeyEffect = "HoneyEffect"
   case splash = "LoadingSpinner"
   case loadingSpinner = "Splash"
-  
-  var fileName: String {
-    return rawValue + ".json"
-  }
 }
