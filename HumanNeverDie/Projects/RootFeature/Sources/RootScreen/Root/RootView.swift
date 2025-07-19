@@ -52,7 +52,8 @@ public struct RootView: View {
           GoalSettingFactory.create(userInfo: userInfo)
           
         case .SettingNotificationSetting:
-          NotificationSettingView(viewModel: settingViewModel)
+          let userInfo = settingViewModel.getUserInfoForAccountSetting()
+          NotificationSettingFactory.create(userInfo: userInfo)
           
         case .SettingTerms:
           TermsView(viewModel: settingViewModel)

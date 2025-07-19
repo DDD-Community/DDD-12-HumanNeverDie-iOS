@@ -6,17 +6,162 @@
 //
 
 import SwiftUI
+import DesignSystem
+import CommonFeature
 
 public struct NotificationSettingView: View {
-  @State public var viewModel: SettingViewModel
+  @State private var viewModel: NotificationSettingViewModel
+  @Environment(\.dismiss) private var dismiss
+  @State private var showTimePicker = false
   
-  public init(viewModel: SettingViewModel) {
+  public init(viewModel: NotificationSettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
   public var body: some View {
-      VStack{
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-      }.commonToolbar(item: .notificationSetting)
+    ScrollView {
+      VStack(spacing: 0) {
+        notificationToggleSection()
+        
+      }
+      .padding(.horizontal, 20)
+      .padding(.top, 30)
     }
+    .onAppear {
+      viewModel.handleAction(.onAppear)
+    }
+    .commonToolbar(item: .notificationSetting)
+    .sheet(isPresented: $showTimePicker) {
+      timePickerSheet()
+    }
+  }
+}
+
+extension NotificationSettingView {
+
+  @ViewBuilder
+  private func notificationToggleSection() -> some View {
+    VStack(spacing: 23) {
+      
+      NotificationToggleRow(
+        title: "알림 ON/OFF",
+        isOn: Binding(
+          get: { viewModel.state.isPermissionGranted },
+          set: { viewModel.handleAction(.toggleGeneralNotification($0)) }
+        )
+      )
+      
+      if(viewModel.state.isPermissionGranted) {
+        NotificationToggleRow(
+          title: "기록 리마인더",
+          isOn: Binding(
+            get: { viewModel.state.isGoalReminderEnabled },
+            set: { viewModel.handleAction(.toggleGoalReminder($0)) }
+          ),
+          isEnabled: viewModel.isOtherNotificationsEnabled
+        )
+        
+        if (viewModel.state.isGoalReminderEnabled) {
+          reminderTimeSection()
+        }
+        
+        NotificationToggleRow(
+          title: "목표 위험 경고",
+          subtitle: "일일 당 섭취량의 2/3를 넘어가면 알려드릴게요",
+          isOn: Binding(
+            get: { viewModel.state.isGoalWarningEnabled },
+            set: { viewModel.handleAction(.toggleGoalWarning($0)) }
+          ),
+          isEnabled: viewModel.isOtherNotificationsEnabled
+        )
+        
+        NotificationToggleRow(
+          title: "새소식",
+          subtitle: "카페인 및 음료 업데이트 소식을 받을 수 있어요",
+          isOn: Binding(
+            get: { viewModel.state.isCaffeineNotificationEnabled },
+            set: { viewModel.handleAction(.toggleCaffeineNotification($0)) }
+          ),
+          isEnabled: viewModel.isOtherNotificationsEnabled
+        )
+      }
+    }
+  }
+  
+  @ViewBuilder
+  private func reminderTimeSection() -> some View {
+    VStack(alignment: .leading, spacing: 16) {
+      HStack(alignment: .center, spacing: 12) {
+        Text("알림 시간")
+          .amdFont(.mediumRegular)
+          .foregroundColor(.gray80)
+        
+        Spacer()
+        
+        Button(viewModel.state.reminderTime) {
+          if viewModel.isOtherNotificationsEnabled {
+            showTimePicker = true
+          }
+        }
+        .amdFont(.mediumRegular)
+        .foregroundColor(.primaryDarker)
+        .disabled(!viewModel.isOtherNotificationsEnabled)
+      }
+    }
+  }
+  
+  @ViewBuilder
+  private func timePickerSheet() -> some View {
+
+//    let formatter = DateFormatter()
+//    formatter.locale = Locale(identifier: "ko_KR")
+//    formatter.dateFormat = "a h시 m분"
+//    let timeString = formatter.string(from: Date())
+//    viewModel.handleAction(.updateReminderTime(timeString))
+//    showTimePicker = false
+//  }
+  }
+}
+
+private struct NotificationToggleRow: View {
+  let title: String
+  let subtitle: String?
+  @Binding var isOn: Bool
+  let isEnabled: Bool
+  
+  init(
+    title: String,
+    subtitle: String? = nil,
+    isOn: Binding<Bool>,
+    isEnabled: Bool = true
+  ) {
+    self.title = title
+    self.subtitle = subtitle
+    self._isOn = isOn
+    self.isEnabled = isEnabled
+  }
+  
+  var body: some View {
+    HStack(alignment: .top, spacing: 12) {
+      VStack(alignment: .leading, spacing: 4) {
+        Text(title)
+          .amdFont(.mediumRegular)
+          .foregroundColor(.gray80)
+        
+        if let subtitle = subtitle {
+          Text(subtitle)
+            .lineLimit(1)
+            .fixedSize(horizontal: true, vertical: false)
+            .amdFont(.xsmallRegular)
+            .foregroundColor(.gray60)
+        }
+      }
+      
+      Spacer()
+      
+      Toggle("", isOn: $isOn)
+        .toggleStyle(SwitchToggleStyle(tint: .amdPrimary))
+        .disabled(!isEnabled)
+    }
+  }
 }

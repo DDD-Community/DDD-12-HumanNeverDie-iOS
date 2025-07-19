@@ -30,6 +30,10 @@ public struct UserInfo: Equatable {
     public let selectedActivity: ActivityLevel
     public let selectedDailySugarGoal: SugarGoal
     public let isPermissionGranted: Bool
+    public let isGoalReminderEnabled: Bool
+    public let reminderTime: String
+    public let isGoalWarningEnabled: Bool
+    public let isCaffeineNotificationEnabled: Bool
     
     public init(
         nickname: String,
@@ -39,7 +43,11 @@ public struct UserInfo: Equatable {
         weight: String,
         selectedActivity: ActivityLevel,
         selectedDailySugarGoal: SugarGoal,
-        isPermissionGranted: Bool
+        isPermissionGranted: Bool,
+        isGoalReminderEnabled: Bool,
+        reminderTime: String,
+        isGoalWarningEnabled: Bool,
+        isCaffeineNotificationEnabled: Bool
     ) {
         self.nickname = nickname
         self.birthDate = birthDate
@@ -49,6 +57,10 @@ public struct UserInfo: Equatable {
         self.selectedActivity = selectedActivity
         self.selectedDailySugarGoal = selectedDailySugarGoal
         self.isPermissionGranted = isPermissionGranted
+        self.isGoalReminderEnabled = isGoalReminderEnabled
+        self.reminderTime = reminderTime
+        self.isGoalWarningEnabled = isGoalWarningEnabled
+        self.isCaffeineNotificationEnabled = isCaffeineNotificationEnabled
     }
     
   nonisolated(unsafe) static let defaultUserInfo = UserInfo(
@@ -59,7 +71,11 @@ public struct UserInfo: Equatable {
         weight: "50",
         selectedActivity: .low,
         selectedDailySugarGoal: .normal,
-        isPermissionGranted: false
+        isPermissionGranted: false,
+        isGoalReminderEnabled: false,
+        reminderTime: "오후 12시 10분",
+        isGoalWarningEnabled: false,
+        isCaffeineNotificationEnabled: false
     )
 }
 
