@@ -56,7 +56,7 @@ public struct RootView: View {
           NotificationSettingFactory.create(userInfo: userInfo)
           
         case .SettingTerms:
-          TermsView(viewModel: settingViewModel)
+          TermsFactory.create()
         }
       }
     }
