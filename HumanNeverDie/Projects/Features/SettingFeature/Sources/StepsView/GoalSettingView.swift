@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
-import CommonFeature
+
+import UserDomain
 import DesignSystem
+import CommonFeature
 
 public struct GoalSettingView: View {
   @State public var viewModel: SettingViewModel

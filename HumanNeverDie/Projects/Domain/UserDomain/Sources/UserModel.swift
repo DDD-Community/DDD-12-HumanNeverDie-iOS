@@ -1,8 +1,8 @@
 //
-//  CommonModel.swift
-//  CommonFeature
+//  UserModel.swift
+//  UserDomain
 //
-//  Created by Seulki Lee on 7/16/25.
+//  Created by Seulki Lee on 7/20/25.
 //
 
 import Foundation

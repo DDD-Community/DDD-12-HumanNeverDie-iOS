@@ -7,8 +7,9 @@
 
 import SwiftUI
 
-import CommonFeature
+import UserDomain
 import DesignSystem
+import CommonFeature
 
 public struct AccountInfoView: View {
   @State public var viewModel: SettingViewModel

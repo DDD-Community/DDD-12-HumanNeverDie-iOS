@@ -44,6 +44,7 @@ public extension Modules {
     
     enum Domain: String {
         case Beverage
+        case User
         
         var name: String {
             return "\(rawValue)Domain"

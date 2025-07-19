@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+import UserDomain
 import CommonFeature
 import DesignSystem
 
