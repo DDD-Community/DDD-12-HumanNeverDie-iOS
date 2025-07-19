@@ -12,14 +12,14 @@ import DesignSystem
 import CommonFeature
 
 public struct AccountInfoView: View {
-  @State public var viewModel: SettingViewModel
+  @State public var viewModel: AccountInfoViewModel
   @State private var showAlert = false
   @Environment(\.dismiss) private var dismiss
   @FocusState private var isNicknameFocused: Bool
   @FocusState private var isHeightFocused: Bool
   @FocusState private var isWeightFocused: Bool
   
-  public init(viewModel: SettingViewModel) {
+  public init(viewModel: AccountInfoViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   

@@ -1,5 +1,6 @@
 import SwiftUI
 
+import UserDomain
 import SplashFeature
 import OnboardingFeature
 import CommonFeature
@@ -43,10 +44,12 @@ public struct RootView: View {
           SettingViewFactory.create()
           
         case .SettingAccountInfo:
-          AccountInfoView(viewModel: settingViewModel)
+          let userInfo = settingViewModel.getUserInfoForAccountSetting()
+          AccountInfoFactory.create(userInfo: userInfo)
           
         case .SettingGoalSetting:
-          GoalSettingView(viewModel: settingViewModel)
+          let userInfo = settingViewModel.getUserInfoForAccountSetting()
+          GoalSettingFactory.create(userInfo: userInfo)
           
         case .SettingNotificationSetting:
           NotificationSettingView(viewModel: settingViewModel)

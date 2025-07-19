@@ -12,10 +12,10 @@ import DesignSystem
 import CommonFeature
 
 public struct GoalSettingView: View {
-  @State public var viewModel: SettingViewModel
+  @State public var viewModel: GoalSettingViewModel
   @Environment(\.dismiss) private var dismiss
   
-  public init(viewModel: SettingViewModel) {
+  public init(viewModel: GoalSettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
