@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+import DesignSystem
 import CommonFeature
 
 public struct SettingView: View {
