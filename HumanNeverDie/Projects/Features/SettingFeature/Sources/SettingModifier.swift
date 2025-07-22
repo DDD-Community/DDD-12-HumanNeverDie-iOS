@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct CommonToolbarModifier: ViewModifier {
+private struct SettingToolbarModifier: ViewModifier {
   let title: String
   
   public func body(content: Content) -> some View {
@@ -23,11 +23,11 @@ public struct CommonToolbarModifier: ViewModifier {
 }
 
 public extension View {
-  func commonToolbar(title: String) -> some View {
-    modifier(CommonToolbarModifier(title: title))
+  func settingToolbar(title: String) -> some View {
+    modifier(SettingToolbarModifier(title: title))
   }
   
-  func commonToolbar(item: SettingItem) -> some View {
-    modifier(CommonToolbarModifier(title: item.title))
+  func settingToolbar(item: SettingItem) -> some View {
+    modifier(SettingToolbarModifier(title: item.title))
   }
 }

@@ -51,7 +51,7 @@ public struct SettingView: View {
     }
     .listStyle(.plain)
     .listRowSeparator(.hidden)
-    .commonToolbar(item: .settingTitle)
+    .settingToolbar(item: .settingTitle)
   }
 }
 

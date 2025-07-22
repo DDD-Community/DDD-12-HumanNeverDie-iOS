@@ -31,7 +31,7 @@ public struct TermsView: View {
     .listStyle(.plain)
     .listRowSeparator(.hidden)
     .padding(.top, 30)
-    .commonToolbar(item: .terms)
+    .settingToolbar(item: .terms)
   }
 }
 

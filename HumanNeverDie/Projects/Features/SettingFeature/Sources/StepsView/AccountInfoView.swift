@@ -34,7 +34,7 @@ public struct AccountInfoView: View {
       bottomButtonView()
         .padding(.top, 30)
       
-    }.commonToolbar(item: .accountInfo)
+    }.settingToolbar(item: .accountInfo)
   }
 }
 

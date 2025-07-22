@@ -28,7 +28,7 @@ public struct GoalSettingView: View {
     }
     .background(.gray0)
     .ignoresSafeArea(edges: .bottom)
-    .commonToolbar(item: .goalSetting)
+    .settingToolbar(item: .goalSetting)
   }
 }
 

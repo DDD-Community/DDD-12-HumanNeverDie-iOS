@@ -30,7 +30,7 @@ public struct NotificationSettingView: View {
     .onAppear {
       viewModel.handleAction(.onAppear)
     }
-    .commonToolbar(item: .notificationSetting)
+    .settingToolbar(item: .notificationSetting)
     .amdBottomSheet(isPresented: $viewModel.state.showTimePicker, detents: [.height(474)]) {
       AMDDatePicker(
         selectedDate: $viewModel.state.reminderTime,
