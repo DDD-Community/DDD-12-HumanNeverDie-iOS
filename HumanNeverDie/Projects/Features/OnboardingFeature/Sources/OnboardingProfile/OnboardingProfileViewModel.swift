@@ -6,14 +6,14 @@
 //
 
 import Foundation
-import Observation
-
+import UserDomain
 import CommonFeature
 
 @Observable
 @MainActor
 public final class OnboardingProfileViewModel: ViewModelable {
   private(set) var currentStep: OnboardingStep = .basicInfo
+  private let validator: UserInfoValidationUseCase
   
   public struct State: Equatable {
     //BasicInfoFormView
@@ -51,7 +51,9 @@ public final class OnboardingProfileViewModel: ViewModelable {
   }
   
   public var state: State = .init()
-  public init() {}
+  public init(validator: UserInfoValidationUseCase = DefaultUserInfoValidationUseCase()) {
+      self.validator = validator
+  }
   
   public func handleAction(_ action: Action) {
     switch action {
@@ -97,42 +99,13 @@ public final class OnboardingProfileViewModel: ViewModelable {
 extension OnboardingProfileViewModel {
   
   public var isValidBasicInfo: Bool {
-    return isValidNickname  && isValidBirthDate && isValidGender
-  }
-  
-  private var isValidNickname: Bool {
-    let trimmedNickname = state.nickname.trimmingCharacters(in: .whitespacesAndNewlines)
-    return !trimmedNickname.isEmpty &&
-    trimmedNickname.count <= 10 &&
-    trimmedNickname.isValidNicknameFormat
-  }
-  
-  private var isValidBirthDate: Bool {
-    return true
-  }
-  
-  private var isValidGender: Bool {
-    return state.selectedGender.isSelected
+    return validator.isValidNickname(state.nickname) &&
+           state.birthDate != "" &&
+    state.selectedGender != .none
   }
   
   public var nicknameErrorMessage: String? {
-    if state.nickname.isEmpty {
-      return nil
-    }
-    
-    if state.nickname.count < 2 {
-      return "닉네임은 2자 이상 입력해주세요."
-    }
-    
-    if state.nickname.count > 10 {
-      return "닉네임은 10자 이하로 입력해주세요."
-    }
-    
-    if !state.nickname.isValidNicknameFormat {
-      return "닉네임은 띄어쓰기 없이 한글, 영문, 숫자로 입력해주세요."
-    }
-    
-    return nil
+    return validator.nicknameErrorMessage(for: state.nickname)
   }
 }
 
@@ -140,55 +113,17 @@ extension OnboardingProfileViewModel {
 extension OnboardingProfileViewModel {
   
   public var isValidPhysicalInfo: Bool {
-    return isValidHeight && isValidWeight && isValidActivity
-  }
-  
-  private var isValidHeight: Bool {
-    guard !state.height.isEmpty else { return false }
-    guard let heightValue = Int(state.height) else { return false }
-    return heightValue > 0 && heightValue <= 300
-  }
-  
-  private var isValidWeight: Bool {
-    guard !state.weight.isEmpty else { return false }
-    guard let weightValue = Int(state.weight) else { return false }
-    return weightValue > 0 && weightValue <= 300
-  }
-  
-  private var isValidActivity: Bool {
-    return state.selectedActivity.isSelected
+    return validator.isValidHeight(state.height) &&
+    validator.isValidWeight(state.weight) &&
+    state.selectedActivity != .none
   }
   
   public var heightErrorMessage: String? {
-    if state.height.isEmpty {
-      return nil
-    }
-    
-    guard let heightValue = Int(state.height) else {
-      return "키는 0-300 사이의 숫자를 입력해주세요"
-    }
-    
-    if heightValue <= 0 || heightValue > 300 {
-      return "키는 0-300 사이의 숫자를 입력해주세요"
-    }
-    
-    return nil
+    return validator.heightErrorMessage(for: state.height)
   }
   
   public var weightErrorMessage: String? {
-    if state.weight.isEmpty {
-      return nil
-    }
-    
-    guard let weightValue = Int(state.weight) else {
-      return "몸무게는 0-300 사이의 숫자를 입력해주세요"
-    }
-    
-    if weightValue <= 0 || weightValue > 300 {
-      return "몸무게는 0-300 사이의 숫자를 입력해주세요"
-    }
-    
-    return nil
+    return validator.weightErrorMessage(for: state.weight)
   }
 }
 
@@ -196,17 +131,6 @@ extension OnboardingProfileViewModel {
 extension OnboardingProfileViewModel {
   
   public var isValidDailySugarGoal: Bool {
-    return state.selectedDailySugarGoal.isSelected
+    return state.selectedDailySugarGoal != .none
   }
 }
-
-
-extension String {
-  public var isValidNicknameFormat: Bool {
-    let regex = "^[가-힣a-zA-Z0-9]{1,10}$"
-    let test = NSPredicate(format: "SELF MATCHES %@", regex)
-    return test.evaluate(with: self)
-  }
-}
-
-

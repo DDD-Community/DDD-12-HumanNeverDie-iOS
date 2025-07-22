@@ -1,12 +1,15 @@
 import SwiftUI
 
+import UserDomain
 import SplashFeature
 import OnboardingFeature
 import CommonFeature
 import BeverageRecordListFeature
+import SettingFeature
 
 public struct RootView: View {
   @State private var router = Router()
+  @State private var settingViewModel = SettingViewModel()
   
   public init() {}
   
@@ -36,6 +39,24 @@ public struct RootView: View {
           
         case .onboardingProfile:
           OnboardingProfileFactory.create()
+          
+        case .Setting:
+          SettingViewFactory.create()
+          
+        case .SettingAccountInfo:
+          let userInfo = settingViewModel.getUserInfoForAccountSetting()
+          AccountInfoFactory.create(userInfo: userInfo)
+          
+        case .SettingGoalSetting:
+          let userInfo = settingViewModel.getUserInfoForAccountSetting()
+          GoalSettingFactory.create(userInfo: userInfo)
+          
+        case .SettingNotificationSetting:
+          let userInfo = settingViewModel.getUserInfoForAccountSetting()
+          NotificationSettingFactory.create(userInfo: userInfo)
+          
+        case .SettingTerms:
+          TermsFactory.create()
         }
       }
     }

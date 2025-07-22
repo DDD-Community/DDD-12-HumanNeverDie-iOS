@@ -11,4 +11,10 @@ public enum Route: Hashable {
   case beverageRecordList
   case BeverageSearch
   case onboardingProfile
+  case Setting
+  case SettingAccountInfo
+  case SettingGoalSetting
+  case SettingNotificationSetting
+  case SettingTerms
+  
 }

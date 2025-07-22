@@ -1,43 +1,38 @@
 //
-//  DailySugarGoalView.swift
-//  OnboardingFeature
+//  GoalSettingView.swift
+//  SettingFeature
 //
-//  Created by Seulki Lee on 7/11/25.
+//  Created by Seulki Lee on 7/19/25.
 //
 
 import SwiftUI
+
 import UserDomain
 import DesignSystem
 import CommonFeature
 
-struct DailySugarGoalView: View {
-  @State private var viewModel: OnboardingProfileViewModel
+public struct GoalSettingView: View {
+  @State public var viewModel: GoalSettingViewModel
+  @Environment(\.dismiss) private var dismiss
   
-  public init(viewModel: OnboardingProfileViewModel) {
+  public init(viewModel: GoalSettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
-  var body: some View {
+  public var body: some View {
     VStack(spacing: 0) {
-      topHeaderView()
       contentView()
       bottomInfoView()
       Spacer()
       bottomButtonView()
     }
-    .background(Color.white)
+    .background(.gray0)
     .ignoresSafeArea(edges: .bottom)
+    .settingToolbar(item: .goalSetting)
   }
 }
 
-extension DailySugarGoalView {
-  @ViewBuilder
-  private func topHeaderView() -> some View {
-    OnboardingTopHeaderView(
-      title: "일일 당 섭취량 목표를\n정해주세요",
-      stepText: "3/3"
-    )
-  }
+extension GoalSettingView {
   
   @ViewBuilder
   private func contentView() -> some View {
@@ -136,13 +131,15 @@ extension DailySugarGoalView {
   
   @ViewBuilder
   private func bottomButtonView() -> some View {
-    OnboardingBottomButton(
-      type: viewModel.isValidDailySugarGoal ? .default : .secondary
+    SettingBottomButton(
+      type: viewModel.isChangedAccountInfo ? .default : .secondary
     ) {
-      guard viewModel.isValidDailySugarGoal else { return }
+      guard viewModel.isChangedAccountInfo else { return }
       withAnimation(.easeInOut) {
-        viewModel.handleAction(.moveToNextStep)
+        viewModel.handleAction(.updateAccountInfoUserInfo)
+        dismiss()
       }
     }
   }
 }
+

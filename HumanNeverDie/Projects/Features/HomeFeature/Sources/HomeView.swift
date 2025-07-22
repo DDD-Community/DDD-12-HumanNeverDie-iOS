@@ -22,10 +22,17 @@ public struct HomeView: View {
     ZStack {
       Color.pink
       
-      AMDFloatingButton(
-        title: "음료 기록하기",
-        action: { router.push(to: .beverageRecordList) }
-      )
+      VStack {
+        AMDFloatingButton(
+          title: "Setting",
+          action: { router.push(to: .Setting) }
+        )
+        
+        AMDFloatingButton(
+          title: "음료 기록하기",
+          action: { router.push(to: .beverageRecordList) }
+        )
+      }
     }
   }
 }
