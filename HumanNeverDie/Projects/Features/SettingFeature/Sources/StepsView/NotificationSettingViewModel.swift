@@ -80,7 +80,7 @@ public final class NotificationSettingViewModel: ViewModelable {
   }
   
   public func getReminderTimeString() -> String {
-    return UserInfo.reminderTimeFormatter.string(from:state.reminderTime)
+      return UserInfo.reminderTimeFormatter.string(from: state.reminderTime)
   }
 }
 

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UserDomain
 
 @MainActor
 public struct AccountInfoFactory {
