@@ -17,9 +17,10 @@ public final class NotificationSettingViewModel: ViewModelable {
     // 알림 설정
     var isPermissionGranted: Bool
     var isGoalReminderEnabled: Bool
-    var reminderTime: String
+    var reminderTime = Date()
     var isGoalWarningEnabled: Bool
     var isCaffeineNotificationEnabled: Bool
+    var showTimePicker: Bool = false
   }
   
   public enum Action {
@@ -32,7 +33,7 @@ public final class NotificationSettingViewModel: ViewModelable {
     case toggleCaffeineNotification(Bool)
     
     // 시간 설정 액션
-    case updateReminderTime(String)
+    case updateReminderTime(Date)
     
     case updateNotificationSettingInfo
   }
@@ -77,7 +78,10 @@ public final class NotificationSettingViewModel: ViewModelable {
       break
     }
   }
-
+  
+  public func getReminderTimeString() -> String {
+    return UserInfo.reminderTimeFormatter.string(from:state.reminderTime)
+  }
 }
 
 extension NotificationSettingViewModel {

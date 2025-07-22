@@ -31,8 +31,12 @@ public struct NotificationSettingView: View {
       viewModel.handleAction(.onAppear)
     }
     .commonToolbar(item: .notificationSetting)
-    .sheet(isPresented: $showTimePicker) {
-      timePickerSheet()
+    .amdBottomSheet(isPresented: $viewModel.state.showTimePicker, detents: [.height(474)]) {
+      AMDDatePicker(
+        selectedDate: $viewModel.state.reminderTime,
+        pickerType: .time
+      )
+      .frame(height: 200)
     }
   }
 }
@@ -98,9 +102,9 @@ extension NotificationSettingView {
         
         Spacer()
         
-        Button(viewModel.state.reminderTime) {
+        Button(viewModel.getReminderTimeString()) {
           if viewModel.isOtherNotificationsEnabled {
-            showTimePicker = true
+            viewModel.state.showTimePicker = true
           }
         }
         .amdFont(.mediumRegular)
@@ -108,18 +112,6 @@ extension NotificationSettingView {
         .disabled(!viewModel.isOtherNotificationsEnabled)
       }
     }
-  }
-  
-  @ViewBuilder
-  private func timePickerSheet() -> some View {
-
-//    let formatter = DateFormatter()
-//    formatter.locale = Locale(identifier: "ko_KR")
-//    formatter.dateFormat = "a h시 m분"
-//    let timeString = formatter.string(from: Date())
-//    viewModel.handleAction(.updateReminderTime(timeString))
-//    showTimePicker = false
-//  }
   }
 }
 

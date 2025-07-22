@@ -31,10 +31,10 @@ public struct UserInfo: Equatable {
     public let selectedDailySugarGoal: SugarGoal
     public let isPermissionGranted: Bool
     public let isGoalReminderEnabled: Bool
-    public let reminderTime: String
+    public let reminderTime: Date
     public let isGoalWarningEnabled: Bool
     public let isCaffeineNotificationEnabled: Bool
-    
+
     public init(
         nickname: String,
         birthDate: String,
@@ -45,7 +45,7 @@ public struct UserInfo: Equatable {
         selectedDailySugarGoal: SugarGoal,
         isPermissionGranted: Bool,
         isGoalReminderEnabled: Bool,
-        reminderTime: String,
+        reminderTime: String, // ← 여전히 문자열을 받음
         isGoalWarningEnabled: Bool,
         isCaffeineNotificationEnabled: Bool
     ) {
@@ -58,12 +58,12 @@ public struct UserInfo: Equatable {
         self.selectedDailySugarGoal = selectedDailySugarGoal
         self.isPermissionGranted = isPermissionGranted
         self.isGoalReminderEnabled = isGoalReminderEnabled
-        self.reminderTime = reminderTime
+      self.reminderTime = UserInfo.reminderTimeFormatter.date(from: reminderTime) ?? Date()
         self.isGoalWarningEnabled = isGoalWarningEnabled
         self.isCaffeineNotificationEnabled = isCaffeineNotificationEnabled
     }
-    
-  nonisolated(unsafe) static let defaultUserInfo = UserInfo(
+
+    nonisolated(unsafe) static let defaultUserInfo = UserInfo(
         nickname: "아맞당",
         birthDate: "2025-07-25",
         selectedGender: .female,
@@ -77,5 +77,12 @@ public struct UserInfo: Equatable {
         isGoalWarningEnabled: false,
         isCaffeineNotificationEnabled: false
     )
+
+  static let reminderTimeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "a h시 mm분"
+        return formatter
+    }()
 }
 
