@@ -83,11 +83,11 @@ public class UserInfoValidator {
     }
     
     public static func isValidGender(_ gender: Gender) -> Bool {
-        return gender.isSelected
+      return gender != .none
     }
     
     public static func isValidActivity(_ activity: ActivityLevel) -> Bool {
-        return activity.isSelected
+      return activity != .none
     }
     
     public static func isValidBirthDate(_ birthDate: String) -> Bool {
@@ -95,6 +95,6 @@ public class UserInfoValidator {
     }
     
     public static func isValidDailySugarGoal(_ sugarGoal: SugarGoal) -> Bool {
-        return sugarGoal.isSelected
+        return sugarGoal != .none
     }
 }

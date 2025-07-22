@@ -11,10 +11,6 @@ public enum Gender: String, CaseIterable {
   case none = ""
   case male = "남성"
   case female = "여성"
-  
-  public var isSelected: Bool {
-    return self != .none
-  }
 }
 
 public enum ActivityLevel: String, CaseIterable {
@@ -23,9 +19,6 @@ public enum ActivityLevel: String, CaseIterable {
   case medium = "보통"
   case high = "높은 편"
   
-  public var isSelected: Bool {
-    return self != .none
-  }
 }
 
 public enum SugarGoal: String, CaseIterable {
@@ -50,9 +43,5 @@ public enum SugarGoal: String, CaseIterable {
     case .normal: return "하루 100g"
     case .hard: return "하루 40g"
     }
-  }
-  
-  public var isSelected: Bool {
-    return self != .none
   }
 }
