@@ -13,6 +13,7 @@ import CommonFeature
 @MainActor
 public final class OnboardingProfileViewModel: ViewModelable {
   private(set) var currentStep: OnboardingStep = .basicInfo
+  private let validator: UserInfoValidationUseCase
   
   public struct State: Equatable {
     //BasicInfoFormView
@@ -50,7 +51,9 @@ public final class OnboardingProfileViewModel: ViewModelable {
   }
   
   public var state: State = .init()
-  public init() {}
+  public init(validator: UserInfoValidationUseCase = DefaultUserInfoValidationUseCase()) {
+      self.validator = validator
+  }
   
   public func handleAction(_ action: Action) {
     switch action {
@@ -96,13 +99,13 @@ public final class OnboardingProfileViewModel: ViewModelable {
 extension OnboardingProfileViewModel {
   
   public var isValidBasicInfo: Bool {
-    return UserInfoValidator.isValidNickname(state.nickname) &&
+    return validator.isValidNickname(state.nickname) &&
            state.birthDate != "" &&
     state.selectedGender != .none
   }
   
   public var nicknameErrorMessage: String? {
-    return UserInfoValidator.nicknameErrorMessage(for: state.nickname)
+    return validator.nicknameErrorMessage(for: state.nickname)
   }
 }
 
@@ -110,17 +113,17 @@ extension OnboardingProfileViewModel {
 extension OnboardingProfileViewModel {
   
   public var isValidPhysicalInfo: Bool {
-    return UserInfoValidator.isValidHeight(state.height) &&
-           UserInfoValidator.isValidWeight(state.weight) &&
+    return validator.isValidHeight(state.height) &&
+    validator.isValidWeight(state.weight) &&
     state.selectedActivity != .none
   }
   
   public var heightErrorMessage: String? {
-    return UserInfoValidator.heightErrorMessage(for: state.height)
+    return validator.heightErrorMessage(for: state.height)
   }
   
   public var weightErrorMessage: String? {
-    return UserInfoValidator.weightErrorMessage(for: state.weight)
+    return validator.weightErrorMessage(for: state.weight)
   }
 }
 

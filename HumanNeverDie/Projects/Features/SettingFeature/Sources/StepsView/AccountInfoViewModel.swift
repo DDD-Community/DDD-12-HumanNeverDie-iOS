@@ -13,6 +13,7 @@ import CommonFeature
 @Observable
 @MainActor
 public final class AccountInfoViewModel: ViewModelable {
+  private let validator: UserInfoValidationUseCase
   
   public struct State: Equatable {
     //AccountInfoView
@@ -41,7 +42,12 @@ public final class AccountInfoViewModel: ViewModelable {
   public var state: State = .init()
   private var originalState: State
 
-  public init(userInfo: UserInfo) {
+  public init(
+    userInfo: UserInfo,
+    validator: UserInfoValidationUseCase = DefaultUserInfoValidationUseCase()
+  ) {
+      self.validator = validator
+
       let initialState = State(
           nickname: userInfo.nickname,
           birthDate: userInfo.birthDate,
@@ -50,11 +56,11 @@ public final class AccountInfoViewModel: ViewModelable {
           weight: userInfo.weight,
           selectedActivity: userInfo.selectedActivity
       )
-      
+
       self.state = initialState
       self.originalState = initialState
   }
-  
+
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
@@ -91,15 +97,15 @@ extension AccountInfoViewModel {
   }
   
   public var nicknameErrorMessage: String? {
-    return UserInfoValidator.nicknameErrorMessage(for: state.nickname)
+    return validator.nicknameErrorMessage(for: state.nickname)
   }
   
   public var heightErrorMessage: String? {
-    return UserInfoValidator.heightErrorMessage(for: state.height)
+    return validator.heightErrorMessage(for: state.height)
   }
   
   public var weightErrorMessage: String? {
-    return UserInfoValidator.weightErrorMessage(for: state.weight)
+    return validator.weightErrorMessage(for: state.weight)
   }
 }
 
