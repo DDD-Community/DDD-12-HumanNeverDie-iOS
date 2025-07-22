@@ -97,8 +97,8 @@ extension OnboardingProfileViewModel {
   
   public var isValidBasicInfo: Bool {
     return UserInfoValidator.isValidNickname(state.nickname) &&
-           UserInfoValidator.isValidBirthDate(state.birthDate) &&
-           UserInfoValidator.isValidGender(state.selectedGender)
+           state.birthDate != "" &&
+    state.selectedGender != .none
   }
   
   public var nicknameErrorMessage: String? {
@@ -112,7 +112,7 @@ extension OnboardingProfileViewModel {
   public var isValidPhysicalInfo: Bool {
     return UserInfoValidator.isValidHeight(state.height) &&
            UserInfoValidator.isValidWeight(state.weight) &&
-           UserInfoValidator.isValidActivity(state.selectedActivity)
+    state.selectedActivity != .none
   }
   
   public var heightErrorMessage: String? {
@@ -128,6 +128,6 @@ extension OnboardingProfileViewModel {
 extension OnboardingProfileViewModel {
   
   public var isValidDailySugarGoal: Bool {
-    return UserInfoValidator.isValidDailySugarGoal(state.selectedDailySugarGoal)
+    return state.selectedDailySugarGoal != .none
   }
 }

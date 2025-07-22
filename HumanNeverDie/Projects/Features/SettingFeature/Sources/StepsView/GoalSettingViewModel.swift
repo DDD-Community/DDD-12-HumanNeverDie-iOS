@@ -67,6 +67,6 @@ extension GoalSettingViewModel {
   }
   
   public var isValidDailySugarGoal: Bool {
-    return UserInfoValidator.isValidDailySugarGoal(state.selectedDailySugarGoal)
+    return state.selectedDailySugarGoal != .none
   }
 }
