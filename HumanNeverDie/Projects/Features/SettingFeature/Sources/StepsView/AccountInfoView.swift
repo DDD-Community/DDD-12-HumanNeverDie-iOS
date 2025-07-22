@@ -29,14 +29,11 @@ public struct AccountInfoView: View {
         .padding(.bottom, 30)
       
       sectionDivider()
-      
       contentPhysicalInfoView()
-      
       Spacer()
-      
       bottomButtonView()
         .padding(.top, 30)
-  
+      
     }.commonToolbar(item: .accountInfo)
   }
 }
