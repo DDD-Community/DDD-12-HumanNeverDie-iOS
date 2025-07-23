@@ -8,7 +8,8 @@ let packageSettings = PackageSettings(
     productTypes: [
         "Dependencies": .framework,
         "Nuke": .framework,
-        "Alamofire": .framework
+        "Alamofire": .framework,
+        "Lottie": .framework
     ]
 )
 #endif
@@ -18,6 +19,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.9.2"),
         .package(url: "https://github.com/Alamofire/Alamofire", from: "5.10.2"),
-        .package(url: "https://github.com/kean/Nuke", branch: "main")
+        .package(url: "https://github.com/kean/Nuke", branch: "main"),
+        .package(url: "https://github.com/airbnb/lottie-spm.git", from: "4.5.2")
     ]
 )
