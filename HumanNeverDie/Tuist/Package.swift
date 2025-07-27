@@ -9,7 +9,8 @@ let packageSettings = PackageSettings(
         "Dependencies": .framework,
         "Nuke": .framework,
         "Alamofire": .framework,
-        "Lottie": .framework
+        "Lottie": .framework,
+        "AsyncAlgorithms": .framework
     ]
 )
 #endif
@@ -20,6 +21,7 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.9.2"),
         .package(url: "https://github.com/Alamofire/Alamofire", from: "5.10.2"),
         .package(url: "https://github.com/kean/Nuke", branch: "main"),
-        .package(url: "https://github.com/airbnb/lottie-spm.git", from: "4.5.2")
+        .package(url: "https://github.com/airbnb/lottie-spm.git", from: "4.5.2"),
+        .package(url: "https://github.com/apple/swift-async-algorithms", from: "1.0.0")
     ]
 )
