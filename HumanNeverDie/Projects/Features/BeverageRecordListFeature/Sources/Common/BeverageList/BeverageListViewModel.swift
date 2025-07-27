@@ -12,7 +12,6 @@ import CommonFeature
 import BeverageDomain
 
 import Dependencies
-import SwiftUI
 
 @Observable
 @MainActor
