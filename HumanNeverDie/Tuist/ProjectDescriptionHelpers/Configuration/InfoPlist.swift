@@ -26,6 +26,9 @@ public struct InfoPlist {
                 ]
             ]
         ],
+        "NSAppTransportSecurity": [
+            "NSAllowsArbitraryLoads": true
+        ],
         "CFBundleDevelopmentRegion": "ko",
         "CFBundleShortVersionString": .string(AppConfiguration.marketingVesion),
         "CFBundleVersion": .string(AppConfiguration.projectBuildVersion),
