@@ -71,7 +71,7 @@ public final class BeverageRepository: BeverageRepositoryInterface, @unchecked S
     return response.toDomain()
   }
   
-  public func searchBeverage(keyword: String) async throws -> BeverageDomain.BeverageList {
+  public func searchBeverage(keyword: String) async throws -> BeverageList {
     let target = BeverageSearchTarget(keyword: keyword)
     let result = try await networkService.requestDDD(target)
     

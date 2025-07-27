@@ -16,7 +16,7 @@ struct BeverageSearchTarget: AMDAPIRequestable {
     self.keyword = keyword
   }
   
-  typealias Response = AMDAPIResponse<BeverageListResponse>
+  typealias Response = AMDAPIResponse<BeverageSearchResponse>
   
   var path: String {
     return "/cafe-beverages/search"
