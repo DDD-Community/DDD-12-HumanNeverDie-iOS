@@ -81,4 +81,15 @@ public final class BeverageRepository: BeverageRepositoryInterface, @unchecked S
     
     return response.toDomain()
   }
+  
+  public func recordBeverage(productID: String) async throws -> Int {
+    let target = BeverageRecordTarget(productID: productID)
+    let result = try await networkService.requestDDD(target)
+    
+    guard let statusCode = result.status else {
+      throw AMDNetworkError.emptyResponse
+    }
+    
+    return statusCode
+  }
 }
