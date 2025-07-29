@@ -5,7 +5,8 @@ let project = Project.makeModule(
     name: Modules.BaseDomain.name,
     product: .framework,
     dependencies: [.domain(module: .Beverage),
-        .domain(module: .User)
+        .domain(module: .User),
+        .domain(module: .History)
     ],
     hasTests: false
 )
