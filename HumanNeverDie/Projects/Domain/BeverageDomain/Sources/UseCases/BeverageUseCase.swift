@@ -8,6 +8,7 @@ public protocol BeverageUseCaseProtocol: Sendable {
   func getBeverageDetail(productID: String) async throws -> BeverageDetail
   func likeBeverage(productID: String) async throws -> BeverageLike
   func unLikeBeverage(productID: String) async throws -> BeverageLike
+  func searchBeverage(keyword: String) async throws -> BeverageList
 }
 
 public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable {
@@ -32,5 +33,9 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
   
   public func unLikeBeverage(productID: String) async throws -> BeverageLike {
     return try await beverageRepository.unLikeBeverage(productID: productID)
+  }
+  
+  public func searchBeverage(keyword: String) async throws -> BeverageList {
+    return try await beverageRepository.searchBeverage(keyword: keyword)
   }
 }

@@ -6,15 +6,18 @@
 //
 
 import SwiftUI
+import AsyncAlgorithms
 
 import CommonFeature
 import DesignSystem
+import Shared
 
 public struct BeverageSearchView: View {
   @State private var viewModel: BeverageSearchViewModel
   @Environment(Router.self) private var router
   
   @FocusState private var isFocus: Bool
+  private let searchChannel = AsyncChannel<String>()
   
   private enum Constants {
     static let navigationBarHeight: CGFloat = 56
@@ -59,6 +62,10 @@ public struct BeverageSearchView: View {
         hiddenClearButton: false,
         rightButtonType: .search
       )
+      .debounce($viewModel.state.searchText, using: searchChannel, for: .seconds(1.0)) {
+        viewModel.handleAction(.debounceSearchTextChanged($0))
+      }
+          
     }
     .padding(.horizontal, 20)
     .frame(height: Constants.navigationBarHeight)

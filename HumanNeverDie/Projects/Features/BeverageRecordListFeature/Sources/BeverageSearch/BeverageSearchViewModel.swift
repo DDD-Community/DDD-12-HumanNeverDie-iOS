@@ -10,7 +10,6 @@ import Observation
 
 import CommonFeature
 import BeverageDomain
-import Shared
 
 import Dependencies
 
@@ -29,12 +28,16 @@ public final class BeverageSearchViewModel: ViewModelable {
     var recentSearchList: [String] = ["에스프레소", "블렌디드"]
   }
   
+  @ObservationIgnored
+  private var lastSearchedText: String = ""
+  
   var isBeverageListEmpty: Bool {
     listViewModel.beverageList.isEmpty
   }
-  
+    
   public enum Action {
     case searchTextChanged(String)
+    case debounceSearchTextChanged(String)
     case recentSearchListButtonTapped(String)
     case addBeverageButtonTapped
     case delegateAction(BeverageListViewModel.DelegateAction?)
@@ -61,6 +64,14 @@ public final class BeverageSearchViewModel: ViewModelable {
       state.searchType = searchText.isEmpty ? .search : .list
       state.searchText = searchText
       
+    case let .debounceSearchTextChanged(searchText):
+      guard lastSearchedText != searchText else {
+        return
+      }
+
+      lastSearchedText = searchText
+      Task { await searchBeverage(searchText) }
+      
     case let .recentSearchListButtonTapped(recentText):
       state.recentSearchList.removeAll { $0 == recentText }
       
@@ -75,6 +86,21 @@ public final class BeverageSearchViewModel: ViewModelable {
       case nil:
         break
       }
+    }
+  }
+  
+  private func searchBeverage(_ keyword: String) async {
+    do {
+      let beverageList = try await beverageUseCase.searchBeverage(keyword: keyword)
+      
+      await MainActor.run {
+        listViewModel.state.beverageList = beverageList.items
+        listViewModel.state.cursor = beverageList.nextCursor
+        listViewModel.state.hasNext = beverageList.hasNext
+        listViewModel.state.filterCount.like = beverageList.likeCount
+      }
+    } catch {
+      print(error)
     }
   }
 }
