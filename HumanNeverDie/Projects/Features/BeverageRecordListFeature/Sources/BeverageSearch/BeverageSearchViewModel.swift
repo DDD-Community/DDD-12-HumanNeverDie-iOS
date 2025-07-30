@@ -26,6 +26,8 @@ public final class BeverageSearchViewModel: ViewModelable {
     var searchType: BeverageSearchType = .search
     
     var recentSearchList: [String] = ["에스프레소", "블렌디드"]
+    
+    var route: Route?
   }
   
   @ObservationIgnored
@@ -81,7 +83,7 @@ public final class BeverageSearchViewModel: ViewModelable {
     case let .delegateAction(action):
       switch action {
       case let .beverageListItemTapped(beverage):
-        print(beverage)
+        state.route = .beverageRecord(productID: beverage.productID, isLiked: beverage.isLiked)
         
       case nil:
         break

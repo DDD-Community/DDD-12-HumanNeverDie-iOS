@@ -18,6 +18,7 @@ import Dependencies
 @MainActor
 public final class BeverageRecordListViewModel: ViewModelable {
   public struct State: Equatable {
+    var route: Route?
   }
   
   public enum Action {
@@ -52,7 +53,7 @@ public final class BeverageRecordListViewModel: ViewModelable {
     case let .delegateAction(action):
       switch action {
       case let .beverageListItemTapped(beverage):
-        print(beverage)
+        state.route = .beverageRecord(productID: beverage.productID, isLiked: beverage.isLiked)
         
       case nil:
         break
