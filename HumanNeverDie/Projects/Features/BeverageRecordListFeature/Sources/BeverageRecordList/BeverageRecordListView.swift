@@ -38,6 +38,7 @@ public struct BeverageRecordListView: View {
     .onChange(of: viewModel.route) { _, route in
       guard let route else { return }
       router.push(to: route)
+      viewModel.handleAction(.clearRoute)
     }
     .onAppear {
       viewModel.handleAction(.onAppear)

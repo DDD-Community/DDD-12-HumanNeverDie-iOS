@@ -44,6 +44,7 @@ public final class BeverageSearchViewModel: ViewModelable {
     case recentSearchListButtonTapped(String)
     case addBeverageButtonTapped
     case delegateAction(BeverageListViewModel.DelegateAction?)
+    case clearRoute
   }
   
   @ObservationIgnored
@@ -95,6 +96,9 @@ public final class BeverageSearchViewModel: ViewModelable {
       case nil:
         break
       }
+      
+    case .clearRoute:
+      state.route = nil
     }
   }
   

@@ -24,6 +24,7 @@ public final class BeverageRecordListViewModel: ViewModelable {
   public enum Action {
     case onAppear
     case delegateAction(BeverageListViewModel.DelegateAction?)
+    case clearRoute
   }
   
   @ObservationIgnored
@@ -55,6 +56,9 @@ public final class BeverageRecordListViewModel: ViewModelable {
       case nil:
         break
       }
+      
+    case .clearRoute:
+      state.route = nil
     }
   }
   
