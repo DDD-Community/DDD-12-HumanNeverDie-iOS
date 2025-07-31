@@ -131,6 +131,7 @@ public final class BeverageListViewModel: ViewModelable {
         state.beverageList.append(contentsOf: beverageList.items)
         state.cursor = beverageList.nextCursor
         state.hasNext = beverageList.hasNext
+        state.filterCount.like += beverageList.likeCount
         state.isLoading = false
       }
     } catch {
