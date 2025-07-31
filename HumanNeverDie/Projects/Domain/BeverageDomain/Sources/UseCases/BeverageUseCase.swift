@@ -24,7 +24,14 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
   
   public func getBeverageList(cursor: String?) async throws -> BeverageList {
     let beverageList = try await beverageRepository.getBeverageList(cursor: cursor)
-    return try syncLocalLikeWithBeverageList(beverageList)
+    let (syncedBeverages, likeCountDiff) = try syncBeverageLike(beverages: beverageList.items)
+    
+    return BeverageList(
+      items: syncedBeverages,
+      nextCursor: beverageList.nextCursor,
+      hasNext: beverageList.hasNext,
+      likeCount: beverageList.likeCount + likeCountDiff
+    )
   }
   
   public func getBeverageDetail(productID: String) async throws -> BeverageDetail {
@@ -41,7 +48,14 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
   
   public func searchBeverage(keyword: String) async throws -> BeverageList {
     let beverageList = try await beverageRepository.searchBeverage(keyword: keyword)
-    return try syncLocalLikeWithBeverageList(beverageList)
+    let (syncedBeverages, likeCountDiff) = try syncBeverageLike(beverages: beverageList.items)
+    
+    return BeverageList(
+      items: syncedBeverages,
+      nextCursor: beverageList.nextCursor,
+      hasNext: beverageList.hasNext,
+      likeCount: beverageList.likeCount + likeCountDiff
+    )
   }
   
   public func recordBeverage(productID: String) async throws -> Bool {
@@ -56,21 +70,27 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
     }
   }
   
+  /// 로컬 좋아요 상태를 음료 목록에 동기화하고 카운트 차이를 계산
   public func syncBeverageLike(beverages: [Beverage]) throws -> ([Beverage], Int) {
+    // 로컬에 저장된 좋아요 변경사항 조회
     let localLikedBeverages = try beverageLikeLocalRepository.fetchAllBeverageLike()
     
     guard !localLikedBeverages.isEmpty else { return (beverages, 0) }
     
+    // 빠른 조회를 위한 Map 생성
     let localLikeMap = Dictionary(uniqueKeysWithValues: localLikedBeverages.map { ($0.productID, $0.isLiked) })
     var likeCountDiff = 0
     
+    // 음료 목록에 로컬 좋아요 상태 적용 및 카운트 차이 계산
     let syncedBeverages = beverages.map { beverage in
       guard let localIsLiked = localLikeMap[beverage.productID] else { return beverage }
       
+      // 서버 상태와 로컬 상태가 다르면 카운트 차이 계산
       if localIsLiked != beverage.isLiked {
         likeCountDiff += localIsLiked ? 1 : -1
       }
       
+      // 로컬 좋아요 상태로 업데이트
       var synced = beverage
       synced.isLiked = localIsLiked
       return synced
@@ -80,25 +100,3 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
   }
 }
 
-extension BeverageUseCase {
-  private func syncLocalLikeWithBeverageList(_ beverageList: BeverageList) throws -> BeverageList {
-    let localLikedBeverages = try beverageLikeLocalRepository.fetchAllBeverageLike()
-    
-    guard !localLikedBeverages.isEmpty else { return beverageList }
-    
-    let localLikeMap = Dictionary(uniqueKeysWithValues: localLikedBeverages.map { ($0.productID, $0.isLiked) })
-    
-    return BeverageList(
-      items: beverageList.items.compactMap { beverage in
-        var updated = beverage
-        if let localIsLiked = localLikeMap[beverage.productID] {
-          updated.isLiked = localIsLiked
-        }
-        return updated
-      },
-      nextCursor: beverageList.nextCursor,
-      hasNext: beverageList.hasNext,
-      likeCount: beverageList.likeCount + (try beverageLikeLocalRepository.fetchBeverageLikeCount())
-    )
-  }
-}
