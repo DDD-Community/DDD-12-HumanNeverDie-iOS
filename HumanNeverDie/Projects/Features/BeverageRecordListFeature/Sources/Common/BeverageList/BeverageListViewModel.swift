@@ -95,17 +95,7 @@ public final class BeverageListViewModel: ViewModelable {
       state.beverageList[index].isLiked = newLikedState
       state.filterCount.like = newLikedState ? state.filterCount.like + 1 : state.filterCount.like - 1
       
-      do {
-        var updatedBeverage = beverage
-        updatedBeverage.isLiked = newLikedState
-        
-        try beverageLocalLikeUseCase.handleBeverageLike(
-          beverage: updatedBeverage,
-          originalIsLiked: originalIsLiked
-        )
-      } catch {
-        print("로컬 좋아요 저장 실패: \(error)")
-      }
+      handleBeverageLike(beverage, newIsLiked: newLikedState, originalIsLiked: originalIsLiked)
       
     case let .beverageListInfoTapped(productID):
       state.beverageProductID = productID
@@ -146,6 +136,20 @@ public final class BeverageListViewModel: ViewModelable {
     } catch {
       print(error)
       state.isLoading = false
+    }
+  }
+  
+  private func handleBeverageLike(_ beverage: Beverage, newIsLiked: Bool, originalIsLiked: Bool) {
+    do {
+      var updatedBeverage = beverage
+      updatedBeverage.isLiked = newIsLiked
+      
+      try beverageLocalLikeUseCase.handleBeverageLike(
+        beverage: updatedBeverage,
+        originalIsLiked: originalIsLiked
+      )
+    } catch {
+      print("로컬 좋아요 저장 실패: \(error)")
     }
   }
 }

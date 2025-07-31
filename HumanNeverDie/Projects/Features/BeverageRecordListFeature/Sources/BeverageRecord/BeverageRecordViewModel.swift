@@ -57,17 +57,11 @@ public final class BeverageRecordViewModel: ViewModelable {
       let newLikedState = !state.isLiked
       state.isLiked = newLikedState
       
-      do {
-        var updatedBeverage = state.beverageDetail.toBeverage(isLiked: originalIsLiked)
-        updatedBeverage.isLiked = newLikedState
-        
-        try beverageLocalLikeUseCase.handleBeverageLike(
-          beverage: updatedBeverage,
-          originalIsLiked: originalIsLiked
-        )
-      } catch {
-        print("로컬 좋아요 저장 실패: \(error)")
-      }
+      handleBeverageLike(
+        state.beverageDetail.toBeverage(isLiked: originalIsLiked),
+        newIsLiked: newLikedState,
+        originalIsLiked: originalIsLiked
+      )
     }
   }
   
@@ -80,6 +74,20 @@ public final class BeverageRecordViewModel: ViewModelable {
       }
     } catch {
       print(error)
+    }
+  }
+  
+  private func handleBeverageLike(_ beverage: Beverage, newIsLiked: Bool, originalIsLiked: Bool) {
+    do {
+      var updatedBeverage = beverage
+      updatedBeverage.isLiked = newIsLiked
+      
+      try beverageLocalLikeUseCase.handleBeverageLike(
+        beverage: updatedBeverage,
+        originalIsLiked: originalIsLiked
+      )
+    } catch {
+      print("로컬 좋아요 저장 실패: \(error)")
     }
   }
 }
