@@ -6,7 +6,8 @@ let project = Project.makeModule(
     product: .staticFramework,
     dependencies: [
         .baseNetwork,
-        .baseDomain
+        .baseDomain,
+        .localDataBase
     ]
 )
 
