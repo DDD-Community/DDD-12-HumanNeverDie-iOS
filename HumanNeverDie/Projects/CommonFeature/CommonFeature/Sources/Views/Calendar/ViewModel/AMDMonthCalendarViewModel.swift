@@ -84,7 +84,8 @@ class AMDMonthCalendarViewModel: AMDCommonCalendarViewModel {
         isToday: isToday(value.date),
         isSelected: isSelected(value.date),
         textColor: textColor(for: value.date),
-        stateIcon: matchingValue(for: value.date).map { getStateIcon(for: $0) }
+        stateIcon: matchingValue(for: value.date).flatMap { getStateIcon(for: $0)}
+
       )
     }
   }

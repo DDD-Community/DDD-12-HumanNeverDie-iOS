@@ -33,7 +33,7 @@ class AMDCommonCalendarViewModel {
     DateFormatter.calendarTitleFormat.string(from: titleDate)
   }
   
-  func getStateIcon(for value: Int) -> Image {
+  func getStateIcon(for value: Int) -> Image? {
     let sugerValue = Double(value) / Double(userSugarTargetValue) * 100
     return AMDStateIcon(percentage: sugerValue).icon
   }
