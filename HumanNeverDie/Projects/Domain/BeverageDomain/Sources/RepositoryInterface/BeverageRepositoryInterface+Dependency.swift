@@ -15,7 +15,7 @@ public struct BeverageRepositoryKey: TestDependencyKey {
 
 // MARK: - DependencyValues
 
-public extension DependencyValues {
+extension DependencyValues {
   var beverageRepository: BeverageRepositoryInterface {
     get { self[BeverageRepositoryKey.self] }
     set { self[BeverageRepositoryKey.self] = newValue }

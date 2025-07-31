@@ -30,6 +30,9 @@ public final class BeverageRecordViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.beverageUseCase) private var beverageUseCase
   
+  @ObservationIgnored
+  @Dependency(\.beverageLocalLikeUseCase) private var beverageLocalLikeUseCase
+  
   public var state: State
   public init(
     productID: String,
@@ -50,7 +53,21 @@ public final class BeverageRecordViewModel: ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case .likeButtonTapped:
-      state.isLiked.toggle()
+      let originalIsLiked = state.isLiked
+      let newLikedState = !state.isLiked
+      state.isLiked = newLikedState
+      
+      do {
+        var updatedBeverage = state.beverageDetail.toBeverage(isLiked: originalIsLiked)
+        updatedBeverage.isLiked = newLikedState
+        
+        try beverageLocalLikeUseCase.handleBeverageLike(
+          beverage: updatedBeverage,
+          originalIsLiked: originalIsLiked
+        )
+      } catch {
+        print("로컬 좋아요 저장 실패: \(error)")
+      }
     }
   }
   

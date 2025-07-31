@@ -22,20 +22,20 @@ public final class BeverageRecordListViewModel: ViewModelable {
   }
   
   public enum Action {
-    case onViewDidLoad
-    case beverageListItemTapped(Beverage)
+    case onAppear
     case delegateAction(BeverageListViewModel.DelegateAction?)
   }
   
   @ObservationIgnored
   @Dependency(\.beverageUseCase) private var beverageUseCase
-  
+    
   @ObservationIgnored
   var listViewModel: BeverageListViewModel = .init()
   
   public var state: State = .init()
   public init() {
     delegate()
+    Task { await self.getBeverage() }
   }
   
   deinit {
@@ -44,11 +44,8 @@ public final class BeverageRecordListViewModel: ViewModelable {
   
   public func handleAction(_ action: Action) {
     switch action {
-    case .onViewDidLoad:
-      Task { await self.getBeverage() }
-      
-    case let .beverageListItemTapped(beverage):
-      print(beverage)
+    case .onAppear:
+      Task { await syncBeverageLike() }
       
     case let .delegateAction(action):
       switch action {
@@ -61,13 +58,26 @@ public final class BeverageRecordListViewModel: ViewModelable {
     }
   }
   
+  private func syncBeverageLike() async {
+    do {
+      let (syncedBeverages, localLikeCount) = try beverageUseCase.syncBeverageLike(beverages: listViewModel.state.beverageList)
+      
+      await MainActor.run {
+        listViewModel.state.beverageList = syncedBeverages
+        listViewModel.state.filterCount.like += localLikeCount
+      }
+    } catch {
+      print("로컬 좋아요 동기화 실패: \(error)")
+    }
+  }
+  
   private func getBeverage() async {
     do {
       async let beverageListResponse = try beverageUseCase.getBeverageList(cursor: nil)
       async let beverageCountResponse = try beverageUseCase.getBeverageCount()
       
       let (beverageList, beverageCount) = try await (beverageListResponse, beverageCountResponse)
-      
+            
       await MainActor.run {
         listViewModel.state.beverageList = beverageList.items
         listViewModel.state.cursor = beverageList.nextCursor

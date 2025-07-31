@@ -40,7 +40,7 @@ public struct BeverageRecordListView: View {
       router.push(to: route)
     }
     .onAppear {
-      viewModel.handleAction(.onViewDidLoad)
+      viewModel.handleAction(.onAppear)
     }
   }
   

@@ -24,12 +24,17 @@ public struct SplashView: View {
         .scaledToFill()
         .ignoresSafeArea(.all)
     }
-    .onAppear {
-      DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-        withAnimation {
-          router.setRoute(.main)
+    .onChange(of: viewModel.isInitializationComplete) { _, isInitializationComplete in
+      if isInitializationComplete {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+          withAnimation {
+            router.setRoute(.main)
+          }
         }
       }
+    }
+    .onAppear {
+      viewModel.handleAction(.onAppear)
     }
   }
 }

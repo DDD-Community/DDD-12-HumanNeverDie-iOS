@@ -177,13 +177,6 @@ private extension AMDBeverageListView {
             .scaledToFill()
             .frame(width: type.thumbnailSize.width, height: type.thumbnailSize.height)
             .amdCornerRadius(.small)
-            .if(type == .large) {
-              $0
-                .overlay(alignment: .topLeading) {
-                  favoriteButton
-                    .padding([.top, .leading], 6)
-                }
-            }
           
         } else {
           progressView
@@ -191,6 +184,13 @@ private extension AMDBeverageListView {
       }
     }
     .processors([.resize(size: type.thumbnailSize)])
+    .if(type == .large) {
+      $0
+        .overlay(alignment: .topLeading) {
+          favoriteButton
+            .padding([.top, .leading], 6)
+        }
+    }
   }
   
   private var progressView: some View {

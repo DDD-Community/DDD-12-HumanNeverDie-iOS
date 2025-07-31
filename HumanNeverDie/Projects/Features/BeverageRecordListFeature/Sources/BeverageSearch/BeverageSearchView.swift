@@ -45,7 +45,10 @@ public struct BeverageSearchView: View {
       guard let route else { return }
       router.push(to: route)
     }
-    .onAppear { isFocus = true }
+    .onAppear {
+      isFocus = true
+      viewModel.handleAction(.onAppear)
+    }
   }
   
   private var navigationBar: some View {

@@ -43,10 +43,7 @@ public final class BeverageListViewModel: ViewModelable {
     
     var filterType: BeverageFilterType = .all
     var filterCount: BeverageFilterCount = .init(total: 0, zero: 0, low: 0, like: 0)
-    
-    // 서버에 동기화되지 않은 좋아요 변경사항 (productID: isFavorite)
-    var pendingLikeChanges: [String: Bool] = [:]
-    
+
     var beverageProductID: String = ""
     var isBevarageDetailPresented: Bool = false
     
@@ -54,7 +51,6 @@ public final class BeverageListViewModel: ViewModelable {
   }
   
   public enum Action {
-    case onDisappear
     case beverageFilterChipItemTapped(BeverageFilterType)
     case loadNextBeverageList([Beverage.ID])
     case beverageListFavoriteTapped(Int, Beverage)
@@ -71,6 +67,9 @@ public final class BeverageListViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.beverageUseCase) private var beverageUseCase
   
+  @ObservationIgnored
+  @Dependency(\.beverageLocalLikeUseCase) private var beverageLocalLikeUseCase
+  
   var delegateAction: ((DelegateAction?) -> Void)?
   public var state: State = .init()
   init() {
@@ -82,9 +81,6 @@ public final class BeverageListViewModel: ViewModelable {
   
   public func handleAction(_ action: Action) {
     switch action {
-    case .onDisappear:
-      Task { await handleBeverageLike() }
-      
     case let .beverageFilterChipItemTapped(filterType):
       state.filterType = filterType
       
@@ -94,12 +90,22 @@ public final class BeverageListViewModel: ViewModelable {
       }
       
     case let .beverageListFavoriteTapped(index, beverage):
-      // 추후 검색 API -> 검색에 따른 검색 결과 리스트마다 아래 값 업데이트 해줘야 한다.
-      state.beverageList[index].isLiked = !beverage.isLiked
-      state.filterCount.like = !beverage.isLiked ? state.filterCount.like + 1 : state.filterCount.like - 1
+      let originalIsLiked = beverage.isLiked
+      let newLikedState = !beverage.isLiked
+      state.beverageList[index].isLiked = newLikedState
+      state.filterCount.like = newLikedState ? state.filterCount.like + 1 : state.filterCount.like - 1
       
-      // 변경사항을 pendingChanges에 추가
-      state.pendingLikeChanges[beverage.productID] = !beverage.isLiked
+      do {
+        var updatedBeverage = beverage
+        updatedBeverage.isLiked = newLikedState
+        
+        try beverageLocalLikeUseCase.handleBeverageLike(
+          beverage: updatedBeverage,
+          originalIsLiked: originalIsLiked
+        )
+      } catch {
+        print("로컬 좋아요 저장 실패: \(error)")
+      }
       
     case let .beverageListInfoTapped(productID):
       state.beverageProductID = productID
@@ -140,36 +146,6 @@ public final class BeverageListViewModel: ViewModelable {
     } catch {
       print(error)
       state.isLoading = false
-    }
-  }
-  
-  private func handleBeverageLike() async {
-    guard !state.pendingLikeChanges.isEmpty else {
-      return
-    }
-    
-    await withTaskGroup(of: (String?).self) { group in
-      for (productID, isFavorite) in state.pendingLikeChanges {
-        group.addTask {
-          do {
-            if isFavorite {
-              let likeBeverage = try await self.beverageUseCase.likeBeverage(productID: productID)
-              return likeBeverage.productID
-            } else {
-              let unLikeBeverage = try await self.beverageUseCase.unLikeBeverage(productID: productID)
-              return unLikeBeverage.productID
-            }
-          } catch {
-            return nil
-          }
-        }
-      }
-      
-      for await productID in group {
-        if let productID {
-          state.pendingLikeChanges.removeValue(forKey: productID)
-        }
-      }
     }
   }
 }
