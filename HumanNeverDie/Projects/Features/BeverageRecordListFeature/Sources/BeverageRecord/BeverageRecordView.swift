@@ -31,7 +31,6 @@ public struct BeverageRecordView: View {
     }
     .padding(.horizontal, 24)
     .toolbarVisibility(.hidden, for: .navigationBar)
-    .amdSwipeBackEnabled()
   }
   
   private var navigationBar: some View {
