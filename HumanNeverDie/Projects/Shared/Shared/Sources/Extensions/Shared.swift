@@ -7,7 +7,7 @@ extension String {
     return test.evaluate(with: self)
   }
   
-  func toDate() -> Date? {
+  public func toDate() -> Date? {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "ko_KR")
     formatter.timeZone = TimeZone(identifier: "UTC")
@@ -17,7 +17,7 @@ extension String {
 }
 
 extension Date {
-  func toISO8601String() -> String {
+  public func toISO8601String() -> String {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "ko_KR")
     formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
