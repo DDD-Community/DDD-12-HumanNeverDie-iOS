@@ -26,14 +26,19 @@ public struct HistoryView: View {
         VStack(spacing: 0) {
           AMDCalendarFactory.createMonth(
             currentDate: viewModel.currentDate,
-            sugarIntakeRecordData: viewModel.sugarIntakeRecordData,
+            sugarIntakeRecordData: viewModel.state.sugarIntakeRecordData,
             userSugarTargetValue: 50,
-            selectedDate: $viewModel.selectedDate,
+            selectedDate: $viewModel.state.selectedDate,
             onTapTitle: {
               tempDate = viewModel.selectedDate ?? Date()
               isMonthPickerPresented = true
+            },onMonthChanged: { newDate in
+              viewModel.state.currentDate = newDate
             }
           )
+          .onChange(of: viewModel.state.currentDate) { _, newDate in
+            viewModel.handleAction(.incrementCounterAsync)
+          }
           .sheet(isPresented: $isMonthPickerPresented) {
             VStack(spacing: 20) {
               DatePicker(
@@ -45,7 +50,8 @@ public struct HistoryView: View {
               .labelsHidden()
               
               Button("확인") {
-                viewModel.selectedDate = tempDate
+                viewModel.state.currentDate = tempDate
+                viewModel.state.selectedDate = tempDate
                 isMonthPickerPresented = false
               }
               
@@ -105,7 +111,7 @@ public struct HistoryView: View {
   private var selectedDateBeverageSection: some View {
     VStack(alignment: .leading, spacing: 0) {
       LazyVStack(spacing: 20) {
-        ForEach(viewModel.frequentBeverageList, id: \.productID) { beverage in
+        ForEach(viewModel.state.frequentBeverageList, id: \.productID) { beverage in
           AMDBeverageListView.medium(
             thumbnailURL: beverage.thumbnailURL,
             brandTitle: beverage.brandName,
@@ -138,7 +144,7 @@ public struct HistoryView: View {
   
   @ViewBuilder
   private func popupBackgroundOverlay() -> some View {
-    if viewModel.selectedBeverageID != nil {
+    if viewModel.state.selectedBeverageID != nil {
       Color.black.opacity(0.001)
         .ignoresSafeArea()
         .onTapGesture {
@@ -150,7 +156,7 @@ public struct HistoryView: View {
   
   @ViewBuilder
   private func popupMenu() -> some View {
-    if let popupPosition, let productID = viewModel.selectedBeverageID {
+    if let popupPosition, let productID = viewModel.state.selectedBeverageID {
       VStack(spacing: 0) {
         Button {
           viewModel.handleAction(.beverageListInfoTapped(productID))
@@ -195,6 +201,4 @@ public struct HistoryView: View {
       .zIndex(1)
     }
   }
-
-
 }

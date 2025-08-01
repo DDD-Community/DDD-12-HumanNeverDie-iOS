@@ -6,4 +6,22 @@ extension String {
     let test = NSPredicate(format: "SELF MATCHES %@", regex)
     return test.evaluate(with: self)
   }
+  
+  func toDate() -> Date? {
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "ko_KR")
+    formatter.timeZone = TimeZone(identifier: "UTC")
+    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+    return formatter.date(from: self)
+  }
+}
+
+extension Date {
+  func toISO8601String() -> String {
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "ko_KR")
+    formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+    return formatter.string(from: self)
+  }
 }
