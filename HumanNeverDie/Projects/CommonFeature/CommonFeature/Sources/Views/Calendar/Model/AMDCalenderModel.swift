@@ -9,7 +9,7 @@ import Foundation
 import DesignSystem
 import SwiftUICore
 
-public struct SugarIntakeRecord {
+public struct SugarIntakeRecord : Equatable {
   public let date: Date
   public let value: Int
   

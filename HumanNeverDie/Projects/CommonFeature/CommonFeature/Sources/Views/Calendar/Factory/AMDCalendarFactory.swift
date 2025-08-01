@@ -16,12 +16,13 @@ public struct AMDCalendarFactory {
     selectedDate: Binding<Date?>,
     onTapTitle: @escaping () -> Void
   ) -> some View {
-    let viewModel = AMDMonthCalendarViewModel(
+    AMDMonthCalendarView(
       currentDate: currentDate,
       sugarIntakeRecordData: sugarIntakeRecordData,
-      userSugarTargetValue: userSugarTargetValue
+      userSugarTargetValue: userSugarTargetValue,
+      selectedDate: selectedDate,
+      onTapTitle: onTapTitle
     )
-    return AMDMonthCalendarView(viewModel: viewModel, selectedDate: selectedDate, onTapTitle: onTapTitle)
   }
   
   public static func createWeekly(
@@ -31,11 +32,12 @@ public struct AMDCalendarFactory {
     selectedDate: Binding<Date?>,
     onTapTitle: @escaping () -> Void
   ) -> some View {
-    let viewModel = AMDWeekCalendarViewModel(
+    AMDWeekCalendarView(
       currentDate: currentDate,
       sugarIntakeRecordData: sugarIntakeRecordData,
-      userSugarTargetValue: userSugarTargetValue
+      userSugarTargetValue: userSugarTargetValue,
+      selectedDate: selectedDate,
+      onTapTitle: onTapTitle
     )
-    return AMDWeekCalendarView(viewModel: viewModel, selectedDate: selectedDate, onTapTitle: onTapTitle)
   }
 }

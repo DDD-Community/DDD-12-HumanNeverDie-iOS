@@ -10,8 +10,8 @@ import SwiftUI
 class AMDCommonCalendarViewModel {
   private var selectedDate: Date? = nil
   private(set) var currentDate: Date
-  private let sugarIntakeRecordData: [SugarIntakeRecord]
   private let userSugarTargetValue: Int
+  var sugarIntakeRecordData: [SugarIntakeRecord]
   let calendar = Calendar.current
   let dragThreshold: CGFloat = 50
   let weekdayItems: [AMDWeekdayTile] = AMDWeekdayTile.allCases

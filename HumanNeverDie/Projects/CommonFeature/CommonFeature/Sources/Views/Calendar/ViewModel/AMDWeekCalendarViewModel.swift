@@ -77,6 +77,10 @@ class AMDWeekCalendarViewModel: AMDCommonCalendarViewModel {
     }
   }
   
+  func updateSugarIntakeData(_ newData: [SugarIntakeRecord]) {
+    self.sugarIntakeRecordData = newData
+    updateDayModels()
+  }
 }
 
 extension Date {

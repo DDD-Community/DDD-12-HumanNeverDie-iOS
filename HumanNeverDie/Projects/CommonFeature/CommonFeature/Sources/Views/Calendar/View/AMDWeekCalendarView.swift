@@ -11,12 +11,32 @@ struct AMDWeekCalendarView: View {
   @State private var viewModel: AMDWeekCalendarViewModel
   @Binding var selectedDate: Date?
   private let onTapTitle: () -> Void
+  private let currentDate: Date
+  private let sugarIntakeRecordData: [SugarIntakeRecord]
+  private let userSugarTargetValue: Int
   
-  init(viewModel: AMDWeekCalendarViewModel, selectedDate: Binding<Date?>, onTapTitle: @escaping () -> Void) {
-    self.viewModel = viewModel
+  init(
+    currentDate: Date,
+    sugarIntakeRecordData: [SugarIntakeRecord],
+    userSugarTargetValue: Int,
+    selectedDate: Binding<Date?>,
+    onTapTitle: @escaping () -> Void
+  ) {
+    // 외부 데이터 저장
+    self.currentDate = currentDate
+    self.sugarIntakeRecordData = sugarIntakeRecordData
+    self.userSugarTargetValue = userSugarTargetValue
     self._selectedDate = selectedDate
     self.onTapTitle = onTapTitle
+    
+    // viewModel 초기 생성
+    self._viewModel = State(initialValue: AMDWeekCalendarViewModel(
+      currentDate: currentDate,
+      sugarIntakeRecordData: sugarIntakeRecordData,
+      userSugarTargetValue: userSugarTargetValue
+    ))
   }
+
   
   var body: some View {
     VStack(spacing: 0) {
@@ -32,6 +52,8 @@ struct AMDWeekCalendarView: View {
             }
           }
       )
+    }.onChange(of: sugarIntakeRecordData) { _, newData in
+      viewModel.updateSugarIntakeData(newData)
     }
     .padding()
   }
