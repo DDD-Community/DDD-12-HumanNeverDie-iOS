@@ -7,6 +7,7 @@
 
 import Data
 import BeverageDomain
+import HistoryDomain
 
 import Dependencies
 
@@ -14,4 +15,8 @@ import Dependencies
 
 extension BeverageRepositoryKey: @retroactive DependencyKey {
   public static let liveValue: BeverageRepositoryInterface = BeverageRepository()
+}
+
+extension HistoryRepositoryKey: @retroactive DependencyKey {
+  public static let liveValue: HistoryRepositoryInterface = HistoryRepository()
 }

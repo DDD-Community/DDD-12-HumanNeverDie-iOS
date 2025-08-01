@@ -6,17 +6,18 @@
 //
 
 import Foundation
+import Dependencies
 
 public protocol HistoryUseCaseProtocol: Sendable {
-    // Add your use case methods here
+  func getWeeklyIntakeHistory(dateInWeek: String) async throws -> [HistoryDaily]
 }
 
 public final class HistoryUseCase: HistoryUseCaseProtocol, @unchecked Sendable {
-    private let repository: HistoryRepositoryInterface
-    
-    public init(repository: HistoryRepositoryInterface) {
-        self.repository = repository
-    }
-    
+  @Dependency(\.historyRepository) private var historyRepository
+  public init() {}
+  
+  public func getWeeklyIntakeHistory(dateInWeek: String) async throws -> [HistoryDaily] {
+      return try await historyRepository.getWeeklyIntakeHistory(dateInWeek: dateInWeek)
+  }
     // Implement your use case methods here
 } 

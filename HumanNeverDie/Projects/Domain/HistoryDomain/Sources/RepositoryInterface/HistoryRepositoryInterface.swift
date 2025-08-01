@@ -8,5 +8,5 @@
 import Foundation
 
 public protocol HistoryRepositoryInterface: Sendable {
-    // Add your repository interface methods here
-} 
+  func getWeeklyIntakeHistory(dateInWeek: String) async throws -> [HistoryDaily]
+}
