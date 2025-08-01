@@ -14,14 +14,16 @@ public struct AMDCalendarFactory {
     sugarIntakeRecordData: [SugarIntakeRecord],
     userSugarTargetValue: Int,
     selectedDate: Binding<Date?>,
-    onTapTitle: @escaping () -> Void
+    onTapTitle: @escaping () -> Void,
+    onMonthChanged: @escaping (Date) -> Void
   ) -> some View {
     AMDMonthCalendarView(
       currentDate: currentDate,
       sugarIntakeRecordData: sugarIntakeRecordData,
       userSugarTargetValue: userSugarTargetValue,
       selectedDate: selectedDate,
-      onTapTitle: onTapTitle
+      onTapTitle: onTapTitle,
+      onMonthChanged: onMonthChanged
     )
   }
   
@@ -30,14 +32,16 @@ public struct AMDCalendarFactory {
     sugarIntakeRecordData: [SugarIntakeRecord],
     userSugarTargetValue: Int,
     selectedDate: Binding<Date?>,
-    onTapTitle: @escaping () -> Void
+    onTapTitle: @escaping () -> Void,
+    onWeekChanged: @escaping (Date) -> Void
   ) -> some View {
     AMDWeekCalendarView(
       currentDate: currentDate,
       sugarIntakeRecordData: sugarIntakeRecordData,
       userSugarTargetValue: userSugarTargetValue,
       selectedDate: selectedDate,
-      onTapTitle: onTapTitle
+      onTapTitle: onTapTitle,
+      onWeekChanged: onWeekChanged
     )
   }
 }

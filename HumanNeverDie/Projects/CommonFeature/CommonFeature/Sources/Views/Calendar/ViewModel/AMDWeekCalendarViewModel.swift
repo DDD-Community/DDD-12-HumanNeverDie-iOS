@@ -81,6 +81,10 @@ class AMDWeekCalendarViewModel: AMDCommonCalendarViewModel {
     self.sugarIntakeRecordData = newData
     updateDayModels()
   }
+  
+  func getCurrentWeekStartDate() -> Date {
+    return currentWeekStartDate
+  }
 }
 
 extension Date {

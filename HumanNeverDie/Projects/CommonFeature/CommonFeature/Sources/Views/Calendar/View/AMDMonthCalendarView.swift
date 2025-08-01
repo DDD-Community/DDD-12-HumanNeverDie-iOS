@@ -11,6 +11,7 @@ struct AMDMonthCalendarView: View {
   @State private var viewModel: AMDMonthCalendarViewModel
   @Binding var selectedDate: Date?
   private let onTapTitle: () -> Void
+  private let onMonthChanged: (Date) -> Void
   private let currentDate: Date
   private let sugarIntakeRecordData: [SugarIntakeRecord]
   private let userSugarTargetValue: Int
@@ -20,7 +21,8 @@ struct AMDMonthCalendarView: View {
     sugarIntakeRecordData: [SugarIntakeRecord],
     userSugarTargetValue: Int,
     selectedDate: Binding<Date?>,
-    onTapTitle: @escaping () -> Void
+    onTapTitle: @escaping () -> Void,
+    onMonthChanged: @escaping (Date) -> Void
   ) {
     // 외부 데이터 저장
     self.currentDate = currentDate
@@ -28,6 +30,7 @@ struct AMDMonthCalendarView: View {
     self.userSugarTargetValue = userSugarTargetValue
     self._selectedDate = selectedDate
     self.onTapTitle = onTapTitle
+    self.onMonthChanged = onMonthChanged
     
     // viewModel 초기 생성
     self._viewModel = State(initialValue: AMDMonthCalendarViewModel(
@@ -46,9 +49,12 @@ struct AMDMonthCalendarView: View {
     }
     .onChange(of: viewModel.currentMonth) {
       viewModel.updateCurrentDateToCurrentMonth()
+      
+      let newDate = viewModel.getCurrentMonth()
+      onMonthChanged(newDate)
     }
     .onChange(of: sugarIntakeRecordData) { _, newData in
-      viewModel.updateSugarIntakeData(newData) 
+      viewModel.updateSugarIntakeData(newData)
     }
     .highPriorityGesture(
       
