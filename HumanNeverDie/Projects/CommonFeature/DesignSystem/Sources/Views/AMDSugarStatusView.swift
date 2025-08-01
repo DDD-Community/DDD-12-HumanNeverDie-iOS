@@ -12,7 +12,7 @@ public struct AMDSugarStatusView: View {
     case main(sugar: Int, baseSugar: Int)
     case history(drinkCount: Int, sugar: Int, baseSugar: Int)
   }
-
+  
   private let variant: AMDStatusVariant
   private let style: Style
   
@@ -101,22 +101,48 @@ public struct AMDSugarStatusView: View {
     .background(Color.white)
   }
   
+  private struct characterSpeechTail: Shape {
+    func path(in rect: CGRect) -> Path {
+      var path = Path()
+      
+      let offset: CGFloat = rect.width * 0.4
+      path.move(to: CGPoint(x: rect.minX + offset, y: rect.minY))
+      path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+      path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+      path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+      path.closeSubpath()
+      
+      return path
+    }
+  }
   private func contentHistoryView(drinkCount: Int, sugar: Int, baseSugar: Int) -> some View {
     HStack(spacing: 4.5){
-      HStack(spacing: 2) {
-        Text("총 ")
-          .amdFont(.largeRegular)
-          .foregroundStyle(.gray70)
-        
-        Text("\(drinkCount)잔")
-          .amdFont(.largeBold)
-          .foregroundStyle(.gray85)
-        
-        Text("이당!")
-          .amdFont(.largeRegular)
-          .foregroundStyle(.gray70)
-      }
-      
+      // 🎯 말풍선 + 삼각형 꼬리
+       ZStack(alignment: .bottomLeading) {
+         // 말풍선 본체
+         HStack(spacing: 2) {
+           Text("총 ")
+             .amdFont(.largeRegular)
+             .foregroundStyle(.gray70)
+           
+           Text("\(drinkCount)잔")
+             .amdFont(.largeBold)
+             .foregroundStyle(.gray85)
+           
+           Text("이당!")
+             .amdFont(.largeRegular)
+             .foregroundStyle(.gray70)
+         }
+         .padding(.horizontal, 20)
+         .padding(.vertical, 12)
+         .background(Color.gray10)
+         .cornerRadius(16)
+         
+         characterSpeechTail()
+               .fill(Color.gray10)
+               .frame(width: 20, height: 10)
+               .offset(x: -5, y: -2) // 말풍선 밖으로 나오도록 조정
+       }
       Spacer()
       
       VStack {
