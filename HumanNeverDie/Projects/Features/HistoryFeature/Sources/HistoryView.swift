@@ -126,9 +126,9 @@ extension HistoryView {
           let beverageIdString = String(data.beverageId)
           
           AMDBeverageListView.medium(
-            thumbnailURL: "",//thumbnailURL,
+            thumbnailURL: data.imgUrl,
             brandTitle: data.cafeBrand,
-            beverageSize: "Tall", // 사이즈관련 데이터 없음
+            beverageSize: data.beverageSize,
             beverageTitle: data.beverageName,
             glucose: Double(data.sugarG),
             kcal: Double(data.servingKcal),
