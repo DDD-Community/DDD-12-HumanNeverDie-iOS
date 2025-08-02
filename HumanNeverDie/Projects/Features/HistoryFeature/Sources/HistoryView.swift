@@ -61,10 +61,14 @@ extension HistoryView {
       }
     )
     .onChange(of: viewModel.state.currentDate) { _, newDate in
-      viewModel.handleAction(.loadHistorDailyList)
+      if (isMonthPickerPresented) {
+        viewModel.handleAction(.loadHistorDailyList)
+      }
     }
     .onChange(of: viewModel.state.selectedDate) { _, selectedDate in
-      viewModel.handleAction(.loadHistoryForSelectedDate)
+      if (isMonthPickerPresented) {
+        viewModel.handleAction(.loadHistoryForSelectedDate)
+      }
     }
     .amdDatePickerBottomSheet(
       pickerTitle: "날짜 선택",
@@ -74,6 +78,8 @@ extension HistoryView {
       onConfirm: { date in
         viewModel.state.currentDate = date
         viewModel.state.selectedDate = date
+        
+        viewModel.handleAction(.datePickeronConfirm)
       }
     )
   }

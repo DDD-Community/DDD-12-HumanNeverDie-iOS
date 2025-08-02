@@ -38,6 +38,7 @@ public final class HistoryViewModel: ViewModelable {
     case beverageListInfoTapped(String)
     case loadHistorDailyList
     case loadHistoryForSelectedDate
+    case datePickeronConfirm
   }
   
   public var state: State = .init()
@@ -62,6 +63,13 @@ public final class HistoryViewModel: ViewModelable {
       }
     case .loadHistoryForSelectedDate:
       loadSelectedDateHistory()
+      
+    case .datePickeronConfirm:
+      Task {
+        await loadNetworkData()
+        loadSelectedDateHistory()
+      }
+      
     }
   }
 }
