@@ -48,47 +48,34 @@ extension HistoryView {
   
   private func contentCalenderView() -> some View {
     AMDCalendarFactory.createMonth(
-       currentDate: viewModel.currentDate,
-       sugarIntakeRecordData: viewModel.state.sugarIntakeRecordData,
-       userSugarTargetValue: 50,
-       selectedDate: $viewModel.state.selectedDate,
-       onTapTitle: {
-         popUpDate = viewModel.state.selectedDate ?? Date()
-         isMonthPickerPresented = true
-       },
-       onMonthChanged: { newDate in
-         viewModel.state.currentDate = newDate
-       }
-     )
-     .onChange(of: viewModel.state.currentDate) { _, newDate in
-       viewModel.handleAction(.loadHistorDailyList)
-     }
-     .onChange(of: viewModel.state.selectedDate) { _, selectedDate in
-         viewModel.handleAction(.loadHistoryForSelectedDate)
-     }
-     .sheet(isPresented: $isMonthPickerPresented) {
-       VStack(spacing: 20) {
-         DatePicker(
-           "날짜 선택",
-           selection: $popUpDate,
-           displayedComponents: [.date]
-         )
-         .datePickerStyle(.wheel)
-         .labelsHidden()
-         
-         Button("확인") {
-           viewModel.state.currentDate = popUpDate
-           viewModel.state.selectedDate = popUpDate
-           isMonthPickerPresented = false
-         }
-         
-         Button("닫기") {
-           isMonthPickerPresented = false
-         }
-         .foregroundColor(.red)
-       }
-       .padding()
-     }
+      currentDate: viewModel.currentDate,
+      sugarIntakeRecordData: viewModel.state.sugarIntakeRecordData,
+      userSugarTargetValue: 50,
+      selectedDate: $viewModel.state.selectedDate,
+      onTapTitle: {
+        popUpDate = viewModel.state.selectedDate ?? Date()
+        isMonthPickerPresented = true
+      },
+      onMonthChanged: { newDate in
+        viewModel.state.currentDate = newDate
+      }
+    )
+    .onChange(of: viewModel.state.currentDate) { _, newDate in
+      viewModel.handleAction(.loadHistorDailyList)
+    }
+    .onChange(of: viewModel.state.selectedDate) { _, selectedDate in
+      viewModel.handleAction(.loadHistoryForSelectedDate)
+    }
+    .amdDatePickerBottomSheet(
+      pickerTitle: "날짜 선택",
+      isResetButtonHidden: false,
+      isPresented: $isMonthPickerPresented,
+      selectedDate: $popUpDate,
+      onConfirm: { date in
+        viewModel.state.currentDate = date
+        viewModel.state.selectedDate = date
+      }
+    )
   }
   
   private func contentSugerStatusView() -> some View {
@@ -125,7 +112,7 @@ extension HistoryView {
     VStack(alignment: .leading, spacing: 0) {
       LazyVStack(spacing: 20) {
         ForEach(viewModel.state.selectedDateHistoryList, id: \.beverageId) { data in
-
+          
           let sugarFreeVariant = AMDSugarFreeVariant.from(data.sugarLevel) ?? .none
           let beverageIdString = String(data.beverageId)
           
@@ -193,9 +180,9 @@ extension HistoryView {
           .padding(.horizontal, 20)
           .frame(maxWidth: .infinity, alignment: .leading)
         }
-
+        
         Divider()
-
+        
         Button {
           viewModel.state.selectedBeverageID = nil
         } label: {
