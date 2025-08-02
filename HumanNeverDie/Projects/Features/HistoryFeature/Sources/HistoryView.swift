@@ -41,6 +41,9 @@ public struct HistoryView: View {
       
       popupMenuDailylList()
     }
+    .onAppear {
+      viewModel.handleAction(.onAppear)
+    }
   }
 }
 
@@ -61,12 +64,12 @@ extension HistoryView {
       }
     )
     .onChange(of: viewModel.state.currentDate) { _, newDate in
-      if (isMonthPickerPresented) {
+      if (!isMonthPickerPresented) {
         viewModel.handleAction(.loadHistorDailyList)
       }
     }
     .onChange(of: viewModel.state.selectedDate) { _, selectedDate in
-      if (isMonthPickerPresented) {
+      if (!isMonthPickerPresented) {
         viewModel.handleAction(.loadHistoryForSelectedDate)
       }
     }

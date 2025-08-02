@@ -50,7 +50,10 @@ public final class HistoryViewModel: ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
-      break
+      Task {
+        await loadNetworkData()
+        loadSelectedDateHistory()
+      }
     case .beverageListFavoriteTapped(_, _):
       break
     case .beverageListInfoTapped(let id):
