@@ -26,6 +26,8 @@ public final class BeverageSearchViewModel: ViewModelable {
     var searchType: BeverageSearchType = .search
     
     var recentSearchList: [String] = ["에스프레소", "블렌디드"]
+    
+    var route: Route?
   }
   
   @ObservationIgnored
@@ -34,17 +36,22 @@ public final class BeverageSearchViewModel: ViewModelable {
   var isBeverageListEmpty: Bool {
     listViewModel.beverageList.isEmpty
   }
-    
+  
   public enum Action {
+    case onAppear
     case searchTextChanged(String)
     case debounceSearchTextChanged(String)
     case recentSearchListButtonTapped(String)
     case addBeverageButtonTapped
     case delegateAction(BeverageListViewModel.DelegateAction?)
+    case clearRoute
   }
   
   @ObservationIgnored
   @Dependency(\.beverageUseCase) private var beverageUseCase
+  
+  @ObservationIgnored
+  @Dependency(\.beverageLocalLikeUseCase) private var beverageLocalLikeUseCase
   
   @ObservationIgnored
   var listViewModel: BeverageListViewModel = .init()
@@ -60,6 +67,9 @@ public final class BeverageSearchViewModel: ViewModelable {
   
   public func handleAction(_ action: Action) {
     switch action {
+    case .onAppear:
+      Task { await syncBeverageLike() }
+      
     case let .searchTextChanged(searchText):
       state.searchType = searchText.isEmpty ? .search : .list
       state.searchText = searchText
@@ -68,7 +78,7 @@ public final class BeverageSearchViewModel: ViewModelable {
       guard lastSearchedText != searchText else {
         return
       }
-
+      
       lastSearchedText = searchText
       Task { await searchBeverage(searchText) }
       
@@ -81,11 +91,27 @@ public final class BeverageSearchViewModel: ViewModelable {
     case let .delegateAction(action):
       switch action {
       case let .beverageListItemTapped(beverage):
-        print(beverage)
+        state.route = .beverageRecord(productID: beverage.productID, isLiked: beverage.isLiked)
         
       case nil:
         break
       }
+      
+    case .clearRoute:
+      state.route = nil
+    }
+  }
+  
+  private func syncBeverageLike() async {
+    do {
+      let (syncedBeverages, localLikeCount) = try beverageUseCase.syncBeverageLike(beverages: listViewModel.state.beverageList)
+      
+      await MainActor.run {
+        listViewModel.state.beverageList = syncedBeverages
+        listViewModel.state.filterCount.like += localLikeCount
+      }
+    } catch {
+      print("로컬 좋아요 동기화 실패: \(error)")
     }
   }
   

@@ -9,7 +9,8 @@ import Foundation
 
 public enum Route: Hashable {
   case beverageRecordList
-  case BeverageSearch
+  case beverageSearch
+  case beverageRecord(productID: String, isLiked: Bool)
   case onboardingProfile
   case Setting
   case SettingAccountInfo

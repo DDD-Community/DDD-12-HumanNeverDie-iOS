@@ -45,6 +45,21 @@ public struct BeverageDetail: Equatable, Sendable {
 }
 
 extension BeverageDetail {
+  public func toBeverage(isLiked: Bool) -> Beverage {
+    return .init(
+      name: name,
+      productID: productID,
+      thumbnailURL: thumbnailURL,
+      kcal: kcal,
+      sugar: sugar,
+      brandName: brandName,
+      sugarFreeType: BeverageSugarFreeType(sugar: sugar),
+      isLiked: isLiked
+    )
+  }
+}
+
+extension BeverageDetail {
   public static func mock() -> BeverageDetail {
     .init(
       name: "아메리카노",

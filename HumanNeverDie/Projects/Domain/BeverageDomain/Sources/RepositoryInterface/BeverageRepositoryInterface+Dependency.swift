@@ -15,7 +15,7 @@ public struct BeverageRepositoryKey: TestDependencyKey {
 
 // MARK: - DependencyValues
 
-public extension DependencyValues {
+extension DependencyValues {
   var beverageRepository: BeverageRepositoryInterface {
     get { self[BeverageRepositoryKey.self] }
     set { self[BeverageRepositoryKey.self] = newValue }
@@ -31,4 +31,5 @@ private struct MockBeverageRepository: BeverageRepositoryInterface {
   func likeBeverage(productID: String) async throws -> BeverageLike { BeverageLike.mock() }
   func unLikeBeverage(productID: String) async throws -> BeverageLike { BeverageLike.mock() }
   func searchBeverage(keyword: String) async throws -> BeverageList { BeverageList.mock() }
+  func recordBeverage(productID: String) async throws -> Int { 500 }
 }

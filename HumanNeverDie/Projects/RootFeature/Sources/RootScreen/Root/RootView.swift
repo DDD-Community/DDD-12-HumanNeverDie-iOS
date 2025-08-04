@@ -34,8 +34,11 @@ public struct RootView: View {
         case .beverageRecordList:
           BeverageRecordListViewFactory.create()
           
-        case .BeverageSearch:
+        case .beverageSearch:
           BeverageSearchViewFactory.create()
+          
+        case let .beverageRecord(productID, isLiked):
+          BeverageRecordViewFactory.create(productID: productID, isLiked: isLiked)
           
         case .onboardingProfile:
           OnboardingProfileFactory.create()

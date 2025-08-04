@@ -11,7 +11,7 @@ public struct BeverageList: Equatable, Sendable {
   public let items: [Beverage]
   public let nextCursor: String?
   public let hasNext: Bool
-  public let likeCount: Int
+  public var likeCount: Int
   
   public init(
     items: [Beverage],

@@ -40,8 +40,15 @@ public struct BeverageSearchView: View {
     }
     .ignoresSafeArea([.keyboard, .container], edges: .bottom)
     .toolbarVisibility(.hidden, for: .navigationBar)
-    .amdSwipeBackEnabled()
-    .onAppear { isFocus = true }
+    .onChange(of: viewModel.route) { _, route in
+      guard let route else { return }
+      router.push(to: route)
+      viewModel.handleAction(.clearRoute)
+    }
+    .onAppear {
+      isFocus = true
+      viewModel.handleAction(.onAppear)
+    }
   }
   
   private var navigationBar: some View {

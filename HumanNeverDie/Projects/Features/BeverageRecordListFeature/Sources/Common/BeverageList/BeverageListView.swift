@@ -33,9 +33,6 @@ struct BeverageListView: View {
     .amdBottomSheet(isPresented: $viewModel.state.isBevarageDetailPresented, detents: [.height(474)]) {
       BeverageDetailView(productID: viewModel.beverageProductID)
     }
-    .onDisappear {
-      viewModel.handleAction(.onDisappear)
-    }
   }
   
   private var beverageFilterChipView: some View {

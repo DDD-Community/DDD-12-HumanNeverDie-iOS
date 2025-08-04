@@ -9,17 +9,26 @@ import Foundation
 import Observation
 
 import CommonFeature
+import BeverageDomain
+
+import Dependencies
 
 @Observable
 @MainActor
 public final class SplashViewModel: ViewModelable {
   public struct State: Equatable {
-    
+    var isInitializationComplete: Bool = false
   }
   
   public enum Action {
     case onAppear
   }
+  
+  @ObservationIgnored
+  @Dependency(\.beverageUseCase) private var beverageUseCase
+  
+  @ObservationIgnored
+  @Dependency(\.beverageLocalLikeUseCase) private var beverageLocalLikeUseCase
   
   public var state: State = .init()
   public init() {}
@@ -27,7 +36,50 @@ public final class SplashViewModel: ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
-      break
+      Task {
+        await syncLocalLikeToServer()
+        await setInitializationCompleted()
+      }
     }
+  }
+  
+  private func syncLocalLikeToServer() async {
+    do {
+      let localLikes = try beverageLocalLikeUseCase.fetchAllBeverageLike()
+      
+      await withTaskGroup(of: String?.self) { group in
+        for localLike in localLikes {
+          group.addTask {
+            do {
+              if localLike.isLiked {
+                _ = try await self.beverageUseCase.likeBeverage(productID: localLike.productID)
+              } else {
+                _ = try await self.beverageUseCase.unLikeBeverage(productID: localLike.productID)
+              }
+              return localLike.productID
+            } catch {
+              print("동기화 실패: \(localLike.productID)")
+              return nil
+            }
+          }
+        }
+        
+        for await productID in group {
+          if let productID {
+            do {
+              try beverageLocalLikeUseCase.removeBeverageLike(productID: productID)
+            } catch {
+              print("로컬 삭제 실패: \(productID)")
+            }
+          }
+        }
+      }
+    } catch {
+      print("로컬 데이터 조회 실패")
+    }
+  }
+  
+  private func setInitializationCompleted() async {
+    state.isInitializationComplete = true
   }
 }

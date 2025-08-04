@@ -35,8 +35,13 @@ public struct BeverageRecordListView: View {
     .ignoresSafeArea([.keyboard, .container], edges: .bottom)
     .toolbarVisibility(.hidden, for: .navigationBar)
     .amdSwipeBackEnabled()
+    .onChange(of: viewModel.route) { _, route in
+      guard let route else { return }
+      router.push(to: route)
+      viewModel.handleAction(.clearRoute)
+    }
     .onAppear {
-      viewModel.handleAction(.onViewDidLoad)
+      viewModel.handleAction(.onAppear)
     }
   }
   
@@ -56,7 +61,7 @@ public struct BeverageRecordListView: View {
       )
       .disabled(true)
       .onTapGesture {
-        router.push(to: .BeverageSearch)
+        router.push(to: .beverageSearch)
       }
     }
     .padding(.horizontal, 20)
