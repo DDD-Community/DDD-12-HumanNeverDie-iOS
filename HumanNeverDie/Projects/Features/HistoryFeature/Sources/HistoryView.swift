@@ -73,18 +73,16 @@ extension HistoryView {
         viewModel.handleAction(.loadHistoryForSelectedDate)
       }
     }
-    .amdDatePickerBottomSheet(
-      pickerTitle: "날짜 선택",
-      isResetButtonHidden: false,
-      isPresented: $isMonthPickerPresented,
-      selectedDate: $popUpDate,
-      onConfirm: { date in
-        viewModel.state.currentDate = date
-        viewModel.state.selectedDate = date
-        
-        viewModel.handleAction(.datePickeronConfirm)
-      }
-    )
+    .amdBottomSheet(isPresented: .constant(isMonthPickerPresented), detents: [.height(310)]) {
+      AMDDatePickerView(
+        title: "날짜 선택",
+        isResetButtonHidden: false,
+        type: .yearMonthDay) {
+          viewModel.state.currentDate = $0
+          viewModel.state.selectedDate = $0
+          isMonthPickerPresented = false
+        }
+    }
   }
   
   private func contentSugerStatusView() -> some View {

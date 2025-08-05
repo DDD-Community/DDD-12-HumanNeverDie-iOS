@@ -7,7 +7,6 @@
 
 import Data
 import BeverageDomain
-import HistoryDomain
 
 import Dependencies
 
