@@ -72,6 +72,13 @@ public extension TargetDependency {
             path: .relativeToRoot("Projects/Data/\(Modules.BaseNetwork.name)")
         )
     }
+    
+    static var localDataBase: Self {
+        return .project(
+            target: Modules.LocalDataBase.name,
+            path: .relativeToRoot("Projects/Data/\(Modules.LocalDataBase.name)")
+        )
+    }
 }
 
 // MARK: - Shared

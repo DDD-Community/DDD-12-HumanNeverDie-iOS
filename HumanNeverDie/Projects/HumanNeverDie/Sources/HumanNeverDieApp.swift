@@ -1,7 +1,9 @@
 import SwiftUI
+import SwiftData
 
 import RootFeature
 import DesignSystem
+import Data
 
 @main
 struct HumanNeverDieApp: App {
@@ -15,5 +17,6 @@ struct HumanNeverDieApp: App {
     WindowGroup {
       RootView()
     }
+    .modelContainer(.aMatdangLocalDataBase)
   }
 }

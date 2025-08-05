@@ -14,3 +14,9 @@ import Dependencies
 extension BeverageUseCaseKey: @retroactive DependencyKey {
   public static let liveValue: BeverageUseCaseProtocol = BeverageUseCase()
 }
+
+// MARK: - BeverageLocalLikeUseCase
+
+extension BeverageLocalLikeUseCaseKey: @retroactive DependencyKey {
+  public static let liveValue: BeverageLocalLikeUseCaseProtocol = BeverageLocalLikeUseCase()
+}

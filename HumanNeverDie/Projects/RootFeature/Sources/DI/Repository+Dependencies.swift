@@ -17,6 +17,8 @@ extension BeverageRepositoryKey: @retroactive DependencyKey {
   public static let liveValue: BeverageRepositoryInterface = BeverageRepository()
 }
 
-extension HistoryRepositoryKey: @retroactive DependencyKey {
-  public static let liveValue: HistoryRepositoryInterface = HistoryRepository()
+// MARK: - BeverageLikeLocalRepository
+
+extension BeverageLikeLocalRepositoryKey: @retroactive DependencyKey {
+  public static let liveValue: BeverageLikeLocalRepositoryInterface = BeverageLikeLocalRepository()
 }

@@ -62,6 +62,10 @@ public extension Modules {
     struct BaseNetwork {
         public static let name: String = "BaseNetwork"
     }
+    
+    struct LocalDataBase {
+        public static let name: String = "LocalDataBase"
+    }
 }
 
 // MARK: - Shared

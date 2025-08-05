@@ -9,5 +9,4 @@ import Foundation
 
 public protocol HistoryRepositoryInterface: Sendable {
   func getWeeklyIntakeHistory(dateInWeek: String) async throws -> [HistoryDaily]
-  func getWeeklyIntakeHistory(dateInWeek: String) async throws -> [HistoryDaily]
 }
