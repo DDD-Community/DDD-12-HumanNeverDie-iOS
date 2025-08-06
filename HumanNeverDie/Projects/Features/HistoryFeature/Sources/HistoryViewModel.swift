@@ -92,7 +92,7 @@ extension HistoryViewModel {
     state.monthHistoryData.removeAll()
     
     do {
-      let dateString = state.currentDate.toISO8601String()
+      let dateString = state.currentDate.toDateKeyString()
       let result = try await historyUseCase.getWeeklyIntakeHistory(dateInWeek: dateString)
       
       let newSugarIntakeRecordData: [SugarIntakeRecord] = result.compactMap { dailyData in
@@ -119,7 +119,7 @@ extension HistoryViewModel {
       return
     }
     
-    let dateKey = selectedDate.toISO8601String().prefix(10)
+    let dateKey = selectedDate.toDateKeyString()
     
     if let dailyData = state.monthHistoryData[String(dateKey)] {
       state.totalSugarGrams = dailyData.totalSugarGrams
