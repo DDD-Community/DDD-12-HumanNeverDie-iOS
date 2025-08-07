@@ -1,35 +1,35 @@
 import Foundation
 
 extension String {
-  public var isValidNicknameFormat: Bool {
+  public  var isValidNicknameFormat: Bool {
     let regex = "^[가-힣a-zA-Z0-9]{1,10}$"
     let test = NSPredicate(format: "SELF MATCHES %@", regex)
     return test.evaluate(with: self)
   }
-  
-  public func toDate() -> Date? {
+
+  public static func toDate(from string: String) -> Date? {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "ko_KR")
     formatter.timeZone = TimeZone(identifier: "UTC")
     formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-    return formatter.date(from: self)
+    return formatter.date(from: string)
   }
 }
 
 extension Date {
-  public func toDateKeyString() -> String {
+  public static func toDateKeyString(from date: Date) -> String {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "ko_KR")
     formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
     formatter.dateFormat = "yyyy-MM-dd"
-    return formatter.string(from: self)
+    return formatter.string(from: date)
   }
-  
-  public func toRequestDateKeyString() -> String {
+
+  public static func toRequestDateKeyString(from date: Date) -> String {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "ko_KR")
     formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
     formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-    return formatter.string(from: self)
+    return formatter.string(from: date)
   }
 }
