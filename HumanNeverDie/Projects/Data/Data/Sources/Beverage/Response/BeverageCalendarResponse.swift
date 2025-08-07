@@ -10,17 +10,15 @@ import Foundation
 import BeverageDomain
 
 public struct BeverageCalendarResponse: Decodable {
-    public let date: String
-    public let records: [CalendarRecord]
-    public let totalKcal: Int
-    public let totalSugarGrams: Int
-    public let totalCaffeine: Int
+    let date: String
+    let records: [CalendarRecordResponse]
+    let totalKcal: Int
+    let totalSugarGrams: Int
+    let totalCaffeine: Int
     
-    public var id: String { date }
-    
-    public init(
+    init(
         date: String,
-        records: [CalendarRecord],
+        records: [CalendarRecordResponse],
         totalKcal: Int,
         totalSugarGrams: Int,
         totalCaffeine: Int
@@ -34,26 +32,24 @@ public struct BeverageCalendarResponse: Decodable {
 }
 
 // MARK: - Individual Record
-public struct CalendarRecord: Decodable {
-    public let intakeHistoryId: Int
-    public let beverageId: Int
-    public let beverageName: String
-    public let cafeBrand: String
-    public let intakeTime: String
-    public let nutrition: Nutrition
-    public let imgUrl: String
-    public let sugarLevel: String
-    public let beverageSize: String
+struct CalendarRecordResponse: Decodable {
+    let intakeHistoryId: Int
+    let beverageId: Int
+    let beverageName: String
+    let cafeBrand: String
+    let intakeTime: String
+    let nutrition: NutritionResponse
+    let imgUrl: String
+    let sugarLevel: String
+    let beverageSize: String
     
-    public var id: Int { intakeHistoryId }
-    
-    public init(
+    init(
         intakeHistoryId: Int,
         beverageId: Int,
         beverageName: String,
         cafeBrand: String,
         intakeTime: String,
-        nutrition: Nutrition,
+        nutrition: NutritionResponse,
         imgUrl: String,
         sugarLevel: String,
         beverageSize: String
@@ -71,15 +67,15 @@ public struct CalendarRecord: Decodable {
 }
 
 // MARK: - Nutrition Information
-public struct Nutrition: Decodable, Equatable, Sendable {
-    public let servingKcal: Int
-    public let saturatedFatG: Double
-    public let proteinG: Int
-    public let sodiumMg: Int
-    public let sugarG: Int
-    public let caffeineMg: Int
+struct NutritionResponse: Decodable {
+    let servingKcal: Int
+    let saturatedFatG: Double
+    let proteinG: Int
+    let sodiumMg: Int
+    let sugarG: Int
+    let caffeineMg: Int
     
-    public init(
+    init(
         servingKcal: Int,
         saturatedFatG: Double,
         proteinG: Int,
@@ -97,14 +93,14 @@ public struct Nutrition: Decodable, Equatable, Sendable {
 }
 
 extension Array where Element == BeverageCalendarResponse {
-    func toDomain() -> [BeverageCalendar] {
+    public func toDomain() -> [BeverageCalendar] {
         return self.map { $0.toDomain() }
     }
 }
 
 
-public extension BeverageCalendarResponse {
-  func toDomain() -> BeverageCalendar {
+extension BeverageCalendarResponse {
+  public func toDomain() -> BeverageCalendar {
     return BeverageCalendar(
       date: self.date,
       records: self.records.map { $0.toDomain() },
@@ -115,8 +111,8 @@ public extension BeverageCalendarResponse {
   }
 }
 
-public extension CalendarRecord {
-  func toDomain() -> BeverageCalendarRecoders {
+extension CalendarRecordResponse {
+  public func toDomain() -> BeverageCalendarRecoders {
     return BeverageCalendarRecoders(
       intakeHistoryId: self.intakeHistoryId,
       beverageId: self.beverageId,

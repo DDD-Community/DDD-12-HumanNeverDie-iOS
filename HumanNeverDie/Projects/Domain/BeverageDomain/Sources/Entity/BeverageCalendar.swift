@@ -14,8 +14,6 @@ public struct BeverageCalendar: Equatable, Sendable {
   public let totalSugarGrams: Int
   public let totalCaffeine: Int
   
-  public var id: String { date }
-  
   public init(
       date: String,
       records: [BeverageCalendarRecoders],

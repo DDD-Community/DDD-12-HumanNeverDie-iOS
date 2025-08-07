@@ -8,7 +8,7 @@
 import Foundation
 
 
-public struct BeverageCalendarRecoders: Decodable, Equatable, Identifiable, Sendable {
+public struct BeverageCalendarRecoders: Equatable, Sendable {
   public let intakeHistoryId: Int
   public let beverageId: Int
   public let beverageName: String
@@ -23,8 +23,6 @@ public struct BeverageCalendarRecoders: Decodable, Equatable, Identifiable, Send
   public let caffeineMg: Int
   public let imgUrl: String
   public let beverageSize : String
-  
-  public var id: Int { intakeHistoryId }
   
   private enum CodingKeys: String, CodingKey {
     case intakeHistoryId, beverageId, beverageName, cafeBrand, intakeTime, sugarLevel, nutrition, imgUrl, beverageSize
