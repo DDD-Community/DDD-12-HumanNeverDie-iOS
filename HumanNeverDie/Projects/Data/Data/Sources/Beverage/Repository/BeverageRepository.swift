@@ -92,4 +92,15 @@ public final class BeverageRepository: BeverageRepositoryInterface, @unchecked S
     
     return statusCode
   }
+  
+  public func getBeverageMonthCalender(dateInWeek: String) async throws -> [BeverageCalendar] {
+    let target = BeverageMonthCalenderTarget(dateInMonth: dateInWeek)
+    let result = try await networkService.requestDDD(target)
+
+    guard let response = result.data else {
+      throw AMDNetworkError.emptyResponse
+    }
+
+    return response.toDomain()
+  }
 }

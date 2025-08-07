@@ -1,5 +1,5 @@
 //
-//  HistoryMonthCalenderTarget.swift
+//  BeverageMonthCalenderTarget.swift
 //  Data
 //
 //  Created by Seulki Lee on 8/1/25.
@@ -8,10 +8,10 @@
 import Foundation
 
 import BaseNetwork
-import HistoryDomain
+import BeverageDomain
 
-struct HistoryMonthCalenderTarget: AMDAPIRequestable {
-  typealias Response = AMDAPIResponse<[HistoryDaily]>
+struct BeverageMonthCalenderTarget: AMDAPIRequestable {
+  typealias Response = AMDAPIResponse<[BeverageCalendarResponse]>
   
   private let dateInMonth: String?
   

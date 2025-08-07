@@ -10,7 +10,6 @@ import Observation
 
 import CommonFeature
 import BeverageDomain
-import HistoryDomain
 import Shared
 
 @Observable
@@ -24,9 +23,9 @@ public final class HistoryViewModel: ViewModelable {
     var selectedBeverageID: String? = nil
     var isLoading: Bool = false
     
-    var selectedDateHistoryList: [HistoryDailyDetail] = []
+    var selectedDateHistoryList: [BeverageCalendarRecoders] = []
     var sugarIntakeRecordData: [SugarIntakeRecord] = []
-    var monthHistoryData: [String: HistoryDaily] = [:]
+    var monthHistoryData: [String: BeverageCalendar] = [:]
     
     var totalSugarGrams = 0
     var totalCount = 0
@@ -42,8 +41,8 @@ public final class HistoryViewModel: ViewModelable {
   }
   
   public var state: State = .init()
-  private let historyUseCase: HistoryUseCaseProtocol
-  public init(historyUseCase: HistoryUseCaseProtocol = HistoryUseCase()) {
+  private let historyUseCase: BeverageUseCaseProtocol
+  public init(historyUseCase: BeverageUseCaseProtocol = BeverageUseCase()) {
     self.historyUseCase = historyUseCase
   }
   
@@ -92,8 +91,8 @@ extension HistoryViewModel {
     state.monthHistoryData.removeAll()
     
     do {
-      let dateString = state.currentDate.toDateKeyString()
-      let result = try await historyUseCase.getWeeklyIntakeHistory(dateInWeek: dateString)
+      let dateString = state.currentDate.toRequestDateKeyString()
+      let result = try await historyUseCase.getBeverageMonthCalender(dateInWeek: dateString)
       
       let newSugarIntakeRecordData: [SugarIntakeRecord] = result.compactMap { dailyData in
         

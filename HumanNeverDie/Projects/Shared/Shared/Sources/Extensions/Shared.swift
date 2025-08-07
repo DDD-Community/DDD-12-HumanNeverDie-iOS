@@ -24,4 +24,12 @@ extension Date {
     formatter.dateFormat = "yyyy-MM-dd"
     return formatter.string(from: self)
   }
+  
+  public func toRequestDateKeyString() -> String {
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "ko_KR")
+    formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+    return formatter.string(from: self)
+  }
 }

@@ -1,246 +1,189 @@
 //
-//  HistoryDailyDetail.swift
-//  HistoryDomain
+//  BeverageHistoryCalendarList.swift
+//  BeverageDomain
 //
-//  Created by Seulki Lee on 8/2/25.
+//  Created by Seulki Lee on 8/7/25.
 //
 
 import Foundation
 
-
-public struct HistoryDailyDetail: Decodable, Equatable, Identifiable, Sendable {
-  public let intakeHistoryId: Int
-  public let beverageId: Int
-  public let beverageName: String
-  public let cafeBrand: String
-  public let intakeTime: String
-  public let sugarLevel: String
-  public let servingKcal: Int
-  public let saturatedFatG: Double
-  public let proteinG: Int
-  public let sodiumMg: Int
-  public let sugarG: Int
-  public let caffeineMg: Int
-  public let imgUrl: String
-  public let beverageSize : String
+public struct BeverageCalendar: Equatable, Sendable {
+  public let date: String
+  public let records: [BeverageCalendarRecoders]
+  public let totalKcal: Int
+  public let totalSugarGrams: Int
+  public let totalCaffeine: Int
   
-  public var id: Int { intakeHistoryId }
-  
-  private enum CodingKeys: String, CodingKey {
-    case intakeHistoryId, beverageId, beverageName, cafeBrand, intakeTime, sugarLevel, nutrition, imgUrl, beverageSize
-  }
-  
-  private enum NutritionKeys: String, CodingKey {
-    case servingKcal, saturatedFatG, proteinG, sodiumMg, sugarG, caffeineMg
-  }
-  
-  
-  public init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    
-    intakeHistoryId = try container.decode(Int.self, forKey: .intakeHistoryId)
-    beverageId = try container.decode(Int.self, forKey: .beverageId)
-    beverageName = try container.decode(String.self, forKey: .beverageName)
-    cafeBrand = try container.decode(String.self, forKey: .cafeBrand)
-    intakeTime = try container.decode(String.self, forKey: .intakeTime)
-    sugarLevel = try container.decode(String.self, forKey: .sugarLevel)
-    imgUrl = try container.decode(String.self, forKey: .imgUrl)
-    beverageSize =  try container.decode(String.self, forKey: .beverageSize)
-    
-    // nutrition 객체에서 필드들 추출
-    let nutritionContainer = try container.nestedContainer(keyedBy: NutritionKeys.self, forKey: .nutrition)
-    servingKcal = try nutritionContainer.decode(Int.self, forKey: .servingKcal)
-    saturatedFatG = try nutritionContainer.decode(Double.self, forKey: .saturatedFatG)
-    proteinG = try nutritionContainer.decode(Int.self, forKey: .proteinG)
-    sodiumMg = try nutritionContainer.decode(Int.self, forKey: .sodiumMg)
-    sugarG = try nutritionContainer.decode(Int.self, forKey: .sugarG)
-    caffeineMg = try nutritionContainer.decode(Int.self, forKey: .caffeineMg)
-  }
+  public var id: String { date }
   
   public init(
-    intakeHistoryId: Int,
-    beverageId: Int,
-    beverageName: String,
-    cafeBrand: String,
-    intakeTime: String,
-    sugarLevel: String,
-    servingKcal: Int,
-    saturatedFatG: Double,
-    proteinG: Int,
-    sodiumMg: Int,
-    sugarG: Int,
-    caffeineMg: Int,
-    imgUrl: String,
-    beverageSize: String
+      date: String,
+      records: [BeverageCalendarRecoders],
+      totalKcal: Int,
+      totalSugarGrams: Int,
+      totalCaffeine: Int
   ) {
-    self.intakeHistoryId = intakeHistoryId
-    self.beverageId = beverageId
-    self.beverageName = beverageName
-    self.cafeBrand = cafeBrand
-    self.intakeTime = intakeTime
-    self.sugarLevel = sugarLevel
-    self.servingKcal = servingKcal
-    self.saturatedFatG = saturatedFatG
-    self.proteinG = proteinG
-    self.sodiumMg = sodiumMg
-    self.sugarG = sugarG
-    self.caffeineMg = caffeineMg
-    self.imgUrl = imgUrl
-    self.beverageSize = beverageSize
+      self.date = date
+      self.records = records
+      self.totalKcal = totalKcal
+      self.totalSugarGrams = totalSugarGrams
+      self.totalCaffeine = totalCaffeine
   }
 }
 
-public extension HistoryDaily {
-  static var mockData: [HistoryDaily] {
+public extension BeverageCalendar {
+  static func mock() -> [BeverageCalendar] { mockData }
+  
+  private static var mockData: [BeverageCalendar] {
     [
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-04T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-05T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-06T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-07T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-08T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-09T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-10T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-11T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-12T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-13T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-14T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-15T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-16T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-17T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-18T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-19T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-20T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-21T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-22T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-23T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-24T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-25T00:00:00",
         records: [],
         totalKcal: 0,
@@ -248,10 +191,10 @@ public extension HistoryDaily {
         totalCaffeine: 0
       ),
       // 👇 실제 데이터가 있는 날!
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-26T00:00:00",
         records: [
-          HistoryDailyDetail(
+          BeverageCalendarRecoders(
             intakeHistoryId: 1,
             beverageId: 1,
             beverageName: "밀크카라멜 라떼",
@@ -267,7 +210,7 @@ public extension HistoryDaily {
             imgUrl: "https://www.starbucks.co.kr/upload/store/skuimg/2025/06/[110601]_20250626095213930.jpg",
             beverageSize: "Tall"
           ),
-          HistoryDailyDetail(
+          BeverageCalendarRecoders(
             intakeHistoryId: 6,
             beverageId: 16,
             beverageName: "사케라또 비안코 오버 아이스",
@@ -288,56 +231,56 @@ public extension HistoryDaily {
         totalSugarGrams: 36,
         totalCaffeine: 390
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-27T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-28T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-29T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-30T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-07-31T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-08-01T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-08-02T00:00:00",
         records: [],
         totalKcal: 0,
         totalSugarGrams: 0,
         totalCaffeine: 0
       ),
-      HistoryDaily(
+      BeverageCalendar(
         date: "2025-08-03T00:00:00",
         records: [],
         totalKcal: 0,
@@ -347,3 +290,4 @@ public extension HistoryDaily {
     ]
   }
 }
+

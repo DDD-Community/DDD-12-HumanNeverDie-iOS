@@ -44,7 +44,6 @@ public extension Modules {
     
     enum Domain: String {case Beverage
         case User
-        case History
     
         
         var name: String {
