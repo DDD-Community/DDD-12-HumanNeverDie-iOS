@@ -14,6 +14,10 @@ extension String {
     formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
     return formatter.date(from: string)
   }
+  
+  public var toYMDFormat: String {
+    return String(self.prefix(10))
+  }
 }
 
 extension Date {

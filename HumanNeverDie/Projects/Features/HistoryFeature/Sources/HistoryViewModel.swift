@@ -19,8 +19,9 @@ public final class HistoryViewModel: ViewModelable {
   public struct State: Equatable {
     var currentDate: Date = Date()
     var selectedDate: Date? = nil
+    var isMonthPickerPresented = false
     
-    var selectedBeverageID: String? = nil
+    var selectedBeverageID: String = ""
     var isLoading: Bool = false
     
     var selectedDateHistoryList: [BeverageCalendarRecoders] = []
@@ -34,10 +35,14 @@ public final class HistoryViewModel: ViewModelable {
   public enum Action {
     case onAppear
     case beverageListFavoriteTapped(Bool, String)
-    case beverageListInfoTapped(String)
+    case beverageListInfoTapped
     case loadHistorDailyList
     case loadHistoryForSelectedDate
     case datePickeronConfirm
+    case updateCurrentDate(Date)
+    case updateSelectedBeverageID(String)
+    case updateisMonthPickerPresented(Bool)
+    case applySelectedDate(Date)
   }
   
   public var state: State = .init()
@@ -55,8 +60,10 @@ public final class HistoryViewModel: ViewModelable {
       }
     case .beverageListFavoriteTapped(_, _):
       break
-    case .beverageListInfoTapped(let id):
-      state.selectedBeverageID = id
+    case .beverageListInfoTapped:
+      // state.selectedBeverageID 설명창띄우기
+      //띄우고 초기화
+      state.selectedBeverageID = ""
       
       break
     case .loadHistorDailyList:
@@ -72,6 +79,19 @@ public final class HistoryViewModel: ViewModelable {
         loadSelectedDateHistory()
       }
       
+    case .updateCurrentDate(let newDate):
+      state.currentDate = newDate
+      
+    case .updateSelectedBeverageID(let newId):
+      state.selectedBeverageID = newId
+      
+    case .updateisMonthPickerPresented(let isPickerPresented):
+      state.isMonthPickerPresented = isPickerPresented
+      
+    case .applySelectedDate(let newDate):
+     state.currentDate = newDate
+     state.selectedDate = newDate
+      state.isMonthPickerPresented = false
     }
   }
 }
@@ -96,7 +116,7 @@ extension HistoryViewModel {
       
       let newSugarIntakeRecordData: [SugarIntakeRecord] = result.compactMap { dailyData in
         
-        let dateKey = String(dailyData.date.prefix(10))
+        let dateKey = dailyData.date.toYMDFormat
         state.monthHistoryData[dateKey] = dailyData
         
         guard let date = String.toDate(from: dailyData.date) else { return nil }
@@ -129,3 +149,4 @@ extension HistoryViewModel {
     }
   }
 }
+

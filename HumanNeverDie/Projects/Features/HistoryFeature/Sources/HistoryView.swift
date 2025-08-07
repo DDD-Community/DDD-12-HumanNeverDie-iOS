@@ -14,7 +14,6 @@ public struct HistoryView: View {
   @State private var viewModel: HistoryViewModel
   @State private var popUpDate = Date()
   @State private var popupPosition: CGPoint? = nil
-  @State private var isMonthPickerPresented = false
   
   public init(viewModel: HistoryViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -52,35 +51,34 @@ extension HistoryView {
   private func contentCalenderView() -> some View {
     AMDCalendarFactory.createMonth(
       currentDate: viewModel.currentDate,
-      sugarIntakeRecordData: viewModel.state.sugarIntakeRecordData,
+      sugarIntakeRecordData: viewModel.sugarIntakeRecordData,
       userSugarTargetValue: 50,
       selectedDate: $viewModel.state.selectedDate,
       onTapTitle: {
-        popUpDate = viewModel.state.selectedDate ?? Date()
-        isMonthPickerPresented = true
+        popUpDate = viewModel.selectedDate ?? Date()
+        viewModel.handleAction(.updateisMonthPickerPresented(true))
       },
       onMonthChanged: { newDate in
-        viewModel.state.currentDate = newDate
+        viewModel.handleAction(.updateCurrentDate(newDate))
       }
     )
-    .onChange(of: viewModel.state.currentDate) { _, newDate in
-      if (!isMonthPickerPresented) {
+    .onChange(of: viewModel.currentDate) { _, newDate in
+      if (!viewModel.isMonthPickerPresented) {
         viewModel.handleAction(.loadHistorDailyList)
       }
     }
-    .onChange(of: viewModel.state.selectedDate) { _, selectedDate in
-      if (!isMonthPickerPresented) {
+    .onChange(of: viewModel.selectedDate) { _, selectedDate in
+      if (!viewModel.isMonthPickerPresented) {
         viewModel.handleAction(.loadHistoryForSelectedDate)
       }
     }
-    .amdBottomSheet(isPresented: .constant(isMonthPickerPresented), detents: [.height(310)]) {
+    .amdBottomSheet(isPresented: .constant(viewModel.isMonthPickerPresented), detents: [.height(310)]) {
       AMDDatePickerView(
         title: "날짜 선택",
         isResetButtonHidden: false,
         type: .yearMonthDay) {
-          viewModel.state.currentDate = $0
-          viewModel.state.selectedDate = $0
-          isMonthPickerPresented = false
+          
+          viewModel.handleAction(.applySelectedDate($0))
         }
     }
   }
@@ -88,7 +86,7 @@ extension HistoryView {
   private func contentSugerStatusView() -> some View {
     AMDSugarStatusView(
       variant: .healthy,
-      style: .history(drinkCount:viewModel.state.totalCount , sugar: viewModel.state.totalSugarGrams, baseSugar: 50)
+      style: .history(drinkCount:viewModel.totalCount , sugar: viewModel.totalSugarGrams, baseSugar: 50)
     )
   }
   
@@ -115,11 +113,12 @@ extension HistoryView {
   }
   
   private var selectedHistoryDailylList: some View {
-    
     VStack(alignment: .leading, spacing: 0) {
       LazyVStack(spacing: 20) {
-        ForEach(viewModel.state.selectedDateHistoryList, id: \.beverageId) { data in
-          
+        // 변수로 한 번 받아서 사용
+        let historyList = viewModel.selectedDateHistoryList
+        
+        ForEach(historyList, id: \.intakeHistoryId) { data in
           let sugarFreeVariant = AMDSugarFreeVariant.from(data.sugarLevel) ?? .none
           let beverageIdString = String(data.beverageId)
           
@@ -132,7 +131,7 @@ extension HistoryView {
             kcal: Double(data.servingKcal),
             sugarFreeVariant: sugarFreeVariant,
             menuAction: {
-              viewModel.handleAction(.beverageListInfoTapped(beverageIdString))
+              viewModel.handleAction(.updateSelectedBeverageID(beverageIdString))
             }
           )
           .padding(.horizontal, 20)
@@ -143,7 +142,7 @@ extension HistoryView {
                 .onTapGesture {
                   let frame = geo.frame(in: .global)
                   self.popupPosition = CGPoint(x: frame.maxX - 100, y: frame.midY - 60)
-                  viewModel.state.selectedBeverageID = beverageIdString
+                  viewModel.handleAction(.updateSelectedBeverageID(beverageIdString))
                 }
             }
           )
@@ -155,11 +154,11 @@ extension HistoryView {
   
   @ViewBuilder
   private func popupBackgroundOverlay() -> some View {
-    if viewModel.state.selectedBeverageID != nil {
+    if viewModel.selectedBeverageID != "" {
       Color.black.opacity(0.001)
         .ignoresSafeArea()
         .onTapGesture {
-          viewModel.state.selectedBeverageID  = nil
+          viewModel.handleAction(.updateSelectedBeverageID(""))
         }
         .zIndex(0)
     }
@@ -169,11 +168,10 @@ extension HistoryView {
   private func popupMenuDailylList() -> some View {
     popupBackgroundOverlay()
     
-    if let popupPosition, let productID = viewModel.state.selectedBeverageID {
+    if let popupPosition, viewModel.selectedBeverageID != "" {
       VStack(spacing: 0) {
         Button {
-          viewModel.handleAction(.beverageListInfoTapped(productID))
-          viewModel.state.selectedBeverageID  = nil
+          viewModel.handleAction(.beverageListInfoTapped)
         } label: {
           HStack(spacing: 8) {
             Image(systemName: "info.circle")
@@ -191,7 +189,7 @@ extension HistoryView {
         Divider()
         
         Button {
-          viewModel.state.selectedBeverageID = nil
+          viewModel.handleAction(.updateSelectedBeverageID(""))
         } label: {
           HStack(spacing: 8) {
             Image(systemName: "trash")
@@ -215,3 +213,4 @@ extension HistoryView {
     }
   }
 }
+
