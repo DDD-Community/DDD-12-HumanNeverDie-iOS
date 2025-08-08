@@ -24,37 +24,6 @@ public struct BeverageCalendarRecoders: Equatable, Sendable {
   public let imgUrl: String
   public let beverageSize : String
   
-  private enum CodingKeys: String, CodingKey {
-    case intakeHistoryId, beverageId, beverageName, cafeBrand, intakeTime, sugarLevel, nutrition, imgUrl, beverageSize
-  }
-  
-  private enum NutritionKeys: String, CodingKey {
-    case servingKcal, saturatedFatG, proteinG, sodiumMg, sugarG, caffeineMg
-  }
-  
-  
-  public init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    
-    intakeHistoryId = try container.decode(Int.self, forKey: .intakeHistoryId)
-    beverageId = try container.decode(Int.self, forKey: .beverageId)
-    beverageName = try container.decode(String.self, forKey: .beverageName)
-    cafeBrand = try container.decode(String.self, forKey: .cafeBrand)
-    intakeTime = try container.decode(String.self, forKey: .intakeTime)
-    sugarLevel = try container.decode(String.self, forKey: .sugarLevel)
-    imgUrl = try container.decode(String.self, forKey: .imgUrl)
-    beverageSize =  try container.decode(String.self, forKey: .beverageSize)
-    
-    // nutrition 객체에서 필드들 추출
-    let nutritionContainer = try container.nestedContainer(keyedBy: NutritionKeys.self, forKey: .nutrition)
-    servingKcal = try nutritionContainer.decode(Int.self, forKey: .servingKcal)
-    saturatedFatG = try nutritionContainer.decode(Double.self, forKey: .saturatedFatG)
-    proteinG = try nutritionContainer.decode(Int.self, forKey: .proteinG)
-    sodiumMg = try nutritionContainer.decode(Int.self, forKey: .sodiumMg)
-    sugarG = try nutritionContainer.decode(Int.self, forKey: .sugarG)
-    caffeineMg = try nutritionContainer.decode(Int.self, forKey: .caffeineMg)
-  }
-  
   public init(
     intakeHistoryId: Int,
     beverageId: Int,
