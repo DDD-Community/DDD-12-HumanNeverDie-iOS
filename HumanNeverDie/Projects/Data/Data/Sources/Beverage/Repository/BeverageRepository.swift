@@ -101,6 +101,6 @@ public final class BeverageRepository: BeverageRepositoryInterface, @unchecked S
       throw AMDNetworkError.emptyResponse
     }
 
-    return response.toDomain()
+    return response.map { $0.toDomain() }
   }
 }

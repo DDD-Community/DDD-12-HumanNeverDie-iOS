@@ -1,38 +1,34 @@
 //
-//  BeverageDetailViewModel.swift
-//  BeverageRecordListFeature
+//  AMDBeverageDetailViewModel.swift
+//  CommonFeature
 //
-//  Created by 김규철 on 7/12/25.
+//  Created by 김규철 on 8/8/25.
 //
 
 import Foundation
 import Observation
 
-import CommonFeature
 import BeverageDomain
 
 import Dependencies
 
 @Observable
 @MainActor
-public final class BeverageDetailViewModel: ViewModelable {
-  public enum Size: String, CaseIterable {
-    case tail = "Tail"
-  }
-  
+public final class AMDBeverageDetailViewModel: ViewModelable {
   public struct State: Equatable {
     var beverageDetail: BeverageDetail?
-    var size: Size = .tail
+    var selectedSize: BeverageSize?
   }
   
   public enum Action {
-    case sizeItemTapped(Size)
+    case sizeItemTapped(BeverageSize)
   }
   
   @ObservationIgnored
   @Dependency(\.beverageUseCase) private var beverageUseCase
   
   public var state: State = .init()
+
   public init(productID: String) {
     Task {
       await getBeverageDetail(productID)
@@ -46,8 +42,7 @@ public final class BeverageDetailViewModel: ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case let .sizeItemTapped(size):
-      // 백엔드 사이즈 별 리스폰스 업데이트 이후 수정
-      state.size = size
+      state.selectedSize = size
     }
   }
   
@@ -57,6 +52,7 @@ public final class BeverageDetailViewModel: ViewModelable {
       
       await MainActor.run {
         state.beverageDetail = beverageDetail
+        state.selectedSize = beverageDetail.sizes.first
       }
     } catch {
       print(error)

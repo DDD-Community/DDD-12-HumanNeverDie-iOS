@@ -14,7 +14,8 @@ struct BeverageDetailResponse: Decodable {
   let productId: String?
   let imgUrl: String?
   let beverageType: String?
-  let beverageNutrition: BeverageNutritionResponse?
+  let defaultNutrition: BeverageNutritionResponse?
+  let sizes: [BeverageDetailSizeResponse]?
   let cafeStoreDto: CafeStoreResponse?
   
   init(
@@ -22,40 +23,30 @@ struct BeverageDetailResponse: Decodable {
     productId: String?,
     imgUrl: String?,
     beverageType: String?,
-    beverageNutrition: BeverageNutritionResponse?,
+    defaultNutrition: BeverageNutritionResponse?,
+    sizes: [BeverageDetailSizeResponse]?,
     cafeStoreDto: CafeStoreResponse?
   ) {
     self.name = name
     self.productId = productId
     self.imgUrl = imgUrl
     self.beverageType = beverageType
-    self.beverageNutrition = beverageNutrition
+    self.defaultNutrition = defaultNutrition
+    self.sizes = sizes
     self.cafeStoreDto = cafeStoreDto
   }
 }
 
-struct BeverageNutritionResponse: Decodable {
-  let servingKcal: Int?
-  let saturatedFatG: Int?
-  let proteinG: Int?
-  let sodiumMg: Int?
-  let sugarG: Int?
-  let caffeineMg: Int?
+struct BeverageDetailSizeResponse: Decodable {
+  let sizeType: String
+  let nutrition: BeverageNutritionResponse
   
   init(
-    servingKcal: Int?,
-    saturatedFatG: Int?,
-    proteinG: Int?,
-    sodiumMg: Int?,
-    sugarG: Int?,
-    caffeineMg: Int?
+    sizeType: String,
+    nutrition: BeverageNutritionResponse
   ) {
-    self.servingKcal = servingKcal
-    self.saturatedFatG = saturatedFatG
-    self.proteinG = proteinG
-    self.sodiumMg = sodiumMg
-    self.sugarG = sugarG
-    self.caffeineMg = caffeineMg
+    self.sizeType = sizeType
+    self.nutrition = nutrition
   }
 }
 
@@ -65,13 +56,31 @@ extension BeverageDetailResponse {
       name: name ?? "",
       productID: productId ?? "",
       thumbnailURL: imgUrl ?? "",
-      kcal: beverageNutrition?.servingKcal ?? 0,
-      sugar: beverageNutrition?.sugarG ?? 0,
-      protein: beverageNutrition?.proteinG ?? 0,
-      saturatedFat: beverageNutrition?.saturatedFatG ?? 0,
-      sodium: beverageNutrition?.sodiumMg ?? 0,
-      caffeine: beverageNutrition?.caffeineMg ?? 0,
+      defaultNutrition: defaultNutrition?.toDomainNutrition() ?? BeverageNutrition(kcal: 0, sugar: 0, protein: 0, saturatedFat: 0, sodium: 0, caffeine: 0),
+      sizes: sizes?.map { $0.toDomain() } ?? [],
       brandName: cafeStoreDto?.cafeBrand ?? ""
+    )
+  }
+}
+
+extension BeverageNutritionResponse {
+  func toDomainNutrition() -> BeverageNutrition {
+    return BeverageNutrition(
+      kcal: servingKcal ?? 0,
+      sugar: sugarG ?? 0,
+      protein: proteinG ?? 0,
+      saturatedFat: Int(saturatedFatG ?? 0),
+      sodium: sodiumMg ?? 0,
+      caffeine: caffeineMg ?? 0
+    )
+  }
+}
+
+extension BeverageDetailSizeResponse {
+  func toDomain() -> BeverageSize {
+    return BeverageSize(
+      sizeType: sizeType,
+      nutrition: nutrition.toDomainNutrition()
     )
   }
 }

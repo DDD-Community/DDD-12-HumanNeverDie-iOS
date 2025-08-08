@@ -12,10 +12,11 @@ import CommonFeature
 import BeverageDomain
 import Shared
 
+import Dependencies
+
 @Observable
 @MainActor
 public final class HistoryViewModel: ViewModelable {
-  
   public struct State: Equatable {
     var currentDate: Date = Date()
     var selectedDate: Date? = nil
@@ -46,10 +47,9 @@ public final class HistoryViewModel: ViewModelable {
   }
   
   public var state: State = .init()
-  private let historyUseCase: BeverageUseCaseProtocol
-  public init(historyUseCase: BeverageUseCaseProtocol = BeverageUseCase()) {
-    self.historyUseCase = historyUseCase
-  }
+  
+  @ObservationIgnored
+  @Dependency(\.beverageUseCase) private var beverageUseCase
   
   public func handleAction(_ action: Action) {
     switch action {
@@ -112,7 +112,7 @@ extension HistoryViewModel {
     
     do {
       let dateString = Date.toRequestDateKeyString(from:state.currentDate)
-      let result = try await historyUseCase.getBeverageMonthCalender(dateInWeek: dateString)
+      let result = try await beverageUseCase.getBeverageMonthCalender(dateInWeek: dateString)
       
       let newSugarIntakeRecordData: [SugarIntakeRecord] = result.compactMap { dailyData in
         
