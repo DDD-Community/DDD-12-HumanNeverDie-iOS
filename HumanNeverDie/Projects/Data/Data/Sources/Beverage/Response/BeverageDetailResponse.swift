@@ -39,12 +39,24 @@ struct BeverageDetailResponse: Decodable {
 
 extension BeverageDetailResponse {
   public func toDomain() -> BeverageDetail {
-    return .init(
+    let defaultBeverageNutrition = BeverageNutrition(
+      kcal: 0,
+      sugar: 0,
+      protein: 0,
+      saturatedFat: 0,
+      sodium: 0,
+      caffeine: 0
+    )
+    
+    let domainNutrition = defaultNutrition?.toDomain() ?? defaultBeverageNutrition
+    let domainSizes = sizes?.map { $0.toDomain() } ?? []
+    
+    return BeverageDetail(
       name: name ?? "",
       productID: productId ?? "",
       thumbnailURL: imgUrl ?? "",
-      defaultNutrition: defaultNutrition?.toDomain() ?? BeverageNutrition(kcal: 0, sugar: 0, protein: 0, saturatedFat: 0, sodium: 0, caffeine: 0),
-      sizes: sizes?.map { $0.toDomain() } ?? [],
+      defaultNutrition: domainNutrition,
+      sizes: domainSizes,
       brandName: cafeStoreDto?.cafeBrand ?? ""
     )
   }

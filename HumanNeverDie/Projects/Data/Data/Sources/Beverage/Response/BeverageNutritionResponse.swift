@@ -7,6 +7,8 @@
 
 import Foundation
 
+import BeverageDomain
+
 struct BeverageNutritionResponse: Decodable {
   let servingKcal: Int?
   let saturatedFatG: Double?
