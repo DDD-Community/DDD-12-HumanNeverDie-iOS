@@ -20,7 +20,14 @@ public final class BeverageRecordViewModel: ViewModelable {
     var productID: String
     var isLiked: Bool
     
-    var beverageDetail: BeverageDetail = .init(name: "", productID: "", thumbnailURL: "", kcal: 0, sugar: 0, protein: 0, saturatedFat: 0, sodium: 0, caffeine: 0, brandName: "")
+    var beverageDetail: BeverageDetail = .init(
+      name: "",
+      productID: "",
+      thumbnailURL: "",
+      defaultNutrition: BeverageNutrition(kcal: 0, sugar: 0, protein: 0, saturatedFat: 0, sodium: 0, caffeine: 0),
+      sizes: [],
+      brandName: ""
+    )
   }
   
   public enum Action {

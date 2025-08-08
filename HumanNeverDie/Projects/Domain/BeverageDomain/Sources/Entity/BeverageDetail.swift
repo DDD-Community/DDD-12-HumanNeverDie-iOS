@@ -11,35 +11,23 @@ public struct BeverageDetail: Equatable, Sendable {
   public let name: String
   public let productID: String
   public let thumbnailURL: String
-  public let kcal: Int
-  public let sugar: Int
-  public let protein: Int
-  public let saturatedFat: Int
-  public let sodium: Int
-  public let caffeine: Int
+  public let defaultNutrition: BeverageNutrition
+  public let sizes: [BeverageSize]
   public let brandName: String
   
   public init(
     name: String,
     productID: String,
     thumbnailURL: String,
-    kcal: Int,
-    sugar: Int,
-    protein: Int,
-    saturatedFat: Int,
-    sodium: Int,
-    caffeine: Int,
+    defaultNutrition: BeverageNutrition,
+    sizes: [BeverageSize],
     brandName: String
   ) {
     self.name = name
     self.productID = productID
     self.thumbnailURL = thumbnailURL
-    self.kcal = kcal
-    self.sugar = sugar
-    self.protein = protein
-    self.saturatedFat = saturatedFat
-    self.sodium = sodium
-    self.caffeine = caffeine
+    self.defaultNutrition = defaultNutrition
+    self.sizes = sizes
     self.brandName = brandName
   }
 }
@@ -50,10 +38,10 @@ extension BeverageDetail {
       name: name,
       productID: productID,
       thumbnailURL: thumbnailURL,
-      kcal: kcal,
-      sugar: sugar,
+      kcal: defaultNutrition.kcal,
+      sugar: defaultNutrition.sugar,
       brandName: brandName,
-      sugarFreeType: BeverageSugarFreeType(sugar: sugar),
+      sugarFreeType: BeverageSugarFreeType(sugar: defaultNutrition.sugar),
       isLiked: isLiked
     )
   }
@@ -65,12 +53,27 @@ extension BeverageDetail {
       name: "아메리카노",
       productID: "starbucks_americano_001",
       thumbnailURL: "https://picsum.photos/200/300?random=15",
-      kcal: 10,
-      sugar: 20,
-      protein: 10,
-      saturatedFat: 10,
-      sodium: 130,
-      caffeine: 140,
+      defaultNutrition: BeverageNutrition(
+        kcal: 10,
+        sugar: 20,
+        protein: 10,
+        saturatedFat: 10,
+        sodium: 130,
+        caffeine: 140
+      ),
+      sizes: [
+        BeverageSize(
+          sizeType: "TALL",
+          nutrition: BeverageNutrition(
+            kcal: 10,
+            sugar: 20,
+            protein: 10,
+            saturatedFat: 10,
+            sodium: 130,
+            caffeine: 140
+          )
+        )
+      ],
       brandName: "스타벅스"
     )
   }

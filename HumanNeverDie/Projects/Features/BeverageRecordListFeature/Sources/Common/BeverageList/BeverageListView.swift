@@ -8,7 +8,6 @@
 import SwiftUI
 
 import BeverageDomain
-
 import CommonFeature
 import DesignSystem
 
@@ -31,7 +30,7 @@ struct BeverageListView: View {
     }
     .padding(.horizontal, 20)
     .amdBottomSheet(isPresented: $viewModel.state.isBevarageDetailPresented, detents: [.height(474)]) {
-      BeverageDetailView(productID: viewModel.beverageProductID)
+      AMDBeverageDetailView(productID: viewModel.beverageProductID)
     }
   }
   

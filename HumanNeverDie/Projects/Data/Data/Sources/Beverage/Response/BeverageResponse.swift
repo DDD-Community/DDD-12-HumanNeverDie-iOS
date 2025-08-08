@@ -44,6 +44,7 @@ struct BeverageResponse: Decodable {
   let name: String?
   let imgUrl: String?
   let beverageType: String?
+  let beverageNutrition: BeverageNutritionResponse?
   let cafeStoreDto: CafeStoreResponse?
   let isLiked: Bool?
   
@@ -52,6 +53,7 @@ struct BeverageResponse: Decodable {
     name: String?,
     imgUrl: String?,
     beverageType: String?,
+    beverageNutrition: BeverageNutritionResponse?,
     cafeStoreDto: CafeStoreResponse?,
     isLiked: Bool?
   ) {
@@ -59,6 +61,7 @@ struct BeverageResponse: Decodable {
     self.name = name
     self.imgUrl = imgUrl
     self.beverageType = beverageType
+    self.beverageNutrition = beverageNutrition
     self.cafeStoreDto = cafeStoreDto
     self.isLiked = isLiked
   }
@@ -78,10 +81,10 @@ extension BeverageResponse {
       name: name ?? "",
       productID: productId ?? "",
       thumbnailURL: imgUrl ?? "",
-      kcal: 0, // 서버 리스폰스 값 추가 예정
-      sugar: 0, // 서버 리스폰스 값 추가 예정
+      kcal: beverageNutrition?.servingKcal ?? 0,
+      sugar: beverageNutrition?.sugarG ?? 0,
       brandName: cafeStoreDto?.cafeBrand ?? "",
-      sugarFreeType: BeverageSugarFreeType(sugar: 0), // 서버 리스폰스 값 추가 반영 예정
+      sugarFreeType: BeverageSugarFreeType(sugar: beverageNutrition?.sugarG ?? 0),
       isLiked: isLiked ?? false
     )
   }
