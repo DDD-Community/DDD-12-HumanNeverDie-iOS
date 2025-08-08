@@ -10,49 +10,143 @@ import Observation
 
 import CommonFeature
 import BeverageDomain
+import Shared
 
 @Observable
 @MainActor
-public final class HistoryViewModel :ViewModelable {
-  @ObservationIgnored
-  private(set) var currentDate: Date = Date()
-  @ObservationIgnored
-  private(set) var sugarIntakeRecordData: [SugarIntakeRecord] = HistoryViewModel.sampleData
-  var selectedDate: Date? = nil
+public final class HistoryViewModel: ViewModelable {
   
   public struct State: Equatable {
-    var frequentBeverageList: [Beverage] = Beverage.frequentMockData
-    var selectedBeverageID: String? = nil
+    var currentDate: Date = Date()
+    var selectedDate: Date? = nil
+    var isMonthPickerPresented = false
+    
+    var selectedBeverageID: String = ""
+    var isLoading: Bool = false
+    
+    var selectedDateHistoryList: [BeverageCalendarRecoders] = []
+    var sugarIntakeRecordData: [SugarIntakeRecord] = []
+    var monthHistoryData: [String: BeverageCalendar] = [:]
+    
+    var totalSugarGrams = 0
+    var totalCount = 0
   }
   
   public enum Action {
     case onAppear
     case beverageListFavoriteTapped(Bool, String)
-    case beverageListInfoTapped(String)
+    case beverageListInfoTapped
+    case loadHistorDailyList
+    case loadHistoryForSelectedDate
+    case datePickeronConfirm
+    case updateCurrentDate(Date)
+    case updateSelectedBeverageID(String)
+    case updateisMonthPickerPresented(Bool)
+    case applySelectedDate(Date)
   }
   
   public var state: State = .init()
-  public init() {}
+  private let historyUseCase: BeverageUseCaseProtocol
+  public init(historyUseCase: BeverageUseCaseProtocol = BeverageUseCase()) {
+    self.historyUseCase = historyUseCase
+  }
   
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
-      break
+      Task {
+        await loadNetworkData()
+        loadSelectedDateHistory()
+      }
     case .beverageListFavoriteTapped(_, _):
       break
-    case .beverageListInfoTapped(let id):
-      state.selectedBeverageID = id
+    case .beverageListInfoTapped:
+      // state.selectedBeverageID 설명창띄우기
+      //띄우고 초기화
+      state.selectedBeverageID = ""
+      
       break
-    }
-  }
-  
-  @ObservationIgnored
-  public static var sampleData: [SugarIntakeRecord] {
-    let calendar = Calendar.current
-    let baseDate = calendar.date(from: DateComponents(year: 2025, month: 5, day: 1))!
-    return (0..<40).compactMap {
-      guard let date = calendar.date(byAdding: .day, value: $0, to: baseDate) else { return nil }
-      return SugarIntakeRecord(date: date, value: Int.random(in: 0...50))
+    case .loadHistorDailyList:
+      Task {
+        await loadNetworkData()
+      }
+    case .loadHistoryForSelectedDate:
+      loadSelectedDateHistory()
+      
+    case .datePickeronConfirm:
+      Task {
+        await loadNetworkData()
+        loadSelectedDateHistory()
+      }
+      
+    case .updateCurrentDate(let newDate):
+      state.currentDate = newDate
+      
+    case .updateSelectedBeverageID(let newId):
+      state.selectedBeverageID = newId
+      
+    case .updateisMonthPickerPresented(let isPickerPresented):
+      state.isMonthPickerPresented = isPickerPresented
+      
+    case .applySelectedDate(let newDate):
+     state.currentDate = newDate
+     state.selectedDate = newDate
+      state.isMonthPickerPresented = false
     }
   }
 }
+
+extension HistoryViewModel {
+  
+  private func resetSelectedData() {
+    state.selectedDateHistoryList = []
+    state.totalSugarGrams = 0
+    state.totalCount = 0
+  }
+  
+  private func loadNetworkData() async {
+    guard !state.isLoading else { return }
+    
+    state.isLoading = true
+    state.monthHistoryData.removeAll()
+    
+    do {
+      let dateString = Date.toRequestDateKeyString(from:state.currentDate)
+      let result = try await historyUseCase.getBeverageMonthCalender(dateInWeek: dateString)
+      
+      let newSugarIntakeRecordData: [SugarIntakeRecord] = result.compactMap { dailyData in
+        
+        let dateKey = dailyData.date.toYMDFormat
+        state.monthHistoryData[dateKey] = dailyData
+        
+        guard let date = String.toDate(from: dailyData.date) else { return nil }
+        return SugarIntakeRecord(date: date, value: dailyData.totalSugarGrams)
+      }
+      
+      state.sugarIntakeRecordData = newSugarIntakeRecordData
+      state.isLoading = false
+      
+    } catch {
+      print("❌ 히스토리 로딩 실패: \(error)")
+      state.isLoading = false
+    }
+  }
+  
+  private func loadSelectedDateHistory() {
+    guard let selectedDate = state.selectedDate else {
+      resetSelectedData()
+      return
+    }
+    
+    let dateKey = Date.toDateKeyString(from: selectedDate)
+    
+    if let dailyData = state.monthHistoryData[String(dateKey)] {
+      state.totalSugarGrams = dailyData.totalSugarGrams
+      state.totalCount = dailyData.records.count
+      state.selectedDateHistoryList = dailyData.records
+    } else {
+      resetSelectedData()
+    }
+  }
+}
+

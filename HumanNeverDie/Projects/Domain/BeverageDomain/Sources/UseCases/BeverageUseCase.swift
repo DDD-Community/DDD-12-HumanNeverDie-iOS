@@ -6,11 +6,13 @@ public protocol BeverageUseCaseProtocol: Sendable {
   func getBeverageCount() async throws -> BeverageCount
   func getBeverageList(cursor: String?) async throws -> BeverageList
   func getBeverageDetail(productID: String) async throws -> BeverageDetail
+  func getBeverageMonthCalender(dateInWeek: String) async throws -> [BeverageCalendar]
   func likeBeverage(productID: String) async throws -> BeverageLike
   func unLikeBeverage(productID: String) async throws -> BeverageLike
   func searchBeverage(keyword: String) async throws -> BeverageList
   func recordBeverage(productID: String) async throws -> Bool
   func syncBeverageLike(beverages: [Beverage]) throws -> ([Beverage], Int)
+  
 }
 
 public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable {
@@ -97,6 +99,11 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
     }
     
     return (syncedBeverages, likeCountDiff)
+  }
+  
+  
+  public func getBeverageMonthCalender(dateInWeek: String) async throws -> [BeverageCalendar] {
+      return try await beverageRepository.getBeverageMonthCalender(dateInWeek: dateInWeek)
   }
 }
 

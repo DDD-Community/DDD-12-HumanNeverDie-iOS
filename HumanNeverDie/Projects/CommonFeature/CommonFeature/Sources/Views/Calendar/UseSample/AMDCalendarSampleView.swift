@@ -33,6 +33,8 @@ public struct AMDCalendarSampleView: View {
           onTapTitle: {
             tempDate = viewModel.selectedDate ?? Date()
             isMonthPickerPresented = true
+          },onMonthChanged: { newDate in
+            print("월 변경: \(newDate)")
           }
         ).sheet(isPresented: $isMonthPickerPresented) {
           datePickerSheet(
@@ -59,6 +61,8 @@ public struct AMDCalendarSampleView: View {
           onTapTitle: {
             tempDate = viewModel.selectedDate ?? Date()
             isWeekPickerPresented = true
+          },onWeekChanged: { newWeekDate in
+            print("주 변경: \(newWeekDate)")
           }
         ).sheet(isPresented: $isMonthPickerPresented) {
           datePickerSheet(

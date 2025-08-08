@@ -14,14 +14,17 @@ public struct AMDCalendarFactory {
     sugarIntakeRecordData: [SugarIntakeRecord],
     userSugarTargetValue: Int,
     selectedDate: Binding<Date?>,
-    onTapTitle: @escaping () -> Void
+    onTapTitle: @escaping () -> Void,
+    onMonthChanged: @escaping (Date) -> Void
   ) -> some View {
-    let viewModel = AMDMonthCalendarViewModel(
+    AMDMonthCalendarView(
       currentDate: currentDate,
       sugarIntakeRecordData: sugarIntakeRecordData,
-      userSugarTargetValue: userSugarTargetValue
+      userSugarTargetValue: userSugarTargetValue,
+      selectedDate: selectedDate,
+      onTapTitle: onTapTitle,
+      onMonthChanged: onMonthChanged
     )
-    return AMDMonthCalendarView(viewModel: viewModel, selectedDate: selectedDate, onTapTitle: onTapTitle)
   }
   
   public static func createWeekly(
@@ -29,13 +32,16 @@ public struct AMDCalendarFactory {
     sugarIntakeRecordData: [SugarIntakeRecord],
     userSugarTargetValue: Int,
     selectedDate: Binding<Date?>,
-    onTapTitle: @escaping () -> Void
+    onTapTitle: @escaping () -> Void,
+    onWeekChanged: @escaping (Date) -> Void
   ) -> some View {
-    let viewModel = AMDWeekCalendarViewModel(
+    AMDWeekCalendarView(
       currentDate: currentDate,
       sugarIntakeRecordData: sugarIntakeRecordData,
-      userSugarTargetValue: userSugarTargetValue
+      userSugarTargetValue: userSugarTargetValue,
+      selectedDate: selectedDate,
+      onTapTitle: onTapTitle,
+      onWeekChanged: onWeekChanged
     )
-    return AMDWeekCalendarView(viewModel: viewModel, selectedDate: selectedDate, onTapTitle: onTapTitle)
   }
 }

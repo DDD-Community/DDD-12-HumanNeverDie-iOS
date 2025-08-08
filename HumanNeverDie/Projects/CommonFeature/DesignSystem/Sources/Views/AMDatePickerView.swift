@@ -9,6 +9,7 @@ import SwiftUI
 
 public struct AMDDatePickerView: View {
   private let title: String
+  private let isResetButtonHidden: Bool
   private let type: AMDDatePicker.PickerType
   private let action: (Date) -> Void
   
@@ -16,12 +17,15 @@ public struct AMDDatePickerView: View {
   
   public init(
     title: String,
+    isResetButtonHidden: Bool = true,
     type: AMDDatePicker.PickerType,
     action: @escaping (Date) -> Void
   ) {
     self.title = title
     self.type = type
+    self.isResetButtonHidden = isResetButtonHidden
     self.action = action
+    
   }
   
   public var body: some View {
@@ -36,11 +40,33 @@ public struct AMDDatePickerView: View {
   }
   
   private var titleView: some View {
-    Text(title)
-      .amdFont(.largeBold)
-      .foregroundStyle(.gray85)
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .multilineTextAlignment(.leading)
+    HStack {
+      Text(title)
+        .amdFont(.largeBold)
+        .foregroundStyle(.gray85)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .multilineTextAlignment(.leading)
+      Spacer()
+      if !isResetButtonHidden {
+        resetButton()
+      }
+    }
+  }
+  
+  private func resetButton() -> some View {
+    Button {
+      date = Date()
+    } label: {
+      HStack(spacing: 4) {
+        Text("초기화")
+          .amdFont(.mediumRegular)
+          .foregroundColor(.gray60)
+        
+        Image(systemName: "arrow.clockwise")
+          .amdFont(.mediumRegular)
+          .foregroundColor(.gray60)
+      }
+    }
   }
   
   private var datePickerView: some View {

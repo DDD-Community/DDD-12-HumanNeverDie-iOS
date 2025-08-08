@@ -9,7 +9,7 @@ import Foundation
 import DesignSystem
 import SwiftUICore
 
-public struct SugarIntakeRecord {
+public struct SugarIntakeRecord : Equatable {
   public let date: Date
   public let value: Int
   
@@ -26,12 +26,15 @@ public struct DateValue: Identifiable {
 }
 
 public enum AMDStateIcon {
+  case none
   case healthy
   case warning
   case danger
   
   init(percentage: Double) {
     switch percentage {
+    case 0:
+      self = .none
     case ...33:
       self = .healthy
     case ...66:
@@ -41,8 +44,9 @@ public enum AMDStateIcon {
     }
   }
   
-  public var icon: Image {
+  public var icon: Image? {
     switch self {
+    case .none:   return nil
     case .healthy: return AMDImage.stateHealthy.swiftUIImage
     case .warning: return AMDImage.stateWarning.swiftUIImage
     case .danger:  return AMDImage.stateDanger.swiftUIImage

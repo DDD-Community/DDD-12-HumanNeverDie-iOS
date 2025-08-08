@@ -42,9 +42,9 @@ public extension Modules {
         public static let name: String = "BaseDomain"
     }
     
-    enum Domain: String {
-        case Beverage
+    enum Domain: String {case Beverage
         case User
+    
         
         var name: String {
             return "\(rawValue)Domain"

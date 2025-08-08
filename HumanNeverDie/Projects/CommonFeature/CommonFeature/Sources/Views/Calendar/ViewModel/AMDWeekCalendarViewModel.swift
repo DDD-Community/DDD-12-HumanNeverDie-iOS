@@ -72,11 +72,19 @@ class AMDWeekCalendarViewModel: AMDCommonCalendarViewModel {
         isToday: isToday(value.date),
         isSelected: isSelected(value.date),
         textColor: textColor(for: value.date),
-        stateIcon: matchingValue(for: value.date).map { getStateIcon(for: $0) }
+        stateIcon: matchingValue(for: value.date).flatMap { getStateIcon(for: $0)}
       )
     }
   }
   
+  func updateSugarIntakeData(_ newData: [SugarIntakeRecord]) {
+    self.sugarIntakeRecordData = newData
+    updateDayModels()
+  }
+  
+  func getCurrentWeekStartDate() -> Date {
+    return currentWeekStartDate
+  }
 }
 
 extension Date {

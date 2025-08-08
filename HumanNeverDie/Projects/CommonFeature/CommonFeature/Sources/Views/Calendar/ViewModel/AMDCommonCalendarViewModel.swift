@@ -10,8 +10,8 @@ import SwiftUI
 class AMDCommonCalendarViewModel {
   private var selectedDate: Date? = nil
   private(set) var currentDate: Date
-  private let sugarIntakeRecordData: [SugarIntakeRecord]
   private let userSugarTargetValue: Int
+  var sugarIntakeRecordData: [SugarIntakeRecord]
   let calendar = Calendar.current
   let dragThreshold: CGFloat = 50
   let weekdayItems: [AMDWeekdayTile] = AMDWeekdayTile.allCases
@@ -33,7 +33,7 @@ class AMDCommonCalendarViewModel {
     DateFormatter.calendarTitleFormat.string(from: titleDate)
   }
   
-  func getStateIcon(for value: Int) -> Image {
+  func getStateIcon(for value: Int) -> Image? {
     let sugerValue = Double(value) / Double(userSugarTargetValue) * 100
     return AMDStateIcon(percentage: sugerValue).icon
   }
