@@ -37,19 +37,6 @@ struct BeverageDetailResponse: Decodable {
   }
 }
 
-struct BeverageDetailSizeResponse: Decodable {
-  let sizeType: String
-  let nutrition: BeverageNutritionResponse
-  
-  init(
-    sizeType: String,
-    nutrition: BeverageNutritionResponse
-  ) {
-    self.sizeType = sizeType
-    self.nutrition = nutrition
-  }
-}
-
 extension BeverageDetailResponse {
   public func toDomain() -> BeverageDetail {
     return .init(
@@ -63,24 +50,24 @@ extension BeverageDetailResponse {
   }
 }
 
-extension BeverageNutritionResponse {
-  func toDomain() -> BeverageNutrition {
-    return BeverageNutrition(
-      kcal: servingKcal ?? 0,
-      sugar: sugarG ?? 0,
-      protein: proteinG ?? 0,
-      saturatedFat: Int(saturatedFatG ?? 0),
-      sodium: sodiumMg ?? 0,
-      caffeine: caffeineMg ?? 0
-    )
+struct BeverageDetailSizeResponse: Decodable {
+  let sizeType: String?
+  let nutrition: BeverageNutritionResponse?
+  
+  init(
+    sizeType: String?,
+    nutrition: BeverageNutritionResponse?
+  ) {
+    self.sizeType = sizeType
+    self.nutrition = nutrition
   }
 }
 
 extension BeverageDetailSizeResponse {
   func toDomain() -> BeverageSize {
     return BeverageSize(
-      sizeType: sizeType,
-      nutrition: nutrition.toDomain()
+      sizeType: sizeType ?? "",
+      nutrition: nutrition?.toDomain() ?? BeverageNutrition(kcal: 0, sugar: 0, protein: 0, saturatedFat: 0, sodium: 0, caffeine: 0)
     )
   }
 }

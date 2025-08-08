@@ -31,3 +31,16 @@ struct BeverageNutritionResponse: Decodable {
     self.caffeineMg = caffeineMg
   }
 }
+
+extension BeverageNutritionResponse {
+  func toDomain() -> BeverageNutrition {
+    return BeverageNutrition(
+      kcal: servingKcal ?? 0,
+      sugar: sugarG ?? 0,
+      protein: proteinG ?? 0,
+      saturatedFat: Int(saturatedFatG ?? 0),
+      sodium: sodiumMg ?? 0,
+      caffeine: caffeineMg ?? 0
+    )
+  }
+}
