@@ -56,7 +56,7 @@ extension BeverageDetailResponse {
       name: name ?? "",
       productID: productId ?? "",
       thumbnailURL: imgUrl ?? "",
-      defaultNutrition: defaultNutrition?.toDomainNutrition() ?? BeverageNutrition(kcal: 0, sugar: 0, protein: 0, saturatedFat: 0, sodium: 0, caffeine: 0),
+      defaultNutrition: defaultNutrition?.toDomain() ?? BeverageNutrition(kcal: 0, sugar: 0, protein: 0, saturatedFat: 0, sodium: 0, caffeine: 0),
       sizes: sizes?.map { $0.toDomain() } ?? [],
       brandName: cafeStoreDto?.cafeBrand ?? ""
     )
@@ -64,7 +64,7 @@ extension BeverageDetailResponse {
 }
 
 extension BeverageNutritionResponse {
-  func toDomainNutrition() -> BeverageNutrition {
+  func toDomain() -> BeverageNutrition {
     return BeverageNutrition(
       kcal: servingKcal ?? 0,
       sugar: sugarG ?? 0,
@@ -80,7 +80,7 @@ extension BeverageDetailSizeResponse {
   func toDomain() -> BeverageSize {
     return BeverageSize(
       sizeType: sizeType,
-      nutrition: nutrition.toDomainNutrition()
+      nutrition: nutrition.toDomain()
     )
   }
 }
