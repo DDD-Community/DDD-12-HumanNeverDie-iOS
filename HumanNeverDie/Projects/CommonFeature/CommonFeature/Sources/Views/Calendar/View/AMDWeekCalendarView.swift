@@ -68,11 +68,7 @@ struct AMDWeekCalendarView: View {
     CalendarTitleView(
       title: viewModel.weekTitleDateString,
       onTap: onTapTitle
-    ).onChange(of: selectedDate) {
-      if let date = selectedDate {
-        viewModel.applySelectedDate(date)
-      }
-    }
+    )
     
     CalendarWeekdayTitleView(
       items: viewModel.weekdayItems,
