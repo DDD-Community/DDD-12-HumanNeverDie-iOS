@@ -19,6 +19,7 @@ public final class BeverageRecordViewModel: ViewModelable {
   public struct State: Equatable {
     var productID: String
     var isLiked: Bool
+    var beverageRecordDate: Date
     
     var beverageDetail: BeverageDetail = .init(
       name: "",
@@ -43,11 +44,13 @@ public final class BeverageRecordViewModel: ViewModelable {
   public var state: State
   public init(
     productID: String,
-    isLiked: Bool
+    isLiked: Bool,
+    beverageRecordDate: Date
   ) {
     self.state = .init(
       productID: productID,
-      isLiked: isLiked
+      isLiked: isLiked,
+      beverageRecordDate: beverageRecordDate
     )
     
     Task { await getBeverageDetail(productID) }
