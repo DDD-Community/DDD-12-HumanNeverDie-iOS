@@ -121,7 +121,7 @@ extension HistoryView {
         
         ForEach(historyList, id: \.intakeHistoryId) { data in
           let sugarFreeVariant = AMDSugarFreeVariant.from(data.sugarLevel) ?? .none
-          let beverageIdString = String(data.beverageId)
+          let beverageIdString = String(data.productId)
           
           AMDBeverageListView.medium(
             thumbnailURL: data.imgUrl,

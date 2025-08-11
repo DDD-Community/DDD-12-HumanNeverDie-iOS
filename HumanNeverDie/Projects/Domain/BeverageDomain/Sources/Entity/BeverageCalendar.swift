@@ -194,7 +194,7 @@ public extension BeverageCalendar {
         records: [
           BeverageCalendarRecoders(
             intakeHistoryId: 1,
-            beverageId: 1,
+            productId: "f36c78bd-db20-4432-8104-80765cbc265c",
             beverageName: "밀크카라멜 라떼",
             cafeBrand: "STARBUCKS",
             intakeTime: "2025-07-26T06:30:00",
@@ -210,7 +210,7 @@ public extension BeverageCalendar {
           ),
           BeverageCalendarRecoders(
             intakeHistoryId: 6,
-            beverageId: 16,
+            productId: "f36c78bd-db20-4432-8104-80765cbc265c",
             beverageName: "사케라또 비안코 오버 아이스",
             cafeBrand: "STARBUCKS",
             intakeTime: "2025-07-26T11:30:00",
