@@ -99,8 +99,8 @@ private struct CardItem: View {
         .frame(maxWidth: .infinity, alignment: .leading)
       
       AMDCard(
-        consumedGlucose: consumedGlucose,
-        baseGlucose: baseGlucose,
+        totalSugar: Int(consumedGlucose),
+        baseSugar: Int(baseGlucose),
         variant: variant
       )
       .amdFlipCard(backView: cardBackView)
