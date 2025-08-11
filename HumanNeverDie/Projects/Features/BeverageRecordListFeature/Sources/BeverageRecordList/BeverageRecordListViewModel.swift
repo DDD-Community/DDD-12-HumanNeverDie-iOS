@@ -18,6 +18,7 @@ import Dependencies
 @MainActor
 public final class BeverageRecordListViewModel: ViewModelable {
   public struct State: Equatable {
+    var beverageRecordDate: Date
     var route: Route?
   }
   
@@ -33,8 +34,9 @@ public final class BeverageRecordListViewModel: ViewModelable {
   @ObservationIgnored
   var listViewModel: BeverageListViewModel = .init()
   
-  public var state: State = .init()
-  public init() {
+  public var state: State
+  public init(beverageRecordDate: Date) {
+    self.state = .init(beverageRecordDate: beverageRecordDate)
     delegate()
     Task { await self.getBeverage() }
   }
@@ -51,7 +53,7 @@ public final class BeverageRecordListViewModel: ViewModelable {
     case let .delegateAction(action):
       switch action {
       case let .beverageListItemTapped(beverage):
-        state.route = .beverageRecord(productID: beverage.productID, isLiked: beverage.isLiked)
+        state.route = .beverageRecord(productID: beverage.productID, isLiked: beverage.isLiked, recordDate: state.beverageRecordDate)
         
       case nil:
         break

@@ -5,6 +5,8 @@
 //  Created by 김규철 on 7/10/25.
 //
 
+import Foundation
+
 import Dependencies
 
 // MARK: - TestDependencyKey
@@ -29,9 +31,10 @@ private struct MockBeverageUseCase: BeverageUseCaseProtocol {
   func getBeverageList(cursor: String?) async throws -> BeverageList { BeverageList.mock() }
   func getBeverageDetail(productID: String) async throws -> BeverageDetail { BeverageDetail.mock() }
   func getBeverageMonthCalender(dateInWeek: String) async throws -> [BeverageCalendar] { BeverageCalendar.mock() }
+  func getBeverageWeeklyCalender(dateInWeek: String) async throws -> [BeverageCalendar] { BeverageCalendar.mock() }
   func likeBeverage(productID: String) async throws -> BeverageLike { BeverageLike.mock() }
   func unLikeBeverage(productID: String) async throws -> BeverageLike { BeverageLike.mock() }
   func searchBeverage(keyword: String) async throws -> BeverageList { BeverageList.mock() }
-  func recordBeverage(productID: String) async throws -> Bool { false }
+  func recordBeverage(productID: String, recordDate: Date) async throws -> Bool { false }
   func syncBeverageLike(beverages: [Beverage]) throws -> ([Beverage], Int) { (beverages, 0) }
 }

@@ -93,7 +93,7 @@ extension HistoryView {
   
   private var contentDrinkButton: some View {
     Button(action: {
-      router.push(to: .beverageRecordList)
+      router.push(to: .beverageRecordList(recordDate: viewModel.selectedDate ?? Date()))
     }) {
       HStack(spacing: 8) {
         Image(systemName: "plus.circle")

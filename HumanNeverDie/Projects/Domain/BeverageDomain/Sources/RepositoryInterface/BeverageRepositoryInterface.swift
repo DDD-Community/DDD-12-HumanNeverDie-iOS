@@ -12,9 +12,10 @@ public protocol BeverageRepositoryInterface: Sendable {
   func getBeverageList(cursor: String?) async throws -> BeverageList
   func getBeverageDetail(productID: String) async throws -> BeverageDetail
   func getBeverageMonthCalender(dateInWeek: String) async throws -> [BeverageCalendar]
+  func getBeverageWeeklyCalender(dateInWeek: String) async throws -> [BeverageCalendar]
   func likeBeverage(productID: String) async throws -> BeverageLike
   func unLikeBeverage(productID: String) async throws -> BeverageLike
   func searchBeverage(keyword: String) async throws -> BeverageList
-  func recordBeverage(productID: String) async throws -> Int
+  func recordBeverage(productID: String, recordDate: Date) async throws -> Int
   
 }

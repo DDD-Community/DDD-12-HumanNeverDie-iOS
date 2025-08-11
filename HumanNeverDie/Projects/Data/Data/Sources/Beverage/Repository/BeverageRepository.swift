@@ -82,8 +82,8 @@ public final class BeverageRepository: BeverageRepositoryInterface, @unchecked S
     return response.toDomain()
   }
   
-  public func recordBeverage(productID: String) async throws -> Int {
-    let target = BeverageRecordTarget(productID: productID)
+  public func recordBeverage(productID: String, recordDate: Date) async throws -> Int {
+    let target = BeverageRecordTarget(productID: productID, recordDate: recordDate)
     let result = try await networkService.requestDDD(target)
     
     guard let statusCode = result.status else {
@@ -101,6 +101,17 @@ public final class BeverageRepository: BeverageRepositoryInterface, @unchecked S
       throw AMDNetworkError.emptyResponse
     }
 
+    return response.map { $0.toDomain() }
+  }
+  
+  public func getBeverageWeeklyCalender(dateInWeek: String) async throws -> [BeverageCalendar] {
+    let target = BeverageWeeklyCalenderTarget(dateInWeek: dateInWeek)
+    let result = try await networkService.requestDDD(target)
+    
+    guard let response = result.data else {
+      throw AMDNetworkError.emptyResponse
+    }
+    
     return response.map { $0.toDomain() }
   }
 }

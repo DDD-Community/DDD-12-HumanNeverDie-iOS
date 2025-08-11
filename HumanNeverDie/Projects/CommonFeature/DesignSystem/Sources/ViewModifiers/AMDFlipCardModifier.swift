@@ -28,6 +28,8 @@ private struct AMDFlipCardModifier<BackView: View>: ViewModifier {
         .rotation3DEffect(.degrees(flip ? -90 : 0), axis: (x: 0, y: 1, z: 0), perspective: 0.5)
         .animation(flip ? .linear(duration: 0.2) : .linear(duration: 0.2).delay(0.2), value: flip)
     }
+    .amdStrokeBorder(.gray25, radius: .large, linewidth: 1)
+    .amdShadow(.card)
     .gesture(
       DragGesture()
         .onChanged { value in

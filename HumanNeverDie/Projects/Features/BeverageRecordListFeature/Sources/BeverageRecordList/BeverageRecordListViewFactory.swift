@@ -9,8 +9,8 @@ import SwiftUI
 
 @MainActor
 public struct BeverageRecordListViewFactory {
-  public static func create() -> some View {
-    let viewModel = BeverageRecordListViewModel()
+  public static func create(recordDate: Date) -> some View {
+    let viewModel = BeverageRecordListViewModel(beverageRecordDate: recordDate)
     return BeverageRecordListView(viewModel: viewModel)
   }
 }

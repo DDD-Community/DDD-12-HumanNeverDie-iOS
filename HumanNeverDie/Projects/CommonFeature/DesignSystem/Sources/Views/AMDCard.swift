@@ -8,10 +8,10 @@
 import SwiftUI
 
 public struct AMDCard: View {
-  private let consumedGlucose: Double
-  private let baseGlucose: Double
+  private let totalSugar: Int
+  private let baseSugar: Int
   private let variant: AMDStatusVariant
-    
+  
   private var characterImage: Image {
     switch variant {
     case .healthy:
@@ -35,35 +35,27 @@ public struct AMDCard: View {
   }
   
   public init(
-    consumedGlucose: Double,
-    baseGlucose: Double,
+    totalSugar: Int,
+    baseSugar: Int,
     variant: AMDStatusVariant
   ) {
-    self.consumedGlucose = consumedGlucose
-    self.baseGlucose = baseGlucose
+    self.totalSugar = totalSugar
+    self.baseSugar = baseSugar
     self.variant = variant
   }
   
   public var body: some View {
     VStack(spacing: 0) {
-      title
-      Spacer()
       characterImage
-      glucoseText
+      title
+      sugarText
       progress
     }
-    .padding([.top, .horizontal], 30)
+    .padding(.horizontal, 30)
     .padding(.bottom, 24)
-    .frame(width: 295, height: 384, alignment: .top)
+    .frame(width: 295, height: 384, alignment: .bottom)
     .background(backgroundGradient)
     .amdCornerRadius(.large)
-  }
-  
-  private var title: some View {
-    Text("\(variant.rawValue) 고미당")
-      .amdFont(.largeBold)
-      .foregroundStyle(.gray95)
-      .frame(maxWidth: .infinity, alignment: .center)
   }
   
   private var image: some View {
@@ -71,22 +63,32 @@ public struct AMDCard: View {
       .resizable()
       .scaledToFill()
       .frame(width: 165, height: 165)
-      .padding(.top, 34)
+      .padding(.top, 40)
   }
   
-  private var glucoseText: some View {
+  private var title: some View {
+    Text("\(variant.rawValue) 고미당")
+      .amdFont(.largeBold)
+      .foregroundStyle(.gray95)
+      .frame(maxWidth: .infinity, alignment: .center)
+      .padding(.top, 10)
+  }
+  
+  private var sugarText: some View {
     AMDGlucoseValueLabel(
-      consumedGlucose: consumedGlucose,
-      baseGlucose: baseGlucose,
+      consumedGlucose: Double(totalSugar),
+      baseGlucose: Double(baseSugar),
       variant: variant
     )
-    .padding(.top, 24)
+    .padding(.top, 27)
   }
   
   private var progress: some View {
-    RoundedRectangle(cornerRadius: 20)
-      .foregroundStyle(.phase2)
-      .frame(maxWidth: .infinity, minHeight: 33, maxHeight: 33)
-      .padding(.top, 20)
+    AMDProgress(
+      glucose: Double(totalSugar) / Double(baseSugar),
+      type: .small,
+      variant: variant
+    )
+    .padding(.top, 18)
   }
 }

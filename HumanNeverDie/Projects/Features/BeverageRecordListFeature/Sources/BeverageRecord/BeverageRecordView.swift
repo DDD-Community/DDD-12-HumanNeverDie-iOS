@@ -109,7 +109,7 @@ public struct BeverageRecordView: View {
   private var recordButton: some View {
     AMDButton(
       title: "기록하기",
-      action: {}
+      action: { viewModel.handleAction(.recordButtonTapped) }
     )
   }
 }

@@ -7,10 +7,11 @@ public protocol BeverageUseCaseProtocol: Sendable {
   func getBeverageList(cursor: String?) async throws -> BeverageList
   func getBeverageDetail(productID: String) async throws -> BeverageDetail
   func getBeverageMonthCalender(dateInWeek: String) async throws -> [BeverageCalendar]
+  func getBeverageWeeklyCalender(dateInWeek: String) async throws -> [BeverageCalendar]
   func likeBeverage(productID: String) async throws -> BeverageLike
   func unLikeBeverage(productID: String) async throws -> BeverageLike
   func searchBeverage(keyword: String) async throws -> BeverageList
-  func recordBeverage(productID: String) async throws -> Bool
+  func recordBeverage(productID: String, recordDate: Date) async throws -> Bool
   func syncBeverageLike(beverages: [Beverage]) throws -> ([Beverage], Int)
   
 }
@@ -60,9 +61,9 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
     )
   }
   
-  public func recordBeverage(productID: String) async throws -> Bool {
+  public func recordBeverage(productID: String, recordDate: Date) async throws -> Bool {
     do {
-      let statusCode = try await beverageRepository.recordBeverage(productID: productID)
+      let statusCode = try await beverageRepository.recordBeverage(productID: productID, recordDate: recordDate)
       
       guard statusCode == 200 else { return false }
       
@@ -104,6 +105,10 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
   
   public func getBeverageMonthCalender(dateInWeek: String) async throws -> [BeverageCalendar] {
       return try await beverageRepository.getBeverageMonthCalender(dateInWeek: dateInWeek)
+  }
+  
+  public func getBeverageWeeklyCalender(dateInWeek: String) async throws -> [BeverageCalendar] {
+      return try await beverageRepository.getBeverageWeeklyCalender(dateInWeek: dateInWeek)
   }
 }
 

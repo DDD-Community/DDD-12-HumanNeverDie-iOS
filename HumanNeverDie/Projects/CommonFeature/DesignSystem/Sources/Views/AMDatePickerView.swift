@@ -16,7 +16,7 @@ public struct AMDDatePickerView: View {
   @State private var date: Date = Date()
   
   public init(
-    title: String,
+    title: String = "날짜 선택",
     isResetButtonHidden: Bool = true,
     type: AMDDatePicker.PickerType,
     action: @escaping (Date) -> Void
@@ -46,14 +46,16 @@ public struct AMDDatePickerView: View {
         .foregroundStyle(.gray85)
         .frame(maxWidth: .infinity, alignment: .leading)
         .multilineTextAlignment(.leading)
+      
       Spacer()
+      
       if !isResetButtonHidden {
-        resetButton()
+        resetButton
       }
     }
   }
   
-  private func resetButton() -> some View {
+  private var resetButton: some View {
     Button {
       date = Date()
     } label: {
@@ -63,7 +65,6 @@ public struct AMDDatePickerView: View {
           .foregroundColor(.gray60)
         
         Image(systemName: "arrow.clockwise")
-          .amdFont(.mediumRegular)
           .foregroundColor(.gray60)
       }
     }

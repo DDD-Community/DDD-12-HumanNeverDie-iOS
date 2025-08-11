@@ -19,6 +19,7 @@ public final class BeverageRecordViewModel: ViewModelable {
   public struct State: Equatable {
     var productID: String
     var isLiked: Bool
+    var beverageRecordDate: Date
     
     var beverageDetail: BeverageDetail = .init(
       name: "",
@@ -32,6 +33,7 @@ public final class BeverageRecordViewModel: ViewModelable {
   
   public enum Action {
     case likeButtonTapped
+    case recordButtonTapped
   }
   
   @ObservationIgnored
@@ -43,11 +45,13 @@ public final class BeverageRecordViewModel: ViewModelable {
   public var state: State
   public init(
     productID: String,
-    isLiked: Bool
+    isLiked: Bool,
+    beverageRecordDate: Date
   ) {
     self.state = .init(
       productID: productID,
-      isLiked: isLiked
+      isLiked: isLiked,
+      beverageRecordDate: beverageRecordDate
     )
     
     Task { await getBeverageDetail(productID) }
@@ -69,6 +73,9 @@ public final class BeverageRecordViewModel: ViewModelable {
         newIsLiked: newLikedState,
         originalIsLiked: originalIsLiked
       )
+      
+    case .recordButtonTapped:
+      Task { await recordBeverage() }
     }
   }
   
@@ -95,6 +102,23 @@ public final class BeverageRecordViewModel: ViewModelable {
       )
     } catch {
       print("로컬 좋아요 저장 실패: \(error)")
+    }
+  }
+  
+  private func recordBeverage() async {
+    do {
+      let success = try await beverageUseCase.recordBeverage(
+        productID: state.productID,
+        recordDate: state.beverageRecordDate
+      )
+      
+      if success {
+        print("음료 기록 성공")
+      } else {
+        print("음료 기록 실패")
+      }
+    } catch {
+      print("음료 기록 에러: \(error)")
     }
   }
 }
