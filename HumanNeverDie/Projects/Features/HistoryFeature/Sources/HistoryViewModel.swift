@@ -148,9 +148,5 @@ extension HistoryViewModel {
       resetSelectedData()
     }
   }
-  
-  var selectedDateHistoryListArray: [BeverageCalendarRecoders] {
-    return state.selectedDateHistoryList
-  }
 }
 

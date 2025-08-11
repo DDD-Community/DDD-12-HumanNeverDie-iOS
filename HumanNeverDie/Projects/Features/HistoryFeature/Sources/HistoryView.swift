@@ -13,8 +13,6 @@ import CommonFeature
 public struct HistoryView: View {
   @Environment(Router.self) private var router
   @State private var viewModel: HistoryViewModel
-  @State private var popUpDate = Date()
-  @State private var popupPosition: CGPoint? = nil
   
   public init(viewModel: HistoryViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -38,8 +36,7 @@ public struct HistoryView: View {
           selectedHistoryDailylList
         }
       }
-      
-      popupMenuDailylList()
+      popupBackgroundOverlay()
     }
     .onAppear {
       viewModel.handleAction(.onAppear)
@@ -56,7 +53,6 @@ extension HistoryView {
       userSugarTargetValue: 50,
       selectedDate: $viewModel.state.selectedDate,
       onTapTitle: {
-        popUpDate = viewModel.selectedDate ?? Date()
         viewModel.handleAction(.updateisMonthPickerPresented(true))
       },
       onMonthChanged: { newDate in
@@ -136,15 +132,15 @@ extension HistoryView {
             }
           )
           .padding(.horizontal, 20)
-          .background(
-            GeometryReader { geo in
-              Color.clear
-                .contentShape(Rectangle())
-                .onTapGesture {
-                  let frame = geo.frame(in: .global)
-                  self.popupPosition = CGPoint(x: frame.maxX - 100, y: frame.midY - 60)
-                  viewModel.handleAction(.updateSelectedBeverageID(beverageIdString))
+          .overlay(
+            Group {
+              if viewModel.selectedBeverageID == beverageIdString {
+                HStack {
+                  Spacer()
+                  popupMenuDailylList()
+                    .offset(x: -30, y: 0)
                 }
+              }
             }
           )
         }
@@ -167,9 +163,7 @@ extension HistoryView {
   
   @ViewBuilder
   private func popupMenuDailylList() -> some View {
-    popupBackgroundOverlay()
-    
-    if let popupPosition, viewModel.selectedBeverageID != "" {
+    if viewModel.selectedBeverageID != "" {
       VStack(spacing: 0) {
         Button {
           viewModel.handleAction(.beverageListInfoTapped)
@@ -209,7 +203,6 @@ extension HistoryView {
       .background(Color.white)
       .clipShape(RoundedRectangle(cornerRadius: 12))
       .shadow(radius: 4)
-      .position(x: popupPosition.x, y: popupPosition.y)
       .zIndex(1)
     }
   }
