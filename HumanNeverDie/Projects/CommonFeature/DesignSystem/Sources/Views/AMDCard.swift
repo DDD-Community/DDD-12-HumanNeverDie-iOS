@@ -11,7 +11,7 @@ public struct AMDCard: View {
   private let totalSugar: Int
   private let baseSugar: Int
   private let variant: AMDStatusVariant
-    
+  
   private var characterImage: Image {
     switch variant {
     case .healthy:
@@ -57,7 +57,7 @@ public struct AMDCard: View {
     .background(backgroundGradient)
     .amdCornerRadius(.large)
   }
-    
+  
   private var image: some View {
     characterImage
       .resizable()
@@ -85,7 +85,7 @@ public struct AMDCard: View {
   
   private var progress: some View {
     AMDProgress(
-      glucose: Double(totalSugar),
+      glucose: Double(totalSugar) / Double(baseSugar),
       type: .small,
       variant: variant
     )
