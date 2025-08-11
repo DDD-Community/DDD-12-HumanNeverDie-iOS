@@ -19,13 +19,13 @@ import Dependencies
 public final class HomeViewModel: ViewModelable {
   public struct State: Equatable {
     var currentDate: Date = Date()
-    var selectedDate: Date?
+    var selectedDate: Date? = Date()
     
     var sugarIntakeRecords: [SugarIntakeRecord] = []
     var weeklyHistories: [String: BeverageCalendar] = [:]
     
     // 어디서 가져옴?
-    var baseSugar: Int = 0
+    var baseSugar: Int = 50
     var selectedDateCalendar: BeverageCalendar?
     
     var isMonthPickerPresented: Bool = false
