@@ -90,7 +90,7 @@ public struct AMDGlucoseValueLabel: View {
   }
   
   private var baseGlucoseText: some View {
-    Text("\(Int(consumedGlucose))g")
+    Text("\(Int(baseGlucose))g")
       .amdFont(type.baseGlucoseFont)
       .foregroundStyle(.gray60)
       .amdNumericAnimation(Int(consumedGlucose))

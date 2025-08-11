@@ -25,7 +25,7 @@ public struct AMDButton: View {
   }
   
   public init(
-    type: AMDButtonType = .delete,
+    type: AMDButtonType = .default,
     title: String,
     action: @escaping () -> Void
   ) {
