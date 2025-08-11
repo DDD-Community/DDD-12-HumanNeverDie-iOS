@@ -70,7 +70,7 @@ public struct HomeView: View {
   private var beverageRecordButton: some View {
     AMDFloatingButton(
       title: "음료 기록하기",
-      action: { router.push(to: .beverageRecordList) }
+      action: { router.push(to: .beverageRecordList(recordDate: viewModel.selectedDate ?? Date())) }
     )
   }
   
