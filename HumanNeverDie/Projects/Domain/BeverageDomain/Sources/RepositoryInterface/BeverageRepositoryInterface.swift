@@ -16,6 +16,6 @@ public protocol BeverageRepositoryInterface: Sendable {
   func likeBeverage(productID: String) async throws -> BeverageLike
   func unLikeBeverage(productID: String) async throws -> BeverageLike
   func searchBeverage(keyword: String) async throws -> BeverageList
-  func recordBeverage(productID: String) async throws -> Int
+  func recordBeverage(productID: String, recordDate: Date) async throws -> Int
   
 }
