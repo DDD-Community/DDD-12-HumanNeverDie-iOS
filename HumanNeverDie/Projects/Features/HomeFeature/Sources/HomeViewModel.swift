@@ -42,7 +42,7 @@ public final class HomeViewModel: ViewModelable {
     case calendarChangeDateButtonTapped
     /// 캘린더의 날짜 선택 시
     case updateSelectedDate(Date?)
-    // 캘린더 좌우 주간 스와이프 시
+    /// 캘린더 좌우 주간 스와이프 시
     case weekSlideGesture(Date)
     /// 날짜 피커에서 날짜 선택 완료
     case datePickerConfirmed(Date)
