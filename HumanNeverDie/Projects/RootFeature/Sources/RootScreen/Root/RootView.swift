@@ -31,14 +31,14 @@ public struct RootView: View {
       .navigationBarBackButtonHidden(true)
       .navigationDestination(for: Route.self) { route in
         switch route {
-        case .beverageRecordList:
-          BeverageRecordListViewFactory.create()
+        case let .beverageRecordList(date):
+          BeverageRecordListViewFactory.create(recordDate: date)
           
-        case .beverageSearch:
-          BeverageSearchViewFactory.create()
+        case let .beverageSearch(date):
+          BeverageSearchViewFactory.create(recordDate: date)
           
-        case let .beverageRecord(productID, isLiked):
-          BeverageRecordViewFactory.create(productID: productID, isLiked: isLiked)
+        case let .beverageRecord(productID, isLiked, date):
+          BeverageRecordViewFactory.create(productID: productID, isLiked: isLiked, recordDate: date)
           
         case .onboardingProfile:
           OnboardingProfileFactory.create()

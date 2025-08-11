@@ -61,7 +61,7 @@ public struct BeverageRecordListView: View {
       )
       .disabled(true)
       .onTapGesture {
-        router.push(to: .beverageSearch)
+        router.push(to: .beverageSearch(recordDate: viewModel.beverageRecordDate))
       }
     }
     .padding(.horizontal, 20)
