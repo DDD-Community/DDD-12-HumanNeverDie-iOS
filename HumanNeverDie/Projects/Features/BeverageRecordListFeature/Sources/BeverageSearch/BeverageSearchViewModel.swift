@@ -24,6 +24,7 @@ public final class BeverageSearchViewModel: ViewModelable {
   public struct State: Equatable {
     var searchText: String = ""
     var searchType: BeverageSearchType = .search
+    var beverageRecordDate: Date
     
     var recentSearchList: [String] = ["에스프레소", "블렌디드"]
     
@@ -56,8 +57,9 @@ public final class BeverageSearchViewModel: ViewModelable {
   @ObservationIgnored
   var listViewModel: BeverageListViewModel = .init()
   
-  public var state: State = .init()
-  public init() {
+  public var state: State
+  public init(beverageRecordDate: Date) {
+    self.state = .init(beverageRecordDate: beverageRecordDate)
     delegate()
   }
   
@@ -91,7 +93,7 @@ public final class BeverageSearchViewModel: ViewModelable {
     case let .delegateAction(action):
       switch action {
       case let .beverageListItemTapped(beverage):
-        state.route = .beverageRecord(productID: beverage.productID, isLiked: beverage.isLiked)
+        state.route = .beverageRecord(productID: beverage.productID, isLiked: beverage.isLiked, recordDate: state.beverageRecordDate)
         
       case nil:
         break
