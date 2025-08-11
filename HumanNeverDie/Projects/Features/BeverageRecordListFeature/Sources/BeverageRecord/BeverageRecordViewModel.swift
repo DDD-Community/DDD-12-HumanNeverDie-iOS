@@ -33,6 +33,7 @@ public final class BeverageRecordViewModel: ViewModelable {
   
   public enum Action {
     case likeButtonTapped
+    case recordButtonTapped
   }
   
   @ObservationIgnored
@@ -72,6 +73,9 @@ public final class BeverageRecordViewModel: ViewModelable {
         newIsLiked: newLikedState,
         originalIsLiked: originalIsLiked
       )
+      
+    case .recordButtonTapped:
+      Task { await recordBeverage() }
     }
   }
   
@@ -98,6 +102,23 @@ public final class BeverageRecordViewModel: ViewModelable {
       )
     } catch {
       print("로컬 좋아요 저장 실패: \(error)")
+    }
+  }
+  
+  private func recordBeverage() async {
+    do {
+      let success = try await beverageUseCase.recordBeverage(
+        productID: state.productID,
+        recordDate: state.beverageRecordDate
+      )
+      
+      if success {
+        print("음료 기록 성공")
+      } else {
+        print("음료 기록 실패")
+      }
+    } catch {
+      print("음료 기록 에러: \(error)")
     }
   }
 }
