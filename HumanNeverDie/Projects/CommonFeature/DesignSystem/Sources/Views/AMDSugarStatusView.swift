@@ -16,8 +16,31 @@ public struct AMDSugarStatusView: View {
   private let variant: AMDStatusVariant
   private let style: Style
   
+  private var calculatedVariant: AMDStatusVariant {
+    let (sugar, baseSugar) = getSugarValues()
+    let percentage = baseSugar > 0 ? Double(sugar) / Double(baseSugar) : 0
+    
+    switch percentage {
+    case 0.0..<0.33:
+      return .healthy
+    case 0.34..<0.66:
+      return .warning
+    default:
+      return .danger
+    }
+  }
+  
+  private func getSugarValues() -> (sugar: Int, baseSugar: Int) {
+    switch style {
+    case .main(let sugar, let baseSugar):
+      return (sugar, baseSugar)
+    case .history(_, let sugar, let baseSugar):
+      return (sugar, baseSugar)
+    }
+  }
+  
   private var characterImage: Image {
-    switch variant {
+    switch calculatedVariant {
     case .healthy:
       return AMDImage.healthyCharacter.swiftUIImage
     case .warning:
@@ -37,15 +60,15 @@ public struct AMDSugarStatusView: View {
   
   public var body: some View {
     switch style {
-    case .main(let sugar, let baseSugar,):
+    case .main(let sugar, let baseSugar):
       mainStyleBody(sugar: sugar, baseSugar: baseSugar)
       
     case .history(let drinkCount, let sugar, let baseSugar):
-      historyStyleBody(drinkCount: drinkCount,sugar: sugar, baseSugar: baseSugar)
+      historyStyleBody(drinkCount: drinkCount, sugar: sugar, baseSugar: baseSugar)
     }
   }
   
-  private func mainStyleBody( sugar: Int, baseSugar: Int) -> some View {
+  private func mainStyleBody(sugar: Int, baseSugar: Int) -> some View {
     HStack(alignment: .center, spacing: 18) {
       characterImage
       
@@ -79,23 +102,21 @@ public struct AMDSugarStatusView: View {
         consumedGlucose: Double(sugar),
         baseGlucose: Double(baseSugar),
         type: .progress,
-        variant: variant
+        variant: calculatedVariant // variant 대신 calculatedVariant 사용
       )
     }
   }
   
   private func historyStyleBody(drinkCount: Int, sugar: Int, baseSugar: Int) -> some View {
-    VStack(spacing:0) {
+    VStack(spacing: 0) {
       VStack(alignment: .center, spacing: 4) {
         HStack(spacing: 10) {
           characterImage
           contentHistoryView(drinkCount: drinkCount, sugar: sugar, baseSugar: baseSugar)
-      
         }
         progressBar(sugar: sugar, baseSugar: baseSugar, isStatusLavbledHidden: false)
       }
       .frame(minHeight: 87, maxHeight: 87)
-      
     }
     .padding(.vertical, 10)
     .background(Color.white)
@@ -115,34 +136,37 @@ public struct AMDSugarStatusView: View {
       return path
     }
   }
+  
   private func contentHistoryView(drinkCount: Int, sugar: Int, baseSugar: Int) -> some View {
-    HStack(spacing: 4.5){
-      // 🎯 말풍선 + 삼각형 꼬리
-       ZStack(alignment: .bottomLeading) {
-         // 말풍선 본체
-         HStack(spacing: 2) {
-           Text("총 ")
-             .amdFont(.largeRegular)
-             .foregroundStyle(.gray70)
-           
-           Text("\(drinkCount)잔")
-             .amdFont(.largeBold)
-             .foregroundStyle(.gray85)
-           
-           Text("이당!")
-             .amdFont(.largeRegular)
-             .foregroundStyle(.gray70)
-         }
-         .padding(.horizontal, 20)
-         .padding(.vertical, 12)
-         .background(Color.gray10)
-         .cornerRadius(16)
-         
-         characterSpeechTail()
-               .fill(Color.gray10)
-               .frame(width: 20, height: 10)
-               .offset(x: -5, y: -2) // 말풍선 밖으로 나오도록 조정
-       }
+    HStack(spacing: 4.5) {
+      // 말풍선 + 삼각형 꼬리
+      ZStack(alignment: .bottomLeading) {
+        // 말풍선 본체
+        HStack(spacing: 2) {
+          Text("총 ")
+            .amdFont(.largeRegular)
+            .foregroundStyle(.gray70)
+          
+          Text("\(drinkCount)잔")
+            .amdFont(.largeBold)
+            .foregroundStyle(.gray85)
+          
+          Text("이당!")
+            .amdFont(.largeRegular)
+            .foregroundStyle(.gray70)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(Color.gray10)
+        .cornerRadius(16)
+        
+        // 원래 말풍선 꼬리
+        characterSpeechTail()
+          .fill(Color.gray10)
+          .frame(width: 20, height: 10)
+          .offset(x: -5, y: -2) // 말풍선 밖으로 나오도록 조정
+      }
+      
       Spacer()
       
       VStack {
@@ -154,7 +178,7 @@ public struct AMDSugarStatusView: View {
           consumedGlucose: Double(sugar),
           baseGlucose: Double(baseSugar),
           type: .progress,
-          variant: variant
+          variant: calculatedVariant // variant 대신 calculatedVariant 사용
         )
       }
     }
@@ -165,7 +189,7 @@ public struct AMDSugarStatusView: View {
       glucose: Double(sugar) / Double(baseSugar),
       isStatusLabelHidden: isStatusLavbledHidden,
       type: .small,
-      variant: variant
+      variant: calculatedVariant // variant 대신 calculatedVariant 사용
     )
   }
 }
