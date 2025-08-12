@@ -48,6 +48,7 @@ public final class HistoryViewModel: ViewModelable {
     case updateisMonthPickerPresented(Bool)
     case applySelectedDate(Date)
     case clearSelectedBeverage
+    case deleteSelectedBeverage
   }
   
   public var state: State = .init()
@@ -66,7 +67,7 @@ public final class HistoryViewModel: ViewModelable {
       break
     case .beverageListInfoTapped:
       state.isBevarageDetailPresented = true
-    
+      
     case .loadHistorDailyList:
       Task {
         await loadNetworkData()
@@ -85,7 +86,7 @@ public final class HistoryViewModel: ViewModelable {
       
     case .updateSelectedproductID(let newId):
       state.selectedProductID = newId
-    
+      
     case .clearSelectedBeverage:
       clearSelectedProductID()
       
@@ -93,14 +94,41 @@ public final class HistoryViewModel: ViewModelable {
       state.isMonthPickerPresented = isPickerPresented
       
     case .applySelectedDate(let newDate):
-     state.currentDate = newDate
-     state.selectedDate = newDate
+      state.currentDate = newDate
+      state.selectedDate = newDate
       state.isMonthPickerPresented = false
+    case .deleteSelectedBeverage:
+      Task {
+        await deleteSelectedBeverage()
+      }
     }
   }
 }
 
 extension HistoryViewModel {
+  
+  private func deleteSelectedBeverage() async {
+    guard let selectedDate = state.selectedDate else { return }
+    let dateKey = Date.toDateKeyString(from: selectedDate)
+    
+    guard let dailyData = state.monthHistoryData[dateKey] else { return }
+    guard let record = dailyData.records.first(where: { $0.productId == state.selectedProductID }) else { return }
+    //      let result = try await beverageUseCase.deleteBeverage(productID: state.selectedProductID , intakeTime: dailyData.date)
+    print("🗓️ \(dateKey),\(dailyData.date), 🥤 \(record.beverageName)")
+    
+    do {
+      let result = try await beverageUseCase.deleteBeverage(productID: state.selectedProductID, intakeTime: dailyData.date)
+      
+      if (result) {
+        print("❌ 삭제 \(result) 성공")
+      } else {
+        print("❌ 삭제 \(result) 실패")
+      }
+    } catch {
+      print("❌ 네트워크 삭제 실패: \(error)")
+    }
+  }
+  
   
   private func resetSelectedData() {
     state.selectedDateHistoryList = []
@@ -112,7 +140,7 @@ extension HistoryViewModel {
   private func clearSelectedProductID() {
     state.selectedProductID = ""
   }
-
+  
   private func loadNetworkData() async {
     guard !state.isLoading else { return }
     
@@ -145,7 +173,7 @@ extension HistoryViewModel {
     resetSelectedData()
     
     guard let selectedDate = state.selectedDate else { return }
-
+    
     let dateKey = Date.toDateKeyString(from: selectedDate)
     guard let dailyData = state.monthHistoryData[dateKey] else { return }
     

@@ -114,4 +114,25 @@ public final class BeverageRepository: BeverageRepositoryInterface, @unchecked S
     
     return response.map { $0.toDomain() }
   }
+  
+  public func deleteBeverage(productID: String, intakeTime: String) async throws -> Int {
+    print("🔍 DELETE 요청 시작")
+    print("🔍 productID: \(productID)")
+    print("🔍 intakeTime: \(intakeTime)")
+    
+    let target = BeverageDelete(productID: productID, intakeTime: intakeTime)
+    print("🔍 Target 생성 완료")
+    
+    let result = try await networkService.requestDDD(target)
+    print("🔍 네트워크 요청 완료")
+    print("🔍 result.status: \(result.status)")
+    print("🔍 result: \(result)")
+    
+    guard let statusCode = result.status else {
+      throw AMDNetworkError.emptyResponse
+    }
+    
+    return statusCode
+  }
+  
 }

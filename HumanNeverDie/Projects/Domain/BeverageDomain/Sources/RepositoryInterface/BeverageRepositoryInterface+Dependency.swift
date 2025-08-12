@@ -36,4 +36,5 @@ private struct MockBeverageRepository: BeverageRepositoryInterface {
   func unLikeBeverage(productID: String) async throws -> BeverageLike { BeverageLike.mock() }
   func searchBeverage(keyword: String) async throws -> BeverageList { BeverageList.mock() }
   func recordBeverage(productID: String, recordDate: Date) async throws -> Int { 500 }
+  func deleteBeverage(productID: String, intakeTime: String) async throws -> Int { 200 }
 }

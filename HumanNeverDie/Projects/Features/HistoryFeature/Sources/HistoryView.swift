@@ -193,7 +193,7 @@ extension HistoryView {
         
         Button {
           print("updateSelectedBeverageID")
-          viewModel.handleAction(.updateisMonthPickerPresented(false))
+          viewModel.handleAction(.deleteSelectedBeverage)
         } label: {
           HStack(spacing: 8) {
             Image(systemName: "trash")
