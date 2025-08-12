@@ -10,6 +10,7 @@ import Observation
 
 import CommonFeature
 import BeverageDomain
+import DesignSystem
 import Shared
 
 import Dependencies
@@ -38,8 +39,17 @@ public final class HistoryViewModel: ViewModelable {
     var sugarIntakeRecordData: [SugarIntakeRecord] = []
     var monthHistoryData: [String: BeverageCalendar] = [:]
     
+    // 어디서 가져옴?
+    var baseSugar: Int = 50
+    var selectedDateCalendar: BeverageCalendar?
+    
     var totalSugarGrams = 0
     var totalCount = 0
+    
+    var sugarStatus: BeverageSugarStatusType {
+      let totalSugar = selectedDateCalendar?.totalSugarGrams ?? 0
+      return .init(baseSugar: baseSugar, totalSugar: totalSugar)
+    }
   }
   
   public enum Action {
@@ -64,28 +74,15 @@ public final class HistoryViewModel: ViewModelable {
   
   public func handleAction(_ action: Action) {
     switch action {
-    case .onAppear:
-      Task {
-        await loadNetworkData()
-        loadSelectedDateHistory()
-      }
+    case .onAppear, .loadHistorDailyList, .datePickeronConfirm:
+      Task { await refreshData() }
     case .beverageListFavoriteTapped(_, _):
       break
     case .beverageListInfoTapped:
       state.isBevarageDetailPresented = true
       
-    case .loadHistorDailyList:
-      Task {
-        await loadNetworkData()
-      }
     case .loadHistoryForSelectedDate:
       loadSelectedDateHistory()
-      
-    case .datePickeronConfirm:
-      Task {
-        await loadNetworkData()
-        loadSelectedDateHistory()
-      }
       
     case .updateCurrentDate(let newDate):
       state.currentDate = newDate
@@ -113,29 +110,25 @@ public final class HistoryViewModel: ViewModelable {
 
 extension HistoryViewModel {
   
+  private func refreshData() async {
+    await loadNetworkData()
+    loadSelectedDateHistory()
+  }
+  
   nonisolated private func showDeleteAlert() async {
     await alertClient.showAlert(.init(
       title: "이 기록을 삭제할까요?",
       message: "삭제하면 복구할 수 없어요.",
-      primaryButton: .init(
-        title: "삭제",
-        type: .delete,
-        action: {
-          await self.deleteSelectedBeverage()
-        }
-      ),
-      secondaryButton: .init(
-        title: "취소",
-        type: .secondary,
-        action: {
-          await self.clearSelectedProductID()
-        }
-      ))
-    )
+      primaryButton: .init(title: "삭제", type: .delete) {
+        await self.deleteSelectedBeverage()
+      },
+      secondaryButton: .init(title: "취소", type: .secondary) {
+        await self.clearSelectedProductID()
+      }
+    ))
   }
   
   private func deleteSelectedBeverage() async {
-    // 현재 선택된 아이템의 실제 intakeTime 찾기
     guard let selectedRecord = state.selectedDateHistoryList.first(where: {
       String($0.productId) == state.selectedProductID
     }) else { return }
@@ -143,41 +136,27 @@ extension HistoryViewModel {
     do {
       let result = try await beverageUseCase.deleteBeverage(
         productID: state.selectedProductID,
-        intakeTime: selectedRecord.intakeTime  // 실제 intakeTime 사용
+        intakeTime: selectedRecord.intakeTime
       )
       
       if result {
-        
-        Task { @MainActor in
-          await toastClient.showToast(.init(
-            message: "삭제가 완료되었어요.",
-            type: .success
-          ))
-        }
+        showToast(message: "삭제가 완료되었어요.", type: .success)
         clearSelectedProductID()
-        await loadNetworkData()  // 데이터 새로고침
-        loadSelectedDateHistory()
+        await refreshData()
       } else {
-        Task { @MainActor in
-          await toastClient.showToast(.init(
-            message: "데이터를 삭제할 수 없습니다.",
-            type: .failure
-          ))
-        }
+        showToast(message: "데이터를 삭제할 수 없습니다.", type: .failure)
       }
     } catch {
-      Task { @MainActor in
-        await toastClient.showToast(.init(
-          message: "네트워크의 문제로 실패하였습니다.",
-          type: .failure
-        ))
-      }
+      showToast(message: "네트워크의 문제로 실패하였습니다.", type: .failure)
     }
   }
   
-  
-  
-  
+  private func showToast(message: String, type: AMDToastType) {
+    Task { @MainActor in
+      await toastClient.showToast(.init(message: message, type: type))
+    }
+  }
+
   private func resetSelectedData() {
     state.selectedDateHistoryList = []
     state.totalSugarGrams = 0
@@ -200,6 +179,8 @@ extension HistoryViewModel {
       let result = try await beverageUseCase.getBeverageMonthCalender(dateInWeek: dateString)
       
       let newSugarIntakeRecordData: [SugarIntakeRecord] = result.compactMap { dailyData in
+        
+        state.selectedDateCalendar = dailyData
         
         let dateKey = dailyData.date.toYMDFormat
         state.monthHistoryData[dateKey] = dailyData

@@ -77,21 +77,17 @@ extension HistoryView {
       }
     )
     .onChange(of: viewModel.currentDate) { _, newDate in
-      if (!viewModel.isMonthPickerPresented) {
-        viewModel.handleAction(.loadHistorDailyList)
-      }
+      reloadDataIfNeeded(.loadHistorDailyList)
     }
     .onChange(of: viewModel.selectedDate) { _, selectedDate in
-      if (!viewModel.isMonthPickerPresented) {
-        viewModel.handleAction(.loadHistoryForSelectedDate)
-      }
+      reloadDataIfNeeded(.loadHistoryForSelectedDate)
     }
   }
   
   private func contentSugerStatusView() -> some View {
     AMDSugarStatusView(
-      variant: .healthy,
-      style: .history(drinkCount:viewModel.totalCount , sugar: viewModel.totalSugarGrams, baseSugar: 50)
+      variant: viewModel.sugarStatus.statusVariant,
+      style: .history(drinkCount:viewModel.totalCount , sugar: viewModel.totalSugarGrams, baseSugar: viewModel.baseSugar)
     )
   }
   
@@ -213,6 +209,12 @@ extension HistoryView {
       .clipShape(RoundedRectangle(cornerRadius: 12))
       .shadow(radius: 4)
       .zIndex(1)
+    }
+  }
+  
+  private func reloadDataIfNeeded(_ action: HistoryViewModel.Action) {
+    if !viewModel.isMonthPickerPresented {
+      viewModel.handleAction(action)
     }
   }
 }
