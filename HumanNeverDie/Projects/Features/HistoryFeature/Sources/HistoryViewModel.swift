@@ -110,6 +110,14 @@ public final class HistoryViewModel: ViewModelable {
 
 extension HistoryViewModel {
   
+  func getSelectedDateString() -> String {
+    if let selected = state.selectedDate {
+      return Date.toDateTitleString(from: selected)
+    } else {
+      return ""
+    }
+  }
+  
   private func refreshData() async {
     await loadNetworkData()
     loadSelectedDateHistory()

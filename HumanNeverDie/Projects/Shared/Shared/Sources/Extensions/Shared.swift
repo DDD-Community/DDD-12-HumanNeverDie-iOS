@@ -28,6 +28,14 @@ extension Date {
     formatter.dateFormat = "yyyy-MM-dd"
     return formatter.string(from: date)
   }
+  
+  public static func toDateTitleString(from date: Date) -> String {
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "ko_KR")
+    formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+    formatter.dateFormat = "yyyy년 MM월 dd일"
+    return formatter.string(from: date)
+  }
 
   public static func toRequestDateKeyString(from date: Date) -> String {
     let formatter = DateFormatter()

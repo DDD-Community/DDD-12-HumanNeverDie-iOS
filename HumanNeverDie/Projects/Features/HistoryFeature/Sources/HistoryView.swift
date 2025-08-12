@@ -29,6 +29,7 @@ public struct HistoryView: View {
             .frame(height: 8)
           
           VStack(alignment: .leading, spacing: 0) {
+            selectDateTitle()
             contentSugerStatusView()
             contentDrinkButton
           }.padding(.horizontal, 20)
@@ -62,6 +63,13 @@ public struct HistoryView: View {
 }
 
 extension HistoryView {
+  
+  private func selectDateTitle() -> some View {
+    Text(viewModel.getSelectedDateString())
+      .amdFont(.smallRegular)
+      .foregroundStyle(.gray60)
+      .padding(.top, 8)
+  }
   
   private func contentCalenderView() -> some View {
     AMDCalendarFactory.createMonth(
