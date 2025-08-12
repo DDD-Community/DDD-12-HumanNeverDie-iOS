@@ -37,4 +37,5 @@ private struct MockBeverageUseCase: BeverageUseCaseProtocol {
   func searchBeverage(keyword: String) async throws -> BeverageList { BeverageList.mock() }
   func recordBeverage(productID: String, recordDate: Date) async throws -> Bool { false }
   func syncBeverageLike(beverages: [Beverage]) throws -> ([Beverage], Int) { (beverages, 0) }
+  func deleteBeverage(productID: String, intakeTime: String) async throws -> Bool { true }
 }

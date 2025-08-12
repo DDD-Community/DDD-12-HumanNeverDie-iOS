@@ -10,6 +10,7 @@ import Observation
 
 import CommonFeature
 import BeverageDomain
+import DesignSystem
 import Shared
 
 import Dependencies
@@ -17,13 +18,19 @@ import Dependencies
 @Observable
 @MainActor
 public final class HistoryViewModel: ViewModelable {
+  @ObservationIgnored
+  @Dependency(\.alertClient) private var alertClient
+  
+  @ObservationIgnored
+  @Dependency(\.toastClient) private var toastClient
+  
   public struct State: Equatable {
     var currentDate: Date = Date()
     var selectedDate: Date? = nil
     
-    var selectedBeverageID: String = ""
+    var selectedProductID: String = ""
     var isMonthPickerPresented = false
-    var isListPopupPresented = false
+    var isListPopupPresented: Bool { !selectedProductID.isEmpty }
     var isBevarageDetailPresented = false
     
     var isLoading: Bool = false
@@ -32,8 +39,17 @@ public final class HistoryViewModel: ViewModelable {
     var sugarIntakeRecordData: [SugarIntakeRecord] = []
     var monthHistoryData: [String: BeverageCalendar] = [:]
     
+    // 어디서 가져옴?
+    var baseSugar: Int = 50
+    var selectedDateCalendar: BeverageCalendar?
+    
     var totalSugarGrams = 0
     var totalCount = 0
+    
+    var sugarStatus: BeverageSugarStatusType {
+      let totalSugar = selectedDateCalendar?.totalSugarGrams ?? 0
+      return .init(baseSugar: baseSugar, totalSugar: totalSugar)
+    }
   }
   
   public enum Action {
@@ -44,10 +60,11 @@ public final class HistoryViewModel: ViewModelable {
     case loadHistoryForSelectedDate
     case datePickeronConfirm
     case updateCurrentDate(Date)
-    case updateSelectedBeverageID(String)
+    case updateSelectedProductID(String)
     case updateisMonthPickerPresented(Bool)
     case applySelectedDate(Date)
-    case updateisListSelectPresented(Bool)
+    case clearSelectedBeverage
+    case deleteSelectedBeverage
   }
   
   public var state: State = .init()
@@ -57,58 +74,106 @@ public final class HistoryViewModel: ViewModelable {
   
   public func handleAction(_ action: Action) {
     switch action {
-    case .onAppear:
-      Task {
-        await loadNetworkData()
-        loadSelectedDateHistory()
-      }
+    case .onAppear, .loadHistorDailyList, .datePickeronConfirm:
+      Task { await refreshData() }
     case .beverageListFavoriteTapped(_, _):
       break
     case .beverageListInfoTapped:
       state.isBevarageDetailPresented = true
-      state.isListPopupPresented = false
       
-      break
-    case .loadHistorDailyList:
-      Task {
-        await loadNetworkData()
-      }
     case .loadHistoryForSelectedDate:
       loadSelectedDateHistory()
-      
-    case .datePickeronConfirm:
-      Task {
-        await loadNetworkData()
-        loadSelectedDateHistory()
-      }
       
     case .updateCurrentDate(let newDate):
       state.currentDate = newDate
       
-    case .updateSelectedBeverageID(let newId):
-      state.selectedBeverageID = newId
-      state.isListPopupPresented = true
-    
-    case .updateisListSelectPresented(let isPresented):
-      state.isListPopupPresented = isPresented
+    case .updateSelectedProductID(let newId):
+      state.selectedProductID = newId
+      
+    case .clearSelectedBeverage:
+      clearSelectedProductID()
       
     case .updateisMonthPickerPresented(let isPickerPresented):
       state.isMonthPickerPresented = isPickerPresented
       
     case .applySelectedDate(let newDate):
-     state.currentDate = newDate
-     state.selectedDate = newDate
+      state.currentDate = newDate
+      state.selectedDate = newDate
       state.isMonthPickerPresented = false
+    case .deleteSelectedBeverage:
+      Task {
+        await showDeleteAlert()
+      }
     }
   }
 }
 
 extension HistoryViewModel {
   
+  func getSelectedDateString() -> String {
+    if let selected = state.selectedDate {
+      return Date.toDateTitleString(from: selected)
+    } else {
+      return ""
+    }
+  }
+  
+  private func refreshData() async {
+    await loadNetworkData()
+    loadSelectedDateHistory()
+  }
+  
+  nonisolated private func showDeleteAlert() async {
+    await alertClient.showAlert(.init(
+      title: "이 기록을 삭제할까요?",
+      message: "삭제하면 복구할 수 없어요.",
+      primaryButton: .init(title: "삭제", type: .delete) {
+        await self.deleteSelectedBeverage()
+      },
+      secondaryButton: .init(title: "취소", type: .secondary) {
+        await self.clearSelectedProductID()
+      }
+    ))
+  }
+  
+  private func deleteSelectedBeverage() async {
+    guard let selectedRecord = state.selectedDateHistoryList.first(where: {
+      String($0.productId) == state.selectedProductID
+    }) else { return }
+    
+    do {
+      let result = try await beverageUseCase.deleteBeverage(
+        productID: state.selectedProductID,
+        intakeTime: selectedRecord.intakeTime
+      )
+      
+      if result {
+        showToast(message: "삭제가 완료되었어요.", type: .success)
+        clearSelectedProductID()
+        await refreshData()
+      } else {
+        showToast(message: "데이터를 삭제할 수 없습니다.", type: .failure)
+      }
+    } catch {
+      showToast(message: "네트워크의 문제로 실패하였습니다.", type: .failure)
+    }
+  }
+  
+  private func showToast(message: String, type: AMDToastType) {
+    Task { @MainActor in
+      await toastClient.showToast(.init(message: message, type: type))
+    }
+  }
+
   private func resetSelectedData() {
     state.selectedDateHistoryList = []
     state.totalSugarGrams = 0
     state.totalCount = 0
+    clearSelectedProductID()
+  }
+  
+  private func clearSelectedProductID() {
+    state.selectedProductID = ""
   }
   
   private func loadNetworkData() async {
@@ -122,6 +187,8 @@ extension HistoryViewModel {
       let result = try await beverageUseCase.getBeverageMonthCalender(dateInWeek: dateString)
       
       let newSugarIntakeRecordData: [SugarIntakeRecord] = result.compactMap { dailyData in
+        
+        state.selectedDateCalendar = dailyData
         
         let dateKey = dailyData.date.toYMDFormat
         state.monthHistoryData[dateKey] = dailyData
@@ -140,20 +207,17 @@ extension HistoryViewModel {
   }
   
   private func loadSelectedDateHistory() {
-    guard let selectedDate = state.selectedDate else {
-      resetSelectedData()
-      return
-    }
+    resetSelectedData()
+    
+    guard let selectedDate = state.selectedDate else { return }
     
     let dateKey = Date.toDateKeyString(from: selectedDate)
+    guard let dailyData = state.monthHistoryData[dateKey] else { return }
     
-    if let dailyData = state.monthHistoryData[String(dateKey)] {
-      state.totalSugarGrams = dailyData.totalSugarGrams
-      state.totalCount = dailyData.records.count
-      state.selectedDateHistoryList = dailyData.records
-    } else {
-      resetSelectedData()
-    }
+    // 유효한 데이터 있으면 세팅
+    state.totalSugarGrams = dailyData.totalSugarGrams
+    state.totalCount = dailyData.records.count
+    state.selectedDateHistoryList = dailyData.records
   }
 }
 

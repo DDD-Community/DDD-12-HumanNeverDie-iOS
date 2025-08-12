@@ -11,3 +11,7 @@ struct BeverageRecordRequest: Encodable {
   let productId: String
   let intakeTime: String
 }
+
+struct BeverageDeleteRequest: Encodable {
+  let intakeTime: String
+}

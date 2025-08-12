@@ -23,6 +23,8 @@ public struct BeverageCalendarRecoders: Equatable, Sendable {
   public let caffeineMg: Int
   public let imgUrl: String
   public let beverageSize : String
+  public let sugarMaxG: Int
+  public let sugarIdealG: Int
   
   public init(
     intakeHistoryId: Int,
@@ -38,8 +40,10 @@ public struct BeverageCalendarRecoders: Equatable, Sendable {
     sugarG: Int,
     caffeineMg: Int,
     imgUrl: String,
-    beverageSize: String
-  ) {
+    beverageSize: String,
+    sugarMaxG: Int,
+    sugarIdealG: Int
+  ){
     self.intakeHistoryId = intakeHistoryId
     self.productId = productId
     self.beverageName = beverageName
@@ -54,5 +58,7 @@ public struct BeverageCalendarRecoders: Equatable, Sendable {
     self.caffeineMg = caffeineMg
     self.imgUrl = imgUrl
     self.beverageSize = beverageSize
+    self.sugarMaxG = sugarMaxG
+    self.sugarIdealG = sugarIdealG
   }
 }

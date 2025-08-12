@@ -13,7 +13,7 @@ public protocol BeverageUseCaseProtocol: Sendable {
   func searchBeverage(keyword: String) async throws -> BeverageList
   func recordBeverage(productID: String, recordDate: Date) async throws -> Bool
   func syncBeverageLike(beverages: [Beverage]) throws -> ([Beverage], Int)
-  
+  func deleteBeverage(productID: String, intakeTime: String) async throws -> Bool
 }
 
 public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable {
@@ -104,11 +104,24 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
   
   
   public func getBeverageMonthCalender(dateInWeek: String) async throws -> [BeverageCalendar] {
+    //1
       return try await beverageRepository.getBeverageMonthCalender(dateInWeek: dateInWeek)
   }
   
   public func getBeverageWeeklyCalender(dateInWeek: String) async throws -> [BeverageCalendar] {
       return try await beverageRepository.getBeverageWeeklyCalender(dateInWeek: dateInWeek)
+  }
+
+  public func deleteBeverage(productID: String, intakeTime: String) async throws -> Bool {
+    do {
+      let statusCode = try await beverageRepository.deleteBeverage(productID: productID, intakeTime: intakeTime)
+      
+      guard statusCode == 200 else { return false }
+      
+      return true
+    } catch {
+      return false
+    }
   }
 }
 
