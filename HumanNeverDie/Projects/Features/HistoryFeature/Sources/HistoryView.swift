@@ -13,8 +13,6 @@ import CommonFeature
 public struct HistoryView: View {
   @Environment(Router.self) private var router
   @State private var viewModel: HistoryViewModel
-  @State private var popUpDate = Date()
-  @State private var popupPosition: CGPoint? = nil
   
   public init(viewModel: HistoryViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -38,8 +36,19 @@ public struct HistoryView: View {
           selectedHistoryDailylList
         }
       }
+      .amdBottomSheet(isPresented: $viewModel.state.isBevarageDetailPresented, detents: [.height(474)]) {
+        AMDBeverageDetailView(productID: viewModel.selectedBeverageID)
+      }
+      .amdBottomSheet(isPresented: $viewModel.state.isMonthPickerPresented, detents: [.height(310)]) {
+        AMDDatePickerView(
+          title: "날짜 선택",
+          isResetButtonHidden: false,
+          type: .yearMonthDay) {
+            viewModel.handleAction(.applySelectedDate($0))
+          }
+      }
       
-      popupMenuDailylList()
+      popupBackgroundOverlay()
     }
     .onAppear {
       viewModel.handleAction(.onAppear)
@@ -56,7 +65,6 @@ extension HistoryView {
       userSugarTargetValue: 50,
       selectedDate: $viewModel.state.selectedDate,
       onTapTitle: {
-        popUpDate = viewModel.selectedDate ?? Date()
         viewModel.handleAction(.updateisMonthPickerPresented(true))
       },
       onMonthChanged: { newDate in
@@ -72,15 +80,6 @@ extension HistoryView {
       if (!viewModel.isMonthPickerPresented) {
         viewModel.handleAction(.loadHistoryForSelectedDate)
       }
-    }
-    .amdBottomSheet(isPresented: .constant(viewModel.isMonthPickerPresented), detents: [.height(310)]) {
-      AMDDatePickerView(
-        title: "날짜 선택",
-        isResetButtonHidden: false,
-        type: .yearMonthDay) {
-          
-          viewModel.handleAction(.applySelectedDate($0))
-        }
     }
   }
   
@@ -121,7 +120,7 @@ extension HistoryView {
         
         ForEach(historyList, id: \.intakeHistoryId) { data in
           let sugarFreeVariant = AMDSugarFreeVariant.from(data.sugarLevel) ?? .none
-          let beverageIdString = String(data.beverageId)
+          let beverageIdString = String(data.productId)
           
           AMDBeverageListView.medium(
             thumbnailURL: data.imgUrl,
@@ -136,15 +135,15 @@ extension HistoryView {
             }
           )
           .padding(.horizontal, 20)
-          .background(
-            GeometryReader { geo in
-              Color.clear
-                .contentShape(Rectangle())
-                .onTapGesture {
-                  let frame = geo.frame(in: .global)
-                  self.popupPosition = CGPoint(x: frame.maxX - 100, y: frame.midY - 60)
-                  viewModel.handleAction(.updateSelectedBeverageID(beverageIdString))
+          .overlay(
+            Group {
+              if viewModel.selectedBeverageID == beverageIdString {
+                HStack {
+                  Spacer()
+                  popupMenuDailylList()
+                    .offset(x: -30, y: 0)
                 }
+              }
             }
           )
         }
@@ -155,21 +154,19 @@ extension HistoryView {
   
   @ViewBuilder
   private func popupBackgroundOverlay() -> some View {
-    if viewModel.selectedBeverageID != "" {
+    if viewModel.isListPopupPresented {
       Color.black.opacity(0.001)
         .ignoresSafeArea()
         .onTapGesture {
-          viewModel.handleAction(.updateSelectedBeverageID(""))
+          viewModel.handleAction(.updateisMonthPickerPresented(false))
         }
-        .zIndex(0)
+        .zIndex(-1)
     }
   }
   
   @ViewBuilder
   private func popupMenuDailylList() -> some View {
-    popupBackgroundOverlay()
-    
-    if let popupPosition, viewModel.selectedBeverageID != "" {
+    if viewModel.isListPopupPresented {
       VStack(spacing: 0) {
         Button {
           viewModel.handleAction(.beverageListInfoTapped)
@@ -190,7 +187,8 @@ extension HistoryView {
         Divider()
         
         Button {
-          viewModel.handleAction(.updateSelectedBeverageID(""))
+          print("updateSelectedBeverageID")
+          viewModel.handleAction(.updateisMonthPickerPresented(false))
         } label: {
           HStack(spacing: 8) {
             Image(systemName: "trash")
@@ -209,7 +207,6 @@ extension HistoryView {
       .background(Color.white)
       .clipShape(RoundedRectangle(cornerRadius: 12))
       .shadow(radius: 4)
-      .position(x: popupPosition.x, y: popupPosition.y)
       .zIndex(1)
     }
   }

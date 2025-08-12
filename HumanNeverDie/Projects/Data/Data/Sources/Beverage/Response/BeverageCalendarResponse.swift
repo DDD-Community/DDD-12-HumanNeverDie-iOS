@@ -33,7 +33,7 @@ struct BeverageCalendarResponse: Decodable {
 
 struct CalendarRecordResponse: Decodable {
   let intakeHistoryId: Int
-  let beverageId: Int
+  let productId: String
   let beverageName: String
   let cafeBrand: String
   let intakeTime: String
@@ -44,7 +44,7 @@ struct CalendarRecordResponse: Decodable {
   
   init(
     intakeHistoryId: Int,
-    beverageId: Int,
+    productId: String,
     beverageName: String,
     cafeBrand: String,
     intakeTime: String,
@@ -54,7 +54,7 @@ struct CalendarRecordResponse: Decodable {
     beverageSize: String
   ) {
     self.intakeHistoryId = intakeHistoryId
-    self.beverageId = beverageId
+    self.productId = productId
     self.beverageName = beverageName
     self.cafeBrand = cafeBrand
     self.intakeTime = intakeTime
@@ -81,7 +81,7 @@ extension CalendarRecordResponse {
   public func toDomain() -> BeverageCalendarRecoders {
     return BeverageCalendarRecoders(
       intakeHistoryId: self.intakeHistoryId,
-      beverageId: self.beverageId,
+      productId: self.productId,
       beverageName: self.beverageName,
       cafeBrand: self.cafeBrand,
       intakeTime: self.intakeTime,

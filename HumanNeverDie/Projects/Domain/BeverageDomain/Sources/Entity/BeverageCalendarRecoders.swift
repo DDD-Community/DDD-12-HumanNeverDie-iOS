@@ -10,7 +10,7 @@ import Foundation
 
 public struct BeverageCalendarRecoders: Equatable, Sendable {
   public let intakeHistoryId: Int
-  public let beverageId: Int
+  public let productId: String
   public let beverageName: String
   public let cafeBrand: String
   public let intakeTime: String
@@ -26,7 +26,7 @@ public struct BeverageCalendarRecoders: Equatable, Sendable {
   
   public init(
     intakeHistoryId: Int,
-    beverageId: Int,
+    productId: String,
     beverageName: String,
     cafeBrand: String,
     intakeTime: String,
@@ -41,7 +41,7 @@ public struct BeverageCalendarRecoders: Equatable, Sendable {
     beverageSize: String
   ) {
     self.intakeHistoryId = intakeHistoryId
-    self.beverageId = beverageId
+    self.productId = productId
     self.beverageName = beverageName
     self.cafeBrand = cafeBrand
     self.intakeTime = intakeTime
