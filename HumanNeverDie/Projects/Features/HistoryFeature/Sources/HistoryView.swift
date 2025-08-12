@@ -136,7 +136,7 @@ extension HistoryView {
             kcal: Double(data.servingKcal),
             sugarFreeVariant: sugarFreeVariant,
             menuAction: {
-              viewModel.handleAction(.updateSelectedproductID(beverageIdString))
+              viewModel.handleAction(.updateSelectedProductID(beverageIdString))
             }
           )
           .padding(.horizontal, 20)

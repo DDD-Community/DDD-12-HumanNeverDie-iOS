@@ -17,6 +17,12 @@ import Dependencies
 @Observable
 @MainActor
 public final class HistoryViewModel: ViewModelable {
+  @ObservationIgnored
+  @Dependency(\.alertClient) private var alertClient
+  
+  @ObservationIgnored
+  @Dependency(\.toastClient) private var toastClient
+  
   public struct State: Equatable {
     var currentDate: Date = Date()
     var selectedDate: Date? = nil
@@ -44,7 +50,7 @@ public final class HistoryViewModel: ViewModelable {
     case loadHistoryForSelectedDate
     case datePickeronConfirm
     case updateCurrentDate(Date)
-    case updateSelectedproductID(String)
+    case updateSelectedProductID(String)
     case updateisMonthPickerPresented(Bool)
     case applySelectedDate(Date)
     case clearSelectedBeverage
@@ -84,7 +90,7 @@ public final class HistoryViewModel: ViewModelable {
     case .updateCurrentDate(let newDate):
       state.currentDate = newDate
       
-    case .updateSelectedproductID(let newId):
+    case .updateSelectedProductID(let newId):
       state.selectedProductID = newId
       
     case .clearSelectedBeverage:
@@ -99,7 +105,7 @@ public final class HistoryViewModel: ViewModelable {
       state.isMonthPickerPresented = false
     case .deleteSelectedBeverage:
       Task {
-        await deleteSelectedBeverage()
+        await showDeleteAlert()
       }
     }
   }
@@ -107,27 +113,69 @@ public final class HistoryViewModel: ViewModelable {
 
 extension HistoryViewModel {
   
+  nonisolated private func showDeleteAlert() async {
+    await alertClient.showAlert(.init(
+      title: "이 기록을 삭제할까요?",
+      message: "삭제하면 복구할 수 없어요.",
+      primaryButton: .init(
+        title: "삭제",
+        type: .delete,
+        action: {
+          await self.deleteSelectedBeverage()
+        }
+      ),
+      secondaryButton: .init(
+        title: "취소",
+        type: .secondary,
+        action: {
+          await self.clearSelectedProductID()
+        }
+      ))
+    )
+  }
+  
   private func deleteSelectedBeverage() async {
-    guard let selectedDate = state.selectedDate else { return }
-    let dateKey = Date.toDateKeyString(from: selectedDate)
-    
-    guard let dailyData = state.monthHistoryData[dateKey] else { return }
-    guard let record = dailyData.records.first(where: { $0.productId == state.selectedProductID }) else { return }
-    //      let result = try await beverageUseCase.deleteBeverage(productID: state.selectedProductID , intakeTime: dailyData.date)
-    print("🗓️ \(dateKey),\(dailyData.date), 🥤 \(record.beverageName)")
+    // 현재 선택된 아이템의 실제 intakeTime 찾기
+    guard let selectedRecord = state.selectedDateHistoryList.first(where: {
+      String($0.productId) == state.selectedProductID
+    }) else { return }
     
     do {
-      let result = try await beverageUseCase.deleteBeverage(productID: state.selectedProductID, intakeTime: dailyData.date)
+      let result = try await beverageUseCase.deleteBeverage(
+        productID: state.selectedProductID,
+        intakeTime: selectedRecord.intakeTime  // 실제 intakeTime 사용
+      )
       
-      if (result) {
-        print("❌ 삭제 \(result) 성공")
+      if result {
+        
+        Task { @MainActor in
+          await toastClient.showToast(.init(
+            message: "삭제가 완료되었어요.",
+            type: .success
+          ))
+        }
+        clearSelectedProductID()
+        await loadNetworkData()  // 데이터 새로고침
+        loadSelectedDateHistory()
       } else {
-        print("❌ 삭제 \(result) 실패")
+        Task { @MainActor in
+          await toastClient.showToast(.init(
+            message: "데이터를 삭제할 수 없습니다.",
+            type: .failure
+          ))
+        }
       }
     } catch {
-      print("❌ 네트워크 삭제 실패: \(error)")
+      Task { @MainActor in
+        await toastClient.showToast(.init(
+          message: "네트워크의 문제로 실패하였습니다.",
+          type: .failure
+        ))
+      }
     }
   }
+  
+  
   
   
   private func resetSelectedData() {
