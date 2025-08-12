@@ -36,6 +36,18 @@ public struct HistoryView: View {
           selectedHistoryDailylList
         }
       }
+      .amdBottomSheet(isPresented: $viewModel.state.isBevarageDetailPresented, detents: [.height(474)]) {
+        AMDBeverageDetailView(productID: viewModel.selectedBeverageID)
+      }
+      .amdBottomSheet(isPresented: $viewModel.state.isMonthPickerPresented, detents: [.height(310)]) {
+        AMDDatePickerView(
+          title: "날짜 선택",
+          isResetButtonHidden: false,
+          type: .yearMonthDay) {
+            viewModel.handleAction(.applySelectedDate($0))
+          }
+      }
+      
       popupBackgroundOverlay()
     }
     .onAppear {
@@ -68,15 +80,6 @@ extension HistoryView {
       if (!viewModel.isMonthPickerPresented) {
         viewModel.handleAction(.loadHistoryForSelectedDate)
       }
-    }
-    .amdBottomSheet(isPresented: .constant(viewModel.isMonthPickerPresented), detents: [.height(310)]) {
-      AMDDatePickerView(
-        title: "날짜 선택",
-        isResetButtonHidden: false,
-        type: .yearMonthDay) {
-          
-          viewModel.handleAction(.applySelectedDate($0))
-        }
     }
   }
   
@@ -151,19 +154,19 @@ extension HistoryView {
   
   @ViewBuilder
   private func popupBackgroundOverlay() -> some View {
-    if viewModel.selectedBeverageID != "" {
+    if viewModel.isListPopupPresented {
       Color.black.opacity(0.001)
         .ignoresSafeArea()
         .onTapGesture {
-          viewModel.handleAction(.updateSelectedBeverageID(""))
+          viewModel.handleAction(.updateisMonthPickerPresented(false))
         }
-        .zIndex(0)
+        .zIndex(-1)
     }
   }
   
   @ViewBuilder
   private func popupMenuDailylList() -> some View {
-    if viewModel.selectedBeverageID != "" {
+    if viewModel.isListPopupPresented {
       VStack(spacing: 0) {
         Button {
           viewModel.handleAction(.beverageListInfoTapped)
@@ -184,7 +187,8 @@ extension HistoryView {
         Divider()
         
         Button {
-          viewModel.handleAction(.updateSelectedBeverageID(""))
+          print("updateSelectedBeverageID")
+          viewModel.handleAction(.updateisMonthPickerPresented(false))
         } label: {
           HStack(spacing: 8) {
             Image(systemName: "trash")

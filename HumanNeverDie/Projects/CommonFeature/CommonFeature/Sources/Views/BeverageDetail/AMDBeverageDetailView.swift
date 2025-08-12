@@ -14,6 +14,7 @@ public struct AMDBeverageDetailView: View {
   @State private var viewModel: AMDBeverageDetailViewModel
   
   public init(productID: String) {
+    print(productID)
     self.viewModel = .init(productID: productID)
   }
   

@@ -20,9 +20,12 @@ public final class HistoryViewModel: ViewModelable {
   public struct State: Equatable {
     var currentDate: Date = Date()
     var selectedDate: Date? = nil
-    var isMonthPickerPresented = false
     
     var selectedBeverageID: String = ""
+    var isMonthPickerPresented = false
+    var isListPopupPresented = false
+    var isBevarageDetailPresented = false
+    
     var isLoading: Bool = false
     
     var selectedDateHistoryList: [BeverageCalendarRecoders] = []
@@ -44,6 +47,7 @@ public final class HistoryViewModel: ViewModelable {
     case updateSelectedBeverageID(String)
     case updateisMonthPickerPresented(Bool)
     case applySelectedDate(Date)
+    case updateisListSelectPresented(Bool)
   }
   
   public var state: State = .init()
@@ -61,9 +65,8 @@ public final class HistoryViewModel: ViewModelable {
     case .beverageListFavoriteTapped(_, _):
       break
     case .beverageListInfoTapped:
-      // state.selectedBeverageID 설명창띄우기
-      //띄우고 초기화
-      state.selectedBeverageID = ""
+      state.isBevarageDetailPresented = true
+      state.isListPopupPresented = false
       
       break
     case .loadHistorDailyList:
@@ -84,6 +87,10 @@ public final class HistoryViewModel: ViewModelable {
       
     case .updateSelectedBeverageID(let newId):
       state.selectedBeverageID = newId
+      state.isListPopupPresented = true
+    
+    case .updateisListSelectPresented(let isPresented):
+      state.isListPopupPresented = isPresented
       
     case .updateisMonthPickerPresented(let isPickerPresented):
       state.isMonthPickerPresented = isPickerPresented
