@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 import BeverageDomain
 
 struct BeverageCalendarResponse: Decodable {
@@ -15,19 +14,32 @@ struct BeverageCalendarResponse: Decodable {
   let totalKcal: Int
   let totalSugarGrams: Int
   let totalCaffeine: Int
+  let recommendedSugar: RecommendedSugarResponse
   
   init(
     date: String,
     records: [CalendarRecordResponse],
     totalKcal: Int,
     totalSugarGrams: Int,
-    totalCaffeine: Int
+    totalCaffeine: Int,
+    recommendedSugar: RecommendedSugarResponse
   ) {
     self.date = date
     self.records = records
     self.totalKcal = totalKcal
     self.totalSugarGrams = totalSugarGrams
     self.totalCaffeine = totalCaffeine
+    self.recommendedSugar = recommendedSugar
+  }
+}
+
+struct RecommendedSugarResponse: Decodable {
+  let sugarMaxG: Int
+  let sugarIdealG: Int
+  
+  init(sugarMaxG: Int, sugarIdealG: Int) {
+    self.sugarMaxG = sugarMaxG
+    self.sugarIdealG = sugarIdealG
   }
 }
 
@@ -65,20 +77,29 @@ struct CalendarRecordResponse: Decodable {
   }
 }
 
+// MARK: - Domain Conversion Extensions
+
 extension BeverageCalendarResponse {
   public func toDomain() -> BeverageCalendar {
     return BeverageCalendar(
       date: self.date,
-      records: self.records.map { $0.toDomain() },
+      records: self.records.map {
+        $0.toDomain(
+          sugarMaxG: self.recommendedSugar.sugarMaxG,
+          sugarIdealG: self.recommendedSugar.sugarIdealG
+        )
+      },
       totalKcal: self.totalKcal,
       totalSugarGrams: self.totalSugarGrams,
-      totalCaffeine: self.totalCaffeine
+      totalCaffeine: self.totalCaffeine,
+      sugarMaxG: self.recommendedSugar.sugarMaxG,     // 풀어서 전달
+      sugarIdealG: self.recommendedSugar.sugarIdealG  // 풀어서 전달
     )
   }
 }
 
 extension CalendarRecordResponse {
-  public func toDomain() -> BeverageCalendarRecoders {
+  public func toDomain(sugarMaxG: Int, sugarIdealG: Int) -> BeverageCalendarRecoders {
     return BeverageCalendarRecoders(
       intakeHistoryId: self.intakeHistoryId,
       productId: self.productId,
@@ -87,13 +108,15 @@ extension CalendarRecordResponse {
       intakeTime: self.intakeTime,
       sugarLevel: self.sugarLevel,
       servingKcal: self.nutrition.servingKcal ?? 0,
-      saturatedFatG:self.nutrition.saturatedFatG ?? 0,
+      saturatedFatG: self.nutrition.saturatedFatG ?? 0,
       proteinG: self.nutrition.proteinG ?? 0,
       sodiumMg: self.nutrition.sodiumMg ?? 0,
       sugarG: self.nutrition.sugarG ?? 0,
       caffeineMg: self.nutrition.caffeineMg ?? 0,
       imgUrl: self.imgUrl,
-      beverageSize: self.beverageSize
+      beverageSize: self.beverageSize,
+      sugarMaxG: sugarMaxG,
+      sugarIdealG: sugarIdealG
     )
   }
 }
