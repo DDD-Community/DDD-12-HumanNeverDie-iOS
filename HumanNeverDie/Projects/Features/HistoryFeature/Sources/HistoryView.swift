@@ -39,6 +39,11 @@ public struct HistoryView: View {
       .amdBottomSheet(isPresented: $viewModel.state.isBevarageDetailPresented, detents: [.height(474)]) {
         AMDBeverageDetailView(productID: viewModel.selectedBeverageID)
       }
+      .onChange(of: viewModel.state.isBevarageDetailPresented) { _, isPresented in
+        if !isPresented {
+          viewModel.handleAction(.clearSelectedBeverage)
+        }
+      }
       .amdBottomSheet(isPresented: $viewModel.state.isMonthPickerPresented, detents: [.height(310)]) {
         AMDDatePickerView(
           title: "날짜 선택",
@@ -158,7 +163,7 @@ extension HistoryView {
       Color.black.opacity(0.001)
         .ignoresSafeArea()
         .onTapGesture {
-          viewModel.handleAction(.updateisMonthPickerPresented(false))
+          viewModel.handleAction(.clearSelectedBeverage)
         }
         .zIndex(-1)
     }

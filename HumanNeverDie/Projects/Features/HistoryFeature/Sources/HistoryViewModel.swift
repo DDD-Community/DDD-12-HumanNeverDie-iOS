@@ -23,7 +23,7 @@ public final class HistoryViewModel: ViewModelable {
     
     var selectedBeverageID: String = ""
     var isMonthPickerPresented = false
-    var isListPopupPresented = false
+    var isListPopupPresented: Bool { !selectedBeverageID.isEmpty }
     var isBevarageDetailPresented = false
     
     var isLoading: Bool = false
@@ -47,7 +47,7 @@ public final class HistoryViewModel: ViewModelable {
     case updateSelectedBeverageID(String)
     case updateisMonthPickerPresented(Bool)
     case applySelectedDate(Date)
-    case updateisListSelectPresented(Bool)
+    case clearSelectedBeverage
   }
   
   public var state: State = .init()
@@ -66,9 +66,7 @@ public final class HistoryViewModel: ViewModelable {
       break
     case .beverageListInfoTapped:
       state.isBevarageDetailPresented = true
-      state.isListPopupPresented = false
-      
-      break
+    
     case .loadHistorDailyList:
       Task {
         await loadNetworkData()
@@ -87,10 +85,9 @@ public final class HistoryViewModel: ViewModelable {
       
     case .updateSelectedBeverageID(let newId):
       state.selectedBeverageID = newId
-      state.isListPopupPresented = true
     
-    case .updateisListSelectPresented(let isPresented):
-      state.isListPopupPresented = isPresented
+    case .clearSelectedBeverage:
+      clearSelectedBeverage()
       
     case .updateisMonthPickerPresented(let isPickerPresented):
       state.isMonthPickerPresented = isPickerPresented
@@ -109,8 +106,13 @@ extension HistoryViewModel {
     state.selectedDateHistoryList = []
     state.totalSugarGrams = 0
     state.totalCount = 0
+    clearSelectedBeverage()
   }
   
+  private func clearSelectedBeverage() {
+    state.selectedBeverageID = ""
+  }
+
   private func loadNetworkData() async {
     guard !state.isLoading else { return }
     
@@ -140,20 +142,17 @@ extension HistoryViewModel {
   }
   
   private func loadSelectedDateHistory() {
-    guard let selectedDate = state.selectedDate else {
-      resetSelectedData()
-      return
-    }
+    resetSelectedData()
     
+    guard let selectedDate = state.selectedDate else { return }
+
     let dateKey = Date.toDateKeyString(from: selectedDate)
+    guard let dailyData = state.monthHistoryData[dateKey] else { return }
     
-    if let dailyData = state.monthHistoryData[String(dateKey)] {
-      state.totalSugarGrams = dailyData.totalSugarGrams
-      state.totalCount = dailyData.records.count
-      state.selectedDateHistoryList = dailyData.records
-    } else {
-      resetSelectedData()
-    }
+    // 유효한 데이터 있으면 세팅
+    state.totalSugarGrams = dailyData.totalSugarGrams
+    state.totalCount = dailyData.records.count
+    state.selectedDateHistoryList = dailyData.records
   }
 }
 
