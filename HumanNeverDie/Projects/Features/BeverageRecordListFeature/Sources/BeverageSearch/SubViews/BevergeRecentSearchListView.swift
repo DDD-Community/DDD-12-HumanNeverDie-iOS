@@ -26,6 +26,7 @@ struct BevergeRecentSearchListView: View {
       recentSearchListView
     }
     .frame(maxWidth: .infinity, minHeight: Constants.height, maxHeight: Constants.height, alignment: .leading)
+    .animation(.default, value: viewModel.recentSearchList)
   }
   
   private var recentSearchTitleView: some View {
@@ -42,8 +43,11 @@ struct BevergeRecentSearchListView: View {
         ForEach(viewModel.recentSearchList, id: \.self) { search in
           AMDTagChip(
             title: search,
-            action: { viewModel.handleAction(.recentSearchListButtonTapped(search)) }
+            action: { viewModel.handleAction(.recentSearchListItemDeleteButtonTapped(search)) }
           )
+          .onTapGesture {
+            viewModel.handleAction(.recentSearchListItemTapped(search))
+          }
         }
       }
     }
