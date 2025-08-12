@@ -21,20 +21,24 @@ public struct HistoryView: View {
   public var body: some View {
     ZStack(alignment: .top) {
       ScrollView(.vertical, showsIndicators: false) {
-        VStack(spacing: 0) {
-          contentCalenderView()
+        ZStack {
+          popupBackgroundOverlay()
           
-          Rectangle()
-            .fill(.gray10)
-            .frame(height: 8)
-          
-          VStack(alignment: .leading, spacing: 0) {
-            selectDateTitle()
-            contentSugerStatusView()
-            contentDrinkButton
-          }.padding(.horizontal, 20)
-          
-          selectedHistoryDailylList
+          VStack(spacing: 0) {
+            contentCalenderView()
+            
+            Rectangle()
+              .fill(.gray10)
+              .frame(height: 8)
+            
+            VStack(alignment: .leading, spacing: 0) {
+              selectDateTitle()
+              contentSugerStatusView()
+              contentDrinkButton
+            }.padding(.horizontal, 20)
+            
+            selectedHistoryDailylList
+          }
         }
       }
       .amdBottomSheet(isPresented: $viewModel.state.isBevarageDetailPresented, detents: [.height(474)]) {
@@ -53,8 +57,6 @@ public struct HistoryView: View {
             viewModel.handleAction(.applySelectedDate($0))
           }
       }
-      
-      popupBackgroundOverlay()
     }
     .onAppear {
       viewModel.handleAction(.onAppear)
