@@ -21,9 +21,9 @@ public final class HistoryViewModel: ViewModelable {
     var currentDate: Date = Date()
     var selectedDate: Date? = nil
     
-    var selectedBeverageID: String = ""
+    var selectedProductID: String = ""
     var isMonthPickerPresented = false
-    var isListPopupPresented: Bool { !selectedBeverageID.isEmpty }
+    var isListPopupPresented: Bool { !selectedProductID.isEmpty }
     var isBevarageDetailPresented = false
     
     var isLoading: Bool = false
@@ -44,7 +44,7 @@ public final class HistoryViewModel: ViewModelable {
     case loadHistoryForSelectedDate
     case datePickeronConfirm
     case updateCurrentDate(Date)
-    case updateSelectedBeverageID(String)
+    case updateSelectedproductID(String)
     case updateisMonthPickerPresented(Bool)
     case applySelectedDate(Date)
     case clearSelectedBeverage
@@ -83,11 +83,11 @@ public final class HistoryViewModel: ViewModelable {
     case .updateCurrentDate(let newDate):
       state.currentDate = newDate
       
-    case .updateSelectedBeverageID(let newId):
-      state.selectedBeverageID = newId
+    case .updateSelectedproductID(let newId):
+      state.selectedProductID = newId
     
     case .clearSelectedBeverage:
-      clearSelectedBeverage()
+      clearSelectedProductID()
       
     case .updateisMonthPickerPresented(let isPickerPresented):
       state.isMonthPickerPresented = isPickerPresented
@@ -106,11 +106,11 @@ extension HistoryViewModel {
     state.selectedDateHistoryList = []
     state.totalSugarGrams = 0
     state.totalCount = 0
-    clearSelectedBeverage()
+    clearSelectedProductID()
   }
   
-  private func clearSelectedBeverage() {
-    state.selectedBeverageID = ""
+  private func clearSelectedProductID() {
+    state.selectedProductID = ""
   }
 
   private func loadNetworkData() async {

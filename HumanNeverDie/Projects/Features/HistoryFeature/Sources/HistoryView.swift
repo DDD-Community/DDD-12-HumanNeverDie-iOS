@@ -37,7 +37,7 @@ public struct HistoryView: View {
         }
       }
       .amdBottomSheet(isPresented: $viewModel.state.isBevarageDetailPresented, detents: [.height(474)]) {
-        AMDBeverageDetailView(productID: viewModel.selectedBeverageID)
+        AMDBeverageDetailView(productID: viewModel.selectedProductID)
       }
       .onChange(of: viewModel.state.isBevarageDetailPresented) { _, isPresented in
         if !isPresented {
@@ -136,13 +136,13 @@ extension HistoryView {
             kcal: Double(data.servingKcal),
             sugarFreeVariant: sugarFreeVariant,
             menuAction: {
-              viewModel.handleAction(.updateSelectedBeverageID(beverageIdString))
+              viewModel.handleAction(.updateSelectedproductID(beverageIdString))
             }
           )
           .padding(.horizontal, 20)
           .overlay(
             Group {
-              if viewModel.selectedBeverageID == beverageIdString {
+              if viewModel.state.selectedProductID == beverageIdString {
                 HStack {
                   Spacer()
                   popupMenuDailylList()
