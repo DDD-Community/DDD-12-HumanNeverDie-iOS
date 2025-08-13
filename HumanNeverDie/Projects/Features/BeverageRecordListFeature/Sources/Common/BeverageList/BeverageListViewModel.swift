@@ -158,12 +158,11 @@ public final class BeverageListViewModel: ViewModelable {
       await MainActor.run {
         if isInitialLoad {
           state.beverageList = beverageList.items
-          state.filterCount.like = beverageList.likeCount
         } else {
           state.beverageList.append(contentsOf: beverageList.items)
-          state.filterCount.like += beverageList.likeCount
         }
         
+        state.filterCount.like = beverageList.likeCount
         state.cursor = beverageList.nextCursor
         state.hasNext = beverageList.hasNext
         state.isLoading = false
