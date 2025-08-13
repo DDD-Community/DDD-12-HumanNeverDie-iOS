@@ -18,40 +18,49 @@ public struct SettingView: View {
   }
   
   public var body: some View {
-    List {
-      Section {
-        SettingsRow(item: SettingItem.accountInfo, onTap: handleItemTap)
-        SettingsRow(item: SettingItem.goalSetting, onTap: handleItemTap)
-      } header: {
+    VStack(alignment: .leading, spacing: 0) {
+      
+      VStack(alignment: .leading, spacing:0) {
         sectionTitle(title: "사용자 설정")
-      }
+        SettingsRow(item: SettingItem.accountInfo, onTap: handleItemTap, color: .gray80)
+        SettingsRow(item: SettingItem.goalSetting, onTap: handleItemTap, color: .gray80)
+      }.padding(.horizontal, 20)
+        .padding(.top, 16)
       
-      sectionDivider()
+      sectionDivider().padding(.vertical, 16)
       
-      Section {
-        SettingsRow(item: SettingItem.notificationSetting, onTap: handleItemTap)
-      } header: {
+      VStack(alignment: .leading, spacing:0) {
         sectionTitle(title: "알림 설정")
-      }
+        SettingsRow(item: SettingItem.notificationSetting, onTap: handleItemTap, color: .gray80)
+      }.padding(.horizontal, 20)
       
-      sectionDivider()
+      sectionDivider().padding(.vertical, 16)
       
-      Section {
-        SettingsRow(item: SettingItem.feedback, onTap: handleItemTap)
-        SettingsRow(item: SettingItem.terms, onTap: handleItemTap)
-      } header: {
+      VStack(alignment: .leading, spacing:0) {
         sectionTitle(title: "기타")
-      }
+        SettingsRow(item: SettingItem.feedback, onTap: handleItemTap, color: .gray80)
+        SettingsRow(item: SettingItem.terms, onTap: handleItemTap, color: .gray80)
+      }.padding(.horizontal, 20)
       
-      sectionDivider()
+      sectionDivider().padding(.vertical, 16)
       
-      Section {
+      VStack(alignment: .leading, spacing:0) {
+        sectionTitle(title: "계정")
+        SettingsRow(item: SettingItem.logout, onTap: handleItemTap, color: .gray80)
+        SettingsRow(item: SettingItem.unsubscribe, onTap: handleItemTap, color: .danger)
+      }.padding(.horizontal, 20)
+      
+      sectionDivider().padding(.vertical, 16)
+      
+      VStack(alignment: .leading, spacing:0) {
         AppVersionRow(title: "앱 버전", value: "0.0.0")
-      }
+      }.padding(.horizontal, 20)
+      
+      Spacer()
     }
-    .listStyle(.plain)
-    .listRowSeparator(.hidden)
     .settingToolbar(item: .settingTitle)
+    
+    Spacer()
   }
 }
 
@@ -76,6 +85,10 @@ extension SettingView {
       
     case .settingTitle:
       break
+    case .logout:
+      break
+    case .unsubscribe:
+      break
     }
   }
   
@@ -83,23 +96,23 @@ extension SettingView {
     Text(title)
       .amdFont(.smallBold)
       .foregroundStyle(.gray85)
-      .padding(.top, 16)
-      .padding(.bottom, 16)
+      .padding(.vertical, 10)
   }
   
   private struct SettingsRow: View {
     let item: SettingItem
     let onTap: (SettingItem) -> Void
+    let color: Color
     
     var body: some View {
       HStack {
         Text(item.title)
           .amdFont(.mediumRegular)
-          .foregroundColor(.gray80)
+          .foregroundColor(color)
+          .padding(.vertical, 11)
         
         Spacer()
       }
-      .listRowSeparator(.hidden)
       .contentShape(Rectangle())
       .onTapGesture {
         onTap(item)
@@ -129,9 +142,9 @@ extension SettingView {
             .amdFont(.smallRegular)
             .foregroundColor(.gray60)
         }
-        
       }
-      .listRowSeparator(.hidden)
+      .padding(.vertical, 20)
     }
   }
 }
+
