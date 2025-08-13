@@ -51,6 +51,7 @@ public final class BeverageListViewModel: ViewModelable {
     var isBevarageDetailPresented: Bool = false
     
     var isLoading: Bool = false
+    var isFilteringInProgress: Bool = false
   }
   
   public enum Action {
@@ -75,8 +76,7 @@ public final class BeverageListViewModel: ViewModelable {
   
   var delegateAction: ((DelegateAction?) -> Void)?
   public var state: State = .init()
-  init() {
-  }
+  init() {}
   
   deinit {
     print("deinit BeverageListViewModel")
@@ -85,6 +85,7 @@ public final class BeverageListViewModel: ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case let .beverageFilterChipItemTapped(filterType):
+      state.isFilteringInProgress = true
       state.filterType = filterType
       state.cursor = nil
       
@@ -106,10 +107,17 @@ public final class BeverageListViewModel: ViewModelable {
         state.isOnlyLiked = true
       }
       
-      Task { await getBeverageList() }
+      Task { 
+        await getBeverageList()
+        await MainActor.run {
+          state.isFilteringInProgress = false
+        }
+      }
             
     case let .loadNextBeverageList(beverageIDList):
-      guard !state.isLoading, let lastId = beverageIDList.last else { return }
+      guard !state.isLoading, 
+            !state.isFilteringInProgress,
+            let lastId = beverageIDList.last else { return }
       Task { await getBeverageList(lastId) }
       
     case let .beverageListFavoriteTapped(index, beverage):

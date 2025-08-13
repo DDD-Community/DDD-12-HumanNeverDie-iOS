@@ -13,6 +13,7 @@ import DesignSystem
 
 struct BeverageListView: View {
   @Bindable private var viewModel: BeverageListViewModel
+  @State private var scrollPosition = ScrollPosition(edge: .top)
   
   init(viewModel: BeverageListViewModel) {
     self.viewModel = viewModel
@@ -42,7 +43,13 @@ struct BeverageListView: View {
           title: type == .like ? nil : type.title,
           count: viewModel.filterCount.toValue(type),
           isSelected: viewModel.filterType == type,
-          action: { viewModel.handleAction(.beverageFilterChipItemTapped(type)) }
+          action: {
+            withAnimation(.easeOut(duration: 0.3)) {
+              scrollPosition.scrollTo(edge: .top)
+            } completion: {
+              viewModel.handleAction(.beverageFilterChipItemTapped(type))
+            }
+          }
         )
       }
     }
@@ -74,6 +81,7 @@ struct BeverageListView: View {
       }
       .scrollTargetLayout()
     }
+    .scrollPosition($scrollPosition)
     .onScrollTargetVisibilityChange(idType: Beverage.ID.self) { item in
       viewModel.handleAction(.loadNextBeverageList(item))
     }
