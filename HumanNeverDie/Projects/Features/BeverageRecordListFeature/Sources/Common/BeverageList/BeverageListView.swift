@@ -16,16 +16,16 @@ struct BeverageListView: View {
   @Bindable private var viewModel: BeverageListViewModel
   @State private var scrollPosition = ScrollPosition(edge: .top)
   private let paginationChannel = AsyncChannel<[Beverage.ID]>()
-  
+
   init(viewModel: BeverageListViewModel) {
     self.viewModel = viewModel
   }
-  
+
   private enum Constants {
     static let beverageFilterChipViewHeight: CGFloat = 68
     static let scrollViewBottomPadding: CGFloat = 110
   }
-  
+
   var body: some View {
     VStack(spacing: 0) {
       beverageFilterChipView
@@ -36,7 +36,7 @@ struct BeverageListView: View {
       AMDBeverageDetailView(productID: viewModel.beverageProductID)
     }
   }
-  
+
   private var beverageFilterChipView: some View {
     HStack(spacing: 4) {
       ForEach(BeverageFilterType.allCases, id: \.self) { type in
@@ -58,7 +58,7 @@ struct BeverageListView: View {
     .padding(.vertical, 16)
     .frame(maxWidth: .infinity, minHeight: Constants.beverageFilterChipViewHeight, maxHeight: Constants.beverageFilterChipViewHeight, alignment: .leading)
   }
-  
+
   private var beverageList: some View {
     ScrollView {
       LazyVStack(spacing: 0) {

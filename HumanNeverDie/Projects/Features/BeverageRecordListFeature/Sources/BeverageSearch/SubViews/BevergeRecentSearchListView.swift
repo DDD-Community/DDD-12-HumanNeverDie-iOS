@@ -11,15 +11,15 @@ import DesignSystem
 
 struct BevergeRecentSearchListView: View {
   @Bindable private var viewModel: BeverageSearchViewModel
-  
+
   private enum Constants {
     static let height: CGFloat = 36
   }
-  
+
   init(viewModel: BeverageSearchViewModel) {
     self.viewModel = viewModel
   }
-  
+
   var body: some View {
     VStack(spacing: 10) {
       recentSearchTitleView
@@ -28,7 +28,7 @@ struct BevergeRecentSearchListView: View {
     .frame(maxWidth: .infinity, minHeight: Constants.height, maxHeight: Constants.height, alignment: .leading)
     .animation(.default, value: viewModel.recentSearchList)
   }
-  
+
   private var recentSearchTitleView: some View {
     Text("최근 검색어")
       .amdFont(.mediumBold)
@@ -36,7 +36,7 @@ struct BevergeRecentSearchListView: View {
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(.top, 20)
   }
-  
+
   private var recentSearchListView: some View {
     ScrollView(.horizontal) {
       LazyHStack(spacing: 8) {

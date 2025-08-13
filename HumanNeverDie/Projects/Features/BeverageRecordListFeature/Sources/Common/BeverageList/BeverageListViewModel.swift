@@ -21,7 +21,7 @@ public final class BeverageListViewModel: ViewModelable {
     var zero: Int
     var low: Int
     var like: Int
-    
+
     func toValue(_ type: BeverageFilterType) -> Int {
       switch type {
       case .all:
@@ -35,25 +35,25 @@ public final class BeverageListViewModel: ViewModelable {
       }
     }
   }
-  
+
   public struct State: Equatable {
     var beverageList: [Beverage] = []
-    
+
     var sugarLevelType: BeverageSugarLevelType?
     var isOnlyLiked: Bool = false
     var cursor: String?
     var hasNext: Bool = false
-    
+
     var filterType: BeverageFilterType = .all
     var filterCount: BeverageFilterCount = .init(total: 0, zero: 0, low: 0, like: 0)
 
     var beverageProductID: String = ""
     var isBevarageDetailPresented: Bool = false
-    
+
     var isLoading: Bool = false
     var isFilteringInProgress: Bool = false
   }
-  
+
   public enum Action {
     case beverageFilterChipItemTapped(BeverageFilterType)
     case loadNextBeverageList([Beverage.ID])
@@ -63,89 +63,88 @@ public final class BeverageListViewModel: ViewModelable {
     case addBeverageButtonTapped
     case recentSearchListButtonTapped(String)
   }
-  
+
   public enum DelegateAction: Equatable {
     case beverageListItemTapped(Beverage)
   }
-  
+
   @ObservationIgnored
   @Dependency(\.beverageUseCase) private var beverageUseCase
-  
+
   @ObservationIgnored
   @Dependency(\.beverageLocalLikeUseCase) private var beverageLocalLikeUseCase
-  
+
   var delegateAction: ((DelegateAction?) -> Void)?
   public var state: State = .init()
   init() {}
-  
+
   deinit {
     print("deinit BeverageListViewModel")
   }
-  
+
   public func handleAction(_ action: Action) {
     switch action {
     case let .beverageFilterChipItemTapped(filterType):
       state.isFilteringInProgress = true
       state.filterType = filterType
       state.cursor = nil
-      
+
       switch state.filterType {
       case .all:
         state.sugarLevelType = nil
         state.isOnlyLiked = false
-        
+
       case .zero:
         state.sugarLevelType = .zero
         state.isOnlyLiked = false
-        
+
       case .low:
         state.sugarLevelType = .low
         state.isOnlyLiked = false
-        
+
       case .like:
         state.sugarLevelType = nil
         state.isOnlyLiked = true
       }
-      
-      Task { 
+
+      Task {
         await getBeverageList()
         await MainActor.run {
           state.isFilteringInProgress = false
         }
       }
-            
     case let .loadNextBeverageList(beverageIDList):
-      guard !state.isLoading, 
+      guard !state.isLoading,
             !state.isFilteringInProgress,
             let lastId = beverageIDList.last else { return }
       Task { await getBeverageList(lastId) }
-      
+
     case let .beverageListFavoriteTapped(index, beverage):
       let originalIsLiked = beverage.isLiked
       let newLikedState = !beverage.isLiked
       state.beverageList[index].isLiked = newLikedState
       state.filterCount.like = newLikedState ? state.filterCount.like + 1 : state.filterCount.like - 1
-      
+
       handleBeverageLike(beverage, newIsLiked: newLikedState, originalIsLiked: originalIsLiked)
-      
+
     case let .beverageListInfoTapped(productID):
       state.beverageProductID = productID
       state.isBevarageDetailPresented = true
-      
+
     case let .beverageListItemTapped(item):
       delegateAction?(.beverageListItemTapped(item))
-      
+
     case .addBeverageButtonTapped:
       break
-      
+
     case .recentSearchListButtonTapped(_):
       break
     }
   }
-  
+
   private func getBeverageList(_ lastId: String? = nil) async {
     let isInitialLoad = lastId == nil
-    
+
     do {
       if !isInitialLoad {
         guard
@@ -157,19 +156,19 @@ public final class BeverageListViewModel: ViewModelable {
           return
         }
       }
-      
+
       state.isLoading = true
-      
+
       let cursor = isInitialLoad ? nil : state.cursor
       let beverageList = try await beverageUseCase.getBeverageList(cursor: cursor, sugarLevel: state.sugarLevelType, onlyLiked: state.isOnlyLiked)
-      
+
       await MainActor.run {
         if isInitialLoad {
           state.beverageList = beverageList.items
         } else {
           state.beverageList.append(contentsOf: beverageList.items)
         }
-        
+
         state.filterCount.like = beverageList.likeCount
         state.cursor = beverageList.nextCursor
         state.hasNext = beverageList.hasNext
@@ -181,12 +180,12 @@ public final class BeverageListViewModel: ViewModelable {
       }
     }
   }
-  
+
   private func handleBeverageLike(_ beverage: Beverage, newIsLiked: Bool, originalIsLiked: Bool) {
     do {
       var updatedBeverage = beverage
       updatedBeverage.isLiked = newIsLiked
-      
+
       try beverageLocalLikeUseCase.handleBeverageLike(
         beverage: updatedBeverage,
         originalIsLiked: originalIsLiked
