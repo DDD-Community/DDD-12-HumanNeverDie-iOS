@@ -38,6 +38,9 @@ public final class BeverageListViewModel: ViewModelable {
   
   public struct State: Equatable {
     var beverageList: [Beverage] = []
+    
+    var sugarLevelType: BeverageSugarLevelType?
+    var isOnlyLiked: Bool = false
     var cursor: String?
     var hasNext: Bool = false
     
@@ -83,11 +86,31 @@ public final class BeverageListViewModel: ViewModelable {
     switch action {
     case let .beverageFilterChipItemTapped(filterType):
       state.filterType = filterType
+      state.cursor = nil
       
-    case let .loadNextBeverageList(beverageIDList):
-      if let lastId = beverageIDList.last {
-        Task { await getBeverageList(lastId) }
+      switch state.filterType {
+      case .all:
+        state.sugarLevelType = nil
+        state.isOnlyLiked = false
+        
+      case .zero:
+        state.sugarLevelType = .zero
+        state.isOnlyLiked = false
+        
+      case .low:
+        state.sugarLevelType = .low
+        state.isOnlyLiked = false
+        
+      case .like:
+        state.sugarLevelType = nil
+        state.isOnlyLiked = true
       }
+      
+      Task { await getBeverageList() }
+            
+    case let .loadNextBeverageList(beverageIDList):
+      guard !state.isLoading, let lastId = beverageIDList.last else { return }
+      Task { await getBeverageList(lastId) }
       
     case let .beverageListFavoriteTapped(index, beverage):
       let originalIsLiked = beverage.isLiked
@@ -112,31 +135,43 @@ public final class BeverageListViewModel: ViewModelable {
     }
   }
   
-  private func getBeverageList(_ lastId: String) async {
+  private func getBeverageList(_ lastId: String? = nil) async {
+    let isInitialLoad = lastId == nil
+    
     do {
-      guard
-        let cursor = state.cursor,
-        state.hasNext,
-        !state.isLoading,
-        state.beverageList.contains(where: { $0.id == lastId }),
-        lastId == state.beverageList.last?.id else {
-        return
+      if !isInitialLoad {
+        guard
+          state.cursor != nil,
+          state.hasNext,
+          !state.isLoading,
+          state.beverageList.contains(where: { $0.id == lastId }),
+          lastId == state.beverageList.last?.id else {
+          return
+        }
       }
       
       state.isLoading = true
       
-      let beverageList = try await beverageUseCase.getBeverageList(cursor: cursor)
+      let cursor = isInitialLoad ? nil : state.cursor
+      let beverageList = try await beverageUseCase.getBeverageList(cursor: cursor, sugarLevel: state.sugarLevelType, onlyLiked: state.isOnlyLiked)
       
       await MainActor.run {
-        state.beverageList.append(contentsOf: beverageList.items)
+        if isInitialLoad {
+          state.beverageList = beverageList.items
+          state.filterCount.like = beverageList.likeCount
+        } else {
+          state.beverageList.append(contentsOf: beverageList.items)
+          state.filterCount.like += beverageList.likeCount
+        }
+        
         state.cursor = beverageList.nextCursor
         state.hasNext = beverageList.hasNext
-        state.filterCount.like += beverageList.likeCount
         state.isLoading = false
       }
     } catch {
-      print(error)
-      state.isLoading = false
+      await MainActor.run {
+        state.isLoading = false
+      }
     }
   }
   

@@ -10,6 +10,7 @@ import Observation
 
 import CommonFeature
 import BeverageDomain
+import Shared
 
 import Dependencies
 
@@ -26,7 +27,7 @@ public final class BeverageSearchViewModel: ViewModelable {
     var searchType: BeverageSearchType = .search
     var beverageRecordDate: Date
     
-    var recentSearchList: [String] = ["에스프레소", "블렌디드"]
+    var recentSearchList: [String] = []
     
     var route: Route?
   }
@@ -42,7 +43,8 @@ public final class BeverageSearchViewModel: ViewModelable {
     case onAppear
     case searchTextChanged(String)
     case debounceSearchTextChanged(String)
-    case recentSearchListButtonTapped(String)
+    case recentSearchListItemTapped(String)
+    case recentSearchListItemDeleteButtonTapped(String)
     case addBeverageButtonTapped
     case delegateAction(BeverageListViewModel.DelegateAction?)
     case clearRoute
@@ -53,6 +55,9 @@ public final class BeverageSearchViewModel: ViewModelable {
   
   @ObservationIgnored
   @Dependency(\.beverageLocalLikeUseCase) private var beverageLocalLikeUseCase
+  
+  @ObservationIgnored
+  @Dependency(\.beverageLocalSearchUseCase) private var beverageLocalSearchUseCase
   
   @ObservationIgnored
   var listViewModel: BeverageListViewModel = .init()
@@ -70,6 +75,7 @@ public final class BeverageSearchViewModel: ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
+      state.recentSearchList = beverageLocalSearchUseCase.getRecentSearchList()
       Task { await syncBeverageLike() }
       
     case let .searchTextChanged(searchText):
@@ -77,15 +83,30 @@ public final class BeverageSearchViewModel: ViewModelable {
       state.searchText = searchText
       
     case let .debounceSearchTextChanged(searchText):
-      guard lastSearchedText != searchText else {
+      guard searchText != lastSearchedText,
+            !searchText.isEmpty else {
         return
       }
       
       lastSearchedText = searchText
-      Task { await searchBeverage(searchText) }
       
-    case let .recentSearchListButtonTapped(recentText):
-      state.recentSearchList.removeAll { $0 == recentText }
+      Task {
+        await searchBeverage(searchText)
+        await saveRecentSearch(searchText)
+      }
+      
+    case let .recentSearchListItemTapped(recentText):
+      lastSearchedText = recentText
+      state.searchText = recentText
+      state.searchType = .list
+      
+      Task {
+        await searchBeverage(recentText)
+        await saveRecentSearch(recentText)
+      }
+      
+    case let .recentSearchListItemDeleteButtonTapped(recentText):
+      Task { await removeRecentSearch(recentText) }
       
     case .addBeverageButtonTapped:
       break
@@ -129,6 +150,20 @@ public final class BeverageSearchViewModel: ViewModelable {
       }
     } catch {
       print(error)
+    }
+  }
+  
+  private func saveRecentSearch(_ keyword: String) async {
+    await beverageLocalSearchUseCase.addRecentSearch(keyword)
+    await MainActor.run {
+      state.recentSearchList = beverageLocalSearchUseCase.getRecentSearchList()
+    }
+  }
+  
+  private func removeRecentSearch(_ keyword: String) async {
+    await beverageLocalSearchUseCase.removeRecentSearch(keyword)
+    await MainActor.run {
+      state.recentSearchList = beverageLocalSearchUseCase.getRecentSearchList()
     }
   }
 }

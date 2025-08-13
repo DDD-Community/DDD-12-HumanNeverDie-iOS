@@ -79,7 +79,7 @@ public final class BeverageRecordListViewModel: ViewModelable {
   
   private func getBeverage() async {
     do {
-      async let beverageListResponse = try beverageUseCase.getBeverageList(cursor: nil)
+      async let beverageListResponse = try beverageUseCase.getBeverageList(cursor: nil, sugarLevel: nil, onlyLiked: false)
       async let beverageCountResponse = try beverageUseCase.getBeverageCount()
       
       let (beverageList, beverageCount) = try await (beverageListResponse, beverageCountResponse)
