@@ -9,7 +9,7 @@ import Foundation
 
 public protocol BeverageRepositoryInterface: Sendable {
   func getBeverageCount() async throws -> BeverageCount
-  func getBeverageList(cursor: String?) async throws -> BeverageList
+  func getBeverageList(cursor: String?, sugarLevel: String?, onlyLiked: Bool) async throws -> BeverageList
   func getBeverageDetail(productID: String) async throws -> BeverageDetail
   func getBeverageMonthCalender(dateInWeek: String) async throws -> [BeverageCalendar]
   func getBeverageWeeklyCalender(dateInWeek: String) async throws -> [BeverageCalendar]

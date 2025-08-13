@@ -4,7 +4,7 @@ import Dependencies
 
 public protocol BeverageUseCaseProtocol: Sendable {
   func getBeverageCount() async throws -> BeverageCount
-  func getBeverageList(cursor: String?) async throws -> BeverageList
+  func getBeverageList(cursor: String?, sugarLevel: BeverageSugarLevelType?, onlyLiked: Bool) async throws -> BeverageList
   func getBeverageDetail(productID: String) async throws -> BeverageDetail
   func getBeverageMonthCalender(dateInWeek: String) async throws -> [BeverageCalendar]
   func getBeverageWeeklyCalender(dateInWeek: String) async throws -> [BeverageCalendar]
@@ -25,8 +25,8 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
     return try await beverageRepository.getBeverageCount()
   }
   
-  public func getBeverageList(cursor: String?) async throws -> BeverageList {
-    let beverageList = try await beverageRepository.getBeverageList(cursor: cursor)
+  public func getBeverageList(cursor: String?, sugarLevel: BeverageSugarLevelType?, onlyLiked: Bool) async throws -> BeverageList {
+    let beverageList = try await beverageRepository.getBeverageList(cursor: cursor, sugarLevel: sugarLevel?.rawValue, onlyLiked: onlyLiked)
     let (syncedBeverages, likeCountDiff) = try syncBeverageLike(beverages: beverageList.items)
     
     return BeverageList(

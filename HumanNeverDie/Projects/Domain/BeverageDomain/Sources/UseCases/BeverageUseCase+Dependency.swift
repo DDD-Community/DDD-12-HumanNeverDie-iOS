@@ -28,7 +28,7 @@ public extension DependencyValues {
 
 private struct MockBeverageUseCase: BeverageUseCaseProtocol {
   func getBeverageCount() async throws -> BeverageCount { BeverageCount.mock() }
-  func getBeverageList(cursor: String?) async throws -> BeverageList { BeverageList.mock() }
+  func getBeverageList(cursor: String?, sugarLevel: BeverageSugarLevelType?, onlyLiked: Bool) async throws -> BeverageList { BeverageList.mock() }
   func getBeverageDetail(productID: String) async throws -> BeverageDetail { BeverageDetail.mock() }
   func getBeverageMonthCalender(dateInWeek: String) async throws -> [BeverageCalendar] { BeverageCalendar.mock() }
   func getBeverageWeeklyCalender(dateInWeek: String) async throws -> [BeverageCalendar] { BeverageCalendar.mock() }

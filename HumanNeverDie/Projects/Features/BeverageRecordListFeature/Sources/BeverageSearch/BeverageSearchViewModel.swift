@@ -96,6 +96,7 @@ public final class BeverageSearchViewModel: ViewModelable {
       }
       
     case let .recentSearchListItemTapped(recentText):
+      lastSearchedText = recentText
       state.searchText = recentText
       state.searchType = .list
       

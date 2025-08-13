@@ -12,13 +12,19 @@ import BaseNetwork
 struct BeverageListTarget: AMDAPIRequestable {
   private let cursor: String?
   private let size: Int
+  private let sugarLevel: String?
+  private let onlyLiked: Bool
   
   init(
     cursor: String? = nil,
-    size: Int = 15
+    size: Int = 15,
+    sugarLevel: String? = nil,
+    onlyLiked: Bool = false
   ) {
     self.cursor = cursor
     self.size = size
+    self.sugarLevel = sugarLevel
+    self.onlyLiked = onlyLiked
   }
   
   typealias Response = AMDAPIResponse<BeverageListResponse>
@@ -40,6 +46,14 @@ struct BeverageListTarget: AMDAPIRequestable {
     
     if let cursor {
       parameters.updateValue(cursor, forKey: "cursor")
+    }
+    
+    if let sugarLevel {
+      parameters.updateValue(sugarLevel, forKey: "sugarLevel")
+    }
+    
+    if onlyLiked {
+      parameters.updateValue("true", forKey: "onlyLiked")
     }
     
     parameters.updateValue("\(size)", forKey: "size")
