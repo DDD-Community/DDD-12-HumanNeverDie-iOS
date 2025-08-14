@@ -18,12 +18,25 @@ public struct SettingView: View {
   }
   
   public var body: some View {
-    VStack(alignment: .leading, spacing: 0) {
+    ScrollView(.vertical, showsIndicators: false) {
+      
+      VStack(alignment: .leading, spacing:0) {
+        userTitleContent()
+        
+        SettingCustomButton(
+          title: "보통",
+          progressText: "하루 100g"
+        ) {
+          handleItemTap(SettingItem.goalSetting)
+        }.padding(.top, 24)
+      }.padding(.horizontal, 20)
+       
+      
+      sectionDivider().padding(.vertical, 16)
       
       VStack(alignment: .leading, spacing:0) {
         sectionTitle(title: "사용자 설정")
         SettingsRow(item: SettingItem.accountInfo, onTap: handleItemTap, color: .gray80)
-        SettingsRow(item: SettingItem.goalSetting, onTap: handleItemTap, color: .gray80)
       }.padding(.horizontal, 20)
         .padding(.top, 16)
       
@@ -66,6 +79,17 @@ public struct SettingView: View {
 }
 
 extension SettingView {
+  
+  private func userTitleContent() -> some View {
+    HStack {
+      Text(viewModel.userInfo.nickname)
+        .amdFont(.xlargeBold)
+        .foregroundStyle(.gray80)
+      
+      Spacer()
+    }
+    .padding(.top, 36)  // 이 줄 추가
+  }
   
   private func handleItemTap(_ item: SettingItem) {
     switch item {
