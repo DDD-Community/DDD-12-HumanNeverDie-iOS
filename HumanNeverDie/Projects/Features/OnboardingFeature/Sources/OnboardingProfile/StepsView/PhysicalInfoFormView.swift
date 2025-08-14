@@ -44,7 +44,7 @@ extension PhysicalInfoFormView {
     VStack(spacing: 30) {
       AMDTextField(
         text: Binding(
-          get: { viewModel.state.height },
+          get: { "\(viewModel.state.height)" },
           set: { viewModel.handleAction(.updateHeight($0)) }
         ),
         title: "키",
@@ -59,7 +59,7 @@ extension PhysicalInfoFormView {
       
       AMDTextField(
         text: Binding(
-          get: { viewModel.state.weight },
+          get: { "\(viewModel.state.weight)" },
           set: { viewModel.handleAction(.updateWeight($0)) }
         ),
         title: "몸무게",

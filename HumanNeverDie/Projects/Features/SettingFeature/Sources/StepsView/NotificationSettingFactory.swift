@@ -10,8 +10,8 @@ import UserDomain
 
 @MainActor
 public struct NotificationSettingFactory {
-  public static func create(userInfo: UserInfo) -> some View {
-    let viewModel = NotificationSettingViewModel(userInfo: userInfo)
+  public static func create() -> some View {
+    let viewModel = NotificationSettingViewModel()
     return NotificationSettingView(viewModel: viewModel)
   }
 }

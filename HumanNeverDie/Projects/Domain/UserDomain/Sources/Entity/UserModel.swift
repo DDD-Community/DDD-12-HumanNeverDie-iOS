@@ -7,13 +7,13 @@
 
 import Foundation
 
-public enum Gender: String, CaseIterable {
+public enum Gender: String, CaseIterable, Sendable {
   case none = ""
   case male = "남성"
   case female = "여성"
 }
 
-public enum ActivityLevel: String, CaseIterable {
+public enum ActivityLevel: String, CaseIterable, Sendable {
   case none = ""
   case low = "낮은 편"
   case medium = "보통"
@@ -21,7 +21,7 @@ public enum ActivityLevel: String, CaseIterable {
   
 }
 
-public enum SugarGoal: String, CaseIterable {
+public enum SugarGoal: String, CaseIterable, Sendable {
   case none = ""
   case easy = "쉬움"
   case normal = "보통"

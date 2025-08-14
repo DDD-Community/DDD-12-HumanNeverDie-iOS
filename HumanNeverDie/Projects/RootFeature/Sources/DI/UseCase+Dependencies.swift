@@ -6,6 +6,7 @@
 //
 
 import BeverageDomain
+import UserDomain
 
 import Dependencies
 
@@ -19,4 +20,8 @@ extension BeverageUseCaseKey: @retroactive DependencyKey {
 
 extension BeverageLocalLikeUseCaseKey: @retroactive DependencyKey {
   public static let liveValue: BeverageLocalLikeUseCaseProtocol = BeverageLocalLikeUseCase()
+}
+
+extension UserUseCaseKey: @retroactive DependencyKey {
+  public static let liveValue: UserUseCaseProtocol = UserUseCase()
 }

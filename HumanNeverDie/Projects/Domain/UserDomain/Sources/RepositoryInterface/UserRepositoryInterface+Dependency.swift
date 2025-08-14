@@ -1,0 +1,33 @@
+//
+//  UserRepositoryInterface+Dependency.swift
+//  UserDomain
+//
+//  Created by Seulki Lee on 8/12/25.
+//
+
+import Foundation
+
+import Dependencies
+
+// MARK: - TestDependencyKey
+
+public struct UserRepositoryKey: TestDependencyKey, Sendable {
+  public static let testValue: UserRepositoryInterface = MockUserRepository()
+}
+
+// MARK: - DependencyValues
+
+extension DependencyValues {
+  var userRepository: UserRepositoryInterface {
+    get { self[UserRepositoryKey.self] }
+    set { self[UserRepositoryKey.self] = newValue }
+  }
+}
+
+// MARK: - MockBeverageLikeLocalRepository
+
+private struct MockUserRepository: UserRepositoryInterface {
+  func getUserInfo(userID: String) async throws -> UserInfo { UserInfo.mock() }
+  
+}
+

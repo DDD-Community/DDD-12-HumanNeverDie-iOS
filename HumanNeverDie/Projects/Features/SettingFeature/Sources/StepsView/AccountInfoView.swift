@@ -103,7 +103,7 @@ extension AccountInfoView {
       
       AMDTextField(
         text: Binding(
-          get: { viewModel.state.height },
+          get: { "\(viewModel.state.height)"},
           set: { viewModel.handleAction(.updateHeight($0)) }
         ),
         isFocused: $isHeightFocused,
@@ -119,7 +119,7 @@ extension AccountInfoView {
       
       AMDTextField(
         text: Binding(
-          get: { viewModel.state.weight },
+          get: { "\(viewModel.state.weight)" },
           set: { viewModel.handleAction(.updateWeight($0)) }
         ),
         isFocused: $isWeightFocused,

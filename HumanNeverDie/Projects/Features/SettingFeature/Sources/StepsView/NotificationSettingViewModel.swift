@@ -41,13 +41,13 @@ public final class NotificationSettingViewModel: ViewModelable {
   public var state: State
   private var originalState: State
   
-  public init(userInfo: UserInfo) {
+  public init() {
     let initialState = State(
-      isPermissionGranted: userInfo.isPermissionGranted,
-      isGoalReminderEnabled: userInfo.isGoalReminderEnabled,
-      reminderTime: userInfo.reminderTime,
-      isGoalWarningEnabled: userInfo.isGoalWarningEnabled,
-      isCaffeineNotificationEnabled: userInfo.isCaffeineNotificationEnabled
+      isPermissionGranted: false,
+      isGoalReminderEnabled: false,
+      reminderTime: Self.defaultReminderTime(),
+      isGoalWarningEnabled: false,
+      isCaffeineNotificationEnabled: false
     )
     
     self.state = initialState
@@ -80,11 +80,17 @@ public final class NotificationSettingViewModel: ViewModelable {
   }
   
   public func getReminderTimeString() -> String {
-      return UserInfo.reminderTimeFormatter.string(from: state.reminderTime)
+      return UserNotifications.reminderTimeFormatter.string(from: state.reminderTime)
   }
 }
 
 extension NotificationSettingViewModel {
+  
+  private static func defaultReminderTime() -> Date {
+    var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
+    comps.hour = 12; comps.minute = 0; comps.second = 0
+    return Calendar.current.date(from: comps) ?? Date()
+  }
   
   public var isChangedNotificationSettings: Bool {
     return state != originalState

@@ -58,8 +58,9 @@ public struct SettingView: View {
       
       Spacer()
     }
-    .settingToolbar(item: .settingTitle)
-    
+    .onAppear {
+      viewModel.handleAction(.onAppear)
+    }
     Spacer()
   }
 }

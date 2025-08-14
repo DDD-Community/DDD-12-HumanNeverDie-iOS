@@ -8,5 +8,5 @@
 import Foundation
 
 public protocol UserRepositoryInterface: Sendable {
-    // Add your repository interface methods here
+  func getUserInfo(userID:String) async throws -> UserInfo
 } 

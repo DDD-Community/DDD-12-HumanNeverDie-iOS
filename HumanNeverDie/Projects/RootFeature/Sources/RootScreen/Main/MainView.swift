@@ -4,15 +4,18 @@ import HomeFeature
 import HistoryFeature
 import CommonFeature
 import DesignSystem
+import SettingFeature
 
 public enum AMDTabBarType: String, CaseIterable {
   case home = "홈"
   case history = "히스토리"
+  case myPage = "마이페이지"
   
   var icon: Image {
     switch self {
     case .home: return AMDImage.homeOff24.swiftUIImage
     case .history: return AMDImage.calendarOff24.swiftUIImage
+    case .myPage: return AMDImage.mypageOff24.swiftUIImage
     }
   }
   
@@ -20,6 +23,7 @@ public enum AMDTabBarType: String, CaseIterable {
     switch self {
     case .home: return AMDImage.home24.swiftUIImage
     case .history: return AMDImage.calendar24.swiftUIImage
+    case .myPage: return AMDImage.mypage24.swiftUIImage
     }
   }
 }
@@ -49,6 +53,9 @@ public struct MainView: View {
         
       case .history:
         HistoryViewFactory.create()
+        
+      case .myPage:
+        SettingViewFactory.create()
       }
     }
     .padding(.bottom, 92)

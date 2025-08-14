@@ -20,8 +20,8 @@ public final class AccountInfoViewModel: ViewModelable {
     var nickname: String = ""
     var birthDate: String = ""
     var selectedGender: Gender = .none
-    var height: String = ""
-    var weight: String = ""
+    var height: Int = 0
+    var weight: Int = 0
     var selectedActivity: ActivityLevel = .none
   }
   
@@ -75,10 +75,18 @@ public final class AccountInfoViewModel: ViewModelable {
       state.selectedGender = gender
       
     case .updateHeight(let height):
-      state.height = height
+      
+      guard let intValue = Int(height) else { state.height = 0
+        return
+      }
+      state.height = intValue
       
     case .updateWeight(let weight):
-      state.weight = weight
+      
+      guard let intValue = Int(weight) else { state.weight = 0
+        return
+      }
+      state.weight = intValue
       
     case .updateActivity(let activity):
       state.selectedActivity = activity
