@@ -57,4 +57,8 @@ public extension View {
   func settingToolbar(title: String, onBackTap: @escaping () -> Void) -> some View {
     modifier(SettingToolbarModifier(title: title, onBackTap: onBackTap))
   }
+  
+  func settingToolbar(item: SettingItem, onBackTap: @escaping () -> Void) -> some View {
+    modifier(SettingToolbarModifier(title: item.title, onBackTap: onBackTap))
+  }
 }
