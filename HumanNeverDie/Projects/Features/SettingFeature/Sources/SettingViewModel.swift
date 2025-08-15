@@ -10,12 +10,15 @@ import Observation
 import Shared
 import UserDomain
 import CommonFeature
+import DesignSystem
 
 import Dependencies
 
 @Observable
 @MainActor
 public final class SettingViewModel: ViewModelable {
+  @ObservationIgnored
+  @Dependency(\.toastClient) private var toastClient
   
   public enum CurrentView {
     case main
@@ -29,6 +32,9 @@ public final class SettingViewModel: ViewModelable {
     var isLoading: Bool = false
     var currentView: CurrentView = .main
     let userID: String = "b5219141-afe3-46c6-8c5c-0f7e850a5bef"
+    
+    var sugarIdealG: Int = 0
+    var sugarMaxG: Int = 0
   }
   
   public enum Action {
@@ -36,6 +42,8 @@ public final class SettingViewModel: ViewModelable {
     case loadUserInfo
     case navigateTo(CurrentView)
     case goBack
+    case updateUserInfo(UserInfo)
+    
   }
   
   public var state: State
@@ -66,6 +74,11 @@ public final class SettingViewModel: ViewModelable {
       
     case .goBack:
       state.currentView = .main
+      
+    case .updateUserInfo(let userInfo): // 추가
+      Task {
+        await updateUserInfo(userInfo: userInfo)
+      }
     }
   }
 }
@@ -74,8 +87,6 @@ public final class SettingViewModel: ViewModelable {
 extension SettingViewModel {
   
   private func loadUserData() async {
-    guard !state.isLoading else { return }
-    
     state.isLoading = true
     
     do {
@@ -83,11 +94,37 @@ extension SettingViewModel {
       state.userInfo = result
       state.isLoading = false
       
+      state.userInfo = userInfo
+      
     } catch {
       print("❌ 유저 정보 로딩 실패: \(error)")
       state.isLoading = false
     }
   }
+  
+  private func updateUserInfo(userInfo : UserInfo) async {
+    state.isLoading = true
+    
+    do {
+      let result = try await userUseCase.updateUserInfo(userID: state.userID, userInfo: userInfo)
+      
+      showToast(message: "저장이 완료되었어요", type: .success)
+      state.userInfo = result.toUserInfo()
+      state.sugarIdealG = result.sugarIdealG
+      state.sugarMaxG = result.sugarMaxG
+      
+    } catch {
+      showToast(message: "저장에 실패하였습니다", type: .failure)
+      state.isLoading = false
+    }
+  }
+  
+  private func showToast(message: String, type: AMDToastType) {
+    Task { @MainActor in
+      await toastClient.showToast(.init(message: message, type: type))
+    }
+  }
+  
 }
 
 // MARK: - Public Methods for Navigation

@@ -6,8 +6,11 @@
 //
 
 import SwiftUI
+
 import DesignSystem
 import CommonFeature
+
+import Dependencies
 
 public struct SettingView: View {
   @State private var viewModel: SettingViewModel
@@ -23,7 +26,7 @@ public struct SettingView: View {
       mainSettingView()
     case .accountInfo:
       AccountInfoView(
-        viewModel: AccountInfoViewModel(userInfo: viewModel.userInfo),
+        viewModel: AccountInfoViewModel(userInfo: viewModel.userInfo, settingViewModel: viewModel),
         settingViewModel: viewModel
       )
     case .goalSetting:

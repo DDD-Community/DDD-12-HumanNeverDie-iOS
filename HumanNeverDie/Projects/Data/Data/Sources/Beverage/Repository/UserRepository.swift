@@ -38,6 +38,17 @@ public final class UserRepository: UserRepositoryInterface, @unchecked Sendable 
 
     return response.toDomain()
   }
+  
+  public func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserDomain.UnitInfoRequest {
+    let target = UserInfoUpdateTarget(userID: userID, userInfo: userInfo)
+    let result = try await networkService.requestDDD(target)
+
+    guard let response = result.data else {
+      throw AMDNetworkError.emptyResponse
+    }
+
+    return response.toDomain()
+  }
 
 }
 

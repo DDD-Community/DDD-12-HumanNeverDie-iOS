@@ -10,20 +10,28 @@ import Foundation
 import UserDomain
 import CommonFeature
 
+import Dependencies
+
 @Observable
 @MainActor
 public final class AccountInfoViewModel: ViewModelable {
+  @ObservationIgnored
+  @Dependency(\.alertClient) private var alertClient
+  
   private let validator: UserInfoValidationUseCase
+  private weak var settingViewModel: SettingViewModel?
+  
   
   public struct State: Equatable {
-    //AccountInfoView
     var nickname: String = ""
-    var birthDate: String = ""
+    var birthDate: Date = Date()
     var selectedGender: Gender = .none
     var height: Int = 0
     var weight: Int = 0
     var selectedActivity: ActivityLevel = .none
     var selectedDailySugarGoal: SugarGoal = .none
+    
+    var showAlert = false
   }
   
   public enum Action {
@@ -31,37 +39,41 @@ public final class AccountInfoViewModel: ViewModelable {
     
     // AccountInfoView
     case updateNickname(String)
-    case updateBirthDate(String)
+    case updateBirthDate(Date)
     case updateGender(Gender)
     case updateHeight(String)
     case updateWeight(String)
     case updateActivity(ActivityLevel)
     
     case updateAccountInfoUserInfo
+    case goBack
   }
   
   public var state: State = .init()
   private var originalState: State
-
+  
   public init(
     userInfo: UserInfo,
+    settingViewModel: SettingViewModel,
     validator: UserInfoValidationUseCase = DefaultUserInfoValidationUseCase()
   ) {
-      self.validator = validator
-
-      let initialState = State(
-          nickname: userInfo.nickname,
-          birthDate: userInfo.birthDate,
-          selectedGender: userInfo.selectedGender,
-          height: userInfo.height,
-          weight: userInfo.weight,
-          selectedActivity: userInfo.selectedActivity
-      )
+    self.validator = validator
+    self.settingViewModel = settingViewModel
+    
+    let initialState = State(
+      nickname: userInfo.nickname,
+      birthDate: Date.toStringConvertDate(from:userInfo.birthDate),
+      selectedGender: userInfo.selectedGender,
+      height: userInfo.height,
+      weight: userInfo.weight,
+      selectedActivity: userInfo.selectedActivity,
+      selectedDailySugarGoal: userInfo.selectedDailySugarGoal
+    )
     
     self.state = initialState
-      self.originalState = initialState
+    self.originalState = initialState
   }
-
+  
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
@@ -71,6 +83,7 @@ public final class AccountInfoViewModel: ViewModelable {
       
     case .updateBirthDate(let birthDate):
       state.birthDate = birthDate
+      state.showAlert = false
       
     case .updateGender(let gender):
       state.selectedGender = gender
@@ -93,8 +106,12 @@ public final class AccountInfoViewModel: ViewModelable {
       state.selectedActivity = activity
       
     case .updateAccountInfoUserInfo:
-      break
+      Task {
+        await showDeleteAlert()
+      }
       
+    case .goBack:
+      settingViewModel?.handleAction(.goBack)
     }
   }
 }
@@ -117,16 +134,40 @@ extension AccountInfoViewModel {
     return validator.weightErrorMessage(for: state.weight)
   }
   
+  public var getBirthDateConvertString: String {
+    return Date.toDateTitleString(from: state.birthDate)
+  }
+  
+  public var birthDate: Date {
+    return state.birthDate
+  }
+  
   // 현재 상태를 UserInfo로 변환하는 메서드 추가
   public func getCurrentUserInfo() -> UserInfo {
     return UserInfo(
       nickname: state.nickname,
-      birthDate: state.birthDate,
+      birthDate: Date.toDateKeyString(from:state.birthDate),
       selectedGender: state.selectedGender,
       height: state.height,
       weight: state.weight,
       selectedActivity: state.selectedActivity,
       selectedDailySugarGoal: state.selectedDailySugarGoal,
     )
+  }
+  
+  nonisolated private func showDeleteAlert() async {
+    await alertClient.showAlert(.init(
+      title: "일일 당 섭취 목표가 변경될 수 있어요.",
+      message: "수정한 신체 정보에 맞춰 일일 권장 당 섭취량이 변경될 예정이에요",
+      primaryButton: .init(title: "저장", type: .default) {
+        
+        let updatedUserInfo = await self.getCurrentUserInfo()
+        await self.settingViewModel?.handleAction(.updateUserInfo(updatedUserInfo))
+        await self.handleAction(.goBack)
+      },
+      secondaryButton: .init(title: "취소", type: .secondary) {
+        
+      }
+    ))
   }
 }

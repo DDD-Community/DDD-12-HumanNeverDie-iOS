@@ -13,16 +13,12 @@ import CommonFeature
 
 public struct AccountInfoView: View {
   @State public var viewModel: AccountInfoViewModel
-  @State private var showAlert = false
   @FocusState private var isNicknameFocused: Bool
   @FocusState private var isHeightFocused: Bool
   @FocusState private var isWeightFocused: Bool
   
-  let settingViewModel: SettingViewModel // 상위 ViewModel 참조
-  
   public init(viewModel: AccountInfoViewModel, settingViewModel: SettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
-    self.settingViewModel = settingViewModel
   }
   
   public var body: some View {
@@ -37,7 +33,7 @@ public struct AccountInfoView: View {
         .padding(.top, 30)
       
     }.settingToolbar(item: .accountInfo) {
-      settingViewModel.handleAction(.goBack)
+      viewModel.handleAction(.goBack)
     }
   }
 }
@@ -65,18 +61,28 @@ extension AccountInfoView {
       
       AMDTextField(
         text: Binding(
-          get: { viewModel.state.birthDate },
-          set: { viewModel.handleAction(.updateBirthDate($0)) }
+          get: { viewModel.getBirthDateConvertString },
+          set: { _ in }
         ),
         title: "생년월일",
         placeholder: "생년월일을 입력해 주세요",
         rightButtonType: .date,
         rightButtonAction: {
-          showAlert = true
+          viewModel.state.showAlert = true
         }
       )
       
       contentGenderSection()
+    }
+    .amdBottomSheet(isPresented: $viewModel.state.showAlert, detents: [.height(310)]) {
+      AMDDatePickerView(
+        title: "생년월일",
+        isResetButtonHidden: true,
+        type: .yearMonthDay,
+        initialDate: viewModel.birthDate
+      ) {
+        viewModel.handleAction(.updateBirthDate($0))
+      }
     }
     .padding(.horizontal, 20)
   }
@@ -166,13 +172,13 @@ extension AccountInfoView {
       type: viewModel.isChangedAccountInfo ? .default : .secondary
     ) {
       guard viewModel.isChangedAccountInfo else {
-        settingViewModel.handleAction(.goBack)
+        viewModel.handleAction(.goBack)
         return
       }
       
       withAnimation(.easeInOut) {
         viewModel.handleAction(.updateAccountInfoUserInfo)
-        settingViewModel.handleAction(.goBack)
+//        viewModel.handleAction(.goBack)
       }
     }
   }

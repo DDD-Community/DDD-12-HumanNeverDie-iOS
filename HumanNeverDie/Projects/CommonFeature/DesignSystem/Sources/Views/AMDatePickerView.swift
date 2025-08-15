@@ -19,12 +19,14 @@ public struct AMDDatePickerView: View {
     title: String = "날짜 선택",
     isResetButtonHidden: Bool = true,
     type: AMDDatePicker.PickerType,
+    initialDate: Date = Date(),
     action: @escaping (Date) -> Void
   ) {
     self.title = title
     self.type = type
     self.isResetButtonHidden = isResetButtonHidden
     self.action = action
+    self._date = State(initialValue: initialDate)
     
   }
   
