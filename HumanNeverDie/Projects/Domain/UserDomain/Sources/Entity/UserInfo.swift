@@ -15,11 +15,6 @@ public struct UserInfo: Equatable, Sendable {
     public let weight: Int
     public let selectedActivity: ActivityLevel
     public let selectedDailySugarGoal: SugarGoal
-//    public let isPermissionGranted: Bool
-//    public let isGoalReminderEnabled: Bool
-//    public let reminderTime: Date
-//    public let isGoalWarningEnabled: Bool
-//    public let isCaffeineNotificationEnabled: Bool
 
     public init(
         nickname: String,

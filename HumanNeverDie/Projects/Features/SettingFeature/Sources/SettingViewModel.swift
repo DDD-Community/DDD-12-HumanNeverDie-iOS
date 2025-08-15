@@ -17,18 +17,30 @@ import Dependencies
 @MainActor
 public final class SettingViewModel: ViewModelable {
     
+    public enum CurrentView {
+        case main
+        case accountInfo
+    }
+    
     public struct State: Equatable {
         var userInfo: UserInfo
         var isLoading: Bool = false
+        var currentView: CurrentView = .main
         let userID: String = "b5219141-afe3-46c6-8c5c-0f7e850a5bef"
     }
     
     public enum Action {
         case onAppear
         case loadUserInfo
+        case navigateTo(CurrentView)
+        case goBack
     }
     
     public var state: State
+    
+    // 편의 프로퍼티
+    public var currentView: CurrentView { state.currentView }
+    public var userInfo: UserInfo { state.userInfo }
     
     @ObservationIgnored
     @Dependency(\.userUseCase) private var userUseCase
@@ -46,6 +58,12 @@ public final class SettingViewModel: ViewModelable {
             Task {
                 await loadUserData()
             }
+            
+        case .navigateTo(let view):
+            state.currentView = view
+            
+        case .goBack:
+            state.currentView = .main
         }
     }
 }

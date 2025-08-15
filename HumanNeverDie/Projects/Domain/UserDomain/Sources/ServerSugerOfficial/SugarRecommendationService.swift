@@ -65,17 +65,17 @@ class SugarRecommendationService {
   private func calculateBMR(age: Int, weight: Double, gender: Gender) -> Double {
     switch age {
     case 18...30:
-      return gender == .male
+      return gender == .MALE
       ? (15.3 * weight + 679)
       : (14.7 * weight + 496)
       
     case 31...60:
-      return gender == .male
+      return gender == .MALE
       ? (11.6 * weight + 879)
       : (8.7 * weight + 829)
       
     case let x where x > 60:
-      return gender == .male
+      return gender == .MALE
       ? (13.5 * weight + 487)
       : (10.5 * weight + 596)
       

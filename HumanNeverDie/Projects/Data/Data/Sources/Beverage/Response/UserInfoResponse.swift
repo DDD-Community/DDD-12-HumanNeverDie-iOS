@@ -23,11 +23,11 @@ extension UserInfoResponse {
        return UserInfo(
            nickname: nickname,
            birthDate: birthDay,
-           selectedGender: Gender(rawValue: gender.lowercased()) ?? .none,
+           selectedGender: Gender(rawValue: gender) ?? .none,
            height: heightCm,
            weight: weightKg,
-           selectedActivity: ActivityLevel(rawValue: activityRange.lowercased()) ?? .none,
-           selectedDailySugarGoal: SugarGoal(rawValue: sugarIntakeLevel.lowercased()) ?? .none
+           selectedActivity: ActivityLevel(rawValue: activityRange) ?? .none,
+           selectedDailySugarGoal: SugarGoal(rawValue: sugarIntakeLevel) ?? .none
        )
    }
 }

@@ -8,24 +8,49 @@
 import Foundation
 
 public enum Gender: String, CaseIterable, Sendable {
-  case none = ""
-  case male = "남성"
-  case female = "여성"
+    case none = ""
+    case MALE = "MALE"
+    case FEMALE = "FEMALE"
+    
+    public var description: String {
+        switch self {
+        case .none: return ""
+        case .MALE: return "남성"
+        case .FEMALE: return "여성"
+        }
+    }
 }
 
 public enum ActivityLevel: String, CaseIterable, Sendable {
   case none = ""
-  case low = "낮은 편"
-  case medium = "보통"
-  case high = "높은 편"
+  case loose = "LOOSE"
+  case normal = "NORMAL"
+  case tight = "TIGHT"
   
+  public var description: String {
+      switch self {
+      case .none: return ""
+      case .loose: return "낮은 편"
+      case .normal: return "보통"
+      case .tight: return "높은 편"
+      }
+  }
 }
 
 public enum SugarGoal: String, CaseIterable, Sendable {
   case none = ""
-  case easy = "쉬움"
-  case normal = "보통"
-  case hard = "어려움"
+  case easy = "EASY"
+  case normal = "NORMAL"
+  case hard = "HARD"
+  
+  public var descriptionTitle: String {
+    switch self {
+    case .none: return ""
+    case .easy: return "쉬움"
+    case .normal: return "보통"
+    case .hard: return "어려움"
+    }
+  }
   
   public var description: String {
     switch self {

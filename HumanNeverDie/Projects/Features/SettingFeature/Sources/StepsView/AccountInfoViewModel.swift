@@ -23,6 +23,7 @@ public final class AccountInfoViewModel: ViewModelable {
     var height: Int = 0
     var weight: Int = 0
     var selectedActivity: ActivityLevel = .none
+    var selectedDailySugarGoal: SugarGoal = .none
   }
   
   public enum Action {
@@ -57,7 +58,12 @@ public final class AccountInfoViewModel: ViewModelable {
           selectedActivity: userInfo.selectedActivity
       )
 
-      self.state = initialState
+    print("🔍 AccountInfoViewModel Init")
+    print("📝 selectedGender: \(userInfo.selectedGender)")
+    print("📝 selectedActivity: \(userInfo.selectedActivity)")
+    print("📝 nickname: \(userInfo.nickname)")
+    print("📝 전체 userInfo: \(userInfo)")
+    self.state = initialState
       self.originalState = initialState
   }
 
@@ -115,5 +121,17 @@ extension AccountInfoViewModel {
   public var weightErrorMessage: String? {
     return validator.weightErrorMessage(for: state.weight)
   }
+  
+  // 현재 상태를 UserInfo로 변환하는 메서드 추가
+  public func getCurrentUserInfo() -> UserInfo {
+    return UserInfo(
+      nickname: state.nickname,
+      birthDate: state.birthDate,
+      selectedGender: state.selectedGender,
+      height: state.height,
+      weight: state.weight,
+      selectedActivity: state.selectedActivity,
+      selectedDailySugarGoal: state.selectedDailySugarGoal,
+    )
+  }
 }
-

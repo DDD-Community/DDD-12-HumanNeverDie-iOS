@@ -18,6 +18,18 @@ public struct SettingView: View {
   }
   
   public var body: some View {
+    switch viewModel.currentView {
+    case .main:
+      mainSettingView()
+    case .accountInfo:
+      AccountInfoView(
+        viewModel: AccountInfoViewModel(userInfo: viewModel.userInfo),
+        settingViewModel: viewModel
+      )
+    }
+  }
+  
+  private func mainSettingView() -> some View {
     ScrollView(.vertical, showsIndicators: false) {
       
       VStack(alignment: .leading, spacing:0) {
@@ -74,7 +86,6 @@ public struct SettingView: View {
     .onAppear {
       viewModel.handleAction(.onAppear)
     }
-    Spacer()
   }
 }
 
@@ -88,27 +99,29 @@ extension SettingView {
       
       Spacer()
     }
-    .padding(.top, 36)  // 이 줄 추가
+    .padding(.top, 36)
   }
   
   private func handleItemTap(_ item: SettingItem) {
     switch item {
     case .accountInfo:
-      router.push(to: .SettingAccountInfo)
+      viewModel.handleAction(.navigateTo(.accountInfo))
       
     case .goalSetting:
-      router.push(to: .SettingGoalSetting)
+      break
+//      router.push(to: .SettingGoalSetting)
       
     case .notificationSetting:
-      router.push(to: .SettingNotificationSetting)
+      break
+//      router.push(to: .SettingNotificationSetting)
       
     case .feedback: break
       //앱스토어 리뷰이동
       
-    case .terms:
-      router.push(to: .SettingTerms)
+    case .terms: break
+//      router.push(to: .SettingTerms)
       
-    case .settingTitle:
+    case .settingTitle: 
       break
     case .logout:
       break
@@ -122,6 +135,12 @@ extension SettingView {
       .amdFont(.smallBold)
       .foregroundStyle(.gray85)
       .padding(.vertical, 10)
+  }
+  
+  private func sectionDivider() -> some View {
+    // sectionDivider 구현이 필요합니다
+    Divider()
+      .background(.gray40)
   }
   
   private struct SettingsRow: View {
@@ -172,4 +191,3 @@ extension SettingView {
     }
   }
 }
-

@@ -13,9 +13,5 @@ public enum Route: Hashable {
   case beverageRecord(productID: String, isLiked: Bool, recordDate: Date)
   case onboardingProfile
   case Setting
-  case SettingAccountInfo
-  case SettingGoalSetting
-  case SettingNotificationSetting
-  case SettingTerms
   
 }

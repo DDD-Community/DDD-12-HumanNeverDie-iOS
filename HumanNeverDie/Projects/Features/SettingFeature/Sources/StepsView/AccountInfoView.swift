@@ -14,13 +14,15 @@ import CommonFeature
 public struct AccountInfoView: View {
   @State public var viewModel: AccountInfoViewModel
   @State private var showAlert = false
-  @Environment(\.dismiss) private var dismiss
   @FocusState private var isNicknameFocused: Bool
   @FocusState private var isHeightFocused: Bool
   @FocusState private var isWeightFocused: Bool
   
-  public init(viewModel: AccountInfoViewModel) {
+  let settingViewModel: SettingViewModel // 상위 ViewModel 참조
+  
+  public init(viewModel: AccountInfoViewModel, settingViewModel: SettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
+    self.settingViewModel = settingViewModel
   }
   
   public var body: some View {
@@ -34,7 +36,9 @@ public struct AccountInfoView: View {
       bottomButtonView()
         .padding(.top, 30)
       
-    }.settingToolbar(item: .accountInfo)
+    }.settingToolbar(item: .accountInfo) {
+      settingViewModel.handleAction(.goBack)
+    }
   }
 }
 
@@ -75,7 +79,6 @@ extension AccountInfoView {
       contentGenderSection()
     }
     .padding(.horizontal, 20)
-    .padding(.top, 48)
   }
   
   @ViewBuilder
@@ -84,9 +87,9 @@ extension AccountInfoView {
       AMDTextField.titleLabel("성별")
       
       HStack(spacing: 12) {
-        ForEach([Gender.male, Gender.female], id: \.self) { gender in
+        ForEach([Gender.MALE, Gender.FEMALE], id: \.self) { gender in
           AMDChipButton(
-            title: gender.rawValue,
+            title: gender.description,
             isSelected: viewModel.state.selectedGender  == gender
           ) {
             viewModel.state.selectedGender  = gender
@@ -145,9 +148,9 @@ extension AccountInfoView {
       AMDTextField.titleLabel("활동량")
       
       VStack(spacing: 12) {
-        ForEach([ActivityLevel.high, ActivityLevel.medium, ActivityLevel.low], id: \.self) { activity in
+        ForEach([ActivityLevel.tight, ActivityLevel.normal, ActivityLevel.loose], id: \.self) { activity in
           AMDOptionButton(
-            title: activity.rawValue,
+            title: activity.description,
             isSelected: viewModel.state.selectedActivity == activity
           ) {
             viewModel.handleAction(.updateActivity(activity))
@@ -162,11 +165,25 @@ extension AccountInfoView {
     SettingBottomButton(
       type: viewModel.isChangedAccountInfo ? .default : .secondary
     ) {
-      guard viewModel.isChangedAccountInfo else { return }
+      guard viewModel.isChangedAccountInfo else {
+        settingViewModel.handleAction(.goBack)
+        return
+      }
+      
       withAnimation(.easeInOut) {
         viewModel.handleAction(.updateAccountInfoUserInfo)
-        dismiss()
+        
+        // 업데이트된 사용자 정보를 상위 ViewModel에 전달
+//        let updatedUserInfo = viewModel.getCurrentUserInfo()
+//        settingViewModel.handleAction(.updateUserInfo(updatedUserInfo))
+        
+        settingViewModel.handleAction(.goBack)
       }
     }
+  }
+  
+  private func sectionDivider() -> some View {
+    Divider()
+      .background(.gray25)
   }
 }
