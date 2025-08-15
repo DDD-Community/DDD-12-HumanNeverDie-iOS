@@ -13,12 +13,9 @@ import CommonFeature
 
 public struct GoalSettingView: View {
   @State public var viewModel: GoalSettingViewModel
-
-  let settingViewModel: SettingViewModel // 상위 ViewModel 참조
   
   public init(viewModel: GoalSettingViewModel, settingViewModel: SettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
-    self.settingViewModel = settingViewModel
   }
   
   public var body: some View {
@@ -32,7 +29,10 @@ public struct GoalSettingView: View {
       }
     }
     .settingToolbar(item: .goalSetting) {
-      settingViewModel.handleAction(.goBack)
+      viewModel.handleAction(.goBack)
+    }
+    .onAppear {
+      viewModel.handleAction(.onAppear)
     }
   }
 }
@@ -71,11 +71,11 @@ extension GoalSettingView {
         .offset(y: -13)
       
       HStack(spacing: 0) {
-        Text("\(viewModel.nickname)님의 일일 권장 당 섭취량은 ")
+        Text("\(viewModel.userInfo.nickname)님의 일일 권장 당 섭취량은 ")
           .amdFont(.largeRegular)
           .foregroundColor(baseTextColor)
         
-        Text("200g")
+        Text("\(viewModel.normalSugarAmount)g")
           .amdFont(.largeBold)
           .foregroundColor(baseTextColor)
         
@@ -110,7 +110,7 @@ extension GoalSettingView {
         AMDOptionButton(
           title: dailyGoal.descriptionTitle,
           subtitle: dailyGoal.description,
-          trailingText: dailyGoal.targetAmount,
+          trailingText: "하루 \(viewModel.getSugarGoalAmount(for: dailyGoal))g",
           isSelected: viewModel.state.selectedDailySugarGoal == dailyGoal
         ) {
           viewModel.handleAction(.updateDailySugarGoal(dailyGoal))
@@ -142,7 +142,6 @@ extension GoalSettingView {
       guard viewModel.isChangedAccountInfo else { return }
       withAnimation(.easeInOut) {
         viewModel.handleAction(.updateAccountInfoUserInfo)
-        settingViewModel.handleAction(.goBack)
       }
     }
   }

@@ -31,7 +31,7 @@ public struct SettingView: View {
       )
     case .goalSetting:
       GoalSettingView(
-        viewModel: GoalSettingViewModel(userInfo: viewModel.userInfo),
+        viewModel: GoalSettingViewModel(userInfo: viewModel.userInfo,  settingViewModel: viewModel),
         settingViewModel: viewModel
       )
     case .Notification:

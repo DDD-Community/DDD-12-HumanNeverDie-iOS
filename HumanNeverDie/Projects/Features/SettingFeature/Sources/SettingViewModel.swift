@@ -34,9 +34,6 @@ public final class SettingViewModel: ViewModelable {
     let userID: String = "b5219141-afe3-46c6-8c5c-0f7e850a5bef"
     
     var sugarMaxG: Int = 0
-    var looseSugarMaxG: Int = 0
-    var normalSugarMaxG: Int = 0
-    var tightSugarMaxG: Int = 0
   }
   
   public enum Action {
@@ -123,26 +120,12 @@ extension SettingViewModel {
   private func setUserInfo(userInfo: UserInfo) {
     state.userInfo = userInfo
     
-    let sugarService = SugarRecommendationService()
-    let recommendedSugar = sugarService.calculate(for: userInfo)
+    let sugarService = SugarUserCalculation()
+    let userSugerMaxG = sugarService.calculateUserSugarGoal(for: userInfo)
     
-    state.userInfo = userInfo
-    state.looseSugarMaxG = Int(recommendedSugar.looseSugarMaxG.rounded())
-    state.normalSugarMaxG = Int(recommendedSugar.normalSugarMaxG.rounded())
-    state.tightSugarMaxG = Int(recommendedSugar.tightSugarMaxG.rounded())
-    
-    switch userInfo.selectedDailySugarGoal {
-    case .easy:
-      state.sugarMaxG = state.looseSugarMaxG
-    case .normal:
-      state.sugarMaxG = state.normalSugarMaxG
-    case .hard:
-      state.sugarMaxG = state.tightSugarMaxG
-    default:
-      state.sugarMaxG  = 0
-    }
-    
-//    print("서버 = \(state.sugarMaxG) = , 쉬움 : \(state.looseSugarMaxG), 보통 : \(state.normalSugarMaxG), 어려움 : \(state.tightSugarMaxG)")
+    print("서버 = \(state.sugarMaxG) == \(userSugerMaxG)")
+    state.sugarMaxG = userSugerMaxG
+  
   }
   
 }

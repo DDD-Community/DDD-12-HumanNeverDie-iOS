@@ -178,7 +178,6 @@ extension AccountInfoView {
       
       withAnimation(.easeInOut) {
         viewModel.handleAction(.updateAccountInfoUserInfo)
-//        viewModel.handleAction(.goBack)
       }
     }
   }

@@ -1,5 +1,5 @@
 //
-//  SugarRecommendationService.swift
+//  SugarUserCalculation.swift
 //  SettingFeature
 //
 //  Created by Seulki Lee on 8/15/25.
@@ -25,10 +25,49 @@ public struct RecommendedSugar {
   public let looseSugarMaxG: Double    // 쉬움일 때 MAX
   public let normalSugarMaxG: Double   // 보통일 때 MAX
   public let tightSugarMaxG: Double    // 어려움일 때 MAX
+  
+
+  public init(looseSugarMaxG: Double, normalSugarMaxG: Double, tightSugarMaxG: Double) {
+    self.looseSugarMaxG = looseSugarMaxG
+    self.normalSugarMaxG = normalSugarMaxG
+    self.tightSugarMaxG = tightSugarMaxG
+  }
 }
 
-public class SugarRecommendationService {
+public class SugarUserCalculation {
   public init() {}
+  
+  public func calculateUserSugarGoal(for userInfo: UserInfo) -> Int {
+    let recommendedSugar = calculate(for: userInfo)
+    
+    // 사용자의 실제 활동량에 따른 기본 MAX 값 선택
+    let baseSugarMaxG: Double
+    switch userInfo.selectedActivity {
+    case .loose:
+      baseSugarMaxG = recommendedSugar.looseSugarMaxG
+    case .normal:
+      baseSugarMaxG = recommendedSugar.normalSugarMaxG
+    case .tight:
+      baseSugarMaxG = recommendedSugar.tightSugarMaxG
+    case .none:
+      baseSugarMaxG = 0
+    }
+    
+    // 목표에 따른 비율 적용
+    let finalSugarGoal: Double
+    switch userInfo.selectedDailySugarGoal {
+    case .easy:
+      finalSugarGoal = baseSugarMaxG // 100%
+    case .normal:
+      finalSugarGoal = baseSugarMaxG * 0.5 // 50%
+    case .hard:
+      finalSugarGoal = baseSugarMaxG * 0.2 // 20%
+    case .none:
+      finalSugarGoal = 0
+    }
+    
+    return Int(finalSugarGoal.rounded(.up))
+  }
   
   public func calculate(for userInfo: UserInfo) -> RecommendedSugar {
     let age = calculateAge(from: userInfo.birthDate)
@@ -55,9 +94,9 @@ public class SugarRecommendationService {
     let tightTEE = calculateTEE(bmr: bmr, activityLevel: .tight)
     
     // 각각의 MAX 값 계산 (5% 기준)
-    let looseSugarMaxG = (looseTEE * 0.05) / 4.0
-    let normalSugarMaxG = (normalTEE * 0.05) / 4.0
-    let tightSugarMaxG = (tightTEE * 0.05) / 4.0
+    let looseSugarMaxG = (looseTEE * 0.1) / 4.0
+    let normalSugarMaxG = (normalTEE * 0.1) / 4.0
+    let tightSugarMaxG = (tightTEE * 0.1) / 4.0
     
     return RecommendedSugar(
       looseSugarMaxG: looseSugarMaxG,
