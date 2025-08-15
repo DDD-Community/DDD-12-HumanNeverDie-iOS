@@ -57,12 +57,7 @@ public final class AccountInfoViewModel: ViewModelable {
           weight: userInfo.weight,
           selectedActivity: userInfo.selectedActivity
       )
-
-    print("🔍 AccountInfoViewModel Init")
-    print("📝 selectedGender: \(userInfo.selectedGender)")
-    print("📝 selectedActivity: \(userInfo.selectedActivity)")
-    print("📝 nickname: \(userInfo.nickname)")
-    print("📝 전체 userInfo: \(userInfo)")
+    
     self.state = initialState
       self.originalState = initialState
   }
