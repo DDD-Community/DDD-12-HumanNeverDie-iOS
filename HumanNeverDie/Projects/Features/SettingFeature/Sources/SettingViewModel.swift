@@ -20,6 +20,7 @@ public final class SettingViewModel: ViewModelable {
     public enum CurrentView {
         case main
         case accountInfo
+        case goalSetting
     }
     
     public struct State: Equatable {

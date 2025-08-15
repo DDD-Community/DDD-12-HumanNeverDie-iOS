@@ -26,6 +26,11 @@ public struct SettingView: View {
         viewModel: AccountInfoViewModel(userInfo: viewModel.userInfo),
         settingViewModel: viewModel
       )
+    case .goalSetting:
+      GoalSettingView(
+        viewModel: GoalSettingViewModel(userInfo: viewModel.userInfo),
+        settingViewModel: viewModel
+      )
     }
   }
   
@@ -108,8 +113,7 @@ extension SettingView {
       viewModel.handleAction(.navigateTo(.accountInfo))
       
     case .goalSetting:
-      break
-//      router.push(to: .SettingGoalSetting)
+      viewModel.handleAction(.navigateTo(.goalSetting))
       
     case .notificationSetting:
       break

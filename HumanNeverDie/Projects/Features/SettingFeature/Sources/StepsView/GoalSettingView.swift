@@ -13,22 +13,27 @@ import CommonFeature
 
 public struct GoalSettingView: View {
   @State public var viewModel: GoalSettingViewModel
-  @Environment(\.dismiss) private var dismiss
+
+  let settingViewModel: SettingViewModel // 상위 ViewModel 참조
   
-  public init(viewModel: GoalSettingViewModel) {
+  public init(viewModel: GoalSettingViewModel, settingViewModel: SettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
+    self.settingViewModel = settingViewModel
   }
   
   public var body: some View {
-    VStack(spacing: 0) {
-      contentView()
-      bottomInfoView()
-      Spacer()
-      bottomButtonView()
+    ScrollView {
+      VStack(spacing: 0) {
+        contentView()
+        bottomInfoView()
+        Spacer()
+        bottomButtonView()
+          .padding(.top, 30)
+      }
     }
-    .background(.gray0)
-    .ignoresSafeArea(edges: .bottom)
-    .settingToolbar(item: .goalSetting)
+    .settingToolbar(item: .goalSetting) {
+      settingViewModel.handleAction(.goBack)
+    }
   }
 }
 
@@ -103,7 +108,7 @@ extension GoalSettingView {
     VStack(spacing: 10) {
       ForEach([SugarGoal.easy, SugarGoal.normal, SugarGoal.hard], id: \.self) { dailyGoal in
         AMDOptionButton(
-          title: dailyGoal.rawValue,
+          title: dailyGoal.descriptionTitle,
           subtitle: dailyGoal.description,
           trailingText: dailyGoal.targetAmount,
           isSelected: viewModel.state.selectedDailySugarGoal == dailyGoal
@@ -137,7 +142,7 @@ extension GoalSettingView {
       guard viewModel.isChangedAccountInfo else { return }
       withAnimation(.easeInOut) {
         viewModel.handleAction(.updateAccountInfoUserInfo)
-        dismiss()
+        settingViewModel.handleAction(.goBack)
       }
     }
   }

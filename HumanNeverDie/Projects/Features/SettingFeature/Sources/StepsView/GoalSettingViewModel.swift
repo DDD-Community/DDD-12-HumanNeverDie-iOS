@@ -14,6 +14,7 @@ import CommonFeature
 @Observable
 @MainActor
 public final class GoalSettingViewModel: ViewModelable {
+  private let validator: UserInfoValidationUseCase
   
   public struct State: Equatable {
     var nickname: String = ""
@@ -29,14 +30,19 @@ public final class GoalSettingViewModel: ViewModelable {
   public var state: State = .init()
   private var originalState: State
   
-  public init(userInfo: UserInfo) {
-    let initialState = State(
-      nickname : userInfo.nickname,
-      selectedDailySugarGoal: userInfo.selectedDailySugarGoal
-    )
+  public init(
+    userInfo: UserInfo,
+    validator: UserInfoValidationUseCase = DefaultUserInfoValidationUseCase()
+  ) {
+      self.validator = validator
+
+      let initialState = State(
+        nickname: userInfo.nickname,
+        selectedDailySugarGoal: userInfo.selectedDailySugarGoal
+      )
     
     self.state = initialState
-    self.originalState = initialState
+      self.originalState = initialState
   }
   
   public func initWithSugarGoal(sugarGoal: SugarGoal) {
