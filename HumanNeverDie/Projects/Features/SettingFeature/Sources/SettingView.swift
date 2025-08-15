@@ -31,6 +31,11 @@ public struct SettingView: View {
         viewModel: GoalSettingViewModel(userInfo: viewModel.userInfo),
         settingViewModel: viewModel
       )
+    case .Notification:
+      NotificationSettingView(
+        viewModel: NotificationSettingViewModel(userID: viewModel.userID),
+        settingViewModel: viewModel
+      )
     }
   }
   
@@ -116,8 +121,7 @@ extension SettingView {
       viewModel.handleAction(.navigateTo(.goalSetting))
       
     case .notificationSetting:
-      break
-//      router.push(to: .SettingNotificationSetting)
+      viewModel.handleAction(.navigateTo(.Notification))
       
     case .feedback: break
       //앱스토어 리뷰이동

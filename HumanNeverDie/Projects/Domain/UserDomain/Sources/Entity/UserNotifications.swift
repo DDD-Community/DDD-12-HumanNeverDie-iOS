@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct UserNotifications: Equatable {
+public struct UserNotifications: Equatable, Sendable {
     public let isPermissionGranted: Bool
     public let isGoalReminderEnabled: Bool
     public let reminderTime: String
@@ -28,7 +28,7 @@ public struct UserNotifications: Equatable {
         self.isCaffeineNotificationEnabled = isCaffeineNotificationEnabled
     }
 
-  nonisolated(unsafe) public static let defaultUserNotifications = UserNotifications(
+ public static let defaultUserNotifications = UserNotifications(
         isPermissionGranted: false,
         isGoalReminderEnabled: false,
         reminderTime: "오후 12시 10분",

@@ -9,4 +9,5 @@ import Foundation
 
 public protocol UserRepositoryInterface: Sendable {
   func getUserInfo(userID:String) async throws -> UserInfo
-} 
+  func getUserNotificationInfo(userID:String) async throws -> UserNotifications
+}

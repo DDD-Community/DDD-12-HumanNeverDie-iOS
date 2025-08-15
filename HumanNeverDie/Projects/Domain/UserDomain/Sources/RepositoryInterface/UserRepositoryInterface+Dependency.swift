@@ -28,6 +28,6 @@ extension DependencyValues {
 
 private struct MockUserRepository: UserRepositoryInterface {
   func getUserInfo(userID: String) async throws -> UserInfo { UserInfo.mock() }
-  
+  func getUserNotificationInfo(userID: String) async throws -> UserNotifications { UserNotifications.mock()}
 }
 

@@ -27,5 +27,17 @@ public final class UserRepository: UserRepositoryInterface, @unchecked Sendable 
 
     return response.toDomain()
   }
+  
+  public func getUserNotificationInfo(userID: String) async throws -> UserDomain.UserNotifications {
+    let target = UserNotificatTarget(userID: userID)
+    let result = try await networkService.requestDDD(target)
+
+    guard let response = result.data else {
+      throw AMDNetworkError.emptyResponse
+    }
+
+    return response.toDomain()
+  }
+
 }
 

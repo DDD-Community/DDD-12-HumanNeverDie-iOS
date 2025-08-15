@@ -11,11 +11,13 @@ import CommonFeature
 
 public struct NotificationSettingView: View {
   @State private var viewModel: NotificationSettingViewModel
-  @Environment(\.dismiss) private var dismiss
   @State private var showTimePicker = false
   
-  public init(viewModel: NotificationSettingViewModel) {
+  let settingViewModel: SettingViewModel // 상위 ViewModel 참조
+  
+  public init(viewModel: NotificationSettingViewModel, settingViewModel: SettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
+    self.settingViewModel = settingViewModel
   }
   
   public var body: some View {
@@ -37,12 +39,14 @@ public struct NotificationSettingView: View {
         pickerType: .time
       )
       .frame(height: 200)
+    }.onAppear {
+      viewModel.handleAction(.onAppear)
     }
   }
 }
 
 extension NotificationSettingView {
-
+  
   @ViewBuilder
   private func notificationToggleSection() -> some View {
     VStack(spacing: 23) {
