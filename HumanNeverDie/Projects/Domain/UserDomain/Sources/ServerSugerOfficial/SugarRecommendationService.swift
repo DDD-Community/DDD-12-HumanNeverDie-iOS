@@ -7,17 +7,10 @@
 
 import Foundation
 
-enum ActivityRange {
-  case loose   // 1.4–1.5
-  case normal  // 1.6–1.7
-  case tight   // 1.8–1.9
-}
-
 struct MemberHealthMetric {
   let age: Int?
   let weightKg: Double?
   let gender: Gender
-  let activityRange: ActivityRange?
 }
 
 class Member {
@@ -28,38 +21,62 @@ class Member {
   }
 }
 
-struct RecommendedSugar {
-  let sugarMaxG: Double
-  let sugarIdealG: Double
+public struct RecommendedSugar {
+  public let looseSugarMaxG: Double    // 쉬움일 때 MAX
+  public let normalSugarMaxG: Double   // 보통일 때 MAX
+  public let tightSugarMaxG: Double    // 어려움일 때 MAX
 }
 
-class SugarRecommendationService {
+public class SugarRecommendationService {
+  public init() {}
   
-  func calculate(for member: Member) -> RecommendedSugar {
-    // 필수 정보가 하나라도 없으면 0 반환
+  public func calculate(for userInfo: UserInfo) -> RecommendedSugar {
+    let age = calculateAge(from: userInfo.birthDate)
+    
     guard
-      let metric = member.healthMetric,
-      let age = metric.age,
-      let weight = metric.weightKg,
-      let activity = metric.activityRange,
-      metric.gender != .none
+      let age = age,
+      userInfo.selectedGender != .none,
+      userInfo.weight > 0
     else {
-      return RecommendedSugar(sugarMaxG: 0, sugarIdealG: 0)
+      return RecommendedSugar(
+        looseSugarMaxG: 0,
+        normalSugarMaxG: 0,
+        tightSugarMaxG: 0
+      )
     }
     
-    let gender = metric.gender
+    let gender = userInfo.selectedGender
+    let weight = Double(userInfo.weight)
     let bmr = calculateBMR(age: age, weight: weight, gender: gender)
-    let tee = calculateTEE(bmr: bmr, activityRange: activity)
     
-    // 전체 에너지 섭취 중 당 에너지 비율: 최대 10%, 권장 5%
-    let dailySugarKcalMax = tee * 0.10
-    let dailySugarKcalIdeal = tee * 0.05
+    // 3가지 활동량에 대해 각각 계산
+    let looseTEE = calculateTEE(bmr: bmr, activityLevel: .loose)
+    let normalTEE = calculateTEE(bmr: bmr, activityLevel: .normal)
+    let tightTEE = calculateTEE(bmr: bmr, activityLevel: .tight)
     
-    // 1g 당 4kcal
-    let sugarMaxG = dailySugarKcalMax / 4.0
-    let sugarIdealG = dailySugarKcalIdeal / 4.0
+    // 각각의 MAX 값 계산 (5% 기준)
+    let looseSugarMaxG = (looseTEE * 0.05) / 4.0
+    let normalSugarMaxG = (normalTEE * 0.05) / 4.0
+    let tightSugarMaxG = (tightTEE * 0.05) / 4.0
     
-    return RecommendedSugar(sugarMaxG: sugarMaxG, sugarIdealG: sugarIdealG)
+    return RecommendedSugar(
+      looseSugarMaxG: looseSugarMaxG,
+      normalSugarMaxG: normalSugarMaxG,
+      tightSugarMaxG: tightSugarMaxG
+    )
+  }
+  
+  private func calculateAge(from birthDateString: String) -> Int? {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy-MM-dd"
+    
+    guard let birthDate = formatter.date(from: birthDateString) else {
+      return nil
+    }
+    
+    let calendar = Calendar.current
+    let ageComponents = calendar.dateComponents([.year], from: birthDate, to: Date())
+    return ageComponents.year
   }
   
   private func calculateBMR(age: Int, weight: Double, gender: Gender) -> Double {
@@ -84,17 +101,18 @@ class SugarRecommendationService {
     }
   }
   
-  private func calculateTEE(bmr: Double, activityRange: ActivityRange) -> Double {
+  private func calculateTEE(bmr: Double, activityLevel: ActivityLevel) -> Double {
     let pal: Double
-    switch activityRange {
+    switch activityLevel {
     case .loose:
       pal = 1.45
     case .normal:
       pal = 1.65
     case .tight:
       pal = 1.85
+    case .none:
+      pal = 0
     }
     return bmr * pal
   }
 }
-

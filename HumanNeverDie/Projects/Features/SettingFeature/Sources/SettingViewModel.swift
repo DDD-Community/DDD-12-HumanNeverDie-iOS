@@ -33,8 +33,10 @@ public final class SettingViewModel: ViewModelable {
     var currentView: CurrentView = .main
     let userID: String = "b5219141-afe3-46c6-8c5c-0f7e850a5bef"
     
-    var sugarIdealG: Int = 0
     var sugarMaxG: Int = 0
+    var looseSugarMaxG: Int = 0
+    var normalSugarMaxG: Int = 0
+    var tightSugarMaxG: Int = 0
   }
   
   public enum Action {
@@ -47,10 +49,6 @@ public final class SettingViewModel: ViewModelable {
   }
   
   public var state: State
-  
-  // 편의 프로퍼티
-  public var currentView: CurrentView { state.currentView }
-  public var userInfo: UserInfo { state.userInfo }
   
   @ObservationIgnored
   @Dependency(\.userUseCase) private var userUseCase
@@ -91,10 +89,8 @@ extension SettingViewModel {
     
     do {
       let result = try await userUseCase.getUserInfo(userID: state.userID)
-      state.userInfo = result
+      setUserInfo(userInfo: result)
       state.isLoading = false
-      
-      state.userInfo = userInfo
       
     } catch {
       print("❌ 유저 정보 로딩 실패: \(error)")
@@ -109,8 +105,7 @@ extension SettingViewModel {
       let result = try await userUseCase.updateUserInfo(userID: state.userID, userInfo: userInfo)
       
       showToast(message: "저장이 완료되었어요", type: .success)
-      state.userInfo = result.toUserInfo()
-      state.sugarIdealG = result.sugarIdealG
+      setUserInfo(userInfo: result.toUserInfo())
       state.sugarMaxG = result.sugarMaxG
       
     } catch {
@@ -123,6 +118,31 @@ extension SettingViewModel {
     Task { @MainActor in
       await toastClient.showToast(.init(message: message, type: type))
     }
+  }
+
+  private func setUserInfo(userInfo: UserInfo) {
+    state.userInfo = userInfo
+    
+    let sugarService = SugarRecommendationService()
+    let recommendedSugar = sugarService.calculate(for: userInfo)
+    
+    state.userInfo = userInfo
+    state.looseSugarMaxG = Int(recommendedSugar.looseSugarMaxG.rounded())
+    state.normalSugarMaxG = Int(recommendedSugar.normalSugarMaxG.rounded())
+    state.tightSugarMaxG = Int(recommendedSugar.tightSugarMaxG.rounded())
+    
+    switch userInfo.selectedDailySugarGoal {
+    case .easy:
+      state.sugarMaxG = state.looseSugarMaxG
+    case .normal:
+      state.sugarMaxG = state.normalSugarMaxG
+    case .hard:
+      state.sugarMaxG = state.tightSugarMaxG
+    default:
+      state.sugarMaxG  = 0
+    }
+    
+//    print("서버 = \(state.sugarMaxG) = , 쉬움 : \(state.looseSugarMaxG), 보통 : \(state.normalSugarMaxG), 어려움 : \(state.tightSugarMaxG)")
   }
   
 }

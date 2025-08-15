@@ -49,8 +49,8 @@ public struct SettingView: View {
         userTitleContent()
         
         SettingCustomButton(
-          title: "보통",
-          progressText: "하루 100g"
+          title: viewModel.userInfo.selectedDailySugarGoal.descriptionTitle,
+          progressText: "하루 \(viewModel.sugarMaxG)g"
         ) {
           handleItemTap(SettingItem.goalSetting)
         }.padding(.top, 24)

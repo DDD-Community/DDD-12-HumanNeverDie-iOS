@@ -84,7 +84,7 @@ extension PhysicalInfoFormView {
       AMDTextField.titleLabel("활동량")
       
       VStack(spacing: 12) {
-        ForEach([ActivityLevel.high, ActivityLevel.medium, ActivityLevel.low], id: \.self) { activity in
+        ForEach([ActivityLevel.tight, ActivityLevel.normal, ActivityLevel.loose], id: \.self) { activity in
           AMDOptionButton(
             title: activity.rawValue,
             isSelected: viewModel.state.selectedActivity == activity
