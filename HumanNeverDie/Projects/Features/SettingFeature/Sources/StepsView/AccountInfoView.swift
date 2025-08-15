@@ -172,11 +172,6 @@ extension AccountInfoView {
       
       withAnimation(.easeInOut) {
         viewModel.handleAction(.updateAccountInfoUserInfo)
-        
-        // 업데이트된 사용자 정보를 상위 ViewModel에 전달
-//        let updatedUserInfo = viewModel.getCurrentUserInfo()
-//        settingViewModel.handleAction(.updateUserInfo(updatedUserInfo))
-        
         settingViewModel.handleAction(.goBack)
       }
     }
