@@ -10,7 +10,6 @@ import SwiftUI
 public struct AMDAlert: View {
   private let property: AMDAlertProperty
   private let dismiss: () async -> Void
-  private let isMessageEmpty: Bool
   
   public init(
     _ property: AMDAlertProperty,
@@ -18,7 +17,6 @@ public struct AMDAlert: View {
   ) {
     self.property = property
     self.dismiss = dismiss
-    self.isMessageEmpty = property.message == nil
   }
   
   public var body: some View {
