@@ -30,7 +30,20 @@ public struct NotificationSettingView: View {
     .onAppear {
       viewModel.handleAction(.onAppear)
     }
-    .amdBottomSheet(isPresented: $viewModel.state.showTimePicker, detents: [.height(310)]) {
+    .amdBottomSheet(isPresented: $viewModel.state.showTimePicker, detents: [.height(474)]) {
+//      AMDDatePicker(
+//        selectedDate: $viewModel.state.reminderTime,
+//        pickerType: .time
+//      )
+      
+//      AMDDatePickerView(
+//        title: "날짜 선택",
+//        isResetButtonHidden: false,
+//        type: .time,
+//        initialDate: $viewModel.reminderTime) {
+//          viewModel.handleAction(.applySelectedDate($0))
+//        }
+      
       AMDDatePickerView(
         title: "생년월일",
         isResetButtonHidden: true,
