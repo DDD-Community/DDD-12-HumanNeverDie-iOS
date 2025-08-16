@@ -19,6 +19,8 @@ import Dependencies
 public final class SettingViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.toastClient) private var toastClient
+  @ObservationIgnored
+  @Dependency(\.alertClient) private var alertClient
   
   public struct State: Equatable {
     var userInfo: UserInfo
@@ -32,6 +34,8 @@ public final class SettingViewModel: ViewModelable {
     case onAppear
     case loadUserInfo
     case updateUserInfo(UserInfo)
+    case logout
+    case unsubscribe
     
   }
   
@@ -57,6 +61,14 @@ public final class SettingViewModel: ViewModelable {
     case .updateUserInfo(let userInfo): // 추가
       Task {
         await updateUserInfo(userInfo: userInfo)
+      }
+    case .logout:
+      Task {
+        await showLogOutAlert()
+      }
+    case .unsubscribe:
+      Task {
+        await showUnsubscribeAlert()
       }
     }
   }
@@ -110,6 +122,31 @@ extension SettingViewModel {
     print("서버 = \(state.sugarMaxG) == \(userSugerMaxG)")
     state.sugarMaxG = userSugerMaxG
   
+  }
+  
+  nonisolated private func showLogOutAlert() async {
+    await alertClient.showAlert(.init(
+      title: "정말 로그아웃 하시겠습니까?",
+      primaryButton: .init(title: "로그아웃", type: .delete) {
+        //성공
+      },
+      secondaryButton: .init(title: "취소", type: .secondary) {
+        //실패
+      }
+    ))
+  }
+  
+  nonisolated private func showUnsubscribeAlert() async {
+    await alertClient.showAlert(.init(
+      title: "정말 탈퇴하시겠어요?",
+      message: "탈퇴시 아래 정보가 모두 사라지며, 재가입해도 복구할 수 없어요.\n\n• 계정 및 개인 정보\n• 개인 당류 섭취 기록 및 히스토리",
+      primaryButton: .init(title: "취소", type: .secondary) {
+        //취소
+      },
+      secondaryButton: .init(title: "탈퇴하기", type: .delete) {
+        //탈퇴하기
+      }
+    ))
   }
   
 }

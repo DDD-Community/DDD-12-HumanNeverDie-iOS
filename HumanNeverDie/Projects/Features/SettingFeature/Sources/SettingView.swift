@@ -100,21 +100,18 @@ extension SettingView {
     switch item {
     case .accountInfo:
       router.setUserInfoUpdateHandler { [weak viewModel] updatedUserInfo in
-          viewModel?.handleAction(.updateUserInfo(updatedUserInfo))
+        viewModel?.handleAction(.updateUserInfo(updatedUserInfo))
       }
       router.push(to: .SettingAccountInfo(userInfo: viewModel.userInfo))
       
     case .goalSetting:
       router.setUserInfoUpdateHandler { [weak viewModel] updatedUserInfo in
-          viewModel?.handleAction(.updateUserInfo(updatedUserInfo))
+        viewModel?.handleAction(.updateUserInfo(updatedUserInfo))
       }
       router.push(to: .SettingGoalSetting(userInfo: viewModel.userInfo))
       
     case .notificationSetting:
-      router.setUserInfoUpdateHandler { [weak viewModel] updatedUserInfo in
-          viewModel?.handleAction(.updateUserInfo(updatedUserInfo))
-      }
-      router.push(to: .SettingNotificationSetting(userID: viewModel.userInfo.nickname))
+      router.push(to: .SettingNotificationSetting(userID: viewModel.userID))
       
     case .feedback: break
       //앱스토어 리뷰이동
@@ -122,11 +119,13 @@ extension SettingView {
     case .terms:
       router.push(to: .SettingTerms)
       
-    case .settingTitle: 
+    case .settingTitle:
       break
     case .logout:
+      viewModel.handleAction(.logout)
       break
     case .unsubscribe:
+      viewModel.handleAction(.unsubscribe)
       break
     }
   }

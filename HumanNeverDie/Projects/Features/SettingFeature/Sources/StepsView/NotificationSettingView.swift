@@ -39,9 +39,7 @@ public struct NotificationSettingView: View {
     }.settingToolbar(item: .notificationSetting) {
       self.router.pop()
     }
-    .onAppear {
-      viewModel.setRouter(router)
-    }
+
   }
 }
 
