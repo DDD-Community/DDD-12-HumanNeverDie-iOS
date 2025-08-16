@@ -11,8 +11,11 @@ import BeverageDomain
 import CommonFeature
 import DesignSystem
 
+import Dependencies
+
 public struct BeverageRecordCompletedView: View {
   @Environment(Router.self) private var router
+  @Dependency(\.globalState) private var globalState
   
   private let beverageDetail: BeverageDetail
   private let selectedSizeType: BeverageSize?
@@ -137,7 +140,10 @@ public struct BeverageRecordCompletedView: View {
     AMDButton(
       title: "닫기",
       action: {
-        router.popToRoot()
+        Task {
+          await globalState.sendEvent(.homeRefresh)
+          await MainActor.run { router.popToRoot() }
+        }
       }
     )
     .padding(.bottom, 10)

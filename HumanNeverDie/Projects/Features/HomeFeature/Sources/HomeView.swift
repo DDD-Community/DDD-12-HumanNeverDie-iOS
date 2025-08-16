@@ -10,9 +10,12 @@ import SwiftUI
 import CommonFeature
 import DesignSystem
 
+import Dependencies
+
 public struct HomeView: View {
   @State private var viewModel: HomeViewModel
   @Environment(Router.self) private var router
+  @Dependency(\.globalState) private var globalState
   
   public init(viewModel: HomeViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -27,8 +30,18 @@ public struct HomeView: View {
       ) {
         datePickerBottomSheet
       }
+      .onViewDidLoad {
+        viewModel.handleAction(.onViewDidLoad)
+      }
       .onAppear {
-        viewModel.handleAction(.onAppear)
+        Task {
+          for await event in globalState.eventStream {
+            switch event {
+            case .homeRefresh:
+              viewModel.handleAction(.homeRefresh)
+            }
+          }
+        }
       }
   }
   
