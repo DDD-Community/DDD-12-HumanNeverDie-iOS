@@ -15,7 +15,7 @@ public protocol BeverageRepositoryInterface: Sendable {
   func getBeverageWeeklyCalender(dateInWeek: String) async throws -> [BeverageCalendar]
   func likeBeverage(productID: String) async throws -> BeverageLike
   func unLikeBeverage(productID: String) async throws -> BeverageLike
-  func searchBeverage(keyword: String) async throws -> BeverageList
+  func searchBeverage(keyword: String, sugarLevel: String?, onlyLiked: Bool) async throws -> BeverageList
   func recordBeverage(productID: String, recordDate: Date) async throws -> Int
   func deleteBeverage(productID: String, intakeTime: String) async throws -> Int
   

@@ -12,6 +12,9 @@ import BeverageDomain
 struct BeverageSearchResponse: Decodable {
   let beverageSearchResults: [BeverageResponse]?
   let likeCount: Int?
+  let totalCount: Int?
+  let zeroSugarCount: Int?
+  let lowSugarCount: Int?
 }
 
 extension BeverageSearchResponse {
@@ -20,7 +23,10 @@ extension BeverageSearchResponse {
       items: beverageSearchResults?.map { $0.toDomain() } ?? [],
       nextCursor: nil,
       hasNext: false,
-      likeCount: likeCount ?? 0
+      likeCount: likeCount ?? 0,
+      totalCount: totalCount ?? 0,
+      zeroSugarCount: zeroSugarCount ?? 0,
+      lowSugarCount: lowSugarCount ?? 0
     )
   }
 }
