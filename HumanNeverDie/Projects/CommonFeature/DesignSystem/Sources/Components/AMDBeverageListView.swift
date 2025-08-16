@@ -41,6 +41,7 @@ public struct AMDBeverageListView: View {
     case medium
     case large
     case completed
+    case card
     
     fileprivate var height: CGFloat {
       switch self {
@@ -50,7 +51,7 @@ public struct AMDBeverageListView: View {
         return 110
       case .large:
         return 124
-      case .completed:
+      case .completed, .card:
         return 106
       }
     }
@@ -59,7 +60,7 @@ public struct AMDBeverageListView: View {
       switch self {
       case .small:
         return 10
-      case .medium, .completed:
+      case .medium, .completed, .card:
         return 16
       case .large:
         return 12
@@ -68,7 +69,7 @@ public struct AMDBeverageListView: View {
     
     fileprivate var thumbnailSize: CGSize {
       switch self {
-      case .small, .completed:
+      case .small, .completed, .card:
         return .init(width: 56, height: 56)
       case .medium:
         return .init(width: 74, height: 74)
@@ -81,6 +82,10 @@ public struct AMDBeverageListView: View {
       switch self {
       case .completed, .medium:
         return .gray10
+        
+      case .card:
+        return .clear
+        
       default:
         return .white
       }
@@ -90,7 +95,7 @@ public struct AMDBeverageListView: View {
       switch self {
       case .small:
         return .xsmallRegular
-      case .medium, .large, .completed:
+      case .medium, .large, .completed, .card:
         return .smallRegular
       }
     }
@@ -99,7 +104,7 @@ public struct AMDBeverageListView: View {
       switch self {
       case .small:
         return .smallRegular
-      case .medium, .large, .completed:
+      case .medium, .large, .completed, .card:
         return .mediumMedium
       }
     }
@@ -108,7 +113,7 @@ public struct AMDBeverageListView: View {
       switch self {
       case .small:
         return .smallBold
-      case .medium, .large, .completed:
+      case .medium, .large, .completed, .card:
         return .mediumBold
       }
     }
@@ -117,7 +122,7 @@ public struct AMDBeverageListView: View {
       switch self {
       case .small:
         return .smallBold
-      case .medium, .large, .completed:
+      case .medium, .large, .completed, .card:
         return .mediumBold
       }
     }
@@ -126,7 +131,7 @@ public struct AMDBeverageListView: View {
       switch self {
       case .small:
         return .smallRegular
-      case .medium, .large, .completed:
+      case .medium, .large, .completed, .card:
         return .mediumRegular
       }
     }
@@ -313,7 +318,7 @@ private extension AMDBeverageListView {
         kcalText
       }
       
-    case .medium, .small, .completed:
+    case .medium, .small, .completed, .card:
       HStack {
         HStack(spacing: 8) {
           beverageSizeText
@@ -368,7 +373,7 @@ private extension AMDBeverageListView {
   @ViewBuilder
   private var divider: some View {
     switch type {
-    case .large, .small:
+    case .large, .small, .card:
       AMDDevider()
       
     default:
@@ -464,6 +469,30 @@ public extension AMDBeverageListView {
   ) -> AMDBeverageListView {
     return AMDBeverageListView(
       type: .completed,
+      thumbnailURL: thumbnailURL,
+      brandTitle: brandTitle,
+      beverageSize: beverageSize,
+      beverageTitle: beverageTitle,
+      glucose: glucose,
+      kcal: kcal,
+      sugarFreeVariant: sugarFreeVariant,
+      likeState: nil,
+      infoAction: nil,
+      menuAction: nil
+    )
+  }
+  
+  static func card(
+    thumbnailURL: String,
+    brandTitle: String,
+    beverageSize: String,
+    beverageTitle: String,
+    glucose: Double,
+    kcal: Double,
+    sugarFreeVariant: AMDSugarFreeVariant?
+  ) -> AMDBeverageListView {
+    return AMDBeverageListView(
+      type: .card,
       thumbnailURL: thumbnailURL,
       brandTitle: brandTitle,
       beverageSize: beverageSize,

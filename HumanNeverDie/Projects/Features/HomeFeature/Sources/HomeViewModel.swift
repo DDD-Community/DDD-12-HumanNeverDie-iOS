@@ -27,6 +27,7 @@ public final class HomeViewModel: ViewModelable {
     // 어디서 가져옴?
     var baseSugar: Int = 50
     var selectedDateCalendar: BeverageCalendar?
+    var isSelectedDateEmpty: Bool = true
     
     var isMonthPickerPresented: Bool = false
   }
@@ -118,5 +119,11 @@ public final class HomeViewModel: ViewModelable {
     
     let dateKey = Date.toDateKeyString(from: selectedDate)
     state.selectedDateCalendar = state.weeklyHistories[String(dateKey)]
+    
+    if let selectedDateCalendar = state.selectedDateCalendar {
+      state.isSelectedDateEmpty = selectedDateCalendar.records.isEmpty
+    } else {
+      state.isSelectedDateEmpty = true
+    }
   }
 }
