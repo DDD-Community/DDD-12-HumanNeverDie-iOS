@@ -13,8 +13,8 @@ import CommonFeature
 
 public struct GoalSettingView: View {
   @State public var viewModel: GoalSettingViewModel
-  
-  public init(viewModel: GoalSettingViewModel, settingViewModel: SettingViewModel) {
+  @Environment(Router.self) private var router
+  public init(viewModel: GoalSettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
@@ -29,10 +29,10 @@ public struct GoalSettingView: View {
       }
     }
     .settingToolbar(item: .goalSetting) {
-      viewModel.handleAction(.goBack)
+      self.router.pop()
     }
     .onAppear {
-      viewModel.handleAction(.onAppear)
+        viewModel.setRouter(router)
     }
   }
 }
@@ -139,7 +139,11 @@ extension GoalSettingView {
     SettingBottomButton(
       type: viewModel.isChangedAccountInfo ? .default : .secondary
     ) {
-      guard viewModel.isChangedAccountInfo else { return }
+      guard viewModel.isChangedAccountInfo else {
+        self.router.pop()
+        return
+      }
+      
       withAnimation(.easeInOut) {
         viewModel.handleAction(.updateAccountInfoUserInfo)
       }

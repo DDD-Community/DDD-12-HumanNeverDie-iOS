@@ -20,17 +20,9 @@ public final class SettingViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.toastClient) private var toastClient
   
-  public enum CurrentView {
-    case main
-    case accountInfo
-    case goalSetting
-    case Notification
-  }
-  
   public struct State: Equatable {
     var userInfo: UserInfo
     var isLoading: Bool = false
-    var currentView: CurrentView = .main
     let userID: String = "b5219141-afe3-46c6-8c5c-0f7e850a5bef"
     
     var sugarMaxG: Int = 0
@@ -39,8 +31,6 @@ public final class SettingViewModel: ViewModelable {
   public enum Action {
     case onAppear
     case loadUserInfo
-    case navigateTo(CurrentView)
-    case goBack
     case updateUserInfo(UserInfo)
     
   }
@@ -63,13 +53,7 @@ public final class SettingViewModel: ViewModelable {
       Task {
         await loadUserData()
       }
-      
-    case .navigateTo(let view):
-      state.currentView = view
-      
-    case .goBack:
-      state.currentView = .main
-      
+
     case .updateUserInfo(let userInfo): // 추가
       Task {
         await updateUserInfo(userInfo: userInfo)

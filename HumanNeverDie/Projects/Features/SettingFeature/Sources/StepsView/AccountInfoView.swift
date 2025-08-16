@@ -13,11 +13,12 @@ import CommonFeature
 
 public struct AccountInfoView: View {
   @State public var viewModel: AccountInfoViewModel
+  @Environment(Router.self) private var router
   @FocusState private var isNicknameFocused: Bool
   @FocusState private var isHeightFocused: Bool
   @FocusState private var isWeightFocused: Bool
   
-  public init(viewModel: AccountInfoViewModel, settingViewModel: SettingViewModel) {
+  public init(viewModel: AccountInfoViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
@@ -33,7 +34,7 @@ public struct AccountInfoView: View {
         .padding(.top, 30)
       
     }.settingToolbar(item: .accountInfo) {
-      viewModel.handleAction(.goBack)
+      self.router.pop()
     }
   }
 }
@@ -85,6 +86,9 @@ extension AccountInfoView {
       }
     }
     .padding(.horizontal, 20)
+    .onAppear {
+        viewModel.setRouter(router)
+    }
   }
   
   @ViewBuilder
@@ -172,7 +176,7 @@ extension AccountInfoView {
       type: viewModel.isChangedAccountInfo ? .default : .secondary
     ) {
       guard viewModel.isChangedAccountInfo else {
-        viewModel.handleAction(.goBack)
+        self.router.pop()
         return
       }
       

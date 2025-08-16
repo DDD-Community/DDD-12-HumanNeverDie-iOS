@@ -18,8 +18,7 @@ import Dependencies
 public final class GoalSettingViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.alertClient) private var alertClient
-  
-  private weak var settingViewModel: SettingViewModel?
+  private var router: Router?
   
   public struct State: Equatable, Sendable {
     var userInfo: UserInfo
@@ -31,18 +30,14 @@ public final class GoalSettingViewModel: ViewModelable {
     case updateDailySugarGoal(SugarGoal)
     
     case updateAccountInfoUserInfo
-    case goBack
   }
   
   public var state: State
   private var originalState: State
   
   public init(
-    userInfo: UserInfo,
-    settingViewModel: SettingViewModel? = nil
+    userInfo: UserInfo
   ) {
-    self.settingViewModel = settingViewModel
-    
     let initialState = State(
       userInfo: userInfo,
       selectedDailySugarGoal: userInfo.selectedDailySugarGoal
@@ -55,7 +50,6 @@ public final class GoalSettingViewModel: ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
-      
       break
       
     case .updateDailySugarGoal(let sugarGoal):
@@ -66,14 +60,15 @@ public final class GoalSettingViewModel: ViewModelable {
         await showSaveAlert()
       }
       break
-    case .goBack:
-      settingViewModel?.handleAction(.goBack)
     }
   }
 }
 
 // MARK: - Goal Setting Specific Methods
 extension GoalSettingViewModel {
+  public func setRouter(_ router: Router) {
+      self.router = router
+  }
   
   public func getSugarGoalAmount(for goal: SugarGoal) -> Int {
     let sugarService = SugarUserCalculation()
@@ -121,8 +116,10 @@ extension GoalSettingViewModel {
               selectedDailySugarGoal: self.state.selectedDailySugarGoal
             )
             
-            self.settingViewModel?.handleAction(.updateUserInfo(updatedUserInfo))
-            self.settingViewModel?.handleAction(.goBack)
+            await MainActor.run {
+              self.router?.onUserInfoUpdated?(updatedUserInfo)
+              self.router?.pop()
+            }
           }
         },
         secondaryButton: .init(title: "취소", type: .secondary) {

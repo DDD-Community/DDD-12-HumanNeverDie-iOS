@@ -14,6 +14,8 @@ import Dependencies
 @Observable
 @MainActor
 public final class NotificationSettingViewModel: ViewModelable {
+  private var router: Router?
+  
   public struct State: Equatable {
     
     let userID: String
@@ -94,6 +96,9 @@ public final class NotificationSettingViewModel: ViewModelable {
 }
 
 extension NotificationSettingViewModel {
+  public func setRouter(_ router: Router) {
+      self.router = router
+  }
   
   private func loadUserData() async {
     guard !state.isLoading else { return }

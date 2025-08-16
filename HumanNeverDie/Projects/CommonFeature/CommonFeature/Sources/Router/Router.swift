@@ -7,10 +7,12 @@
 
 import SwiftUI
 import Observation
+import UserDomain
 
 @Observable
 public final class Router {
   public var path = NavigationPath()
+  public var onUserInfoUpdated: ((UserInfo) -> Void)?
   public var rootRoute: RootRoute {
     didSet {
       self.rootViewId = UUID()
@@ -41,5 +43,9 @@ public final class Router {
     print("set root route: \(route)")
     path.removeLast(path.count)
     rootRoute = route
+  }
+  
+  public func setUserInfoUpdateHandler(_ handler: @escaping (UserInfo) -> Void) {
+    onUserInfoUpdated = handler
   }
 }

@@ -21,25 +21,7 @@ public struct SettingView: View {
   }
   
   public var body: some View {
-    switch viewModel.currentView {
-    case .main:
-      mainSettingView()
-    case .accountInfo:
-      AccountInfoView(
-        viewModel: AccountInfoViewModel(userInfo: viewModel.userInfo, settingViewModel: viewModel),
-        settingViewModel: viewModel
-      )
-    case .goalSetting:
-      GoalSettingView(
-        viewModel: GoalSettingViewModel(userInfo: viewModel.userInfo,  settingViewModel: viewModel),
-        settingViewModel: viewModel
-      )
-    case .Notification:
-      NotificationSettingView(
-        viewModel: NotificationSettingViewModel(userID: viewModel.userID),
-        settingViewModel: viewModel
-      )
-    }
+    mainSettingView()
   }
   
   private func mainSettingView() -> some View {
@@ -55,7 +37,6 @@ public struct SettingView: View {
           handleItemTap(SettingItem.goalSetting)
         }.padding(.top, 24)
       }.padding(.horizontal, 20)
-       
       
       sectionDivider().padding(.vertical, 16)
       
@@ -118,19 +99,28 @@ extension SettingView {
   private func handleItemTap(_ item: SettingItem) {
     switch item {
     case .accountInfo:
-      viewModel.handleAction(.navigateTo(.accountInfo))
+      router.setUserInfoUpdateHandler { [weak viewModel] updatedUserInfo in
+          viewModel?.handleAction(.updateUserInfo(updatedUserInfo))
+      }
+      router.push(to: .SettingAccountInfo(userInfo: viewModel.userInfo))
       
     case .goalSetting:
-      viewModel.handleAction(.navigateTo(.goalSetting))
+      router.setUserInfoUpdateHandler { [weak viewModel] updatedUserInfo in
+          viewModel?.handleAction(.updateUserInfo(updatedUserInfo))
+      }
+      router.push(to: .SettingGoalSetting(userInfo: viewModel.userInfo))
       
     case .notificationSetting:
-      viewModel.handleAction(.navigateTo(.Notification))
+      router.setUserInfoUpdateHandler { [weak viewModel] updatedUserInfo in
+          viewModel?.handleAction(.updateUserInfo(updatedUserInfo))
+      }
+      router.push(to: .SettingNotificationSetting(userID: viewModel.userInfo.nickname))
       
     case .feedback: break
       //앱스토어 리뷰이동
       
-    case .terms: break
-//      router.push(to: .SettingTerms)
+    case .terms:
+      router.push(to: .SettingTerms)
       
     case .settingTitle: 
       break

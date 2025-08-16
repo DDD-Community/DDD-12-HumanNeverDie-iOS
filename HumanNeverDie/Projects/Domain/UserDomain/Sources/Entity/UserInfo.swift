@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct UserInfo: Equatable, Sendable {
+public struct UserInfo: Equatable, Sendable, Hashable {
     public let nickname: String
     public let birthDate: String
     public let selectedGender: Gender

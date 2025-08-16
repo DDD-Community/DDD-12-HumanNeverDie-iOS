@@ -11,13 +11,11 @@ import CommonFeature
 
 public struct NotificationSettingView: View {
   @State private var viewModel: NotificationSettingViewModel
+  @Environment(Router.self) private var router
   @State private var showTimePicker = false
   
-  let settingViewModel: SettingViewModel // 상위 ViewModel 참조
-  
-  public init(viewModel: NotificationSettingViewModel, settingViewModel: SettingViewModel) {
+  public init(viewModel: NotificationSettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
-    self.settingViewModel = settingViewModel
   }
   
   public var body: some View {
@@ -32,15 +30,17 @@ public struct NotificationSettingView: View {
     .onAppear {
       viewModel.handleAction(.onAppear)
     }
-    .settingToolbar(item: .notificationSetting)
     .amdBottomSheet(isPresented: $viewModel.state.showTimePicker, detents: [.height(474)]) {
       AMDDatePicker(
         selectedDate: $viewModel.state.reminderTime,
         pickerType: .time
       )
       .frame(height: 200)
-    }.onAppear {
-      viewModel.handleAction(.onAppear)
+    }.settingToolbar(item: .notificationSetting) {
+      self.router.pop()
+    }
+    .onAppear {
+      viewModel.setRouter(router)
     }
   }
 }

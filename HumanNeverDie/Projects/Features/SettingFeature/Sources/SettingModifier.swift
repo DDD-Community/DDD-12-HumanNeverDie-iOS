@@ -52,12 +52,7 @@ public extension View {
   func settingToolbar(item: SettingItem) -> some View {
     modifier(SettingToolbarModifier(title: item.title, onBackTap: nil))
   }
-  
-  // 커스텀 뒤로가기 액션을 받는 새로운 메서드들
-  func settingToolbar(title: String, onBackTap: @escaping () -> Void) -> some View {
-    modifier(SettingToolbarModifier(title: title, onBackTap: onBackTap))
-  }
-  
+
   func settingToolbar(item: SettingItem, onBackTap: @escaping () -> Void) -> some View {
     modifier(SettingToolbarModifier(title: item.title, onBackTap: onBackTap))
   }

@@ -44,6 +44,17 @@ public struct RootView: View {
           
         case .Setting:
           SettingViewFactory.create()
+          
+        case .SettingAccountInfo(userInfo: let userInfo):
+          AccountInfoFactory.create(userInfo: userInfo)
+          
+        case .SettingGoalSetting(userInfo: let userInfo):
+          GoalSettingFactory.create(userInfo: userInfo)
+          
+        case .SettingNotificationSetting(userID: let userID):
+          NotificationSettingFactory.create(userID: userID)
+        case .SettingTerms:
+          TermsFactory.create()
         }
       }
     }

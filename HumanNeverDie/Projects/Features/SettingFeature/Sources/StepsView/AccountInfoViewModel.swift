@@ -19,9 +19,8 @@ public final class AccountInfoViewModel: ViewModelable {
   @Dependency(\.alertClient) private var alertClient
   
   private let validator: UserInfoValidationUseCase
-  private weak var settingViewModel: SettingViewModel?
-  
-  
+  private var router: Router?
+
   public struct State: Equatable {
     var nickname: String = ""
     var birthDate: Date = Date()
@@ -46,7 +45,6 @@ public final class AccountInfoViewModel: ViewModelable {
     case updateActivity(ActivityLevel)
     
     case updateAccountInfoUserInfo
-    case goBack
   }
   
   public var state: State = .init()
@@ -54,11 +52,9 @@ public final class AccountInfoViewModel: ViewModelable {
   
   public init(
     userInfo: UserInfo,
-    settingViewModel: SettingViewModel,
     validator: UserInfoValidationUseCase = DefaultUserInfoValidationUseCase()
   ) {
     self.validator = validator
-    self.settingViewModel = settingViewModel
     
     let initialState = State(
       nickname: userInfo.nickname,
@@ -110,14 +106,18 @@ public final class AccountInfoViewModel: ViewModelable {
         await showDeleteAlert()
       }
       
-    case .goBack:
-      settingViewModel?.handleAction(.goBack)
+//    case .goBack:
+//      settingViewModel?.handleAction(.goBack)
     }
   }
 }
 
 //AccountInfoView
 extension AccountInfoViewModel {
+  public func setRouter(_ router: Router) {
+      self.router = router
+  }
+  
   public var isChangedAccountInfo: Bool {
     return state != originalState
   }
@@ -162,8 +162,11 @@ extension AccountInfoViewModel {
       primaryButton: .init(title: "저장", type: .default) {
         
         let updatedUserInfo = await self.getCurrentUserInfo()
-        await self.settingViewModel?.handleAction(.updateUserInfo(updatedUserInfo))
-        await self.handleAction(.goBack)
+        // Router를 통해 전달
+        await MainActor.run {
+          self.router?.onUserInfoUpdated?(updatedUserInfo)
+          self.router?.pop()
+        }
       },
       secondaryButton: .init(title: "취소", type: .secondary) {
         
