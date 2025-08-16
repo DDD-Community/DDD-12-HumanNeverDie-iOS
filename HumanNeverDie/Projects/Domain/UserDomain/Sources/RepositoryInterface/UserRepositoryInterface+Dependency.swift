@@ -24,7 +24,7 @@ extension DependencyValues {
   }
 }
 
-// MARK: - MockBeverageLikeLocalRepository
+// MARK: - MockUserRepository
 
 private struct MockUserRepository: UserRepositoryInterface {
   func getUserInfo(userID: String) async throws -> UserInfo { UserInfo.mock() }
