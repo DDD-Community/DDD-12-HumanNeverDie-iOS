@@ -9,21 +9,21 @@ import Foundation
 import UserDomain
 
 struct UserNotificationsResponse: Decodable {
-    let isEnabled: Bool
-    let remindersEnabled: Bool
-    let reminderTime: String
-    let riskWarningsEnabled: Bool
-    let newsUpdatesEnabled: Bool
+  let isEnabled: Bool
+  let remindersEnabled: Bool
+  let reminderTime: String
+  let riskWarningsEnabled: Bool
+  let newsUpdatesEnabled: Bool
 }
 
 extension UserNotificationsResponse {
-    public func toDomain() -> UserNotifications {
-        return UserNotifications(
-            isPermissionGranted: isEnabled,
-            isGoalReminderEnabled: remindersEnabled,
-            reminderTime: reminderTime,
-            isGoalWarningEnabled: riskWarningsEnabled,
-            isCaffeineNotificationEnabled: newsUpdatesEnabled
-        )
-    }
+  public func toDomain() -> UserNotifications {
+    return UserNotifications(
+      isEnabled: isEnabled,
+      remindersEnabled: remindersEnabled,
+      reminderTime: reminderTime,
+      riskWarningsEnabled: riskWarningsEnabled,
+      newsUpdatesEnabled: newsUpdatesEnabled
+    )
+  }
 }

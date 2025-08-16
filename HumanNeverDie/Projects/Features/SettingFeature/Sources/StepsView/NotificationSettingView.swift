@@ -52,22 +52,22 @@ extension NotificationSettingView {
       NotificationToggleRow(
         title: "알림 ON/OFF",
         isOn: Binding(
-          get: { viewModel.state.isPermissionGranted },
-          set: { viewModel.handleAction(.toggleGeneralNotification($0)) }
+          get: { viewModel.isEnabled },
+          set: { viewModel.handleAction(.toggleIsEnabled($0)) }
         )
       )
       
-      if(viewModel.state.isPermissionGranted) {
+      if(viewModel.isEnabled) {
         NotificationToggleRow(
           title: "기록 리마인더",
           isOn: Binding(
-            get: { viewModel.state.isGoalReminderEnabled },
-            set: { viewModel.handleAction(.toggleGoalReminder($0)) }
+            get: { viewModel.state.remindersEnabled },
+            set: { viewModel.handleAction(.toggleRemindersEnabled($0)) }
           ),
-          isEnabled: viewModel.isOtherNotificationsEnabled
+          isEnabled: viewModel.isEnabled
         )
         
-        if (viewModel.state.isGoalReminderEnabled) {
+        if (viewModel.state.remindersEnabled) {
           reminderTimeSection()
         }
         
@@ -75,20 +75,20 @@ extension NotificationSettingView {
           title: "목표 위험 경고",
           subtitle: "일일 당 섭취량의 2/3를 넘어가면 알려드릴게요",
           isOn: Binding(
-            get: { viewModel.state.isGoalWarningEnabled },
-            set: { viewModel.handleAction(.toggleGoalWarning($0)) }
+            get: { viewModel.riskWarningsEnabled },
+            set: { viewModel.handleAction(.toggleRiskWarningsEnabled($0)) }
           ),
-          isEnabled: viewModel.isOtherNotificationsEnabled
+          isEnabled: viewModel.remindersEnabled
         )
         
         NotificationToggleRow(
           title: "새소식",
           subtitle: "카페인 및 음료 업데이트 소식을 받을 수 있어요",
           isOn: Binding(
-            get: { viewModel.state.isCaffeineNotificationEnabled },
+            get: { viewModel.state.newsUpdatesEnabled },
             set: { viewModel.handleAction(.toggleCaffeineNotification($0)) }
           ),
-          isEnabled: viewModel.isOtherNotificationsEnabled
+          isEnabled: viewModel.remindersEnabled
         )
       }
     }
@@ -105,13 +105,13 @@ extension NotificationSettingView {
         Spacer()
         
         Button(viewModel.getReminderTimeString()) {
-          if viewModel.isOtherNotificationsEnabled {
+          if viewModel.remindersEnabled {
             viewModel.state.showTimePicker = true
           }
         }
         .amdFont(.mediumRegular)
         .foregroundColor(.primaryDarker)
-        .disabled(!viewModel.isOtherNotificationsEnabled)
+        .disabled(!viewModel.remindersEnabled)
       }
     }
   }

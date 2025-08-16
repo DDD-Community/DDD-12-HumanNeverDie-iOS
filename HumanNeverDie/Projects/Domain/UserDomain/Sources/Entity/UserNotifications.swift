@@ -8,42 +8,69 @@
 import SwiftUI
 
 public struct UserNotifications: Equatable, Sendable {
-    public let isPermissionGranted: Bool
-    public let isGoalReminderEnabled: Bool
-    public let reminderTime: String
-    public let isGoalWarningEnabled: Bool
-    public let isCaffeineNotificationEnabled: Bool
-
-    public init(
-        isPermissionGranted: Bool,
-        isGoalReminderEnabled: Bool,
-        reminderTime: String, // ← 여전히 문자열을 받음
-        isGoalWarningEnabled: Bool,
-        isCaffeineNotificationEnabled: Bool
-    ) {
-        self.isPermissionGranted = isPermissionGranted
-        self.isGoalReminderEnabled = isGoalReminderEnabled
-      self.reminderTime = reminderTime
-        self.isGoalWarningEnabled = isGoalWarningEnabled
-        self.isCaffeineNotificationEnabled = isCaffeineNotificationEnabled
-    }
-
- public static let defaultUserNotifications = UserNotifications(
-        isPermissionGranted: false,
-        isGoalReminderEnabled: false,
-        reminderTime: "오후 12시 10분",
-        isGoalWarningEnabled: false,
-        isCaffeineNotificationEnabled: false
-    )
-
+  public var isEnabled: Bool
+  public var remindersEnabled: Bool
+  public var reminderTime: String
+  public var riskWarningsEnabled: Bool
+  public var newsUpdatesEnabled: Bool
+  
+  public init(
+    isEnabled: Bool,
+    remindersEnabled: Bool,
+    reminderTime: String,
+    riskWarningsEnabled: Bool,
+    newsUpdatesEnabled: Bool
+  ) {
+    self.isEnabled = isEnabled
+    self.remindersEnabled = remindersEnabled
+    self.reminderTime = reminderTime
+    self.riskWarningsEnabled = riskWarningsEnabled
+    self.newsUpdatesEnabled = newsUpdatesEnabled
+  }
+  
+  public static let defaultUserNotifications = UserNotifications(
+    isEnabled: false,
+    remindersEnabled: false,
+    reminderTime: "12:10:00",
+    riskWarningsEnabled: false,
+    newsUpdatesEnabled: false
+  )
+  
   public static let reminderTimeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "a h시 mm분"
-        return formatter
-    }()
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "ko_KR")
+    formatter.dateFormat = "a h시 mm분"
+    return formatter
+  }()
+  
+  public func convertTimeStringToDate(_ timeString: String) -> Date {
+    let timeFormatter = DateFormatter()
+    timeFormatter.dateFormat = "HH:mm:ss"
+    
+    let calendar = Calendar.current
+    let today = Date()
+    
+    if let timeDate = timeFormatter.date(from: timeString) {
+      let timeComponents = calendar.dateComponents([.hour, .minute, .second], from: timeDate)
+      
+      if let finalDate = calendar.date(bySettingHour: timeComponents.hour ?? 0,
+                                       minute: timeComponents.minute ?? 0,
+                                       second: timeComponents.second ?? 0,
+                                       of: today) {
+        return finalDate
+      }
+    }
+    
+    return defaultReminderTime()
+  }
+  
+  
+  private func defaultReminderTime() -> Date {
+    var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
+    comps.hour = 12; comps.minute = 0; comps.second = 0
+    return Calendar.current.date(from: comps) ?? Date()
+  }
 }
-
 
 public extension UserNotifications {
   static func mock() -> UserNotifications {

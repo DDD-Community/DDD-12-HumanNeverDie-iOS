@@ -17,11 +17,11 @@ public final class NotificationSettingViewModel: ViewModelable {
   public struct State: Equatable {
     
     let userID: String
-    var isPermissionGranted: Bool = false
-    var isGoalReminderEnabled: Bool = false
+    var isEnabled: Bool = false
+    var remindersEnabled: Bool = false
     var reminderTime : Date = Date.now
-    var isGoalWarningEnabled: Bool = false
-    var isCaffeineNotificationEnabled: Bool = false
+    var riskWarningsEnabled: Bool = false
+    var newsUpdatesEnabled: Bool = false
     var showTimePicker: Bool = false
     var isLoading: Bool = false
     
@@ -33,15 +33,13 @@ public final class NotificationSettingViewModel: ViewModelable {
     case loadUserInfo
     
     // 알림 토글 액션
-    case toggleGeneralNotification(Bool)
-    case toggleGoalReminder(Bool)
-    case toggleGoalWarning(Bool)
+    case toggleIsEnabled(Bool)
+    case toggleRemindersEnabled(Bool)
+    case toggleRiskWarningsEnabled(Bool)
     case toggleCaffeineNotification(Bool)
     
     // 시간 설정 액션
     case updateReminderTime(Date)
-    
-    case updateNotificationSettingInfo
   }
   
   public var state: State
@@ -68,23 +66,21 @@ public final class NotificationSettingViewModel: ViewModelable {
       }
       
       
-    case .toggleGeneralNotification(let isEnabled):
-      state.isPermissionGranted = isEnabled
+    case .toggleIsEnabled(let isEnabled):
+      state.isEnabled = isEnabled
       
-    case .toggleGoalReminder(let isEnabled):
-      state.isGoalReminderEnabled = isEnabled
+    case .toggleRemindersEnabled(let isEnabled):
+      state.remindersEnabled = isEnabled
       
-    case .toggleGoalWarning(let isEnabled):
-      state.isGoalWarningEnabled = isEnabled
+    case .toggleRiskWarningsEnabled(let isEnabled):
+      state.riskWarningsEnabled = isEnabled
       
     case .toggleCaffeineNotification(let isEnabled):
-      state.isCaffeineNotificationEnabled = isEnabled
+      state.newsUpdatesEnabled = isEnabled
       
     case .updateReminderTime(let time):
       state.reminderTime = time
-      
-    case .updateNotificationSettingInfo:
-      break
+
     }
   }
   
@@ -102,13 +98,11 @@ extension NotificationSettingViewModel {
     do {
       let result = try await userUseCase.getUserNotificationInfo(userID: state.userID)
       state.userNotificationSettingInfo = result
-      state.isPermissionGranted = result.isPermissionGranted
-      state.isGoalWarningEnabled = result.isGoalWarningEnabled
-      state.isGoalReminderEnabled = result.isGoalReminderEnabled
-      state.reminderTime = convertTimeStringToDate(result.reminderTime)
-      state.isGoalWarningEnabled = result.isGoalWarningEnabled
-      state.isCaffeineNotificationEnabled = result.isCaffeineNotificationEnabled
-      
+      state.isEnabled = result.isEnabled
+      state.remindersEnabled = result.remindersEnabled
+      state.reminderTime = result.convertTimeStringToDate(result.reminderTime)
+      state.riskWarningsEnabled = result.riskWarningsEnabled
+      state.newsUpdatesEnabled = result.newsUpdatesEnabled
       
       state.isLoading = false
       
@@ -117,27 +111,7 @@ extension NotificationSettingViewModel {
       state.isLoading = false
     }
   }
-  
-  private func convertTimeStringToDate(_ timeString: String) -> Date {
-    let timeFormatter = DateFormatter()
-    timeFormatter.dateFormat = "HH:mm:ss"
-    
-    let calendar = Calendar.current
-    let today = Date()
-    
-    if let timeDate = timeFormatter.date(from: timeString) {
-      let timeComponents = calendar.dateComponents([.hour, .minute, .second], from: timeDate)
-      
-      if let finalDate = calendar.date(bySettingHour: timeComponents.hour ?? 0,
-                                       minute: timeComponents.minute ?? 0,
-                                       second: timeComponents.second ?? 0,
-                                       of: today) {
-        return finalDate
-      }
-    }
-    
-    return defaultReminderTime()
-  }
+
   
   private func defaultReminderTime() -> Date {
     var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
@@ -151,9 +125,5 @@ extension NotificationSettingViewModel {
   
   public var needsNotificationPermission: Bool {
     return false
-  }
-  
-  public var isOtherNotificationsEnabled: Bool {
-    return state.isPermissionGranted
   }
 }
