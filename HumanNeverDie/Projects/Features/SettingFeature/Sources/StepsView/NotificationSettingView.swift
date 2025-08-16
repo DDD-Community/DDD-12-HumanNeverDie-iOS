@@ -30,12 +30,16 @@ public struct NotificationSettingView: View {
     .onAppear {
       viewModel.handleAction(.onAppear)
     }
-    .amdBottomSheet(isPresented: $viewModel.state.showTimePicker, detents: [.height(474)]) {
-      AMDDatePicker(
-        selectedDate: $viewModel.state.reminderTime,
-        pickerType: .time
-      )
-      .frame(height: 200)
+    .amdBottomSheet(isPresented: $viewModel.state.showTimePicker, detents: [.height(310)]) {
+      AMDDatePickerView(
+        title: "생년월일",
+        isResetButtonHidden: true,
+        type: .time,
+        initialDate: viewModel.reminderTime
+      ) {
+        viewModel.handleAction(.updateReminderTime($0))
+      }
+
     }.settingToolbar(item: .notificationSetting) {
       self.router.pop()
     }
@@ -57,40 +61,38 @@ extension NotificationSettingView {
         )
       )
       
-      if(viewModel.isEnabled) {
-        NotificationToggleRow(
-          title: "기록 리마인더",
-          isOn: Binding(
-            get: { viewModel.state.remindersEnabled },
-            set: { viewModel.handleAction(.toggleRemindersEnabled($0)) }
-          ),
-          isEnabled: viewModel.isEnabled
-        )
-        
-        if (viewModel.state.remindersEnabled) {
-          reminderTimeSection()
-        }
-        
-        NotificationToggleRow(
-          title: "목표 위험 경고",
-          subtitle: "일일 당 섭취량의 2/3를 넘어가면 알려드릴게요",
-          isOn: Binding(
-            get: { viewModel.riskWarningsEnabled },
-            set: { viewModel.handleAction(.toggleRiskWarningsEnabled($0)) }
-          ),
-          isEnabled: viewModel.remindersEnabled
-        )
-        
-        NotificationToggleRow(
-          title: "새소식",
-          subtitle: "카페인 및 음료 업데이트 소식을 받을 수 있어요",
-          isOn: Binding(
-            get: { viewModel.state.newsUpdatesEnabled },
-            set: { viewModel.handleAction(.toggleCaffeineNotification($0)) }
-          ),
-          isEnabled: viewModel.remindersEnabled
-        )
-      }
+      
+      NotificationToggleRow(
+        title: "기록 리마인더",
+        isOn: Binding(
+          get: { viewModel.state.remindersEnabled },
+          set: { viewModel.handleAction(.toggleRemindersEnabled($0)) }
+        ),
+        isEnabled: viewModel.isEnabled
+      )
+      
+      reminderTimeSection()
+      
+      
+      NotificationToggleRow(
+        title: "목표 위험 경고",
+        subtitle: "일일 당 섭취량의 2/3를 넘어가면 알려드릴게요",
+        isOn: Binding(
+          get: { viewModel.riskWarningsEnabled },
+          set: { viewModel.handleAction(.toggleRiskWarningsEnabled($0)) }
+        ),
+        isEnabled: viewModel.isEnabled
+      )
+      
+      NotificationToggleRow(
+        title: "새소식",
+        subtitle: "카페인 및 음료 업데이트 소식을 받을 수 있어요",
+        isOn: Binding(
+          get: { viewModel.state.newsUpdatesEnabled },
+          set: { viewModel.handleAction(.toggleCaffeineNotification($0)) }
+        ),
+        isEnabled: viewModel.isEnabled
+      )
     }
   }
   
@@ -101,6 +103,7 @@ extension NotificationSettingView {
         Text("알림 시간")
           .amdFont(.mediumRegular)
           .foregroundColor(.gray80)
+          .opacity(viewModel.remindersEnabled ? 1.0 : 0.4)
         
         Spacer()
         
@@ -112,6 +115,7 @@ extension NotificationSettingView {
         .amdFont(.mediumRegular)
         .foregroundColor(.primaryDarker)
         .disabled(!viewModel.remindersEnabled)
+        .opacity(viewModel.remindersEnabled ? 1.0 : 0.4)
       }
     }
   }
@@ -141,6 +145,7 @@ private struct NotificationToggleRow: View {
         Text(title)
           .amdFont(.mediumRegular)
           .foregroundColor(.gray80)
+          .opacity(isEnabled ? 1.0 : 0.4)
         
         if let subtitle = subtitle {
           Text(subtitle)
@@ -148,6 +153,7 @@ private struct NotificationToggleRow: View {
             .fixedSize(horizontal: true, vertical: false)
             .amdFont(.xsmallRegular)
             .foregroundColor(.gray60)
+            .opacity(isEnabled ? 1.0 : 0.4)
         }
       }
       

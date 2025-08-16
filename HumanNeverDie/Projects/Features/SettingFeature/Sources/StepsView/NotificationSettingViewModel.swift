@@ -65,10 +65,9 @@ public final class NotificationSettingViewModel: ViewModelable {
         await loadUserData()
       }
       
-      
     case .toggleIsEnabled(let isEnabled):
-      state.isEnabled = isEnabled
-      
+      setisEnabledWithUserInfo(isEnabled: isEnabled)
+    
     case .toggleRemindersEnabled(let isEnabled):
       state.remindersEnabled = isEnabled
       
@@ -80,6 +79,7 @@ public final class NotificationSettingViewModel: ViewModelable {
       
     case .updateReminderTime(let time):
       state.reminderTime = time
+      state.showTimePicker = false
 
     }
   }
@@ -110,6 +110,25 @@ extension NotificationSettingViewModel {
       print("❌ 유저 정보 로딩 실패: \(error)")
       state.isLoading = false
     }
+  }
+  
+  private func setisEnabledWithUserInfo(isEnabled: Bool) {
+    
+    let updatedNotificationInfo = UserNotifications(
+        isEnabled: isEnabled,
+        remindersEnabled: isEnabled,
+        reminderTime: state.userNotificationSettingInfo.reminderTime,
+        riskWarningsEnabled: isEnabled,
+        newsUpdatesEnabled: isEnabled
+    )
+    
+    state.isEnabled = updatedNotificationInfo.isEnabled
+    state.remindersEnabled = updatedNotificationInfo.remindersEnabled
+    state.reminderTime = updatedNotificationInfo.convertTimeStringToDate(updatedNotificationInfo.reminderTime)
+    state.riskWarningsEnabled = updatedNotificationInfo.riskWarningsEnabled
+    state.newsUpdatesEnabled = updatedNotificationInfo.newsUpdatesEnabled
+
+    state.userNotificationSettingInfo = updatedNotificationInfo
   }
 
   

@@ -64,6 +64,12 @@ public struct UserNotifications: Equatable, Sendable {
     return defaultReminderTime()
   }
   
+  public func convertDateToTimeString(_ date: Date) -> String {
+      let formatter = DateFormatter()
+      formatter.dateFormat = "HH:mm:ss"
+      return formatter.string(from: date)
+  }
+  
   
   private func defaultReminderTime() -> Date {
     var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
