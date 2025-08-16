@@ -19,6 +19,10 @@ import Dependencies
 public final class BeverageRecordListViewModel: ViewModelable {
   public struct State: Equatable {
     var beverageRecordDate: Date
+    
+    var sugarLevelType: BeverageSugarLevelType?
+    var isOnlyLiked: Bool = false
+    
     var route: Route?
   }
 
@@ -54,6 +58,12 @@ public final class BeverageRecordListViewModel: ViewModelable {
       switch action {
       case let .beverageListItemTapped(beverage):
         state.route = .beverageRecord(productID: beverage.productID, isLiked: beverage.isLiked, recordDate: state.beverageRecordDate)
+        
+      case let .beverageFilterItemTapped(sugarLevelType, isOnlyLiked):
+        state.sugarLevelType = sugarLevelType
+        state.isOnlyLiked = isOnlyLiked
+        
+        Task { await getBeverage() }
 
       case nil:
         break
@@ -79,7 +89,9 @@ public final class BeverageRecordListViewModel: ViewModelable {
 
   private func getBeverage() async {
     do {
-      async let beverageListResponse = try beverageUseCase.getBeverageList(cursor: nil, sugarLevel: nil, onlyLiked: false)
+      let sugarLevelType = state.sugarLevelType
+      let isOnlyLiked = state.isOnlyLiked
+      async let beverageListResponse = try beverageUseCase.getBeverageList(cursor: nil, sugarLevel: sugarLevelType, onlyLiked: isOnlyLiked)
       async let beverageCountResponse = try beverageUseCase.getBeverageCount()
 
       let (beverageList, beverageCount) = try await (beverageListResponse, beverageCountResponse)

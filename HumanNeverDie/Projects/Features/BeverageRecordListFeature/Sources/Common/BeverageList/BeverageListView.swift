@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import AsyncAlgorithms
 
 import BeverageDomain
 import CommonFeature
@@ -15,7 +14,6 @@ import DesignSystem
 struct BeverageListView: View {
   @Bindable private var viewModel: BeverageListViewModel
   @State private var scrollPosition = ScrollPosition(edge: .top)
-  private let paginationChannel = AsyncChannel<[Beverage.ID]>()
 
   init(viewModel: BeverageListViewModel) {
     self.viewModel = viewModel
@@ -35,6 +33,7 @@ struct BeverageListView: View {
     .amdBottomSheet(isPresented: $viewModel.state.isBevarageDetailPresented, detents: [.height(474)]) {
       AMDBeverageDetailView(productID: viewModel.beverageProductID)
     }
+    .animation(.default, value: viewModel.beverageList)
   }
 
   private var beverageFilterChipView: some View {
@@ -85,12 +84,7 @@ struct BeverageListView: View {
     }
     .scrollPosition($scrollPosition)
     .onScrollTargetVisibilityChange(idType: Beverage.ID.self) { item in
-      Task { await paginationChannel.send(item) }
-    }
-    .task {
-      for await items in paginationChannel.debounce(for: .milliseconds(200)) {
-        viewModel.handleAction(.loadNextBeverageList(items))
-      }
+      viewModel.handleAction(.loadNextBeverageList(item))
     }
     .scrollIndicators(.hidden)
     .scrollDismissesKeyboard(.immediately)

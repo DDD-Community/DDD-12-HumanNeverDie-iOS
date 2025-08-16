@@ -12,17 +12,26 @@ public struct BeverageList: Equatable, Sendable {
   public let nextCursor: String?
   public let hasNext: Bool
   public var likeCount: Int
+  public let totalCount: Int
+  public let zeroSugarCount: Int
+  public let lowSugarCount: Int
   
   public init(
     items: [Beverage],
     nextCursor: String?,
     hasNext: Bool,
-    likeCount: Int
+    likeCount: Int,
+    totalCount: Int = 0,
+    zeroSugarCount: Int = 0,
+    lowSugarCount: Int = 0
   ) {
     self.items = items
     self.nextCursor = nextCursor
     self.hasNext = hasNext
     self.likeCount = likeCount
+    self.totalCount = totalCount
+    self.zeroSugarCount = zeroSugarCount
+    self.lowSugarCount = lowSugarCount
   }
 }
 
@@ -32,7 +41,10 @@ extension BeverageList {
       items: Beverage.mockData,
       nextCursor: nil,
       hasNext: false,
-      likeCount: 0
+      likeCount: 0,
+      totalCount: 0,
+      zeroSugarCount: 0,
+      lowSugarCount: 0
     )
   }
 }

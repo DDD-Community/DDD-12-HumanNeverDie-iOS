@@ -24,6 +24,9 @@ public final class BeverageSearchViewModel: ViewModelable {
 
   public struct State: Equatable {
     var searchText: String = ""
+    var sugarLevelType: BeverageSugarLevelType?
+    var isOnlyLiked: Bool = false
+    
     var searchType: BeverageSearchType = .search
     var beverageRecordDate: Date
 
@@ -81,6 +84,8 @@ public final class BeverageSearchViewModel: ViewModelable {
     case let .searchTextChanged(searchText):
       state.searchType = searchText.isEmpty ? .search : .list
       state.searchText = searchText
+      state.sugarLevelType = nil
+      state.isOnlyLiked = false
 
     case let .debounceSearchTextChanged(searchText):
       guard searchText != lastSearchedText,
@@ -98,6 +103,8 @@ public final class BeverageSearchViewModel: ViewModelable {
     case let .recentSearchListItemTapped(recentText):
       lastSearchedText = recentText
       state.searchText = recentText
+      state.sugarLevelType = nil
+      state.isOnlyLiked = false
       state.searchType = .list
 
       Task {
@@ -115,6 +122,12 @@ public final class BeverageSearchViewModel: ViewModelable {
       switch action {
       case let .beverageListItemTapped(beverage):
         state.route = .beverageRecord(productID: beverage.productID, isLiked: beverage.isLiked, recordDate: state.beverageRecordDate)
+        
+      case let .beverageFilterItemTapped(sugarLevelType, isOnlyLiked):
+        state.sugarLevelType = sugarLevelType
+        state.isOnlyLiked = isOnlyLiked
+        
+        Task { await searchBeverage(state.searchText) }
 
       case nil:
         break
@@ -140,12 +153,15 @@ public final class BeverageSearchViewModel: ViewModelable {
 
   private func searchBeverage(_ keyword: String) async {
     do {
-      let beverageList = try await beverageUseCase.searchBeverage(keyword: keyword)
+      let beverageList = try await beverageUseCase.searchBeverage(keyword: keyword, sugarLevel: state.sugarLevelType, onlyLiked: state.isOnlyLiked)
 
       await MainActor.run {
         listViewModel.state.beverageList = beverageList.items
         listViewModel.state.cursor = beverageList.nextCursor
         listViewModel.state.hasNext = beverageList.hasNext
+        listViewModel.state.filterCount.total = beverageList.totalCount
+        listViewModel.state.filterCount.zero = beverageList.zeroSugarCount
+        listViewModel.state.filterCount.low = beverageList.lowSugarCount
         listViewModel.state.filterCount.like = beverageList.likeCount
       }
     } catch {

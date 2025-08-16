@@ -66,6 +66,7 @@ public final class BeverageListViewModel: ViewModelable {
 
   public enum DelegateAction: Equatable {
     case beverageListItemTapped(Beverage)
+    case beverageFilterItemTapped(BeverageSugarLevelType?, Bool)
   }
 
   @ObservationIgnored
@@ -88,7 +89,7 @@ public final class BeverageListViewModel: ViewModelable {
       state.isFilteringInProgress = true
       state.filterType = filterType
       state.cursor = nil
-
+      
       switch state.filterType {
       case .all:
         state.sugarLevelType = nil
@@ -108,14 +109,13 @@ public final class BeverageListViewModel: ViewModelable {
       }
 
       Task {
-        await getBeverageList()
+        delegateAction?(.beverageFilterItemTapped(state.sugarLevelType, state.isOnlyLiked))
         await MainActor.run {
           state.isFilteringInProgress = false
         }
       }
     case let .loadNextBeverageList(beverageIDList):
       guard !state.isLoading,
-            !state.isFilteringInProgress,
             let lastId = beverageIDList.last else { return }
       Task { await getBeverageList(lastId) }
 
@@ -161,7 +161,7 @@ public final class BeverageListViewModel: ViewModelable {
 
       let cursor = isInitialLoad ? nil : state.cursor
       let beverageList = try await beverageUseCase.getBeverageList(cursor: cursor, sugarLevel: state.sugarLevelType, onlyLiked: state.isOnlyLiked)
-
+      
       await MainActor.run {
         if isInitialLoad {
           state.beverageList = beverageList.items
@@ -170,8 +170,8 @@ public final class BeverageListViewModel: ViewModelable {
         }
 
         state.filterCount.like = beverageList.likeCount
-        state.cursor = beverageList.nextCursor
-        state.hasNext = beverageList.hasNext
+        state.cursor = beverageList.items.isEmpty ? nil : beverageList.nextCursor
+        state.hasNext = beverageList.items.isEmpty ? false : beverageList.hasNext
         state.isLoading = false
       }
     } catch {
