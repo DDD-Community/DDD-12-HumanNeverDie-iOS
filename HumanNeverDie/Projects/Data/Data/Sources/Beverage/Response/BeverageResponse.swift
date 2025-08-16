@@ -54,7 +54,7 @@ extension BeverageListResponse {
 struct BeverageResponse: Decodable {
   let productId: String?
   let name: String?
-  let imageUrl: String?
+  let imgUrl: String?
   let beverageType: String?
   let beverageNutrition: BeverageNutritionResponse?
   let cafeStoreDto: CafeStoreResponse?
@@ -71,7 +71,7 @@ struct BeverageResponse: Decodable {
   ) {
     self.productId = productId
     self.name = name
-    self.imageUrl = imgUrl
+    self.imgUrl = imgUrl
     self.beverageType = beverageType
     self.beverageNutrition = beverageNutrition
     self.cafeStoreDto = cafeStoreDto
@@ -92,7 +92,7 @@ extension BeverageResponse {
     return .init(
       name: name ?? "",
       productID: productId ?? "",
-      thumbnailURL: imageUrl ?? "",
+      thumbnailURL: imgUrl ?? "",
       kcal: beverageNutrition?.servingKcal ?? 0,
       sugar: beverageNutrition?.sugarG ?? 0,
       brandName: cafeStoreDto?.cafeBrand ?? "",
