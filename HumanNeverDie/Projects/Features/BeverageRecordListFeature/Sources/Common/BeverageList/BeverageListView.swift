@@ -26,14 +26,38 @@ struct BeverageListView: View {
 
   var body: some View {
     VStack(spacing: 0) {
+      filterinfoView
       beverageFilterChipView
       beverageList
     }
     .padding(.horizontal, 20)
-    .amdBottomSheet(isPresented: $viewModel.state.isBevarageDetailPresented, detents: [.height(474)]) {
+    .amdBottomSheet(isPresented: $viewModel.state.isBeverageDetailPresented, detents: [.height(474)]) {
       AMDBeverageDetailView(productID: viewModel.beverageProductID)
     }
+    
     .animation(.default, value: viewModel.beverageList)
+  }
+  
+  private var filterinfoView: some View {
+    VStack {
+      HStack(spacing: 0) {
+        Text("저당/무당 기준이 궁금하다면?")
+          .amdFont(.smallRegular)
+          .foregroundStyle(.gray60)
+        
+        AMDImage.arrowRight18.swiftUIImage
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(.vertical, 10)
+      .onTapGesture {
+        viewModel.handleAction(.filterinfoViewTapped)
+      }
+      
+      AMDDevider()
+        .padding(.horizontal, -20)
+    }
+    .frame(minHeight: 40, maxHeight: 40)
+    .padding(.top, 4)
   }
 
   private var beverageFilterChipView: some View {

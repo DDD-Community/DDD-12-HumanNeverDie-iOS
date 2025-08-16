@@ -49,7 +49,7 @@ public struct AMDAlert: View {
   private var messageView: some View {
     VStack(spacing: 12) {
       Text(property.message)
-        .amdFont(.mediumRegular)
+        .amdFont(.smallRegular)
         .foregroundStyle(.gray80)
         .frame(maxWidth: .infinity, alignment: .leading)
         .multilineTextAlignment(.leading)
