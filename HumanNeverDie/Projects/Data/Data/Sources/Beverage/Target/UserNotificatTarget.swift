@@ -1,5 +1,5 @@
 //
-//  UserNotificatTarget.swift
+//  UserNotificationsTarget.swift
 //  Data
 //
 //  Created by Seulki Lee on 8/15/25.
@@ -10,7 +10,7 @@ import Foundation
 import BaseNetwork
 import UserDomain
 
-struct UserNotificatTarget: AMDAPIRequestable {
+struct UserNotificationsTarget: AMDAPIRequestable {
     typealias Response = AMDAPIResponse<UserNotificationsResponse>
     
     private let userID: String

@@ -29,7 +29,7 @@ public final class UserRepository: UserRepositoryInterface, @unchecked Sendable 
   }
   
   public func getUserNotificationInfo(userID: String) async throws -> UserDomain.UserNotifications {
-    let target = UserNotificatTarget(userID: userID)
+    let target = UserNotificationsTarget(userID: userID)
     let result = try await networkService.requestDDD(target)
 
     guard let response = result.data else {
