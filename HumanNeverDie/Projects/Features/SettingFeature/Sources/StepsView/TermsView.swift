@@ -26,12 +26,12 @@ public struct TermsView: View {
         TermsRow(title: "개인정보처리방침") {
           //외부링크 이동
         }
-      }
+      }.padding(.horizontal, 20)
+    }.settingToolbar(item: .notificationSetting) {
+      self.router.pop()
     }
     .listStyle(.plain)
     .listRowSeparator(.hidden)
-    .padding(.top, 30)
-    .settingToolbar(item: .terms)
   }
 }
 
@@ -52,7 +52,6 @@ private struct TermsRow: View {
         .font(.system(size: 16))
     }
     .padding(.vertical, 15)
-    .padding(.horizontal, 20)
     .contentShape(Rectangle())
     .onTapGesture(perform: onTap)
     .listRowSeparator(.hidden)

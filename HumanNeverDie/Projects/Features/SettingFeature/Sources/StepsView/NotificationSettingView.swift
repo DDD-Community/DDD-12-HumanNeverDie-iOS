@@ -11,7 +11,7 @@ import CommonFeature
 
 public struct NotificationSettingView: View {
   @State private var viewModel: NotificationSettingViewModel
-  @Environment(\.dismiss) private var dismiss
+  @Environment(Router.self) private var router
   @State private var showTimePicker = false
   
   public init(viewModel: NotificationSettingViewModel) {
@@ -30,19 +30,23 @@ public struct NotificationSettingView: View {
     .onAppear {
       viewModel.handleAction(.onAppear)
     }
-    .settingToolbar(item: .notificationSetting)
     .amdBottomSheet(isPresented: $viewModel.state.showTimePicker, detents: [.height(474)]) {
       AMDDatePicker(
         selectedDate: $viewModel.state.reminderTime,
         pickerType: .time
       )
       .frame(height: 200)
+    }.settingToolbar(item: .notificationSetting) {
+      self.router.pop()
+    }
+    .onAppear {
+      viewModel.setRouter(router)
     }
   }
 }
 
 extension NotificationSettingView {
-
+  
   @ViewBuilder
   private func notificationToggleSection() -> some View {
     VStack(spacing: 23) {

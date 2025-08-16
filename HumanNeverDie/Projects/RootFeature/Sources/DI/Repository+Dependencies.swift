@@ -7,6 +7,7 @@
 
 import Data
 import BeverageDomain
+import UserDomain
 
 import Dependencies
 
@@ -20,4 +21,9 @@ extension BeverageRepositoryKey: @retroactive DependencyKey {
 
 extension BeverageLikeLocalRepositoryKey: @retroactive DependencyKey {
   public static let liveValue: BeverageLikeLocalRepositoryInterface = BeverageLikeLocalRepository()
+}
+
+
+extension UserRepositoryKey: @retroactive DependencyKey {
+  public static let liveValue: UserRepositoryInterface = UserRepository()
 }

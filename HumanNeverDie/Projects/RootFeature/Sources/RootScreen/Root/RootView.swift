@@ -9,7 +9,6 @@ import SettingFeature
 
 public struct RootView: View {
   @State private var router = Router()
-  @State private var settingViewModel = SettingViewModel()
   
   public init() {}
   
@@ -46,18 +45,14 @@ public struct RootView: View {
         case .Setting:
           SettingViewFactory.create()
           
-        case .SettingAccountInfo:
-          let userInfo = settingViewModel.getUserInfoForAccountSetting()
+        case .SettingAccountInfo(userInfo: let userInfo):
           AccountInfoFactory.create(userInfo: userInfo)
           
-        case .SettingGoalSetting:
-          let userInfo = settingViewModel.getUserInfoForAccountSetting()
+        case .SettingGoalSetting(userInfo: let userInfo):
           GoalSettingFactory.create(userInfo: userInfo)
           
-        case .SettingNotificationSetting:
-          let userInfo = settingViewModel.getUserInfoForAccountSetting()
-          NotificationSettingFactory.create(userInfo: userInfo)
-          
+        case .SettingNotificationSetting(userID: let userID):
+          NotificationSettingFactory.create(userID: userID)
         case .SettingTerms:
           TermsFactory.create()
         }

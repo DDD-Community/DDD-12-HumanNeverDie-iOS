@@ -2,7 +2,7 @@
 //  GoalSettingFactory.swift
 //  SettingFeature
 //
-//  Created by Seulki Lee on 7/20/25.
+//  Created by Seulki Lee on 8/16/25.
 //
 
 import SwiftUI
@@ -15,3 +15,4 @@ public struct GoalSettingFactory {
     return GoalSettingView(viewModel: viewModel)
   }
 }
+

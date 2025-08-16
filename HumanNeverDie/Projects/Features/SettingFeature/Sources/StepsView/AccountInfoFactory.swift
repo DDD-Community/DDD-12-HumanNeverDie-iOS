@@ -2,9 +2,8 @@
 //  AccountInfoFactory.swift
 //  SettingFeature
 //
-//  Created by Seulki Lee on 7/20/25.
+//  Created by Seulki Lee on 8/16/25.
 //
-
 import SwiftUI
 import UserDomain
 
@@ -12,6 +11,8 @@ import UserDomain
 public struct AccountInfoFactory {
   public static func create(userInfo: UserInfo) -> some View {
     let viewModel = AccountInfoViewModel(userInfo: userInfo)
-    return AccountInfoView(viewModel: viewModel) // SettingView → AccountInfoView
+    return AccountInfoView(viewModel: viewModel) 
   }
 }
+
+
