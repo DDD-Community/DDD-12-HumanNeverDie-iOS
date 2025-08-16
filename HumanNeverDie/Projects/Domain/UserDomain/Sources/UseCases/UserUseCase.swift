@@ -12,7 +12,7 @@ import Dependencies
 public protocol UserUseCaseProtocol: Sendable {
   func getUserInfo(userID:String) async throws -> UserInfo
   func getUserNotificationInfo(userID:String) async throws -> UserNotifications
-  func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UnitInfoRequest
+  func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserInfo
 }
 
 public final class UserUseCase: UserUseCaseProtocol, @unchecked Sendable {
@@ -27,7 +27,7 @@ public final class UserUseCase: UserUseCaseProtocol, @unchecked Sendable {
     return try await userRepository.getUserNotificationInfo(userID: userID)
   }
   
-  public func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UnitInfoRequest {
+  public func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserInfo {
     return try await userRepository.updateUserInfo(userID: userID, userInfo: userInfo)
   }
   

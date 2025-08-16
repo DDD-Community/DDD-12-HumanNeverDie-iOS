@@ -151,7 +151,7 @@ extension AccountInfoViewModel {
       height: state.height,
       weight: state.weight,
       selectedActivity: state.selectedActivity,
-      selectedDailySugarGoal: state.selectedDailySugarGoal,
+      selectedDailySugarGoal: state.selectedDailySugarGoal
     )
   }
   

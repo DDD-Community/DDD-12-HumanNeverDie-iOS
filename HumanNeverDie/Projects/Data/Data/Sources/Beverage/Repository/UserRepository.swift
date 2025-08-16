@@ -39,7 +39,7 @@ public final class UserRepository: UserRepositoryInterface, @unchecked Sendable 
     return response.toDomain()
   }
   
-  public func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserDomain.UnitInfoRequest {
+  public func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserDomain.UserInfo {
     let target = UserInfoUpdateTarget(userID: userID, userInfo: userInfo)
     let result = try await networkService.requestDDD(target)
 

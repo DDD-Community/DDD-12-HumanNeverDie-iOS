@@ -86,7 +86,7 @@ extension SettingViewModel {
       let result = try await userUseCase.updateUserInfo(userID: state.userID, userInfo: userInfo)
       
       showToast(message: "저장이 완료되었어요", type: .success)
-      setUserInfo(userInfo: result.toUserInfo())
+      setUserInfo(userInfo: result)
       state.sugarMaxG = result.sugarMaxG
       
     } catch {

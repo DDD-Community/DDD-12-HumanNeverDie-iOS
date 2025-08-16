@@ -25,6 +25,6 @@ public extension DependencyValues {
 private struct MockUserUseCase: UserUseCaseProtocol {
   func getUserInfo(userID: String) async throws -> UserInfo { UserInfo.mock()}
   func getUserNotificationInfo(userID: String) async throws -> UserNotifications { UserNotifications.mock()}
-  func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UnitInfoRequest { UnitInfoRequest.mock()}
+  func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserInfo { UserInfo.mock()}
   
 }

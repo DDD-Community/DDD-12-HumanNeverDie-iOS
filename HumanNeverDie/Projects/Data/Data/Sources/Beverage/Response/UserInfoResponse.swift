@@ -27,7 +27,9 @@ extension UserInfoResponse {
            height: heightCm,
            weight: weightKg,
            selectedActivity: ActivityLevel(rawValue: activityRange) ?? .none,
-           selectedDailySugarGoal: SugarGoal(rawValue: sugarIntakeLevel) ?? .none
+           selectedDailySugarGoal: SugarGoal(rawValue: sugarIntakeLevel) ?? .none,
+           sugarMaxG: 0,
+           sugarIdealG: 0
        )
    }
 }

@@ -20,8 +20,8 @@ struct UserInfoUpdateResponse: Decodable {
 }
 
 extension UserInfoUpdateResponse {
-   public func toDomain() -> UnitInfoRequest {
-       return UnitInfoRequest(
+   public func toDomain() -> UserInfo {
+       return UserInfo(
            nickname: nickname,
            birthDate: birthDay,
            selectedGender: Gender(rawValue: gender) ?? .none,

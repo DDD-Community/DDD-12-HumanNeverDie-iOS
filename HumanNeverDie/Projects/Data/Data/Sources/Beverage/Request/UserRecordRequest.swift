@@ -15,6 +15,4 @@ struct UserRecordRequest: Encodable {
   let weightKg: Int
   let activityRange: String
   let sugarIntakeLevel: String
-  
 }
-
