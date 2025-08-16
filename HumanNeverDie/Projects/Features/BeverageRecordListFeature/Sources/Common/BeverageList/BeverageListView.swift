@@ -13,27 +13,53 @@ import DesignSystem
 
 struct BeverageListView: View {
   @Bindable private var viewModel: BeverageListViewModel
-  
+  @State private var scrollPosition = ScrollPosition(edge: .top)
+
   init(viewModel: BeverageListViewModel) {
     self.viewModel = viewModel
   }
-  
+
   private enum Constants {
     static let beverageFilterChipViewHeight: CGFloat = 68
     static let scrollViewBottomPadding: CGFloat = 110
   }
-  
+
   var body: some View {
     VStack(spacing: 0) {
+      filterinfoView
       beverageFilterChipView
       beverageList
     }
     .padding(.horizontal, 20)
-    .amdBottomSheet(isPresented: $viewModel.state.isBevarageDetailPresented, detents: [.height(474)]) {
+    .amdBottomSheet(isPresented: $viewModel.state.isBeverageDetailPresented, detents: [.height(474)]) {
       AMDBeverageDetailView(productID: viewModel.beverageProductID)
     }
+    
+    .animation(.default, value: viewModel.beverageList)
   }
   
+  private var filterinfoView: some View {
+    VStack {
+      HStack(spacing: 0) {
+        Text("저당/무당 기준이 궁금하다면?")
+          .amdFont(.smallRegular)
+          .foregroundStyle(.gray60)
+        
+        AMDImage.arrowRight18.swiftUIImage
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(.vertical, 10)
+      .onTapGesture {
+        viewModel.handleAction(.filterinfoViewTapped)
+      }
+      
+      AMDDevider()
+        .padding(.horizontal, -20)
+    }
+    .frame(minHeight: 40, maxHeight: 40)
+    .padding(.top, 4)
+  }
+
   private var beverageFilterChipView: some View {
     HStack(spacing: 4) {
       ForEach(BeverageFilterType.allCases, id: \.self) { type in
@@ -42,14 +68,20 @@ struct BeverageListView: View {
           title: type == .like ? nil : type.title,
           count: viewModel.filterCount.toValue(type),
           isSelected: viewModel.filterType == type,
-          action: { viewModel.handleAction(.beverageFilterChipItemTapped(type)) }
+          action: {
+            withAnimation(.easeOut(duration: 0.3)) {
+              scrollPosition.scrollTo(edge: .top)
+            } completion: {
+              viewModel.handleAction(.beverageFilterChipItemTapped(type))
+            }
+          }
         )
       }
     }
     .padding(.vertical, 16)
     .frame(maxWidth: .infinity, minHeight: Constants.beverageFilterChipViewHeight, maxHeight: Constants.beverageFilterChipViewHeight, alignment: .leading)
   }
-  
+
   private var beverageList: some View {
     ScrollView {
       LazyVStack(spacing: 0) {
@@ -74,6 +106,7 @@ struct BeverageListView: View {
       }
       .scrollTargetLayout()
     }
+    .scrollPosition($scrollPosition)
     .onScrollTargetVisibilityChange(idType: Beverage.ID.self) { item in
       viewModel.handleAction(.loadNextBeverageList(item))
     }

@@ -11,9 +11,17 @@ import BaseNetwork
 
 struct BeverageSearchTarget: AMDAPIRequestable {
   private let keyword: String
+  private let sugarLevel: String?
+  private let onlyLiked: Bool
   
-  init(keyword: String) {
+  init(
+    keyword: String,
+    sugarLevel: String? = nil,
+    onlyLiked: Bool = false
+  ) {
     self.keyword = keyword
+    self.sugarLevel = sugarLevel
+    self.onlyLiked = onlyLiked
   }
   
   typealias Response = AMDAPIResponse<BeverageSearchResponse>
@@ -34,6 +42,15 @@ struct BeverageSearchTarget: AMDAPIRequestable {
     var parameters: [String : String] = [:]
     
     parameters.updateValue(keyword, forKey: "keyword")
+    
+    if let sugarLevel {
+      parameters.updateValue(sugarLevel, forKey: "sugarLevel")
+    }
+    
+    if onlyLiked {
+      parameters.updateValue("true", forKey: "onlyLiked")
+    }
+    
     return parameters
   }
   

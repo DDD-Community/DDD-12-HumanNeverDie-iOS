@@ -4,13 +4,13 @@ import Dependencies
 
 public protocol BeverageUseCaseProtocol: Sendable {
   func getBeverageCount() async throws -> BeverageCount
-  func getBeverageList(cursor: String?) async throws -> BeverageList
+  func getBeverageList(cursor: String?, sugarLevel: BeverageSugarLevelType?, onlyLiked: Bool) async throws -> BeverageList
   func getBeverageDetail(productID: String) async throws -> BeverageDetail
   func getBeverageMonthCalender(dateInWeek: String) async throws -> [BeverageCalendar]
   func getBeverageWeeklyCalender(dateInWeek: String) async throws -> [BeverageCalendar]
   func likeBeverage(productID: String) async throws -> BeverageLike
   func unLikeBeverage(productID: String) async throws -> BeverageLike
-  func searchBeverage(keyword: String) async throws -> BeverageList
+  func searchBeverage(keyword: String, sugarLevel: BeverageSugarLevelType?, onlyLiked: Bool) async throws -> BeverageList
   func recordBeverage(productID: String, recordDate: Date) async throws -> Bool
   func syncBeverageLike(beverages: [Beverage]) throws -> ([Beverage], Int)
   func deleteBeverage(productID: String, intakeTime: String) async throws -> Bool
@@ -25,15 +25,18 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
     return try await beverageRepository.getBeverageCount()
   }
   
-  public func getBeverageList(cursor: String?) async throws -> BeverageList {
-    let beverageList = try await beverageRepository.getBeverageList(cursor: cursor)
+  public func getBeverageList(cursor: String?, sugarLevel: BeverageSugarLevelType?, onlyLiked: Bool) async throws -> BeverageList {
+    let beverageList = try await beverageRepository.getBeverageList(cursor: cursor, sugarLevel: sugarLevel?.rawValue, onlyLiked: onlyLiked)
     let (syncedBeverages, likeCountDiff) = try syncBeverageLike(beverages: beverageList.items)
     
     return BeverageList(
       items: syncedBeverages,
       nextCursor: beverageList.nextCursor,
       hasNext: beverageList.hasNext,
-      likeCount: beverageList.likeCount + likeCountDiff
+      likeCount: beverageList.likeCount + likeCountDiff,
+      totalCount: beverageList.totalCount,
+      zeroSugarCount: beverageList.zeroSugarCount,
+      lowSugarCount: beverageList.lowSugarCount
     )
   }
   
@@ -49,15 +52,18 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
     return try await beverageRepository.unLikeBeverage(productID: productID)
   }
   
-  public func searchBeverage(keyword: String) async throws -> BeverageList {
-    let beverageList = try await beverageRepository.searchBeverage(keyword: keyword)
+  public func searchBeverage(keyword: String, sugarLevel: BeverageSugarLevelType?, onlyLiked: Bool) async throws -> BeverageList {
+    let beverageList = try await beverageRepository.searchBeverage(keyword: keyword, sugarLevel: sugarLevel?.rawValue, onlyLiked: onlyLiked)
     let (syncedBeverages, likeCountDiff) = try syncBeverageLike(beverages: beverageList.items)
     
     return BeverageList(
       items: syncedBeverages,
       nextCursor: beverageList.nextCursor,
       hasNext: beverageList.hasNext,
-      likeCount: beverageList.likeCount + likeCountDiff
+      likeCount: beverageList.likeCount + likeCountDiff,
+      totalCount: beverageList.totalCount,
+      zeroSugarCount: beverageList.zeroSugarCount,
+      lowSugarCount: beverageList.lowSugarCount
     )
   }
   

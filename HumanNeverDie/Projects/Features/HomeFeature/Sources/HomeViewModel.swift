@@ -71,8 +71,10 @@ public final class HomeViewModel: ViewModelable {
       Task { await getWeeklyCalender() }
       
     case let .datePickerConfirmed(date):
-      state.currentDate = date
       state.isMonthPickerPresented = false
+      
+      state.currentDate = date
+      state.selectedDate = date
       Task { await getWeeklyCalender() }
     }
   }

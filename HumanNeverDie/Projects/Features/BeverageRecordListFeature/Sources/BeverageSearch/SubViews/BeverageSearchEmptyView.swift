@@ -12,11 +12,11 @@ import DesignSystem
 struct BeverageSearchEmptyView: View {
   private let type: SearchEmptyType
   @Bindable private var viewModel: BeverageSearchViewModel
-  
+
   enum SearchEmptyType {
     case recentSearch
     case beverageList
-    
+
     var title: String {
       switch self {
       case .recentSearch:
@@ -26,7 +26,7 @@ struct BeverageSearchEmptyView: View {
       }
     }
   }
-  
+
   init(
     type: SearchEmptyType,
     viewModel: BeverageSearchViewModel
@@ -34,7 +34,7 @@ struct BeverageSearchEmptyView: View {
     self.type = type
     self.viewModel = viewModel
   }
-  
+
   var body: some View {
     VStack(alignment: .center) {
       Spacer()
@@ -45,28 +45,28 @@ struct BeverageSearchEmptyView: View {
       Spacer()
     }
   }
-  
+
   private var emptyTitleView: some View {
     Text(type.title)
       .amdFont(.largeBold)
       .foregroundStyle(.gray80)
   }
-  
+
   @ViewBuilder
   private var addBeverageButtonView: some View {
     switch type {
     case .recentSearch:
       Spacer()
-      
+
     case .beverageList:
       Spacer()
-      
+
       VStack(spacing: 10) {
         Text("찾으시는 음료가 없으신가요?")
           .amdFont(.smallRegular)
           .foregroundStyle(.gray80)
 
-        
+
         AMDFloatingButton(
           type: .secondary,
           title: "음료 추가 요청",

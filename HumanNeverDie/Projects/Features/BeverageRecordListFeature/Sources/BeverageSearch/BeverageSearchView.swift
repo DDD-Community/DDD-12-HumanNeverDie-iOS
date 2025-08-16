@@ -15,19 +15,19 @@ import Shared
 public struct BeverageSearchView: View {
   @State private var viewModel: BeverageSearchViewModel
   @Environment(Router.self) private var router
-  
+
   @FocusState private var isFocus: Bool
   private let searchChannel = AsyncChannel<String>()
-  
+
   private enum Constants {
     static let navigationBarHeight: CGFloat = 56
     static let sugarStatusViewHeight: CGFloat = 110
   }
-  
+
   public init(viewModel: BeverageSearchViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
-  
+
   public var body: some View {
     GeometryReader { geometry in
       VStack(spacing: 0) {
@@ -40,6 +40,7 @@ public struct BeverageSearchView: View {
     }
     .ignoresSafeArea([.keyboard, .container], edges: .bottom)
     .toolbarVisibility(.hidden, for: .navigationBar)
+    .animation(.default, value: viewModel.searchType)
     .onChange(of: viewModel.route) { _, route in
       guard let route else { return }
       router.push(to: route)
@@ -50,7 +51,7 @@ public struct BeverageSearchView: View {
       viewModel.handleAction(.onAppear)
     }
   }
-  
+
   private var navigationBar: some View {
     HStack(spacing: 18) {
       Button {
@@ -58,7 +59,7 @@ public struct BeverageSearchView: View {
       } label: {
         AMDImage.arrowLeft24.swiftUIImage
       }
-      
+
       AMDTextField(
         text: Binding(
           get: { viewModel.searchText },
@@ -72,24 +73,24 @@ public struct BeverageSearchView: View {
       .debounce($viewModel.state.searchText, using: searchChannel, for: .seconds(1.0)) {
         viewModel.handleAction(.debounceSearchTextChanged($0))
       }
-          
+
     }
     .padding(.horizontal, 20)
     .frame(height: Constants.navigationBarHeight)
     .background(.white)
   }
-  
+
   @ViewBuilder
   private func contentView(_ height: CGFloat) -> some View {
     switch viewModel.searchType {
     case .search:
       beverageSearchView
-      
+
     case .list:
       beverageSearchListView(height)
     }
   }
-  
+
   private var sugarProgressView: some View {
     AMDSugarStatusView(
       variant: .healthy,
@@ -111,7 +112,7 @@ private extension BeverageSearchView {
     }
     .padding(.horizontal, 20)
   }
-  
+
   private var recentSearchListView: some View {
     VStack(spacing: 0) {
       BevergeRecentSearchListView(viewModel: viewModel)
@@ -121,7 +122,7 @@ private extension BeverageSearchView {
     }
     .padding(.top, 20)
   }
-  
+
   private var recentSearchEmptyView: some View {
     BeverageSearchEmptyView(type: .recentSearch, viewModel: viewModel)
   }
@@ -140,11 +141,11 @@ private extension BeverageSearchView {
     }
     .frame(maxWidth: .infinity, minHeight: height - Constants.navigationBarHeight)
   }
-  
+
   private var beverageListView: some View {
     BeverageListView(viewModel: viewModel.listViewModel)
   }
-  
+
   private var beverageListEmptyView: some View {
     BeverageSearchEmptyView(type: .beverageList, viewModel: viewModel)
   }

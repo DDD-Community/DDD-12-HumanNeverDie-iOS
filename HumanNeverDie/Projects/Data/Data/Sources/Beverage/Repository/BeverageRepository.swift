@@ -27,8 +27,8 @@ public final class BeverageRepository: BeverageRepositoryInterface, @unchecked S
     return response.toDomain()
   }
   
-  public func getBeverageList(cursor: String?) async throws -> BeverageList {
-    let target = BeverageListTarget(cursor: cursor)
+  public func getBeverageList(cursor: String?, sugarLevel: String?, onlyLiked: Bool) async throws -> BeverageList {
+    let target = BeverageListTarget(cursor: cursor, sugarLevel: sugarLevel, onlyLiked: onlyLiked)
     let result = try await networkService.requestDDD(target)
     
     guard let response = result.data else {
@@ -71,8 +71,8 @@ public final class BeverageRepository: BeverageRepositoryInterface, @unchecked S
     return response.toDomain()
   }
   
-  public func searchBeverage(keyword: String) async throws -> BeverageList {
-    let target = BeverageSearchTarget(keyword: keyword)
+  public func searchBeverage(keyword: String, sugarLevel: String?, onlyLiked: Bool) async throws -> BeverageList {
+    let target = BeverageSearchTarget(keyword: keyword, sugarLevel: sugarLevel, onlyLiked: onlyLiked)
     let result = try await networkService.requestDDD(target)
     
     guard let response = result.data else {

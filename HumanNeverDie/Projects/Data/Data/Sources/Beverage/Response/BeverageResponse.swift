@@ -14,17 +14,26 @@ struct BeverageListResponse: Decodable {
   let nextCursor: String?
   let hasNext: Bool?
   let likeCount: Int?
+  let totalCount: Int?
+  let zeroSugarCount: Int?
+  let lowSugarCount: Int?
   
   init(
     items: [BeverageResponse],
     nextCursor: String?,
     hasNext: Bool?,
-    likeCount: Int?
+    likeCount: Int?,
+    totalCount: Int? = nil,
+    zeroSugarCount: Int? = nil,
+    lowSugarCount: Int? = nil
   ) {
     self.items = items
     self.nextCursor = nextCursor
     self.hasNext = hasNext
     self.likeCount = likeCount
+    self.totalCount = totalCount
+    self.zeroSugarCount = zeroSugarCount
+    self.lowSugarCount = lowSugarCount
   }
 }
 
@@ -34,7 +43,10 @@ extension BeverageListResponse {
       items: items.map { $0.toDomain() },
       nextCursor: nextCursor,
       hasNext: hasNext ?? false,
-      likeCount: likeCount ?? 0
+      likeCount: likeCount ?? 0,
+      totalCount: totalCount ?? 0,
+      zeroSugarCount: zeroSugarCount ?? 0,
+      lowSugarCount: lowSugarCount ?? 0
     )
   }
 }
@@ -42,7 +54,7 @@ extension BeverageListResponse {
 struct BeverageResponse: Decodable {
   let productId: String?
   let name: String?
-  let imgUrl: String?
+  let imageUrl: String?
   let beverageType: String?
   let beverageNutrition: BeverageNutritionResponse?
   let cafeStoreDto: CafeStoreResponse?
@@ -59,7 +71,7 @@ struct BeverageResponse: Decodable {
   ) {
     self.productId = productId
     self.name = name
-    self.imgUrl = imgUrl
+    self.imageUrl = imgUrl
     self.beverageType = beverageType
     self.beverageNutrition = beverageNutrition
     self.cafeStoreDto = cafeStoreDto
@@ -80,7 +92,7 @@ extension BeverageResponse {
     return .init(
       name: name ?? "",
       productID: productId ?? "",
-      thumbnailURL: imgUrl ?? "",
+      thumbnailURL: imageUrl ?? "",
       kcal: beverageNutrition?.servingKcal ?? 0,
       sugar: beverageNutrition?.sugarG ?? 0,
       brandName: cafeStoreDto?.cafeBrand ?? "",

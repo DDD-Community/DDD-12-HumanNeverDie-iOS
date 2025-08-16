@@ -22,6 +22,14 @@ extension BeverageLocalLikeUseCaseKey: @retroactive DependencyKey {
   public static let liveValue: BeverageLocalLikeUseCaseProtocol = BeverageLocalLikeUseCase()
 }
 
+// MARK: - BeverageLocalSearchUseCase
+
+extension BeverageLocalSearchUseCaseKey: @retroactive DependencyKey {
+  public static let liveValue: BeverageLocalSearchUseCaseProtocol = BeverageLocalSearchUseCase()
+}
+
+// MARK: - UserUseCase
+
 extension UserUseCaseKey: @retroactive DependencyKey {
   public static let liveValue: UserUseCaseProtocol = UserUseCase()
 }
