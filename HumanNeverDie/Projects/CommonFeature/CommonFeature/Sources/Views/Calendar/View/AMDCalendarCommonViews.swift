@@ -18,23 +18,32 @@ public struct CalendarTitleView: View {
   }
   
   public var body: some View {
-    Button(action: onTap) {
-      HStack(spacing: 0) {
-        Text(title)
-          .amdFont(.xlargeBold)
-          .foregroundColor(.gray100)
-        
-        Image(systemName: "chevron.down")
-          .foregroundColor(.gray50)
-          .padding(9)
-        
-        Spacer()
-      }
+    HStack(spacing: 0) {
+      amdCalenderTitleView()
+      
+      Spacer()
     }
     .frame(maxWidth: .infinity)
     .padding(.vertical, 14)
   }
-  
+}
+
+extension CalendarTitleView {
+  private func amdCalenderTitleView() -> some View {
+    HStack(spacing: 0) {
+      Text(title)
+        .amdFont(.xlargeBold)
+        .foregroundColor(.gray100)
+      
+      Image(systemName: "chevron.down")
+        .foregroundColor(.gray50)
+        .padding(9)
+    }
+    .contentShape(Rectangle())
+    .onTapGesture {
+      onTap()
+    }
+  }
 }
 
 public struct CalendarWeekdayTitleView: View {

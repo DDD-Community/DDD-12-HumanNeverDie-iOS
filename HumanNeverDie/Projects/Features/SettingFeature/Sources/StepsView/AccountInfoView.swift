@@ -13,8 +13,7 @@ import CommonFeature
 
 public struct AccountInfoView: View {
   @State public var viewModel: AccountInfoViewModel
-  @State private var showAlert = false
-  @Environment(\.dismiss) private var dismiss
+  @Environment(Router.self) private var router
   @FocusState private var isNicknameFocused: Bool
   @FocusState private var isHeightFocused: Bool
   @FocusState private var isWeightFocused: Bool
@@ -34,7 +33,9 @@ public struct AccountInfoView: View {
       bottomButtonView()
         .padding(.top, 30)
       
-    }.settingToolbar(item: .accountInfo)
+    }.settingToolbar(item: .accountInfo) {
+      self.router.pop()
+    }
   }
 }
 
@@ -61,21 +62,33 @@ extension AccountInfoView {
       
       AMDTextField(
         text: Binding(
-          get: { viewModel.state.birthDate },
-          set: { viewModel.handleAction(.updateBirthDate($0)) }
+          get: { viewModel.getBirthDateConvertString },
+          set: { _ in }
         ),
         title: "생년월일",
         placeholder: "생년월일을 입력해 주세요",
         rightButtonType: .date,
         rightButtonAction: {
-          showAlert = true
+          viewModel.state.showAlert = true
         }
       )
       
       contentGenderSection()
     }
+    .amdBottomSheet(isPresented: $viewModel.state.showAlert, detents: [.height(310)]) {
+      AMDDatePickerView(
+        title: "생년월일",
+        isResetButtonHidden: true,
+        type: .yearMonthDay,
+        initialDate: viewModel.birthDate
+      ) {
+        viewModel.handleAction(.updateBirthDate($0))
+      }
+    }
     .padding(.horizontal, 20)
-    .padding(.top, 48)
+    .onAppear {
+        viewModel.setRouter(router)
+    }
   }
   
   @ViewBuilder
@@ -84,9 +97,9 @@ extension AccountInfoView {
       AMDTextField.titleLabel("성별")
       
       HStack(spacing: 12) {
-        ForEach([Gender.male, Gender.female], id: \.self) { gender in
+        ForEach([Gender.MALE, Gender.FEMALE], id: \.self) { gender in
           AMDChipButton(
-            title: gender.rawValue,
+            title: gender.description,
             isSelected: viewModel.state.selectedGender  == gender
           ) {
             viewModel.state.selectedGender  = gender
@@ -103,7 +116,7 @@ extension AccountInfoView {
       
       AMDTextField(
         text: Binding(
-          get: { viewModel.state.height },
+          get: { "\(viewModel.state.height)"},
           set: { viewModel.handleAction(.updateHeight($0)) }
         ),
         isFocused: $isHeightFocused,
@@ -119,7 +132,7 @@ extension AccountInfoView {
       
       AMDTextField(
         text: Binding(
-          get: { viewModel.state.weight },
+          get: { "\(viewModel.state.weight)" },
           set: { viewModel.handleAction(.updateWeight($0)) }
         ),
         isFocused: $isWeightFocused,
@@ -145,9 +158,9 @@ extension AccountInfoView {
       AMDTextField.titleLabel("활동량")
       
       VStack(spacing: 12) {
-        ForEach([ActivityLevel.high, ActivityLevel.medium, ActivityLevel.low], id: \.self) { activity in
+        ForEach([ActivityLevel.tight, ActivityLevel.normal, ActivityLevel.loose], id: \.self) { activity in
           AMDOptionButton(
-            title: activity.rawValue,
+            title: activity.description,
             isSelected: viewModel.state.selectedActivity == activity
           ) {
             viewModel.handleAction(.updateActivity(activity))
@@ -162,11 +175,19 @@ extension AccountInfoView {
     SettingBottomButton(
       type: viewModel.isChangedAccountInfo ? .default : .secondary
     ) {
-      guard viewModel.isChangedAccountInfo else { return }
+      guard viewModel.isChangedAccountInfo else {
+        self.router.pop()
+        return
+      }
+      
       withAnimation(.easeInOut) {
         viewModel.handleAction(.updateAccountInfoUserInfo)
-        dismiss()
       }
     }
+  }
+  
+  private func sectionDivider() -> some View {
+    Divider()
+      .background(.gray25)
   }
 }

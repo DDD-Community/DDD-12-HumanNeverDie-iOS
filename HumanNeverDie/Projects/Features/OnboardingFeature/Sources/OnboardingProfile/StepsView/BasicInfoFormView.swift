@@ -80,7 +80,7 @@ extension BasicInfoFormView {
       AMDTextField.titleLabel("성별")
       
       HStack(spacing: 12) {
-        ForEach([Gender.male, Gender.female], id: \.self) { gender in
+        ForEach([Gender.MALE, Gender.FEMALE], id: \.self) { gender in
           AMDChipButton(
             title: gender.rawValue,
             isSelected: viewModel.state.selectedGender  == gender

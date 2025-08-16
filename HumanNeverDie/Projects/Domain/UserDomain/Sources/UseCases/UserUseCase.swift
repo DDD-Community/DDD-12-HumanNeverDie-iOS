@@ -7,16 +7,28 @@
 
 import Foundation
 
+import Dependencies
+
 public protocol UserUseCaseProtocol: Sendable {
-    // Add your use case methods here
+  func getUserInfo(userID:String) async throws -> UserInfo
+  func getUserNotificationInfo(userID:String) async throws -> UserNotifications
+  func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserInfo
 }
 
 public final class UserUseCase: UserUseCaseProtocol, @unchecked Sendable {
-    private let repository: UserRepositoryInterface
-    
-    public init(repository: UserRepositoryInterface) {
-        self.repository = repository
-    }
-    
-    // Implement your use case methods here
-} 
+  @Dependency(\.userRepository) private var userRepository
+  public init() {}
+  
+  public func getUserInfo(userID: String) async throws -> UserInfo {
+    return try await userRepository.getUserInfo(userID: userID)
+  }
+  
+  public func getUserNotificationInfo(userID: String) async throws -> UserNotifications {
+    return try await userRepository.getUserNotificationInfo(userID: userID)
+  }
+  
+  public func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserInfo {
+    return try await userRepository.updateUserInfo(userID: userID, userInfo: userInfo)
+  }
+  
+}

@@ -22,8 +22,8 @@ public final class OnboardingProfileViewModel: ViewModelable {
     var selectedGender: Gender = .none
     
     // PhysicalInfo Actions
-    var height: String = ""
-    var weight: String = ""
+    var height: Int = 0
+    var weight: Int = 0
     var selectedActivity: ActivityLevel = .none
     
     //DailySugarGoalView
@@ -72,10 +72,18 @@ public final class OnboardingProfileViewModel: ViewModelable {
       state.selectedGender = gender
       
     case .updateHeight(let height):
-      state.height = height
+      
+      guard let intValue = Int(height) else { state.height = 0
+        return
+      }
+      state.height = intValue
       
     case .updateWeight(let weight):
-      state.weight = weight
+      
+      guard let intValue = Int(weight) else { state.weight = 0
+        return
+      }
+      state.weight = intValue
       
     case .updateActivity(let activity):
       state.selectedActivity = activity

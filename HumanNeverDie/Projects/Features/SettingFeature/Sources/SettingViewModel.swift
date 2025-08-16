@@ -5,28 +5,43 @@
 // Created by Seulki Lee on 2025.
 //
 import Foundation
+import Observation
+
 import Shared
 import UserDomain
 import CommonFeature
+import DesignSystem
+
+import Dependencies
 
 @Observable
 @MainActor
 public final class SettingViewModel: ViewModelable {
+  @ObservationIgnored
+  @Dependency(\.toastClient) private var toastClient
   
   public struct State: Equatable {
     var userInfo: UserInfo
+    var isLoading: Bool = false
+    let userID: String = "b5219141-afe3-46c6-8c5c-0f7e850a5bef"
+    
+    var sugarMaxG: Int = 0
   }
   
   public enum Action {
     case onAppear
-    case loadUserInfo // 서버에서 데이터 로드
+    case loadUserInfo
+    case updateUserInfo(UserInfo)
+    
   }
   
   public var state: State
   
+  @ObservationIgnored
+  @Dependency(\.userUseCase) private var userUseCase
+  
   public init() {
-    // 초기값 설정 (서버에서 불러올 예정, 현재는 더미 데이터)
-    self.state = State(userInfo: UserInfo.defaultUserInfo) // 또는 UserInfo.defaultUserInfo
+    self.state = State(userInfo: UserInfo.defaultUserInfo)
   }
   
   public func handleAction(_ action: Action) {
@@ -35,21 +50,77 @@ public final class SettingViewModel: ViewModelable {
       handleAction(.loadUserInfo)
       
     case .loadUserInfo:
-      // TODO: 실제로는 서버에서 데이터를 가져옴
-      // 현재는 더미 데이터 사용
-      state.userInfo = UserInfo.defaultUserInfo
+      Task {
+        await loadUserData()
+      }
+
+    case .updateUserInfo(let userInfo): // 추가
+      Task {
+        await updateUserInfo(userInfo: userInfo)
+      }
     }
   }
 }
 
+// MARK: - Private Methods
+extension SettingViewModel {
+  
+  private func loadUserData() async {
+    state.isLoading = true
+    
+    do {
+      let result = try await userUseCase.getUserInfo(userID: state.userID)
+      setUserInfo(userInfo: result)
+      state.isLoading = false
+      
+    } catch {
+      print("❌ 유저 정보 로딩 실패: \(error)")
+      state.isLoading = false
+    }
+  }
+  
+  private func updateUserInfo(userInfo : UserInfo) async {
+    state.isLoading = true
+    
+    do {
+      let result = try await userUseCase.updateUserInfo(userID: state.userID, userInfo: userInfo)
+      
+      showToast(message: "저장이 완료되었어요", type: .success)
+      setUserInfo(userInfo: result)
+      state.sugarMaxG = result.sugarMaxG
+      
+    } catch {
+      showToast(message: "저장에 실패하였습니다", type: .failure)
+      state.isLoading = false
+    }
+  }
+  
+  private func showToast(message: String, type: AMDToastType) {
+    Task { @MainActor in
+      await toastClient.showToast(.init(message: message, type: type))
+    }
+  }
+
+  private func setUserInfo(userInfo: UserInfo) {
+    state.userInfo = userInfo
+    
+    let sugarService = SugarUserCalculation()
+    let userSugerMaxG = sugarService.calculateUserSugarGoal(for: userInfo)
+    
+    print("서버 = \(state.sugarMaxG) == \(userSugerMaxG)")
+    state.sugarMaxG = userSugerMaxG
+  
+  }
+  
+}
+
 // MARK: - Public Methods for Navigation
 extension SettingViewModel {
-  // AccountInfo 화면으로 넘겨줄 UserInfo
+  
   public func getUserInfoForAccountSetting() -> UserInfo {
     return state.userInfo
   }
   
-  // GoalSetting 화면으로 넘겨줄 UserInfo
   public func getUserInfoForGoalSetting() -> UserInfo {
     return state.userInfo
   }

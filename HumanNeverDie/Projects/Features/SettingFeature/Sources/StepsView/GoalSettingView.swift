@@ -13,22 +13,27 @@ import CommonFeature
 
 public struct GoalSettingView: View {
   @State public var viewModel: GoalSettingViewModel
-  @Environment(\.dismiss) private var dismiss
-  
+  @Environment(Router.self) private var router
   public init(viewModel: GoalSettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
   public var body: some View {
-    VStack(spacing: 0) {
-      contentView()
-      bottomInfoView()
-      Spacer()
-      bottomButtonView()
+    ScrollView {
+      VStack(spacing: 0) {
+        contentView()
+        bottomInfoView()
+        Spacer()
+        bottomButtonView()
+          .padding(.top, 30)
+      }
     }
-    .background(.gray0)
-    .ignoresSafeArea(edges: .bottom)
-    .settingToolbar(item: .goalSetting)
+    .settingToolbar(item: .goalSetting) {
+      self.router.pop()
+    }
+    .onAppear {
+        viewModel.setRouter(router)
+    }
   }
 }
 
@@ -66,11 +71,11 @@ extension GoalSettingView {
         .offset(y: -13)
       
       HStack(spacing: 0) {
-        Text("\(viewModel.nickname)님의 일일 권장 당 섭취량은 ")
+        Text("\(viewModel.userInfo.nickname)님의 일일 권장 당 섭취량은 ")
           .amdFont(.largeRegular)
           .foregroundColor(baseTextColor)
         
-        Text("200g")
+        Text("\(viewModel.normalSugarAmount)g")
           .amdFont(.largeBold)
           .foregroundColor(baseTextColor)
         
@@ -103,9 +108,9 @@ extension GoalSettingView {
     VStack(spacing: 10) {
       ForEach([SugarGoal.easy, SugarGoal.normal, SugarGoal.hard], id: \.self) { dailyGoal in
         AMDOptionButton(
-          title: dailyGoal.rawValue,
+          title: dailyGoal.descriptionTitle,
           subtitle: dailyGoal.description,
-          trailingText: dailyGoal.targetAmount,
+          trailingText: "하루 \(viewModel.getSugarGoalAmount(for: dailyGoal))g",
           isSelected: viewModel.state.selectedDailySugarGoal == dailyGoal
         ) {
           viewModel.handleAction(.updateDailySugarGoal(dailyGoal))
@@ -134,10 +139,13 @@ extension GoalSettingView {
     SettingBottomButton(
       type: viewModel.isChangedAccountInfo ? .default : .secondary
     ) {
-      guard viewModel.isChangedAccountInfo else { return }
+      guard viewModel.isChangedAccountInfo else {
+        self.router.pop()
+        return
+      }
+      
       withAnimation(.easeInOut) {
         viewModel.handleAction(.updateAccountInfoUserInfo)
-        dismiss()
       }
     }
   }

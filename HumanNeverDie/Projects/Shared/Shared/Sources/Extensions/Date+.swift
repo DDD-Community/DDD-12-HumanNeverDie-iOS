@@ -16,6 +16,14 @@ extension Date {
     return formatter.string(from: date)
   }
   
+  public static func toStringConvertDate(from dateString: String) -> Date {
+      let formatter = DateFormatter()
+      formatter.locale = Locale(identifier: "ko_KR")
+      formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+      formatter.dateFormat = "yyyy-MM-dd"
+      return formatter.date(from: dateString) ?? Date()
+  }
+  
   public static func toDateTitleString(from date: Date) -> String {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "ko_KR")

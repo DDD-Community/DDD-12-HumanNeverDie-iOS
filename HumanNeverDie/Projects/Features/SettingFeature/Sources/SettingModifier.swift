@@ -6,28 +6,54 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 private struct SettingToolbarModifier: ViewModifier {
   let title: String
+  let onBackTap: (() -> Void)?
   
   public func body(content: Content) -> some View {
-    content
-      .toolbar {
-        ToolbarItem(placement: .principal) {
-          Text(title)
-            .amdFont(.mediumRegular)
-            .foregroundStyle(.gray85)
-        }
+    VStack(spacing: 0) {
+      HStack {
+        if let onBackTap = onBackTap {
+             Button(action: onBackTap) {
+               Image(systemName: "chevron.left")
+                 .foregroundColor(.gray70)
+             }
+           } else {
+             Color.clear
+               .frame(width: 24, height: 24)
+           }
+        Spacer()
+        
+        Text(title)
+          .amdFont(.mediumRegular)
+          .foregroundStyle(.gray85)
+          .padding(.trailing, 24)
+        
+        Spacer()
+      
       }
+      .padding(.horizontal, 20)
+      .padding(.vertical, 17)
+      
+      // 기존 콘텐츠
+      content
+    }
+    .toolbar(.hidden, for: .navigationBar)  // 기본 네비게이션 완전 숨기기
   }
 }
 
 public extension View {
   func settingToolbar(title: String) -> some View {
-    modifier(SettingToolbarModifier(title: title))
+    modifier(SettingToolbarModifier(title: title, onBackTap: nil))
   }
   
   func settingToolbar(item: SettingItem) -> some View {
-    modifier(SettingToolbarModifier(title: item.title))
+    modifier(SettingToolbarModifier(title: item.title, onBackTap: nil))
+  }
+
+  func settingToolbar(item: SettingItem, onBackTap: @escaping () -> Void) -> some View {
+    modifier(SettingToolbarModifier(title: item.title, onBackTap: onBackTap))
   }
 }
