@@ -12,7 +12,6 @@ import CommonFeature
 public struct NotificationSettingView: View {
   @State private var viewModel: NotificationSettingViewModel
   @Environment(Router.self) private var router
-  @State private var showTimePicker = false
   
   public init(viewModel: NotificationSettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -61,18 +60,16 @@ extension NotificationSettingView {
         )
       )
       
-      
       NotificationToggleRow(
         title: "기록 리마인더",
         isOn: Binding(
-          get: { viewModel.state.remindersEnabled },
+          get: { viewModel.remindersEnabled },
           set: { viewModel.handleAction(.toggleRemindersEnabled($0)) }
         ),
         isEnabled: viewModel.isEnabled
       )
       
       reminderTimeSection()
-      
       
       NotificationToggleRow(
         title: "목표 위험 경고",
@@ -88,7 +85,7 @@ extension NotificationSettingView {
         title: "새소식",
         subtitle: "카페인 및 음료 업데이트 소식을 받을 수 있어요",
         isOn: Binding(
-          get: { viewModel.state.newsUpdatesEnabled },
+          get: { viewModel.newsUpdatesEnabled },
           set: { viewModel.handleAction(.toggleCaffeineNotification($0)) }
         ),
         isEnabled: viewModel.isEnabled
