@@ -1,24 +1,11 @@
+//
+//  Date+.swift
+//  Shared
+//
+//  Created by 김규철 on 8/16/25.
+//
+
 import Foundation
-
-extension String {
-  public  var isValidNicknameFormat: Bool {
-    let regex = "^[가-힣a-zA-Z0-9]{1,10}$"
-    let test = NSPredicate(format: "SELF MATCHES %@", regex)
-    return test.evaluate(with: self)
-  }
-
-  public static func toDate(from string: String) -> Date? {
-    let formatter = DateFormatter()
-    formatter.locale = Locale(identifier: "ko_KR")
-    formatter.timeZone = TimeZone(identifier: "UTC")
-    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-    return formatter.date(from: string)
-  }
-  
-  public var toYMDFormat: String {
-    return String(self.prefix(10))
-  }
-}
 
 extension Date {
   public static func toDateKeyString(from date: Date) -> String {
@@ -36,12 +23,27 @@ extension Date {
     formatter.dateFormat = "yyyy년 MM월 dd일"
     return formatter.string(from: date)
   }
-
+  
   public static func toRequestDateKeyString(from date: Date) -> String {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "ko_KR")
     formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
     formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
     return formatter.string(from: date)
+  }
+  
+  public static func convertUTCToKoreaTime(_ utcDate: Date) -> Date {
+    // UTC 시간을 문자열로 변환 (UTC 기준)
+    let utcFormatter = DateFormatter()
+    utcFormatter.timeZone = TimeZone(identifier: "UTC")
+    utcFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    let dateString = utcFormatter.string(from: utcDate)
+    
+    // 같은 문자열을 한국 시간대로 해석
+    let koreaFormatter = DateFormatter()
+    koreaFormatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+    koreaFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    
+    return koreaFormatter.date(from: dateString) ?? utcDate
   }
 }
