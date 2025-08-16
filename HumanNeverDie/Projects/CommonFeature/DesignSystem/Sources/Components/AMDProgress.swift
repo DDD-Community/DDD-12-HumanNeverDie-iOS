@@ -71,8 +71,8 @@ public struct AMDProgress: View {
         type.baseProgress
         
         progressGradient
-          .frame(width: geometry.size.width * CGFloat(glucose))
-          .amdCornerRadius(.large, corners: [.topLeft, .bottomLeft])
+          .frame(width: geometry.size.width * CGFloat(min(glucose, 1.0)))
+          .amdCornerRadius(.large)
           .animation(.easeInOut(duration: 0.3), value: glucose)
         
         divider(geometry.size.width)

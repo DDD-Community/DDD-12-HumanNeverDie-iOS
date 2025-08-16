@@ -40,30 +40,35 @@ public struct AMDBeverageListView: View {
     case small
     case medium
     case large
+    case completed
     
     fileprivate var height: CGFloat {
       switch self {
       case .small:
         return 89
       case .medium:
-        return 98
+        return 110
       case .large:
         return 124
+      case .completed:
+        return 106
       }
     }
     
-    fileprivate var topPadding: CGFloat {
+    fileprivate var padding: CGFloat {
       switch self {
       case .small:
         return 10
-      case .medium, .large:
+      case .medium, .completed:
+        return 16
+      case .large:
         return 12
       }
     }
     
     fileprivate var thumbnailSize: CGSize {
       switch self {
-      case .small:
+      case .small, .completed:
         return .init(width: 56, height: 56)
       case .medium:
         return .init(width: 74, height: 74)
@@ -72,11 +77,20 @@ public struct AMDBeverageListView: View {
       }
     }
     
+    fileprivate var backgroundColor: Color {
+      switch self {
+      case .completed, .medium:
+        return .gray10
+      default:
+        return .white
+      }
+    }
+    
     fileprivate var brandFont: AMDFont {
       switch self {
       case .small:
         return .xsmallRegular
-      case .medium, .large:
+      case .medium, .large, .completed:
         return .smallRegular
       }
     }
@@ -85,7 +99,7 @@ public struct AMDBeverageListView: View {
       switch self {
       case .small:
         return .smallRegular
-      case .medium, .large:
+      case .medium, .large, .completed:
         return .mediumMedium
       }
     }
@@ -94,7 +108,7 @@ public struct AMDBeverageListView: View {
       switch self {
       case .small:
         return .smallBold
-      case .medium, .large:
+      case .medium, .large, .completed:
         return .mediumBold
       }
     }
@@ -103,7 +117,7 @@ public struct AMDBeverageListView: View {
       switch self {
       case .small:
         return .smallBold
-      case .medium, .large:
+      case .medium, .large, .completed:
         return .mediumBold
       }
     }
@@ -112,7 +126,7 @@ public struct AMDBeverageListView: View {
       switch self {
       case .small:
         return .smallRegular
-      case .medium, .large:
+      case .medium, .large, .completed:
         return .mediumRegular
       }
     }
@@ -145,7 +159,7 @@ public struct AMDBeverageListView: View {
   }
   
   public var body: some View {
-    VStack(spacing: 12) {
+    VStack(spacing: 0) {
       HStack(spacing: 12) {
         thumbnail
         
@@ -159,11 +173,15 @@ public struct AMDBeverageListView: View {
           beverageInfoView
         }
       }
+      .padding(type.padding)
+      .frame(minHeight: type.height, maxHeight: type.height)
+      .background(type.backgroundColor)
+      .if(type == .medium || type == .completed) {
+        $0.amdCornerRadius(.medium)
+      }
       
-      AMDDevider()
+      divider
     }
-    .padding(.top, 12)
-    .frame(minHeight: type.height, maxHeight: type.height)
   }
 }
 
@@ -232,6 +250,12 @@ private extension AMDBeverageListView {
         infoButton
       }
       
+    case .small, .medium:
+      HStack(spacing: 0) {
+        brandTitleText
+        menuButton
+      }
+      
     default:
       brandTitleText
     }
@@ -251,29 +275,6 @@ private extension AMDBeverageListView {
       AMDImage.info24.swiftUIImage
     }
   }
-}
-
-private extension AMDBeverageListView {
-  @ViewBuilder
-  private var beverageView: some View {
-    switch type {
-    case .small, .large:
-      beverageTitleText
-      
-    case .medium:
-      HStack(spacing: 0) {
-        beverageTitleText
-        menuButton
-      }
-    }
-  }
-  
-  private var beverageTitleText: some View {
-    Text(beverageTitle)
-      .amdFont(type.beverageFont)
-      .foregroundStyle(.gray80)
-      .frame(maxWidth: .infinity, alignment: .leading)
-  }
   
   private var menuButton: some View {
     Button {
@@ -281,6 +282,19 @@ private extension AMDBeverageListView {
     } label: {
       AMDImage.more24.swiftUIImage
     }
+  }
+}
+
+private extension AMDBeverageListView {
+  private var beverageView: some View {
+    beverageTitleText
+  }
+  
+  private var beverageTitleText: some View {
+    Text(beverageTitle)
+      .amdFont(type.beverageFont)
+      .foregroundStyle(.gray80)
+      .frame(maxWidth: .infinity, alignment: .leading)
   }
 }
 
@@ -299,7 +313,7 @@ private extension AMDBeverageListView {
         kcalText
       }
       
-    case .medium, .small:
+    case .medium, .small, .completed:
       HStack {
         HStack(spacing: 8) {
           beverageSizeText
@@ -349,6 +363,17 @@ private extension AMDBeverageListView {
     Text("\(Int(kcal))kcal")
       .amdFont(type.kcalFont)
       .foregroundStyle(.gray70)
+  }
+  
+  @ViewBuilder
+  private var divider: some View {
+    switch type {
+    case .large, .small:
+      AMDDevider()
+      
+    default:
+      EmptyView()
+    }
   }
 }
 
@@ -424,7 +449,31 @@ public extension AMDBeverageListView {
       kcal: kcal,
       sugarFreeVariant: sugarFreeVariant,
       likeState: likeState,
-      infoAction: infoAction,
+      infoAction: infoAction
+    )
+  }
+  
+  static func completed(
+    thumbnailURL: String,
+    brandTitle: String,
+    beverageSize: String,
+    beverageTitle: String,
+    glucose: Double,
+    kcal: Double,
+    sugarFreeVariant: AMDSugarFreeVariant?
+  ) -> AMDBeverageListView {
+    return AMDBeverageListView(
+      type: .completed,
+      thumbnailURL: thumbnailURL,
+      brandTitle: brandTitle,
+      beverageSize: beverageSize,
+      beverageTitle: beverageTitle,
+      glucose: glucose,
+      kcal: kcal,
+      sugarFreeVariant: sugarFreeVariant,
+      likeState: nil,
+      infoAction: nil,
+      menuAction: nil
     )
   }
 }
