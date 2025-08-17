@@ -104,7 +104,7 @@ extension NotificationSettingView {
         
         Spacer()
         
-        Button(viewModel.getReminderTimeString()) {
+        Button(viewModel.reminderTimeString) {
           if viewModel.remindersEnabled {
             viewModel.state.showTimePicker = true
           }

@@ -18,46 +18,47 @@ import Dependencies
 public final class NotificationSettingViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.toastClient) private var toastClient
+  @ObservationIgnored
+  @Dependency(\.userUseCase) private var userUseCase
+  
+  private enum NotiSettingType {
+    case isEnabled(Bool)
+    case remindersEnabled(Bool)
+    case riskWarningsEnabled(Bool)
+    case newsUpdatesEnabled(Bool)
+    case reminderTime(Date)
+  }
   
   public struct State: Equatable {
-    
     let userID: String
-    var isEnabled: Bool = false
-    var remindersEnabled: Bool = false
-    var reminderTime : Date = Date.now
-    var riskWarningsEnabled: Bool = false
-    var newsUpdatesEnabled: Bool = false
     var showTimePicker: Bool = false
     var isLoading: Bool = false
-    
-    var userNotificationSettingInfo: UserNotifications = UserNotifications.mock()
+    var notiInfo: UserNotifications = UserNotifications.mock()
   }
+  
+  public var state: State
+  public var isEnabled: Bool { return state.notiInfo.isEnabled }
+  public var remindersEnabled: Bool { return state.notiInfo.remindersEnabled }
+  public var reminderTime: Date { return state.notiInfo.convertTimeStringToDate(state.notiInfo.reminderTime) }
+  public var reminderTimeString: String { return UserNotifications.reminderTimeFormatter.string(from: reminderTime) }
+  public var riskWarningsEnabled: Bool { return state.notiInfo.riskWarningsEnabled }
+  public var newsUpdatesEnabled: Bool { return state.notiInfo.newsUpdatesEnabled }
   
   public enum Action {
     case onAppear
     case loadUserInfo
     
-    // 알림 토글 액션
     case toggleIsEnabled(Bool)
     case toggleRemindersEnabled(Bool)
     case toggleRiskWarningsEnabled(Bool)
     case toggleCaffeineNotification(Bool)
-    
-    // 시간 설정 액션
     case updateReminderTime(Date)
   }
-  
-  public var state: State
-  private var originalState: State
-  
-  @ObservationIgnored
-  @Dependency(\.userUseCase) private var userUseCase
   
   public init(userID: String) {
     let initialState = State(userID: userID)
     
     self.state = initialState
-    self.originalState = initialState
   }
   
   public func handleAction(_ action: Action) {
@@ -72,34 +73,30 @@ public final class NotificationSettingViewModel: ViewModelable {
       
     case .toggleIsEnabled(let isEnabled):
       Task {
-        await setIsEnabledWithUserInfo(isEnabled: isEnabled)
+        await updateNotiSetting(.isEnabled(isEnabled))
       }
-    
+      
     case .toggleRemindersEnabled(let isEnabled):
       Task {
-        await setRemindersEnabledWithUserInfo(isEnabled: isEnabled)
+        await updateNotiSetting(.remindersEnabled(isEnabled))
       }
       
     case .toggleRiskWarningsEnabled(let isEnabled):
       Task {
-        await setRiskWarningsEnabledWithUserInfo(isEnabled: isEnabled)
+        await updateNotiSetting(.riskWarningsEnabled(isEnabled))
       }
       
     case .toggleCaffeineNotification(let isEnabled):
       Task {
-        await setNewsUpdatesEnabledWithUserInfo(isEnabled: isEnabled)
+        await updateNotiSetting(.newsUpdatesEnabled(isEnabled))
       }
       
     case .updateReminderTime(let time):
       Task {
-        await setReminderTimeWithUserInfo(time: time)
+        await updateNotiSetting(.reminderTime(time))
       }
       state.showTimePicker = false
     }
-  }
-  
-  public func getReminderTimeString() -> String {
-    return UserNotifications.reminderTimeFormatter.string(from: state.reminderTime)
   }
 }
 
@@ -107,106 +104,72 @@ extension NotificationSettingViewModel {
   private func loadUserData() async {
     guard !state.isLoading else { return }
     
-    state.isLoading = true
+    setLoading(true)
     
     do {
       let result = try await userUseCase.getUserNotificationInfo(userID: state.userID)
-      state.userNotificationSettingInfo = result
-      state.isEnabled = result.isEnabled
-      state.remindersEnabled = result.remindersEnabled
-      state.reminderTime = result.convertTimeStringToDate(result.reminderTime)
-      state.riskWarningsEnabled = result.riskWarningsEnabled
-      state.newsUpdatesEnabled = result.newsUpdatesEnabled
-      
-      state.isLoading = false
+      state.notiInfo = result
+
+      setLoading(false)
       
     } catch {
       print("❌ 노티 정보 로딩 실패: \(error)")
-      state.isLoading = false
+      
+      setLoading(false)
     }
   }
-
-  public var isChangedNotificationSettings: Bool {
-    return state != originalState
-  }
   
-  public var needsNotificationPermission: Bool {
-    return false
-  }
-}
-
-extension NotificationSettingViewModel {
-  private func setIsEnabledWithUserInfo(isEnabled: Bool) async {
-    let current = UserNotifications(
-        isEnabled: isEnabled,
-        remindersEnabled: isEnabled,
-        reminderTime: state.userNotificationSettingInfo.reminderTime,
-        riskWarningsEnabled: isEnabled,
-        newsUpdatesEnabled: isEnabled
-    )
+  private func updateNotiSetting(_ settingType: NotiSettingType) async {
+    var current = state.notiInfo
     
-    await updateUserNotificationsInfo(userNotificationsInfo: current)
-  }
-  
-  private func setRemindersEnabledWithUserInfo(isEnabled: Bool) async {
-    var current = state.userNotificationSettingInfo
-    current.remindersEnabled = isEnabled
+    switch settingType {
+    case .isEnabled(let isEnabled):
+      current.isEnabled = isEnabled
+      current.remindersEnabled = isEnabled
+      current.riskWarningsEnabled = isEnabled
+      current.newsUpdatesEnabled = isEnabled
+      
+    case .remindersEnabled(let isEnabled):
+      current.remindersEnabled = isEnabled
+      
+    case .riskWarningsEnabled(let isEnabled):
+      current.riskWarningsEnabled = isEnabled
+      
+    case .newsUpdatesEnabled(let isEnabled):
+      current.newsUpdatesEnabled = isEnabled
+      
+    case .reminderTime(let time):
+      current.reminderTime = current.convertDateToTimeString(time)
+    }
     
-    await updateUserNotificationsInfo(userNotificationsInfo: current)
+    await updateNotiInfo(notiInfo: current)
   }
   
-  private func setRiskWarningsEnabledWithUserInfo(isEnabled: Bool) async {
-    var current = state.userNotificationSettingInfo
-    current.riskWarningsEnabled = isEnabled
-    
-    await updateUserNotificationsInfo(userNotificationsInfo: current)
-  }
-  
-  private func setNewsUpdatesEnabledWithUserInfo(isEnabled: Bool) async {
-    var current = state.userNotificationSettingInfo
-    current.newsUpdatesEnabled = isEnabled
-    
-    await updateUserNotificationsInfo(userNotificationsInfo: current)
-  }
-  
-  private func setReminderTimeWithUserInfo(time: Date) async {
-    var current = state.userNotificationSettingInfo
-    current.reminderTime = current.convertDateToTimeString(time)
-    
-    await updateUserNotificationsInfo(userNotificationsInfo: current)
-  }
-  
-  private func updateUserNotificationsInfo(userNotificationsInfo: UserNotifications) async {
-    state.isLoading = true
+  private func updateNotiInfo(notiInfo: UserNotifications) async {
+    setLoading(true)
     
     do {
-      let result = try await userUseCase.updateUserNotifications(userID: state.userID, userNotifications: userNotificationsInfo)
+      let result = try await userUseCase.updateUserNotifications(userID: state.userID, userNotifications: notiInfo)
+      state.notiInfo = result
       
-      updateNorifications(updatedNotificationInfo: result)
-      state.isLoading = false
+      setLoading(false)
       
     } catch {
       showToast(message: "오류가 발생했어요. 다시 시도해주세요.", type: .failure)
-      state.isLoading = false
+      
+      setLoading(false)
     }
   }
+  
+  func setLoading(_ isLoading: Bool) {
+    state.isLoading = isLoading
+  }
+  
   
   private func showToast(message: String, type: AMDToastType) {
     Task { @MainActor in
       await toastClient.showToast(.init(message: message, type: type))
     }
   }
-  
-  
-  private func updateNorifications(updatedNotificationInfo: UserNotifications) {
-    state.isEnabled = updatedNotificationInfo.isEnabled
-    state.remindersEnabled = updatedNotificationInfo.remindersEnabled
-    state.reminderTime = updatedNotificationInfo.convertTimeStringToDate(updatedNotificationInfo.reminderTime)
-    state.riskWarningsEnabled = updatedNotificationInfo.riskWarningsEnabled
-    state.newsUpdatesEnabled = updatedNotificationInfo.newsUpdatesEnabled
-
-    state.userNotificationSettingInfo = updatedNotificationInfo
-  }
-
   
 }
