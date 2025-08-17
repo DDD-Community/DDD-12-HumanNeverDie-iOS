@@ -24,7 +24,7 @@ public struct AccountInfoView: View {
   
   public var body: some View {
     ScrollView {
-      contentBasicInfoFormView()
+      contentView()
         .padding(.bottom, 30)
       
       sectionDivider()
@@ -41,39 +41,14 @@ public struct AccountInfoView: View {
 
 extension AccountInfoView {
   @ViewBuilder
-  private func contentBasicInfoFormView() -> some View {
+  private func contentView() -> some View {
     VStack(spacing: 30) {
-      AMDTextField.titleLabel("기본정보")
+      contentFieldView()
       
-      AMDTextField(
-        text: Binding(
-          get: { viewModel.state.nickname },
-          set: { viewModel.handleAction(.updateNickname($0)) }
-        ),
-        isFocused: $isNicknameFocused,
-        title: "닉네임",
-        placeholder: "닉네임을 입력해주세요",
-        rightButtonType: .edit,
-        rightButtonAction: {
-          isNicknameFocused = true
-        },
-        errorMessage: viewModel.nicknameErrorMessage
-      )
-      
-      AMDTextField(
-        text: Binding(
-          get: { viewModel.getBirthDateConvertString },
-          set: { _ in }
-        ),
-        title: "생년월일",
-        placeholder: "생년월일을 입력해 주세요",
-        rightButtonType: .date,
-        rightButtonAction: {
-          viewModel.state.showAlert = true
-        }
-      )
-      
-      contentGenderSection()
+      VStack(alignment: .leading, spacing: 0) {
+        AMDTextField.titleLabel("성별")
+        contentGenderSection()
+      }
     }
     .amdBottomSheet(isPresented: $viewModel.state.showAlert, detents: [.height(310)]) {
       AMDDatePickerView(
@@ -87,23 +62,52 @@ extension AccountInfoView {
     }
     .padding(.horizontal, 20)
     .onAppear {
-        viewModel.setRouter(router)
+      viewModel.setRouter(router)
     }
   }
   
   @ViewBuilder
+  private func contentFieldView() -> some View {
+    AMDTextField.titleLabel("기본정보")
+    
+    AMDTextField(
+      text: Binding(
+        get: { viewModel.state.nickname },
+        set: { viewModel.handleAction(.updateNickname($0)) }
+      ),
+      isFocused: $isNicknameFocused,
+      title: "닉네임",
+      placeholder: "닉네임을 입력해주세요",
+      rightButtonType: .edit,
+      rightButtonAction: {
+        isNicknameFocused = true
+      },
+      errorMessage: viewModel.nicknameErrorMessage
+    )
+    
+    AMDTextField(
+      text: Binding(
+        get: { viewModel.getBirthDateConvertString },
+        set: { _ in }
+      ),
+      title: "생년월일",
+      placeholder: "생년월일을 입력해 주세요",
+      rightButtonType: .date,
+      rightButtonAction: {
+        viewModel.state.showAlert = true
+      }
+    )
+  }
+  
+  @ViewBuilder
   private func contentGenderSection() -> some View {
-    VStack(alignment: .leading, spacing: 0) {
-      AMDTextField.titleLabel("성별")
-      
-      HStack(spacing: 12) {
-        ForEach([Gender.MALE, Gender.FEMALE], id: \.self) { gender in
-          AMDChipButton(
-            title: gender.description,
-            isSelected: viewModel.state.selectedGender  == gender
-          ) {
-            viewModel.state.selectedGender  = gender
-          }
+    HStack(spacing: 12) {
+      ForEach([Gender.MALE, Gender.FEMALE], id: \.self) { gender in
+        AMDChipButton(
+          title: gender.description,
+          isSelected: viewModel.state.selectedGender  == gender
+        ) {
+          viewModel.state.selectedGender  = gender
         }
       }
     }
