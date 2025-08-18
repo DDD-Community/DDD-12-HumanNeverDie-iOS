@@ -47,12 +47,14 @@ public struct AMDAlert: View {
   }
   
   private var messageView: some View {
-    VStack(spacing: 12) {
-      Text(property.message)
-        .amdFont(.smallRegular)
-        .foregroundStyle(.gray80)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .multilineTextAlignment(.leading)
+    VStack(spacing: 0) {
+      if let message = property.message {
+        Text(message)
+          .amdFont(.smallRegular)
+          .foregroundStyle(.gray80)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .multilineTextAlignment(.leading)
+      }
       
       if let subMessage = property.subMessage {
         Text(subMessage)
@@ -62,7 +64,7 @@ public struct AMDAlert: View {
           .multilineTextAlignment(.leading)
       }
     }
-    .padding(.vertical, 10)
+    .padding(.vertical, (property.message == nil && property.subMessage == nil) ? 0 : 10)
   }
   
   private var buttonSection: some View {

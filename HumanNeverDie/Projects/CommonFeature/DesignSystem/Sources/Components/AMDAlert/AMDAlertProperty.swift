@@ -9,14 +9,14 @@ import Foundation
 
 public struct AMDAlertProperty {
   public let title: String
-  public let message: String
+  public let message: String?
   public let subMessage: String?
   public let primaryButton: AMDAlertButtonProperty
   public let secondaryButton: AMDAlertButtonProperty?
   
   public init(
     title: String,
-    message: String,
+    message: String? = nil,
     subMessage: String? = nil,
     primaryButton: AMDAlertButtonProperty,
     secondaryButton: AMDAlertButtonProperty? = nil

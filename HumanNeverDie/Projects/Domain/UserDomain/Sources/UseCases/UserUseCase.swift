@@ -13,6 +13,7 @@ public protocol UserUseCaseProtocol: Sendable {
   func getUserInfo(userID:String) async throws -> UserInfo
   func getUserNotificationInfo(userID:String) async throws -> UserNotifications
   func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserInfo
+  func updateUserNotifications(userID: String, userNotifications: UserNotifications) async throws -> UserNotifications
 }
 
 public final class UserUseCase: UserUseCaseProtocol, @unchecked Sendable {
@@ -31,4 +32,7 @@ public final class UserUseCase: UserUseCaseProtocol, @unchecked Sendable {
     return try await userRepository.updateUserInfo(userID: userID, userInfo: userInfo)
   }
   
+  public func updateUserNotifications(userID: String, userNotifications: UserNotifications) async throws -> UserNotifications {
+    return try await userRepository.updateUserNotifications(userID: userID, userNotificationsInfo: userNotifications)
+  }
 }

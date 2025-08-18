@@ -30,5 +30,6 @@ private struct MockUserRepository: UserRepositoryInterface {
   func getUserInfo(userID: String) async throws -> UserInfo { UserInfo.mock() }
   func getUserNotificationInfo(userID: String) async throws -> UserNotifications { UserNotifications.mock()}
   func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserInfo { UserInfo.mock()}
+  func updateUserNotifications(userID: String, userNotificationsInfo: UserNotifications) async throws -> UserNotifications { UserNotifications.mock()}
 }
 

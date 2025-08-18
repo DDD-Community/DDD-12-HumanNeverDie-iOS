@@ -29,7 +29,7 @@ public final class UserRepository: UserRepositoryInterface, @unchecked Sendable 
   }
   
   public func getUserNotificationInfo(userID: String) async throws -> UserDomain.UserNotifications {
-    let target = UserNotificatTarget(userID: userID)
+    let target = UserNotificationsTarget(userID: userID)
     let result = try await networkService.requestDDD(target)
 
     guard let response = result.data else {
@@ -49,6 +49,16 @@ public final class UserRepository: UserRepositoryInterface, @unchecked Sendable 
 
     return response.toDomain()
   }
+  
+  public func updateUserNotifications(userID: String, userNotificationsInfo: UserNotifications) async throws -> UserNotifications {
+    let target = UserNotificationsUpdateTarget(userID: userID, userNotifications: userNotificationsInfo)
+    let result = try await networkService.requestDDD(target)
 
+    guard let response = result.data else {
+      throw AMDNetworkError.emptyResponse
+    }
+
+    return response.toDomain()
+  }
 }
 

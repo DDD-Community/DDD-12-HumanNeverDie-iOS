@@ -12,7 +12,6 @@ import CommonFeature
 public struct NotificationSettingView: View {
   @State private var viewModel: NotificationSettingViewModel
   @Environment(Router.self) private var router
-  @State private var showTimePicker = false
   
   public init(viewModel: NotificationSettingViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -30,18 +29,20 @@ public struct NotificationSettingView: View {
     .onAppear {
       viewModel.handleAction(.onAppear)
     }
-    .amdBottomSheet(isPresented: $viewModel.state.showTimePicker, detents: [.height(474)]) {
-      AMDDatePicker(
-        selectedDate: $viewModel.state.reminderTime,
-        pickerType: .time
-      )
-      .frame(height: 200)
+    .amdBottomSheet(isPresented: $viewModel.state.showTimePicker, detents: [.height(310)]) {
+      AMDDatePickerView(
+        title: "알람시간",
+        isResetButtonHidden: true,
+        type: .time,
+        initialDate: viewModel.reminderTime
+      ) {
+        viewModel.handleAction(.updateReminderTime($0))
+      }
+
     }.settingToolbar(item: .notificationSetting) {
       self.router.pop()
     }
-    .onAppear {
-      viewModel.setRouter(router)
-    }
+
   }
 }
 
@@ -54,45 +55,41 @@ extension NotificationSettingView {
       NotificationToggleRow(
         title: "알림 ON/OFF",
         isOn: Binding(
-          get: { viewModel.state.isPermissionGranted },
-          set: { viewModel.handleAction(.toggleGeneralNotification($0)) }
+          get: { viewModel.isEnabled },
+          set: { viewModel.handleAction(.toggleIsEnabled($0)) }
         )
       )
       
-      if(viewModel.state.isPermissionGranted) {
-        NotificationToggleRow(
-          title: "기록 리마인더",
-          isOn: Binding(
-            get: { viewModel.state.isGoalReminderEnabled },
-            set: { viewModel.handleAction(.toggleGoalReminder($0)) }
-          ),
-          isEnabled: viewModel.isOtherNotificationsEnabled
-        )
-        
-        if (viewModel.state.isGoalReminderEnabled) {
-          reminderTimeSection()
-        }
-        
-        NotificationToggleRow(
-          title: "목표 위험 경고",
-          subtitle: "일일 당 섭취량의 2/3를 넘어가면 알려드릴게요",
-          isOn: Binding(
-            get: { viewModel.state.isGoalWarningEnabled },
-            set: { viewModel.handleAction(.toggleGoalWarning($0)) }
-          ),
-          isEnabled: viewModel.isOtherNotificationsEnabled
-        )
-        
-        NotificationToggleRow(
-          title: "새소식",
-          subtitle: "카페인 및 음료 업데이트 소식을 받을 수 있어요",
-          isOn: Binding(
-            get: { viewModel.state.isCaffeineNotificationEnabled },
-            set: { viewModel.handleAction(.toggleCaffeineNotification($0)) }
-          ),
-          isEnabled: viewModel.isOtherNotificationsEnabled
-        )
-      }
+      NotificationToggleRow(
+        title: "기록 리마인더",
+        isOn: Binding(
+          get: { viewModel.remindersEnabled },
+          set: { viewModel.handleAction(.toggleRemindersEnabled($0)) }
+        ),
+        isEnabled: viewModel.isEnabled
+      )
+      
+      reminderTimeSection()
+      
+      NotificationToggleRow(
+        title: "목표 위험 경고",
+        subtitle: "일일 당 섭취량의 2/3를 넘어가면 알려드릴게요",
+        isOn: Binding(
+          get: { viewModel.riskWarningsEnabled },
+          set: { viewModel.handleAction(.toggleRiskWarningsEnabled($0)) }
+        ),
+        isEnabled: viewModel.isEnabled
+      )
+      
+      NotificationToggleRow(
+        title: "새소식",
+        subtitle: "카페인 및 음료 업데이트 소식을 받을 수 있어요",
+        isOn: Binding(
+          get: { viewModel.newsUpdatesEnabled },
+          set: { viewModel.handleAction(.toggleCaffeineNotification($0)) }
+        ),
+        isEnabled: viewModel.isEnabled
+      )
     }
   }
   
@@ -103,17 +100,19 @@ extension NotificationSettingView {
         Text("알림 시간")
           .amdFont(.mediumRegular)
           .foregroundColor(.gray80)
+          .opacity(viewModel.remindersEnabled ? 1.0 : 0.4)
         
         Spacer()
         
-        Button(viewModel.getReminderTimeString()) {
-          if viewModel.isOtherNotificationsEnabled {
+        Button(viewModel.reminderTimeString) {
+          if viewModel.remindersEnabled {
             viewModel.state.showTimePicker = true
           }
         }
         .amdFont(.mediumRegular)
         .foregroundColor(.primaryDarker)
-        .disabled(!viewModel.isOtherNotificationsEnabled)
+        .disabled(!viewModel.remindersEnabled)
+        .opacity(viewModel.remindersEnabled ? 1.0 : 0.4)
       }
     }
   }
@@ -143,6 +142,7 @@ private struct NotificationToggleRow: View {
         Text(title)
           .amdFont(.mediumRegular)
           .foregroundColor(.gray80)
+          .opacity(isEnabled ? 1.0 : 0.4)
         
         if let subtitle = subtitle {
           Text(subtitle)
@@ -150,6 +150,7 @@ private struct NotificationToggleRow: View {
             .fixedSize(horizontal: true, vertical: false)
             .amdFont(.xsmallRegular)
             .foregroundColor(.gray60)
+            .opacity(isEnabled ? 1.0 : 0.4)
         }
       }
       

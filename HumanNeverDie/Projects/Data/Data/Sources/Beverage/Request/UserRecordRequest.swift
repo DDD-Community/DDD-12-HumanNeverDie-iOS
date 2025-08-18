@@ -16,3 +16,12 @@ struct UserRecordRequest: Encodable {
   let activityRange: String
   let sugarIntakeLevel: String
 }
+
+
+struct UserNotificationsRequest: Encodable {
+ let isEnabled: Bool
+ let remindersEnabled: Bool
+ let reminderTime: String
+ let riskWarningsEnabled: Bool
+ let newsUpdatesEnabled: Bool
+}
