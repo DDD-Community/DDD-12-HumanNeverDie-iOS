@@ -73,7 +73,9 @@ public struct UserNotifications: Equatable, Sendable {
   
   private func defaultReminderTime() -> Date {
     var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
-    comps.hour = 12; comps.minute = 0; comps.second = 0
+    comps.hour = 12
+    comps.minute = 0
+    comps.second = 0
     return Calendar.current.date(from: comps) ?? Date()
   }
 }
