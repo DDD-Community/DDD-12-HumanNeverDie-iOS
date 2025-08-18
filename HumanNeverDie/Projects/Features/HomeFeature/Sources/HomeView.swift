@@ -10,9 +10,12 @@ import SwiftUI
 import CommonFeature
 import DesignSystem
 
+import Dependencies
+
 public struct HomeView: View {
   @State private var viewModel: HomeViewModel
   @Environment(Router.self) private var router
+  @Dependency(\.globalState) private var globalState
   
   public init(viewModel: HomeViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -27,8 +30,18 @@ public struct HomeView: View {
       ) {
         datePickerBottomSheet
       }
+      .onViewDidLoad {
+        viewModel.handleAction(.onViewDidLoad)
+      }
       .onAppear {
-        viewModel.handleAction(.onAppear)
+        Task {
+          for await event in globalState.eventStream {
+            switch event {
+            case .homeRefresh:
+              viewModel.handleAction(.homeRefresh)
+            }
+          }
+        }
       }
   }
   
@@ -36,10 +49,10 @@ public struct HomeView: View {
     VStack(spacing: 0) {
       weeklyCalendarView
       Spacer()
-      sugarStatusCard
+      cardView
+      Spacer()
       Spacer()
       beverageRecordButton
-      Spacer(minLength: 35)
     }
   }
   
@@ -57,14 +70,34 @@ public struct HomeView: View {
     }
   }
   
+  private var cardView: some View {
+    ZStack {
+      emptyView
+        .opacity(viewModel.isSelectedDateEmpty ? 1.0 : 0.0)
+        .scaleEffect(viewModel.isSelectedDateEmpty ? 1.0 : 0.8)
+      
+      sugarStatusCard
+        .opacity(viewModel.isSelectedDateEmpty ? 0.0 : 1.0)
+        .scaleEffect(viewModel.isSelectedDateEmpty ? 0.8 : 1.0)
+    }
+    .animation(.easeInOut(duration: 0.3), value: viewModel.isSelectedDateEmpty)
+  }
+    
   private var sugarStatusCard: some View {
     AMDCard(
       totalSugar: viewModel.selectedDateCalendar?.totalSugarGrams ?? 0,
       baseSugar: viewModel.baseSugar,
       variant: viewModel.sugarStatus.statusVariant
     )
-    .amdFlipCard(backView: Spacer())
+    .amdFlipCard(
+      backView: HomeCardBeverageListView(beverageCalendar: viewModel.selectedDateCalendar),
+      resetTrigger: viewModel.state.selectedDate
+    )
     .padding(.horizontal, 40)
+  }
+  
+  private var emptyView: some View {
+    HomeCardEmptyView()
   }
   
   private var beverageRecordButton: some View {
@@ -72,6 +105,7 @@ public struct HomeView: View {
       title: "음료 기록하기",
       action: { router.push(to: .beverageRecordList(recordDate: viewModel.selectedDate ?? Date())) }
     )
+    .padding(.bottom, 20)
   }
   
   private var datePickerBottomSheet: some View {

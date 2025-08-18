@@ -9,13 +9,15 @@ import SwiftUI
 
 private struct AMDFlipCardModifier<BackView: View>: ViewModifier {
   private let backView: BackView
+  private let resetTrigger: AnyHashable?
   
   @State private var flip = false
   @State private var dragOffset: CGFloat = 0
   private let dragThreshold: CGFloat = 50
   
-  init(backView: BackView) {
+  init(backView: BackView, resetTrigger: AnyHashable?) {
     self.backView = backView
+    self.resetTrigger = resetTrigger
   }
   
   public func body(content: Content) -> some View {
@@ -28,8 +30,6 @@ private struct AMDFlipCardModifier<BackView: View>: ViewModifier {
         .rotation3DEffect(.degrees(flip ? -90 : 0), axis: (x: 0, y: 1, z: 0), perspective: 0.5)
         .animation(flip ? .linear(duration: 0.2) : .linear(duration: 0.2).delay(0.2), value: flip)
     }
-    .amdStrokeBorder(.gray25, radius: .large, linewidth: 1)
-    .amdShadow(.card)
     .gesture(
       DragGesture()
         .onChanged { value in
@@ -45,16 +45,22 @@ private struct AMDFlipCardModifier<BackView: View>: ViewModifier {
           }
         }
     )
+    .onChange(of: resetTrigger) { _, _ in
+      if flip {
+        flip = false
+      }
+    }
   }
 }
 
 public extension View {
   func amdFlipCard<BackView: View>(
     backView: BackView,
-    dragThreshold: CGFloat = 50
+    dragThreshold: CGFloat = 50,
+    resetTrigger: AnyHashable? = nil
   ) -> some View {
     modifier(
-      AMDFlipCardModifier(backView: backView)
+      AMDFlipCardModifier(backView: backView, resetTrigger: resetTrigger)
     )
   }
 }

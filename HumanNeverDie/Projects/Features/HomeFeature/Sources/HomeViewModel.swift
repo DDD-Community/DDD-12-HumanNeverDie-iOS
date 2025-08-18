@@ -27,6 +27,7 @@ public final class HomeViewModel: ViewModelable {
     // 어디서 가져옴?
     var baseSugar: Int = 50
     var selectedDateCalendar: BeverageCalendar?
+    var isSelectedDateEmpty: Bool = true
     
     var isMonthPickerPresented: Bool = false
   }
@@ -37,7 +38,7 @@ public final class HomeViewModel: ViewModelable {
   }
   
   public enum Action {
-    case onAppear
+    case onViewDidLoad
     /// 캘린더 헤더 Date 뷰 선택
     case calendarChangeDateButtonTapped
     /// 캘린더의 날짜 선택 시
@@ -46,6 +47,8 @@ public final class HomeViewModel: ViewModelable {
     case weekSlideGesture(Date)
     /// 날짜 피커에서 날짜 선택 완료
     case datePickerConfirmed(Date)
+    /// 음료 기록 완료
+    case homeRefresh
   }
   
   @ObservationIgnored
@@ -56,7 +59,7 @@ public final class HomeViewModel: ViewModelable {
   
   public func handleAction(_ action: Action) {
     switch action {
-    case .onAppear:
+    case .onViewDidLoad:
       Task { await getWeeklyCalender() }
       
     case .calendarChangeDateButtonTapped:
@@ -75,6 +78,9 @@ public final class HomeViewModel: ViewModelable {
       
       state.currentDate = date
       state.selectedDate = date
+      Task { await getWeeklyCalender() }
+      
+    case .homeRefresh:
       Task { await getWeeklyCalender() }
     }
   }
@@ -113,5 +119,11 @@ public final class HomeViewModel: ViewModelable {
     
     let dateKey = Date.toDateKeyString(from: selectedDate)
     state.selectedDateCalendar = state.weeklyHistories[String(dateKey)]
+    
+    if let selectedDateCalendar = state.selectedDateCalendar {
+      state.isSelectedDateEmpty = selectedDateCalendar.records.isEmpty
+    } else {
+      state.isSelectedDateEmpty = true
+    }
   }
 }

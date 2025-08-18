@@ -55,7 +55,8 @@ public struct AMDCard: View {
     .padding(.bottom, 24)
     .frame(width: 295, height: 384, alignment: .bottom)
     .background(backgroundGradient)
-    .amdCornerRadius(.large)
+    .amdStrokeBorder(.gray25, radius: .large, linewidth: 1)
+    .amdShadow(.card)
   }
   
   private var image: some View {

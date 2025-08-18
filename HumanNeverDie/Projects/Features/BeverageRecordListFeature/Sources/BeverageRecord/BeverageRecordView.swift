@@ -9,17 +9,18 @@ import SwiftUI
 
 import CommonFeature
 import DesignSystem
+import BeverageDomain
 
 import NukeUI
 
 public struct BeverageRecordView: View {
   @State private var viewModel: BeverageRecordViewModel
   @Environment(Router.self) private var router
-
+  
   public init(viewModel: BeverageRecordViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
-
+  
   public var body: some View {
     VStack(alignment: .center, spacing: 40) {
       navigationBar
@@ -31,8 +32,12 @@ public struct BeverageRecordView: View {
     }
     .padding(.horizontal, 24)
     .toolbarVisibility(.hidden, for: .navigationBar)
+    .overlay {
+      beverageRecordCompletedView
+    }
+    .animation(.easeOut(duration: 0.4).delay(0.2), value: viewModel.isBeverageRecordCompleted)
   }
-
+  
   private var navigationBar: some View {
     HStack(spacing: 0) {
       Button {
@@ -40,18 +45,18 @@ public struct BeverageRecordView: View {
       } label: {
         AMDImage.arrowLeft24.swiftUIImage
       }
-
+      
       Spacer()
     }
     .frame(height: 56)
   }
-
+  
   private var titleView: some View {
     Text("음료 사이즈를 선택해주세요")
       .amdFont(.xlargeBold)
       .foregroundStyle(.gray80)
   }
-
+  
   private var beverageView: some View {
     HStack(alignment: .center, spacing: 0) {
       LazyImage(url: URL(string: viewModel.beverageDetail.thumbnailURL)) { image in
@@ -61,20 +66,20 @@ public struct BeverageRecordView: View {
           .frame(width: 56, height: 56)
           .amdCornerRadius(.small)
       }
-
+      
       VStack(alignment: .leading, spacing: 4) {
         Text(viewModel.beverageDetail.brandName)
           .amdFont(.smallRegular)
           .foregroundStyle(.gray60)
           .frame(maxWidth: .infinity, alignment: .leading)
-
+        
         Text(viewModel.beverageDetail.name)
           .amdFont(.mediumMedium)
           .foregroundStyle(.gray80)
           .frame(maxWidth: .infinity, alignment: .leading)
       }
       .padding(.leading, 12)
-
+      
       Button {
         viewModel.handleAction(.likeButtonTapped)
       } label: {
@@ -93,22 +98,43 @@ public struct BeverageRecordView: View {
     .background(.gray10)
     .amdCornerRadius(.large)
   }
-
+  
   private var beverageSizeView: some View {
-    AMDOptionButton(
-      title: "Tall",
-      subtitle: "저당",
-      subtitleBadgeType: .yellow,
-      sugarAndCaloriesText: AMDSugarAndCalories(suger: 4, caloriesText: 140),
-      isSelected: true,
-      action: {}
-    )
+    VStack(spacing: 10) {
+      if !viewModel.beverageDetail.sizes.isEmpty {
+        ForEach(viewModel.beverageDetail.sizes, id: \.sizeType) { size in
+          let sugarFreeType = BeverageSugarFreeType(sugar: size.nutrition.sugar)
+          
+          AMDOptionButton(
+            title: size.sizeType,
+            subtitle: sugarFreeType?.sugarFreeVariant.rawValue,
+            subtitleBadgeType: sugarFreeType?.sugarFreeVariant == .zero ? .primary : .yellow,
+            sugarAndCaloriesText: AMDSugarAndCalories(
+              suger: size.nutrition.sugar,
+              caloriesText: size.nutrition.kcal
+            ),
+            isSelected: viewModel.selectedSizeType?.sizeType == size.sizeType,
+            action: {
+              viewModel.handleAction(.beverageSizeButtonTapped(size))
+            }
+          )
+        }
+      }
+    }
   }
-
+  
   private var recordButton: some View {
     AMDButton(
       title: "기록하기",
       action: { viewModel.handleAction(.recordButtonTapped) }
     )
+  }
+  
+  private var beverageRecordCompletedView: some View {
+    BeverageRecordCompletedView(
+      beverageDetail: viewModel.beverageDetail,
+      selectedSizeType: viewModel.selectedSizeType
+    )
+      .opacity(viewModel.isBeverageRecordCompleted ? 1 : 0)
   }
 }
