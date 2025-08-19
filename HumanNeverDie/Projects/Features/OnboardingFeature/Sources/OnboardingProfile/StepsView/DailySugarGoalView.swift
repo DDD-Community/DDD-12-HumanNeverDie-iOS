@@ -75,7 +75,7 @@ extension DailySugarGoalView {
           .amdFont(.largeRegular)
           .foregroundColor(baseTextColor)
         
-        Text("200g")
+        Text("\(viewModel.getSugarGoalAmount(for: .easy))g")
           .amdFont(.largeBold)
           .foregroundColor(baseTextColor)
         
@@ -108,9 +108,9 @@ extension DailySugarGoalView {
     VStack(spacing: 10) {
       ForEach([SugarGoal.easy, SugarGoal.normal, SugarGoal.hard], id: \.self) { dailyGoal in
         AMDOptionButton(
-          title: dailyGoal.rawValue,
+          title: dailyGoal.descriptionTitle,
           subtitle: dailyGoal.description,
-          trailingText: dailyGoal.targetAmount,
+          trailingText: "하루 \(viewModel.getSugarGoalAmount(for:dailyGoal))g",
           isSelected: viewModel.state.selectedDailySugarGoal == dailyGoal
         ) {
           viewModel.handleAction(.updateDailySugarGoal(dailyGoal))

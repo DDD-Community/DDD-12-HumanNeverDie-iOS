@@ -152,6 +152,21 @@ extension OnboardingProfileViewModel {
 //DailySugarGoalView
 extension OnboardingProfileViewModel {
   
+  public func getSugarGoalAmount(for goal: SugarGoal) -> Int {
+    
+    let tempUserInfo = UserInfo(
+      nickname: state.nickname,
+      birthDate: Date.toDateKeyString(from: state.birthDate!),
+      selectedGender: state.selectedGender,
+      height: state.height,
+      weight: state.weight,
+      selectedActivity: state.selectedActivity,
+      selectedDailySugarGoal: goal
+    )
+    
+    return sugarGoalCalculator(userInfo: tempUserInfo)
+  }
+  
   public var isValidDailySugarGoal: Bool {
     return state.selectedDailySugarGoal != .none
   }
