@@ -28,13 +28,31 @@ public struct UserNotifications: Equatable, Sendable {
     self.newsUpdatesEnabled = newsUpdatesEnabled
   }
   
-  public static let defaultUserNotifications = UserNotifications(
-    isEnabled: false,
-    remindersEnabled: false,
-    reminderTime: "12:10:00",
-    riskWarningsEnabled: false,
-    newsUpdatesEnabled: false
-  )
+}
+
+public extension UserNotifications {
+  static func mock() -> UserNotifications {
+    UserNotifications.defaultUserNotifications(isEnabled: false)
+  }
+}
+
+extension UserNotifications {
+  
+  public static func defaultUserNotifications(
+    isEnabled: Bool = false,
+    remindersEnabled: Bool? = nil,
+    reminderTime: String = "12:00:00",
+    riskWarningsEnabled: Bool? = nil,
+    newsUpdatesEnabled: Bool? = nil
+  ) -> UserNotifications {
+    return UserNotifications(
+      isEnabled: isEnabled,
+      remindersEnabled: remindersEnabled ?? isEnabled,
+      reminderTime: reminderTime,
+      riskWarningsEnabled: riskWarningsEnabled ?? isEnabled,
+      newsUpdatesEnabled: newsUpdatesEnabled ?? isEnabled
+    )
+  }
   
   public static let reminderTimeFormatter: DateFormatter = {
     let formatter = DateFormatter()
@@ -64,13 +82,6 @@ public struct UserNotifications: Equatable, Sendable {
     return defaultReminderTime()
   }
   
-  public func convertDateToTimeString(_ date: Date) -> String {
-      let formatter = DateFormatter()
-      formatter.dateFormat = "HH:mm:ss"
-      return formatter.string(from: date)
-  }
-  
-  
   private func defaultReminderTime() -> Date {
     var comps = Calendar.current.dateComponents([.year, .month, .day], from: Date())
     comps.hour = 12
@@ -78,10 +89,10 @@ public struct UserNotifications: Equatable, Sendable {
     comps.second = 0
     return Calendar.current.date(from: comps) ?? Date()
   }
-}
-
-public extension UserNotifications {
-  static func mock() -> UserNotifications {
-    UserNotifications.defaultUserNotifications
+  
+  public func convertDateToTimeString(_ date: Date) -> String {
+      let formatter = DateFormatter()
+      formatter.dateFormat = "HH:mm:ss"
+      return formatter.string(from: date)
   }
 }
