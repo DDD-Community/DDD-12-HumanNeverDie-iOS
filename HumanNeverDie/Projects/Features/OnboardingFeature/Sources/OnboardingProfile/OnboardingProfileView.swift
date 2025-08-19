@@ -18,13 +18,21 @@ struct OnboardingProfileView: View {
   var body: some View {
     switch viewModel.currentStep {
     case .basicInfo:
-      BasicInfoFormView(viewModel: viewModel)
+      BasicInfoFormView(
+        viewModel: BasicInfoFormViewModel(parentViewModel: viewModel)
+      )
     case .physicalInfo:
-      PhysicalInfoFormView(viewModel: viewModel)
+      PhysicalInfoFormView(
+        viewModel: PhysicalInfoFormViewModel(parentViewModel: viewModel)
+      )
     case .goalSetting:
-      DailySugarGoalView(viewModel: viewModel)
+      DailySugarGoalView(
+        viewModel: DailySugarGoalViewModel(parentViewModel: viewModel)
+      )
     case .permission:
-      PermissionView(viewModel: viewModel)
+      PermissionView(
+        viewModel: PermissionViewModel(parentViewModel: viewModel)
+      )
     }
   }
 }

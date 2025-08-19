@@ -11,10 +11,10 @@ import CommonFeature
 import DesignSystem
 
 struct PhysicalInfoFormView: View {
-  @State private var viewModel: OnboardingProfileViewModel
+  @State private var viewModel: PhysicalInfoFormViewModel
   @State private var showAlert = false
   
-  public init(viewModel: OnboardingProfileViewModel) {
+  public init(viewModel: PhysicalInfoFormViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
@@ -27,6 +27,9 @@ struct PhysicalInfoFormView: View {
     }
     .background(Color.white)
     .ignoresSafeArea(edges: .bottom)
+    .onAppear {
+      viewModel.handleAction(.onAppear)
+    }
   }
 }
 
@@ -44,7 +47,7 @@ extension PhysicalInfoFormView {
     VStack(spacing: 30) {
       AMDTextField(
         text: Binding(
-          get: { viewModel.getIntConvertString(viewModel.height)},
+          get: { viewModel.getIntConvertString(viewModel.state.height) },
           set: { viewModel.handleAction(.updateHeight($0)) }
         ),
         title: "키",
@@ -59,7 +62,7 @@ extension PhysicalInfoFormView {
       
       AMDTextField(
         text: Binding(
-          get: { viewModel.getIntConvertString(viewModel.weight)},
+          get: { viewModel.getIntConvertString(viewModel.state.weight) },
           set: { viewModel.handleAction(.updateWeight($0)) }
         ),
         title: "몸무게",
@@ -101,10 +104,7 @@ extension PhysicalInfoFormView {
     OnboardingBottomButton(
       type: viewModel.isValidPhysicalInfo ? .default : .secondary
     ) {
-      guard viewModel.isValidPhysicalInfo else { return }
-      withAnimation(.easeInOut) {
-        viewModel.handleAction(.moveToNextStep)
-      }
+      viewModel.handleAction(.submitPhysicalInfo)
     }
   }
 }

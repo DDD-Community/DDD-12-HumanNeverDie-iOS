@@ -6,55 +6,45 @@
 //
 
 import Foundation
+import UserNotifications
 import UserDomain
 import CommonFeature
+import DesignSystem
+
+import Dependencies
 
 @Observable
 @MainActor
 public final class OnboardingProfileViewModel: ViewModelable {
+  @ObservationIgnored
+  @Dependency(\.userUseCase) private var userUseCase
+  @ObservationIgnored
+  @Dependency(\.toastClient) private var toastClient
+  @ObservationIgnored
+  @Dependency(\.alertClient) private var alertClient
+  
   private(set) var currentStep: OnboardingStep = .basicInfo
-  private let validator: UserInfoValidationUseCase
   
   public struct State: Equatable {
-    //BasicInfoFormView
-    var nickname: String = ""
-    var birthDate: Date? = nil
-    var showAlert = false
-    var selectedGender: Gender = .none
+    let userID: String = "b5219141-afe3-46c6-8c5c-0f7e850a5bef"
+    var isLoading: Bool = false
     
-    // PhysicalInfo Actions
-    var height: Int = 0
-    var weight: Int = 0
-    var selectedActivity: ActivityLevel = .none
-    
-    //DailySugarGoalView
-    var selectedDailySugarGoal: SugarGoal = .none
-    
-    //PermissionView
+    var userInfo: UserInfo = .defaultUserInfo
     var isPermissionGranted: Bool = false
   }
   
   public enum Action {
     case onAppear
     case moveToNextStep
-    
-    // BasicInfo Actions
-    case updateNickname(String)
-    case updateBirthDate(Date)
-    case updateGender(Gender)
-    
-    // PhysicalInfo Actions
-    case updateHeight(String)
-    case updateWeight(String)
-    case updateActivity(ActivityLevel)
-    
-    case updateDailySugarGoal(SugarGoal)
+    case updateBasicInfo(UserInfo)
+    case updatePhysicalInfo(UserInfo)
+    case updateGoalInfo(UserInfo)
+    case completeOnboarding
   }
   
   public var state: State = .init()
-  public init(validator: UserInfoValidationUseCase = DefaultUserInfoValidationUseCase()) {
-      self.validator = validator
-  }
+  
+  public init() {}
   
   public func handleAction(_ action: Action) {
     switch action {
@@ -63,111 +53,160 @@ public final class OnboardingProfileViewModel: ViewModelable {
       
     case .moveToNextStep:
       moveToNextStep()
-    case .updateNickname(let nickname):
-      state.nickname = nickname
       
-    case .updateBirthDate(let birthDate):
-      state.birthDate = birthDate
-      state.showAlert = false
+    case .updateBasicInfo(let userInfo):
+      updateUserInfo(userInfo)
       
-    case .updateGender(let gender):
-      state.selectedGender = gender
+    case .updatePhysicalInfo(let userInfo):
+      updateUserInfo(userInfo)
       
-    case .updateHeight(let height):
+    case .updateGoalInfo(let userInfo):
+      updateUserInfo(userInfo)
       
-      guard let intValue = Int(height) else { state.height = 0
-        return
-      }
-      state.height = intValue
-      
-    case .updateWeight(let weight):
-      
-      guard let intValue = Int(weight) else { state.weight = 0
-        return
-      }
-      state.weight = intValue
-      
-    case .updateActivity(let activity):
-      state.selectedActivity = activity
-      
-    case .updateDailySugarGoal(let activity):
-      state.selectedDailySugarGoal = activity
+    case .completeOnboarding:
+      Task { await completeOnboarding() }
     }
   }
   
-  private func moveToNextStep() {
-    let allSteps = OnboardingStep.allCases
-    
-    if let currentIndex = allSteps.firstIndex(of: currentStep),
-       currentIndex < allSteps.count - 1 {
-      currentStep = allSteps[currentIndex + 1]
-    }
-  }
-  
-  public var getBirthDateConvertString: String {
-   guard let birthDate = state.birthDate else {
-     return ""
+  // MARK: - UserInfo 업데이트 메서드들
+  private func updateUserInfo(_ newUserInfo: UserInfo) {
+     state.userInfo = newUserInfo
    }
    
-   return Date.toDateTitleString(from: birthDate)
-  }
-}
-
-//BasicInfoFormView
-extension OnboardingProfileViewModel {
   
-  public func getIntConvertString(_ number: Int) -> String {
-    return number == 0 ? "" : String(number)
-  }
-  
-  public var isValidBasicInfo: Bool {
-    return validator.isValidNickname(state.nickname) &&
-           state.birthDate != nil &&
-    state.selectedGender != .none
-  }
-  
-  public var nicknameErrorMessage: String? {
-    return validator.nicknameErrorMessage(for: state.nickname)
-  }
-}
-
-//PhysicalInfoFormView
-extension OnboardingProfileViewModel {
-  
-  public var isValidPhysicalInfo: Bool {
-    return validator.isValidHeight(state.height) &&
-    validator.isValidWeight(state.weight) &&
-    state.selectedActivity != .none
-  }
-  
-  public var heightErrorMessage: String? {
-    return validator.heightErrorMessage(for: state.height)
-  }
-  
-  public var weightErrorMessage: String? {
-    return validator.weightErrorMessage(for: state.weight)
-  }
-}
-
-//DailySugarGoalView
-extension OnboardingProfileViewModel {
-  
-  public func getSugarGoalAmount(for goal: SugarGoal) -> Int {
+  // MARK: - Navigation
+  private func moveToNextStep() {
+    let allSteps = OnboardingStep.allCases
+    guard let currentIndex = allSteps.firstIndex(of: currentStep),
+          currentIndex < allSteps.count - 1 else { return }
     
-    let tempUserInfo = UserInfo(
-      nickname: state.nickname,
-      birthDate: Date.toDateKeyString(from: state.birthDate!),
-      selectedGender: state.selectedGender,
-      height: state.height,
-      weight: state.weight,
-      selectedActivity: state.selectedActivity,
-      selectedDailySugarGoal: goal
-    )
+    let nextStep = allSteps[currentIndex + 1]
     
-    return sugarGoalCalculator(userInfo: tempUserInfo)
+    // goalSetting 완료 시 서버 저장 후 다음 단계로
+    if currentStep == .goalSetting {
+      Task { await saveUserInfoAndMoveNext() }
+    } else {
+      moveToStep(nextStep)
+    }
   }
   
-  public var isValidDailySugarGoal: Bool {
-    return state.selectedDailySugarGoal != .none
+  private func moveToStep(_ step: OnboardingStep) {
+    currentStep = step
+    
+    if step == .permission {
+      Task { await requestNotificationPermission() }
+    }
+  }
+  
+  private func saveUserInfoAndMoveNext() async {
+    await updateUserInfo(state.userInfo)
+    
+    if !state.isLoading {
+      let allSteps = OnboardingStep.allCases
+      if let currentIndex = allSteps.firstIndex(of: currentStep),
+         currentIndex < allSteps.count - 1 {
+        moveToStep(allSteps[currentIndex + 1])
+      }
+    }
+  }
+  
+  private func completeOnboarding() async {
+    // 온보딩 완료 로직
+    print("온보딩 완료")
+  }
+  
+  // MARK: - API Calls
+  private func updateUserInfo(_ userInfo: UserInfo) async {
+    state.isLoading = true
+    
+    do {
+      _ = try await userUseCase.updateUserInfo(userID: state.userID, userInfo: userInfo)
+      state.isLoading = false
+    } catch {
+      showToast(message: "저장에 실패하였습니다", type: .failure)
+      state.isLoading = false
+    }
+  }
+  
+  public func updateNotificationSetting(isEnabled: Bool) async {
+    do {
+      let notiInfo = UserNotifications.defaultUserNotifications(isEnabled: isEnabled)
+      _ = try await userUseCase.updateUserNotifications(userID: state.userID, userNotifications: notiInfo)
+      print("✅ 알림 설정 업데이트 성공: \(isEnabled)")
+    } catch {
+      print("❌ 알림 설정 업데이트 실패: \(error)")
+    }
+  }
+  
+  private func showToast(message: String, type: AMDToastType) {
+    Task { @MainActor in
+      await toastClient.showToast(.init(message: message, type: type))
+    }
+  }
+}
+
+// MARK: - Permission
+extension OnboardingProfileViewModel {
+  private func requestNotificationPermission() async {
+    let center = UNUserNotificationCenter.current()
+    
+    do {
+      let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
+      
+      await MainActor.run {
+        state.isPermissionGranted = granted
+      }
+      
+      await updateNotificationSetting(isEnabled: granted)
+      
+      if !granted {
+        await showPermissionDeniedAlert()
+      }
+    } catch {
+      await MainActor.run {
+        state.isPermissionGranted = false
+      }
+      await updateNotificationSetting(isEnabled: false)
+      await showPermissionDeniedAlert()
+    }
+  }
+  
+  nonisolated private func showPermissionDeniedAlert() async {
+    await alertClient.showAlert(.init(
+      title: "알람이 거부되었어요",
+      message: "알림을 다시 받으려면 앱 설정에서 허용해야해요.",
+      primaryButton: .init(title: "확인", type: .secondary) {
+        Task {
+          await MainActor.run {
+            print("온보딩 완료 처리")
+          }
+        }
+      }
+    ))
+  }
+}
+
+// MARK: - Public Interface for Child ViewModels
+extension OnboardingProfileViewModel {
+  // 각 단계별 ViewModel에서 호출할 수 있는 메서드들
+  public func updateBasicInfoData(_ userInfo: UserInfo) {
+    handleAction(.updateBasicInfo(userInfo))
+  }
+  
+  public func updatePhysicalInfoData(_ userInfo: UserInfo) {
+    handleAction(.updatePhysicalInfo(userInfo))
+  }
+  
+  public func updateGoalInfoData(_ userInfo: UserInfo) {
+    handleAction(.updateGoalInfo(userInfo))
+  }
+  
+  public func proceedToNextStep() {
+    handleAction(.moveToNextStep)
+  }
+  
+  // 현재 UserInfo 전체를 각 ViewModel에서 참조할 수 있도록
+  public var currentUserInfo: UserInfo {
+    state.userInfo
   }
 }

@@ -11,9 +11,9 @@ import DesignSystem
 import CommonFeature
 
 struct DailySugarGoalView: View {
-  @State private var viewModel: OnboardingProfileViewModel
+  @State private var viewModel: DailySugarGoalViewModel
   
-  public init(viewModel: OnboardingProfileViewModel) {
+  public init(viewModel: DailySugarGoalViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
@@ -27,6 +27,9 @@ struct DailySugarGoalView: View {
     }
     .background(Color.white)
     .ignoresSafeArea(edges: .bottom)
+    .onAppear {
+      viewModel.handleAction(.onAppear)
+    }
   }
 }
 
@@ -89,7 +92,6 @@ extension DailySugarGoalView {
       .cornerRadius(16)
     }
     .padding(.top, 12)
-    
   }
   
   private struct SpeechBubbleTriangle: Shape {
@@ -110,7 +112,7 @@ extension DailySugarGoalView {
         AMDOptionButton(
           title: dailyGoal.descriptionTitle,
           subtitle: dailyGoal.description,
-          trailingText: "하루 \(viewModel.getSugarGoalAmount(for:dailyGoal))g",
+          trailingText: "하루 \(viewModel.getSugarGoalAmount(for: dailyGoal))g",
           isSelected: viewModel.state.selectedDailySugarGoal == dailyGoal
         ) {
           viewModel.handleAction(.updateDailySugarGoal(dailyGoal))
@@ -139,10 +141,7 @@ extension DailySugarGoalView {
     OnboardingBottomButton(
       type: viewModel.isValidDailySugarGoal ? .default : .secondary
     ) {
-      guard viewModel.isValidDailySugarGoal else { return }
-      withAnimation(.easeInOut) {
-        viewModel.handleAction(.moveToNextStep)
-      }
+      viewModel.handleAction(.submitGoalInfo)
     }
   }
 }

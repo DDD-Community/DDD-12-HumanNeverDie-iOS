@@ -11,15 +11,14 @@ import DesignSystem
 import CommonFeature
 
 struct BasicInfoFormView: View {
-  @State private var viewModel: OnboardingProfileViewModel
+  @State private var viewModel: BasicInfoFormViewModel
   
-  public init(viewModel: OnboardingProfileViewModel) {
+  public init(viewModel: BasicInfoFormViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
   var body: some View {
     VStack(spacing: 0) {
-      
       topHeaderView()
       contentView()
       Spacer()
@@ -32,16 +31,18 @@ struct BasicInfoFormView: View {
         title: "생년월일",
         isResetButtonHidden: true,
         type: .yearMonthDay,
-        initialDate: viewModel.birthDate ?? Date()
+        initialDate: viewModel.state.birthDate ?? Date()
       ) {
         viewModel.handleAction(.updateBirthDate($0))
       }
+    }
+    .onAppear {
+      viewModel.handleAction(.onAppear)
     }
   }
 }
 
 extension BasicInfoFormView {
-  
   @ViewBuilder
   private func topHeaderView() -> some View {
     OnboardingTopHeaderView(
@@ -53,7 +54,6 @@ extension BasicInfoFormView {
   @ViewBuilder
   private func contentView() -> some View {
     VStack(spacing: 30) {
-      
       AMDTextField(
         text: Binding(
           get: { viewModel.state.nickname },
@@ -92,9 +92,9 @@ extension BasicInfoFormView {
         ForEach([Gender.MALE, Gender.FEMALE], id: \.self) { gender in
           AMDChipButton(
             title: gender.description,
-            isSelected: viewModel.state.selectedGender  == gender
+            isSelected: viewModel.state.selectedGender == gender
           ) {
-            viewModel.state.selectedGender  = gender
+            viewModel.handleAction(.updateGender(gender))
           }
         }
       }
@@ -106,10 +106,7 @@ extension BasicInfoFormView {
     OnboardingBottomButton(
       type: viewModel.isValidBasicInfo ? .default : .secondary
     ) {
-      guard viewModel.isValidBasicInfo else { return }
-      withAnimation(.easeInOut) {
-        viewModel.handleAction(.moveToNextStep)
-      }
+      viewModel.handleAction(.submitBasicInfo)
     }
   }
 }
