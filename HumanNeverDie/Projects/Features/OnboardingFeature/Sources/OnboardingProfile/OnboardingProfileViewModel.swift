@@ -18,7 +18,8 @@ public final class OnboardingProfileViewModel: ViewModelable {
   public struct State: Equatable {
     //BasicInfoFormView
     var nickname: String = ""
-    var birthDate: String = ""
+    var birthDate: Date? = nil
+    var showAlert = false
     var selectedGender: Gender = .none
     
     // PhysicalInfo Actions
@@ -39,7 +40,7 @@ public final class OnboardingProfileViewModel: ViewModelable {
     
     // BasicInfo Actions
     case updateNickname(String)
-    case updateBirthDate(String)
+    case updateBirthDate(Date)
     case updateGender(Gender)
     
     // PhysicalInfo Actions
@@ -67,6 +68,7 @@ public final class OnboardingProfileViewModel: ViewModelable {
       
     case .updateBirthDate(let birthDate):
       state.birthDate = birthDate
+      state.showAlert = false
       
     case .updateGender(let gender):
       state.selectedGender = gender
@@ -101,6 +103,14 @@ public final class OnboardingProfileViewModel: ViewModelable {
       currentStep = allSteps[currentIndex + 1]
     }
   }
+  
+  public var getBirthDateConvertString: String {
+   guard let birthDate = state.birthDate else {
+     return ""
+   }
+   
+   return Date.toDateTitleString(from: birthDate)
+  }
 }
 
 //BasicInfoFormView
@@ -108,7 +118,7 @@ extension OnboardingProfileViewModel {
   
   public var isValidBasicInfo: Bool {
     return validator.isValidNickname(state.nickname) &&
-           state.birthDate != "" &&
+           state.birthDate != nil &&
     state.selectedGender != .none
   }
   

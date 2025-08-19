@@ -12,7 +12,6 @@ import CommonFeature
 
 struct BasicInfoFormView: View {
   @State private var viewModel: OnboardingProfileViewModel
-  @State private var showAlert = false
   
   public init(viewModel: OnboardingProfileViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -28,6 +27,16 @@ struct BasicInfoFormView: View {
     }
     .background(Color.white)
     .ignoresSafeArea(edges: .bottom)
+    .amdBottomSheet(isPresented: $viewModel.state.showAlert, detents: [.height(310)]) {
+      AMDDatePickerView(
+        title: "생년월일",
+        isResetButtonHidden: true,
+        type: .yearMonthDay,
+        initialDate: viewModel.birthDate ?? Date()
+      ) {
+        viewModel.handleAction(.updateBirthDate($0))
+      }
+    }
   }
 }
 
@@ -57,14 +66,14 @@ extension BasicInfoFormView {
       
       AMDTextField(
         text: Binding(
-          get: { viewModel.state.birthDate },
-          set: { viewModel.handleAction(.updateBirthDate($0)) }
+          get: { viewModel.getBirthDateConvertString },
+          set: { _ in }
         ),
         title: "생년월일",
         placeholder: "생년월일을 입력해 주세요",
         rightButtonType: .date,
         rightButtonAction: {
-          showAlert = true
+          viewModel.state.showAlert = true
         }
       )
       
@@ -82,7 +91,7 @@ extension BasicInfoFormView {
       HStack(spacing: 12) {
         ForEach([Gender.MALE, Gender.FEMALE], id: \.self) { gender in
           AMDChipButton(
-            title: gender.rawValue,
+            title: gender.description,
             isSelected: viewModel.state.selectedGender  == gender
           ) {
             viewModel.state.selectedGender  = gender
