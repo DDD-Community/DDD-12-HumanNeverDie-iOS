@@ -34,5 +34,6 @@ struct OnboardingProfileView: View {
         viewModel: PermissionViewModel(parentViewModel: viewModel)
       )
     }
+    
   }
 }

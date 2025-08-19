@@ -35,6 +35,7 @@ struct PermissionView: View {
         }
       }
     }
+    .toolbarVisibility(.hidden, for: .navigationBar)
   }
 }
 

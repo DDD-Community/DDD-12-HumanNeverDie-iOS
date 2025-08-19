@@ -39,6 +39,7 @@ struct BasicInfoFormView: View {
     .onAppear {
       viewModel.handleAction(.onAppear)
     }
+    .toolbarVisibility(.hidden, for: .navigationBar)
   }
 }
 

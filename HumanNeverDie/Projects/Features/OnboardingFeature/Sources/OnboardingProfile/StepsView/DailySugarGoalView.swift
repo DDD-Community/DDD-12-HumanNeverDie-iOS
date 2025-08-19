@@ -30,6 +30,7 @@ struct DailySugarGoalView: View {
     .onAppear {
       viewModel.handleAction(.onAppear)
     }
+    .toolbarVisibility(.hidden, for: .navigationBar)
   }
 }
 
