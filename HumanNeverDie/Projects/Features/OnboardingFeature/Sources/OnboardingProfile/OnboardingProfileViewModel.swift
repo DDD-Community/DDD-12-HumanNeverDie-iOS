@@ -116,6 +116,10 @@ public final class OnboardingProfileViewModel: ViewModelable {
 //BasicInfoFormView
 extension OnboardingProfileViewModel {
   
+  public func getIntConvertString(_ number: Int) -> String {
+    return number == 0 ? "" : String(number)
+  }
+  
   public var isValidBasicInfo: Bool {
     return validator.isValidNickname(state.nickname) &&
            state.birthDate != nil &&

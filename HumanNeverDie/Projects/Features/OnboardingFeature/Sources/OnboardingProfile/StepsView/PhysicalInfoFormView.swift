@@ -44,7 +44,7 @@ extension PhysicalInfoFormView {
     VStack(spacing: 30) {
       AMDTextField(
         text: Binding(
-          get: { "\(viewModel.state.height)" },
+          get: { viewModel.getIntConvertString(viewModel.height)},
           set: { viewModel.handleAction(.updateHeight($0)) }
         ),
         title: "키",
@@ -59,7 +59,7 @@ extension PhysicalInfoFormView {
       
       AMDTextField(
         text: Binding(
-          get: { "\(viewModel.state.weight)" },
+          get: { viewModel.getIntConvertString(viewModel.weight)},
           set: { viewModel.handleAction(.updateWeight($0)) }
         ),
         title: "몸무게",
@@ -86,7 +86,7 @@ extension PhysicalInfoFormView {
       VStack(spacing: 12) {
         ForEach([ActivityLevel.tight, ActivityLevel.normal, ActivityLevel.loose], id: \.self) { activity in
           AMDOptionButton(
-            title: activity.rawValue,
+            title: activity.description,
             isSelected: viewModel.state.selectedActivity == activity
           ) {
             viewModel.handleAction(.updateActivity(activity))
