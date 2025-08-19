@@ -71,12 +71,13 @@ extension BasicInfoFormView {
         ),
         title: "생년월일",
         placeholder: "생년월일을 입력해 주세요",
-        rightButtonType: .date,
-        rightButtonAction: {
-          viewModel.state.showAlert = true
-        }
+        rightButtonType: .date
       )
-      
+      .disabled(true)
+      .onTapGesture {
+        viewModel.state.showAlert = true
+      }
+
       contentGenderSection()
     }
     .padding(.horizontal, 20)

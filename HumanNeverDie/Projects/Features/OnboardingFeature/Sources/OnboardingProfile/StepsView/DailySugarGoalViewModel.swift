@@ -16,12 +16,15 @@ public final class DailySugarGoalViewModel: ViewModelable {
   
   public struct State: Equatable {
     var selectedDailySugarGoal: SugarGoal = .none
+    
+    var showAlert: Bool = false
   }
   
   public enum Action {
     case onAppear
     case updateDailySugarGoal(SugarGoal)
     case submitGoalInfo
+    case showCalculationModal(Bool)
   }
   
   public var state: State = .init()
@@ -43,6 +46,8 @@ public final class DailySugarGoalViewModel: ViewModelable {
       guard isValidDailySugarGoal else { return }
       updateParentData()
       parentViewModel?.proceedToNextStep()
+    case .showCalculationModal(let isShow):
+      state.showAlert = isShow
     }
   }
   

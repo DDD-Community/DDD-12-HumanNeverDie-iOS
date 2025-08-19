@@ -90,6 +90,7 @@ extension PhysicalInfoFormView {
         ForEach([ActivityLevel.tight, ActivityLevel.normal, ActivityLevel.loose], id: \.self) { activity in
           AMDOptionButton(
             title: activity.description,
+            subtitle: activity.subDescription,
             isSelected: viewModel.state.selectedActivity == activity
           ) {
             viewModel.handleAction(.updateActivity(activity))
