@@ -28,7 +28,7 @@ public struct SplashView: View {
       if isInitializationComplete {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
           withAnimation {
-            router.setRoute(.onboarding)
+            router.setRoute(.main)
           }
         }
       }
