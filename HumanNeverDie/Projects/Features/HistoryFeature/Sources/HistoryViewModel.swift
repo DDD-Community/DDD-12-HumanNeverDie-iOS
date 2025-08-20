@@ -28,6 +28,7 @@ public final class HistoryViewModel: ViewModelable {
     var currentDate: Date = Date()
     var selectedDate: Date? = nil
     
+    var selectedIntakeHistoryID: String = ""
     var selectedProductID: String = ""
     var isMonthPickerPresented = false
     var isListPopupPresented: Bool { !selectedProductID.isEmpty }
@@ -60,7 +61,7 @@ public final class HistoryViewModel: ViewModelable {
     case loadHistoryForSelectedDate
     case datePickeronConfirm
     case updateCurrentDate(Date)
-    case updateSelectedProductID(String)
+    case updateSelectedProductID( String, String)
     case updateisMonthPickerPresented(Bool)
     case applySelectedDate(Date)
     case clearSelectedBeverage
@@ -87,11 +88,12 @@ public final class HistoryViewModel: ViewModelable {
     case .updateCurrentDate(let newDate):
       state.currentDate = newDate
       
-    case .updateSelectedProductID(let newId):
-      state.selectedProductID = newId
+    case .updateSelectedProductID(let intakeHistoryId,let productId):
+      state.selectedIntakeHistoryID = intakeHistoryId
+      state.selectedProductID = productId
       
     case .clearSelectedBeverage:
-      clearSelectedProductID()
+      clearSelectedItemID()
       
     case .updateisMonthPickerPresented(let isPickerPresented):
       state.isMonthPickerPresented = isPickerPresented
@@ -131,7 +133,7 @@ extension HistoryViewModel {
         await self.deleteSelectedBeverage()
       },
       secondaryButton: .init(title: "취소", type: .secondary) {
-        await self.clearSelectedProductID()
+        await self.clearSelectedItemID()
       }
     ))
   }
@@ -149,7 +151,7 @@ extension HistoryViewModel {
       
       if result {
         showToast(message: "삭제가 완료되었어요.", type: .success)
-        clearSelectedProductID()
+        clearSelectedItemID()
         await refreshData()
       } else {
         showToast(message: "데이터를 삭제할 수 없습니다.", type: .failure)
@@ -169,11 +171,12 @@ extension HistoryViewModel {
     state.selectedDateHistoryList = []
     state.totalSugarGrams = 0
     state.totalCount = 0
-    clearSelectedProductID()
+    clearSelectedItemID()
   }
   
-  private func clearSelectedProductID() {
+  private func clearSelectedItemID() {
     state.selectedProductID = ""
+    state.selectedIntakeHistoryID = ""
   }
   
   private func loadNetworkData() async {

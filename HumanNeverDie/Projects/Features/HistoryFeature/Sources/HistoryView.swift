@@ -131,7 +131,8 @@ extension HistoryView {
         
         ForEach(historyList, id: \.intakeHistoryId) { data in
           let sugarFreeVariant = AMDSugarFreeVariant.from(data.sugarLevel) ?? .none
-          let beverageIdString = String(data.productId)
+          let uniqueIdString = String(data.intakeHistoryId)
+          let productIdString = String(data.productId)
           
           AMDBeverageListView.medium(
             thumbnailURL: data.imgUrl,
@@ -142,13 +143,16 @@ extension HistoryView {
             kcal: Double(data.servingKcal),
             sugarFreeVariant: sugarFreeVariant,
             menuAction: {
-              viewModel.handleAction(.updateSelectedProductID(beverageIdString))
+              viewModel.handleAction(.updateSelectedProductID(
+                uniqueIdString,
+                productIdString
+              ))
             }
           )
           .padding(.horizontal, 20)
           .overlay(
             Group {
-              if viewModel.state.selectedProductID == beverageIdString {
+              if viewModel.state.selectedIntakeHistoryID == uniqueIdString {
                 HStack {
                   Spacer()
                   popupMenuDailylList()
