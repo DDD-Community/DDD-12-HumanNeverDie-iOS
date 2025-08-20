@@ -34,7 +34,9 @@ public struct InfoPlist {
         "CFBundleVersion": .string(AppConfiguration.projectBuildVersion),
         "CFBundleDisplayName": "$(BUNDLE_DISPLAY_NAME)",
         "CFBundleURLTypes": [],
-        "BASE_URL": "$(BASE_URL)"
+        "BASE_URL": "$(BASE_URL)",
+        "ClientId": "$(AUTH0_CLIENT_ID)",
+        "Domain": "$(AUTH0_DOMAIN)"
     ]
 }
 
