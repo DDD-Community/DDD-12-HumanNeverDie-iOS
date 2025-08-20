@@ -11,7 +11,7 @@ extension Scheme {
     public static func makeAppScheme() -> [Scheme] {
         return [
             .scheme(
-                name: "release-HumanNeverDie",
+                name: "release-AMatDang",
                 shared: true,
                 buildAction: .buildAction(targets: ["\(AppConfiguration.projectName)"]),
                 runAction: .runAction(configuration: .release),
@@ -20,7 +20,7 @@ extension Scheme {
                 analyzeAction: .analyzeAction(configuration: .release)
             ),
             .scheme(
-                name: "dev-HumanNeverDie",
+                name: "dev-AMatDang",
                 shared: true,
                 buildAction: .buildAction(targets: ["\(AppConfiguration.projectName)"]),
                 runAction: .runAction(configuration: .debug),
