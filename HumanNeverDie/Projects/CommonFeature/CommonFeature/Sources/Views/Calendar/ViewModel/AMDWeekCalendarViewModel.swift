@@ -65,17 +65,20 @@ class AMDWeekCalendarViewModel: AMDCommonCalendarViewModel {
   }
   
   func updateDayModels() {
-    let extracted = extractDate()
-    dayModels = extracted.map { value in
-      CalendarDayModel(
-        value: value,
-        isToday: isToday(value.date),
-        isSelected: isSelected(value.date),
-        textColor: textColor(for: value.date),
-        stateIcon: matchingValue(for: value.date).flatMap { getStateIcon(for: $0)}
-      )
-    }
+      let extracted = extractDate()
+      dayModels = extracted.map { value in
+        let dateWithCurrentTime = value.date.applyingCurrentTime()
+       
+        return CalendarDayModel(
+          value: DateValue(day: value.day, date: dateWithCurrentTime),
+          isToday: isToday(dateWithCurrentTime),
+          isSelected: isSelected(dateWithCurrentTime),
+          textColor: textColor(for: dateWithCurrentTime),
+          stateIcon: matchingValue(for: dateWithCurrentTime).flatMap { getStateIcon(for: $0) }
+        )
+      }
   }
+
   
   func updateSugarIntakeData(_ newData: [SugarIntakeRecord]) {
     self.sugarIntakeRecordData = newData
@@ -92,4 +95,19 @@ extension Date {
     let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self)
     return calendar.date(from: components)!
   }
+  
+  func applyingCurrentTime() -> Date {
+    let calendar = Calendar.current
+    let now = Date()
+    
+    var dateComponents = calendar.dateComponents([.year, .month, .day], from: self)
+    let timeComponents = calendar.dateComponents([.hour, .minute, .second], from: now)
+    
+    dateComponents.hour = timeComponents.hour
+    dateComponents.minute = timeComponents.minute
+    dateComponents.second = timeComponents.second
+    
+    return calendar.date(from: dateComponents)!
+  }
 }
+
