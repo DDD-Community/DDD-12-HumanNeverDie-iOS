@@ -12,7 +12,7 @@ import CommonFeature
 @Observable
 @MainActor
 public final class PermissionViewModel: ViewModelable {
-  private var parentViewModel: OnboardingProfileViewModel?
+  private weak var parentViewModel: OnboardingProfileViewModel?
   
   public struct State: Equatable {
     var isPermissionGranted: Bool = false
