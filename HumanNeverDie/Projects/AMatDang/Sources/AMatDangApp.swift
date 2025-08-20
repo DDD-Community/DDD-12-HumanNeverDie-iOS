@@ -6,7 +6,7 @@ import DesignSystem
 import Data
 
 @main
-struct HumanNeverDieApp: App {
+struct AMatDangApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
   
   init() {
