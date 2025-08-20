@@ -14,7 +14,8 @@ extension ProjectDescription.Settings {
                 "MARKETING_VERSION": .string(AppConfiguration.marketingVesion),
                 "CURRENT_PROJECT_VERSION": .string(AppConfiguration.projectBuildVersion),
                 "OTHER_LDFLAGS": .array(["$(inherited)", "-ObjC"]),
-                "SWIFT_VERSION": .string("6.0")
+                "SWIFT_VERSION": .string("6.0"),
+                "CODE_SIGN_ENTITLEMENTS": .string("XCConfig/AMatDang.entitlements")
             ],
             configurations: [
                 .debug(
