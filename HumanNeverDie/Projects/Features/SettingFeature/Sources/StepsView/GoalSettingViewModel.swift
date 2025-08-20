@@ -71,8 +71,6 @@ extension GoalSettingViewModel {
   }
   
   public func getSugarGoalAmount(for goal: SugarGoal) -> Int {
-    let sugarService = SugarUserCalculation()
-    
     // 임시로 목표를 변경한 userInfo 생성
     let tempUserInfo = UserInfo(
       nickname: state.userInfo.nickname,
@@ -84,7 +82,7 @@ extension GoalSettingViewModel {
       selectedDailySugarGoal: goal
     )
     
-    return sugarService.calculateUserSugarGoal(for: tempUserInfo)
+    return sugarGoalCalculator(userInfo:tempUserInfo)
   }
   
   public var normalSugarAmount: Int {

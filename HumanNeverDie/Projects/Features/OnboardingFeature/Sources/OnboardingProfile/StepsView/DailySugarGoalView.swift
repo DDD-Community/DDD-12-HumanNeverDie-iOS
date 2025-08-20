@@ -11,9 +11,9 @@ import DesignSystem
 import CommonFeature
 
 struct DailySugarGoalView: View {
-  @State private var viewModel: OnboardingProfileViewModel
+  @State private var viewModel: DailySugarGoalViewModel
   
-  public init(viewModel: OnboardingProfileViewModel) {
+  public init(viewModel: DailySugarGoalViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
@@ -27,6 +27,10 @@ struct DailySugarGoalView: View {
     }
     .background(Color.white)
     .ignoresSafeArea(edges: .bottom)
+    .onAppear {
+      viewModel.handleAction(.onAppear)
+    }
+    .toolbarVisibility(.hidden, for: .navigationBar)
   }
 }
 
@@ -49,7 +53,7 @@ extension DailySugarGoalView {
       goalSelectionView()
     }
     .padding(.horizontal, 20)
-    .padding(.top, 40)
+    .padding(.top, 30)
   }
   
   @ViewBuilder
@@ -70,18 +74,24 @@ extension DailySugarGoalView {
         .frame(width: 24, height: 22)
         .offset(y: -13)
       
-      HStack(spacing: 0) {
-        Text("\(viewModel.nickname)님의 일일 권장 당 섭취량은 ")
+      VStack(spacing: 0) {
+        Text("\(viewModel.nickname)님의 일일 권장")
           .amdFont(.largeRegular)
           .foregroundColor(baseTextColor)
         
-        Text("200g")
-          .amdFont(.largeBold)
-          .foregroundColor(baseTextColor)
-        
-        Text("이당!")
-          .amdFont(.largeRegular)
-          .foregroundColor(baseTextColor)
+        HStack(spacing: 0) {
+          Text("당 섭취량은 ")
+            .amdFont(.largeRegular)
+            .foregroundColor(baseTextColor)
+          
+          Text("\(viewModel.getSugarGoalAmount(for: .easy))g")
+            .amdFont(.largeBold)
+            .foregroundColor(baseTextColor)
+          
+          Text("이당!")
+            .amdFont(.largeRegular)
+            .foregroundColor(baseTextColor)
+        }
       }
       .padding(.horizontal, 20)
       .padding(.vertical, 12)
@@ -89,7 +99,6 @@ extension DailySugarGoalView {
       .cornerRadius(16)
     }
     .padding(.top, 12)
-    
   }
   
   private struct SpeechBubbleTriangle: Shape {
@@ -108,9 +117,9 @@ extension DailySugarGoalView {
     VStack(spacing: 10) {
       ForEach([SugarGoal.easy, SugarGoal.normal, SugarGoal.hard], id: \.self) { dailyGoal in
         AMDOptionButton(
-          title: dailyGoal.rawValue,
+          title: dailyGoal.descriptionTitle,
           subtitle: dailyGoal.description,
-          trailingText: dailyGoal.targetAmount,
+          trailingText: "하루 \(viewModel.getSugarGoalAmount(for: dailyGoal))g",
           isSelected: viewModel.state.selectedDailySugarGoal == dailyGoal
         ) {
           viewModel.handleAction(.updateDailySugarGoal(dailyGoal))
@@ -139,10 +148,7 @@ extension DailySugarGoalView {
     OnboardingBottomButton(
       type: viewModel.isValidDailySugarGoal ? .default : .secondary
     ) {
-      guard viewModel.isValidDailySugarGoal else { return }
-      withAnimation(.easeInOut) {
-        viewModel.handleAction(.moveToNextStep)
-      }
+      viewModel.handleAction(.submitGoalInfo)
     }
   }
 }

@@ -73,18 +73,21 @@ extension OnboardingView {
     TabView(selection: $currentPage) {
       OnboardingPageView(
         title: "아맞당에서는 카페 음료에\n숨겨진 당류를 확인할 수 있당!",
+        image:  AMDImage.onbWelcome1,
         pageNumber: 0
       )
       .tag(0)
       
       OnboardingPageView(
         title: "음료를 기록하면 나 고미당이\n당류 섭취량을 한눈에 알려준당!",
+        image:  AMDImage.onbWelcome2,
         pageNumber: 1
       )
       .tag(1)
       
       OnboardingPageView(
         title: "매일 매일 간편한 기록으로\n건강한 습관을 함께 만들어간당!",
+        image:  AMDImage.onbWelcome3,
         pageNumber: 2
       )
       .tag(2)
@@ -112,29 +115,32 @@ extension OnboardingView {
   
   private struct OnboardingPageView: View {
     let title: String
+    let image: DesignSystemImages
     let pageNumber: Int
     
     var body: some View {
-      VStack(spacing: 40) {
-        Spacer()
-        
-        Text(title)
-          .amdFont(.xxlargeBold)
-          .foregroundColor(.gray80)
-          .multilineTextAlignment(.center)
-          .lineSpacing(4)
-          .padding(.horizontal, 40)
-          .padding(.top, -80)
-        
-        Spacer()
-        
-        AMDImage.homeHealthyCharacter.swiftUIImage
-         .resizable()
-         .scaledToFill()
-         .frame(width: 200, height: 200)
-         .padding(.top, 34)
-        
-        Spacer()
+      GeometryReader { geometry in
+        VStack(spacing: 0) {
+          // 텍스트 영역 - 화면의 20-25%
+          VStack {
+            Text(title)
+              .amdFont(.xxlargeBold)
+              .foregroundColor(.gray80)
+              .multilineTextAlignment(.center)
+          }
+          .frame(height: geometry.size.height * 0.25)
+          
+          // 이미지 영역 - 화면의 75%
+          image.swiftUIImage
+            .resizable()
+            .scaledToFit()
+            .frame(
+              width: geometry.size.width * 0.9,
+              height: geometry.size.height * 0.75
+            )
+            .clipped()
+
+        }.frame(maxWidth: .infinity)
       }
     }
   }
@@ -143,4 +149,5 @@ extension OnboardingView {
     router.push(to: .onboardingProfile)
   }
 }
+
 

@@ -10,10 +10,10 @@ import DesignSystem
 import CommonFeature
 
 struct PermissionView: View {
-  @State private var viewModel: OnboardingProfileViewModel
+  @State private var viewModel: PermissionViewModel
   @Environment(Router.self) private var router
   
-  public init(viewModel: OnboardingProfileViewModel) {
+  public init(viewModel: PermissionViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
     
@@ -23,11 +23,19 @@ struct PermissionView: View {
     }
     .background(Color.white)
     .ignoresSafeArea(edges: .all)
+    .onAppear {
+      viewModel.handleAction(.onAppear)
+    }
     .onTapGesture {
-      withAnimation(.easeInOut) {
-        router.setRoute(.main) 
+      // 권한 요청이 완료된 후에만 온보딩 완료 처리
+      if viewModel.canCompleteOnboarding {
+        withAnimation(.easeInOut) {
+          viewModel.handleAction(.completeOnboarding)
+          router.setRoute(.main)
+        }
       }
-     }
+    }
+    .toolbarVisibility(.hidden, for: .navigationBar)
   }
 }
 
@@ -35,10 +43,8 @@ extension PermissionView {
   @ViewBuilder
   private func contentView() -> some View {
     VStack(spacing: 20) {
-
       bellIconView()
       messageView()
-      
     }
     .padding(.horizontal, 20)
   }
@@ -50,7 +56,6 @@ extension PermissionView {
         .resizable()
         .aspectRatio(contentMode: .fit)
         .frame(width: 100, height: 100)
-
     }
   }
   

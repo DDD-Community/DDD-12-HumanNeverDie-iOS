@@ -35,6 +35,15 @@ public enum ActivityLevel: String, CaseIterable, Sendable {
       case .tight: return "높은 편"
       }
   }
+  
+  public var subDescription: String {
+      switch self {
+      case .none: return ""
+      case .loose: return "주 1회 이하 운동 또는 주로 앉아서 생활"
+      case .normal: return "주 2-3회 운동 또는 적당한 일상 활동"
+      case .tight: return "주 4회 이상 운동 또는 매우 활동적"
+      }
+  }
 }
 
 public enum SugarGoal: String, CaseIterable, Sendable {
