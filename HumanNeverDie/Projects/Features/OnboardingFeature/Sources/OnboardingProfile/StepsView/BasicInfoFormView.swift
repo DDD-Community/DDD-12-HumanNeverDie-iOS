@@ -82,7 +82,7 @@ extension BasicInfoFormView {
       contentGenderSection()
     }
     .padding(.horizontal, 20)
-    .padding(.top, 48)
+    .padding(.top, 28)
   }
   
   @ViewBuilder
