@@ -125,8 +125,8 @@ extension HistoryView {
   
   private var selectedHistoryDailylList: some View {
     VStack(alignment: .leading, spacing: 0) {
-      LazyVStack(spacing: 20) {
-        // 변수로 한 번 받아서 사용
+      LazyVStack(spacing: 10) {
+        
         let historyList = viewModel.selectedDateHistoryList
         
         ForEach(historyList, id: \.intakeHistoryId) { data in
