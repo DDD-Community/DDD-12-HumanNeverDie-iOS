@@ -10,6 +10,7 @@ import Foundation
 public enum AppleLoginError: Error, LocalizedError {
   case authenticationFailed(Error)
   case userCancelled
+  case credentialStoreFailed
   case unknown(Error)
   
   public var userMessage: String {
@@ -18,6 +19,8 @@ public enum AppleLoginError: Error, LocalizedError {
       return "애플 로그인 인증에 실패했어요. \(error.localizedDescription)"
     case .userCancelled:
       return "로그인이 취소되었어요."
+    case .credentialStoreFailed:
+      return "인증 정보 저장에 실패했어요."
     case .unknown(let error):
       return "알 수 없는 오류가 발생했어요. \(error.localizedDescription)"
     }

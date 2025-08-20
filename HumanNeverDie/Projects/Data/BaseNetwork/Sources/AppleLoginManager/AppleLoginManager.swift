@@ -11,14 +11,15 @@ import Auth0
 import Dependencies
 
 public protocol AppleLoginManagerProtocol: Sendable {
-  func loginWithApple() async throws(AppleLoginError) -> Credentials
+  func loginWithApple() async throws(AppleLoginError) -> AppleAuthToken
   func logout() async throws(AppleLoginError) -> Void
 }
 
 public actor AppleLoginManager: AppleLoginManagerProtocol {
+  private let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
   public init() {}
   
-  public func loginWithApple() async throws(AppleLoginError) -> Credentials {
+  public func loginWithApple() async throws(AppleLoginError) -> AppleAuthToken {
     do {
       let credentials = try await Auth0
         .webAuth()
@@ -26,7 +27,17 @@ public actor AppleLoginManager: AppleLoginManagerProtocol {
         .useHTTPS()
         .start()
       
-      return credentials
+      let success = credentialsManager.store(credentials: credentials)
+      guard success else {
+        throw AppleLoginError.credentialStoreFailed
+      }
+      
+      return AppleAuthToken(
+        accessToken: credentials.accessToken,
+        refreshToken: credentials.refreshToken,
+        idToken: credentials.idToken,
+        expiresIn: credentials.expiresIn
+      )
       
     } catch let error as WebAuthError {
       switch error {
