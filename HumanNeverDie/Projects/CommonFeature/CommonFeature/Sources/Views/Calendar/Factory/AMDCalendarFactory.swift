@@ -12,7 +12,7 @@ public struct AMDCalendarFactory {
   public static func createMonth(
     currentDate: Date,
     sugarIntakeRecordData: [SugarIntakeRecord],
-    userSugarTargetValue: Int,
+    userSugarTargetValue: Binding<Int>,
     selectedDate: Binding<Date?>,
     onTapTitle: @escaping () -> Void,
     onMonthChanged: @escaping (Date) -> Void
@@ -30,7 +30,7 @@ public struct AMDCalendarFactory {
   public static func createWeekly(
     currentDate: Date,
     sugarIntakeRecordData: [SugarIntakeRecord],
-    userSugarTargetValue: Int,
+    userSugarTargetValue: Binding<Int>,
     selectedDate: Binding<Date?>,
     onTapTitle: @escaping () -> Void,
     onWeekChanged: @escaping (Date) -> Void

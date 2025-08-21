@@ -7,10 +7,11 @@
 
 import SwiftUI
 
+@Observable
 class AMDCommonCalendarViewModel {
   private var selectedDate: Date? = nil
   private(set) var currentDate: Date
-  private let userSugarTargetValue: Int
+  @ObservationIgnored private let userSugarTargetValue: Binding<Int> 
   var sugarIntakeRecordData: [SugarIntakeRecord]
   let calendar = Calendar.current
   let dragThreshold: CGFloat = 50
@@ -19,7 +20,11 @@ class AMDCommonCalendarViewModel {
     Array(repeating: GridItem(.flexible()), count: weekdayItems.count)
   }
   
-  init(currentDate: Date, sugarIntakeRecordData: [SugarIntakeRecord], userSugarTargetValue: Int) {
+  init(
+    currentDate: Date,
+    sugarIntakeRecordData: [SugarIntakeRecord],
+    userSugarTargetValue: Binding<Int>
+  ) {
     self.currentDate = currentDate
     self.sugarIntakeRecordData = sugarIntakeRecordData
     self.userSugarTargetValue = userSugarTargetValue
@@ -34,7 +39,9 @@ class AMDCommonCalendarViewModel {
   }
   
   func getStateIcon(for value: Int) -> Image? {
-    let sugerValue = Double(value) / Double(userSugarTargetValue) * 100
+    let targetValue = userSugarTargetValue.wrappedValue  // 🎯 .wrappedValue로 실제 값 접근
+    let sugerValue = Double(value) / Double(targetValue) * 100
+    print("🍯 \(value) ÷ \(targetValue) × 100 = \(sugerValue)%")
     return AMDStateIcon(percentage: sugerValue).icon
   }
   
