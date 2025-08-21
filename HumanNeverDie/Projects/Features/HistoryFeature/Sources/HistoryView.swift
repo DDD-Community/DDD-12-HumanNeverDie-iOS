@@ -120,6 +120,7 @@ extension HistoryView {
           .foregroundColor(Color.gray40)
       )
     }
+    .opacity(viewModel.state.isTodayOrPastSelectedDate ? 1 : 0)
     .padding(.vertical, 10)
   }
   

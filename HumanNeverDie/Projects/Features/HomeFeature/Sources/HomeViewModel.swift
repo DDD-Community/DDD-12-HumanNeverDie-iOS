@@ -30,6 +30,8 @@ public final class HomeViewModel: ViewModelable {
     var isSelectedDateEmpty: Bool = true
     
     var isMonthPickerPresented: Bool = false
+    
+    var isTodayOrPastSelectedDate: Bool { CommonFeature.isTodayOrPastSelectedDate(selectedDate) }
   }
   
   var sugarStatus: BeverageSugarStatusType {

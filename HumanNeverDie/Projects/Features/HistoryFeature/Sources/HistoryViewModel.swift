@@ -26,7 +26,7 @@ public final class HistoryViewModel: ViewModelable {
   
   public struct State: Equatable {
     var currentDate: Date = Date()
-    var selectedDate: Date? = nil
+    var selectedDate: Date? = Date.now
     
     var selectedIntakeHistoryID: String = ""
     var selectedProductID: String = ""
@@ -47,6 +47,8 @@ public final class HistoryViewModel: ViewModelable {
     var totalSugarGrams = 0
     var totalCount = 0
     
+    var isTodayOrPastSelectedDate: Bool { CommonFeature.isTodayOrPastSelectedDate(selectedDate) }
+
     var sugarStatus: BeverageSugarStatusType {
       let totalSugar = selectedDateCalendar?.totalSugarGrams ?? 0
       return .init(baseSugar: baseSugar, totalSugar: totalSugar)

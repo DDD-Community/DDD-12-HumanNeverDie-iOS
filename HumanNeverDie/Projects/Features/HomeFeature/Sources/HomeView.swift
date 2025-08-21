@@ -106,6 +106,7 @@ public struct HomeView: View {
       action: { router.push(to: .beverageRecordList(recordDate: viewModel.selectedDate ?? Date())) }
     )
     .padding(.bottom, 20)
+    .opacity(viewModel.state.isTodayOrPastSelectedDate ? 1 : 0)
   }
   
   private var datePickerBottomSheet: some View {
