@@ -41,7 +41,7 @@ extension UserNotifications {
   public static func defaultUserNotifications(
     isEnabled: Bool = false,
     remindersEnabled: Bool? = nil,
-    reminderTime: String = "12:00:00",
+    reminderTime: String = "15:00:00",
     riskWarningsEnabled: Bool? = nil,
     newsUpdatesEnabled: Bool? = nil
   ) -> UserNotifications {
