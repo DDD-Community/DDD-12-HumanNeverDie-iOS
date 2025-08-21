@@ -6,7 +6,9 @@
 //
 
 import Foundation
+import UserNotifications
 import UserDomain
+import UIKit
 
 import DesignSystem
 import CommonFeature
@@ -34,6 +36,9 @@ public final class NotificationSettingViewModel: ViewModelable {
     var showTimePicker: Bool = false
     var isLoading: Bool = false
     var notiInfo: UserNotifications = UserNotifications.mock()
+
+    var systemPermissionGranted: Bool = false
+    var showPermissionAlert: Bool = false
   }
   
   public var state: State
@@ -47,6 +52,8 @@ public final class NotificationSettingViewModel: ViewModelable {
   public enum Action {
     case onAppear
     case loadUserInfo
+    case openSystemSettings
+    case dismissAlert
     
     case toggleIsEnabled(Bool)
     case toggleRemindersEnabled(Bool)
@@ -57,7 +64,6 @@ public final class NotificationSettingViewModel: ViewModelable {
   
   public init(userID: String) {
     let initialState = State(userID: userID)
-    
     self.state = initialState
   }
   
@@ -68,8 +74,16 @@ public final class NotificationSettingViewModel: ViewModelable {
       
     case .loadUserInfo:
       Task {
+        await checkSystemNotificationPermission()
         await loadUserData()
       }
+      
+    case .openSystemSettings:
+      openSystemSettings()
+      state.showPermissionAlert = false
+      
+    case .dismissAlert:
+      state.showPermissionAlert = false
       
     case .toggleIsEnabled(let isEnabled):
       Task {
@@ -108,8 +122,12 @@ extension NotificationSettingViewModel {
     
     do {
       let result = try await userUseCase.getUserNotificationInfo(userID: state.userID)
-      state.notiInfo = result
-      
+      if (!state.systemPermissionGranted && result.isEnabled) {
+        await updateUseNotiInfo(isEnabled: false)
+      } else {
+        state.notiInfo = result
+      }
+  
       setLoading(false)
       
     } catch {
@@ -119,28 +137,63 @@ extension NotificationSettingViewModel {
     }
   }
   
-  private func updateNotiSetting(_ settingType: NotiSettingType) async {
-    var current = state.notiInfo
+  nonisolated private func checkSystemNotificationPermission() async {
+    let center = UNUserNotificationCenter.current()
+    let settings = await center.notificationSettings()
+    let isAuthorized = settings.authorizationStatus == .authorized
     
-    switch settingType {
-    case .isEnabled(let isEnabled):
-      await updateUseNotiInfo(isEnabled: isEnabled)
+    await MainActor.run {
+      state.systemPermissionGranted = isAuthorized
+    }
+  }
+  
+  private func openSystemSettings() {
+    guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+      showToast(message: "설정을 열 수 없습니다.", type: .failure)
       return
-      
-    case .remindersEnabled(let isEnabled):
-      current.remindersEnabled = isEnabled
-      
-    case .riskWarningsEnabled(let isEnabled):
-      current.riskWarningsEnabled = isEnabled
-      
-    case .newsUpdatesEnabled(let isEnabled):
-      current.newsUpdatesEnabled = isEnabled
-      
-    case .reminderTime(let time):
-      current.reminderTime = current.convertDateToTimeString(time)
     }
     
-    await updateNotiInfo(notiInfo: current)
+    if UIApplication.shared.canOpenURL(settingsUrl) {
+      UIApplication.shared.open(settingsUrl) { [weak self] success in
+        if success {
+          // 설정에서 돌아왔을 때 권한 상태 다시 확인
+          Task { @MainActor in
+            await self?.checkSystemNotificationPermission()
+          }
+        }
+      }
+    } else {
+      showToast(message: "설정을 열 수 없습니다.", type: .failure)
+    }
+  }
+  
+  private func updateNotiSetting(_ settingType: NotiSettingType) async {
+    if (state.systemPermissionGranted == false) {
+      state.showPermissionAlert = true
+    }else {
+      
+      var current = state.notiInfo
+      
+      switch settingType {
+      case .isEnabled(let isEnabled):
+        await updateUseNotiInfo(isEnabled: isEnabled)
+        return
+        
+      case .remindersEnabled(let isEnabled):
+        current.remindersEnabled = isEnabled
+        
+      case .riskWarningsEnabled(let isEnabled):
+        current.riskWarningsEnabled = isEnabled
+        
+      case .newsUpdatesEnabled(let isEnabled):
+        current.newsUpdatesEnabled = isEnabled
+        
+      case .reminderTime(let time):
+        current.reminderTime = current.convertDateToTimeString(time)
+      }
+      
+      await updateNotiInfo(notiInfo: current)
+    }
   }
   
   private func updateUseNotiInfo(isEnabled: Bool) async {
@@ -179,11 +232,9 @@ extension NotificationSettingViewModel {
     state.isLoading = isLoading
   }
   
-  
   private func showToast(message: String, type: AMDToastType) {
     Task { @MainActor in
       await toastClient.showToast(.init(message: message, type: type))
     }
   }
-  
 }
