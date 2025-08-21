@@ -59,14 +59,14 @@ public final class PermissionViewModel: ViewModelable {
         state.isPermissionGranted = granted
       }
       
-      await parentViewModel?.updateNotificationSetting(isEnabled: granted)
+      await parentViewModel?.updateUseNotiInfo(isEnabled: granted)
       
     } catch {
       await MainActor.run {
         state.isPermissionGranted = false
       }
       
-      await parentViewModel?.updateNotificationSetting(isEnabled: false)
+      await parentViewModel?.updateUseNotiInfo(isEnabled: false)
     }
   }
 }

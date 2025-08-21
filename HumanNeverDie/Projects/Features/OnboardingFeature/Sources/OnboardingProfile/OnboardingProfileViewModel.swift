@@ -128,11 +128,10 @@ public final class OnboardingProfileViewModel: ViewModelable {
     }
   }
   
-  public func updateNotificationSetting(isEnabled: Bool) async {
+  public func updateUseNotiInfo(isEnabled: Bool) async {
     do {
-      let notiInfo = UserNotifications.defaultUserNotifications(isEnabled: isEnabled)
-      _ = try await userUseCase.updateUserNotifications(userID: state.userID, userNotifications: notiInfo)
-      print("✅ 알림 설정 업데이트 성공: \(isEnabled)")
+      let result = try await userUseCase.updateNotifications(userID: state.userID, isEnabled: isEnabled)
+      print("✅ 알림 설정 업데이트 성공: \(result.isEnabled)")
     } catch {
       print("❌ 알림 설정 업데이트 실패: \(error)")
     }
@@ -157,7 +156,7 @@ extension OnboardingProfileViewModel {
         state.isPermissionGranted = granted
       }
       
-      await updateNotificationSetting(isEnabled: granted)
+      await updateUseNotiInfo(isEnabled: granted)
       
       if !granted {
         await showPermissionDeniedAlert()
@@ -166,7 +165,7 @@ extension OnboardingProfileViewModel {
       await MainActor.run {
         state.isPermissionGranted = false
       }
-      await updateNotificationSetting(isEnabled: false)
+      await updateUseNotiInfo(isEnabled: false)
       await showPermissionDeniedAlert()
     }
   }

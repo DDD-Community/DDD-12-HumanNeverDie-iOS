@@ -109,7 +109,7 @@ extension NotificationSettingViewModel {
     do {
       let result = try await userUseCase.getUserNotificationInfo(userID: state.userID)
       state.notiInfo = result
-
+      
       setLoading(false)
       
     } catch {
@@ -124,10 +124,8 @@ extension NotificationSettingViewModel {
     
     switch settingType {
     case .isEnabled(let isEnabled):
-      current.isEnabled = isEnabled
-      current.remindersEnabled = isEnabled
-      current.riskWarningsEnabled = isEnabled
-      current.newsUpdatesEnabled = isEnabled
+      await updateUseNotiInfo(isEnabled: isEnabled)
+      return
       
     case .remindersEnabled(let isEnabled):
       current.remindersEnabled = isEnabled
@@ -143,6 +141,22 @@ extension NotificationSettingViewModel {
     }
     
     await updateNotiInfo(notiInfo: current)
+  }
+  
+  private func updateUseNotiInfo(isEnabled: Bool) async {
+    setLoading(true)
+    
+    do {
+      let result = try await userUseCase.updateNotifications(userID: state.userID, isEnabled: isEnabled)
+      state.notiInfo = result
+      
+      setLoading(false)
+      
+    } catch {
+      showToast(message: "오류가 발생했어요. 다시 시도해주세요.", type: .failure)
+      
+      setLoading(false)
+    }
   }
   
   private func updateNotiInfo(notiInfo: UserNotifications) async {
