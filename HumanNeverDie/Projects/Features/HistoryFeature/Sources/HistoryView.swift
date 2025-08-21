@@ -41,6 +41,7 @@ public struct HistoryView: View {
           }
         }
       }
+      .padding(.top, 4)
       .amdBottomSheet(isPresented: $viewModel.state.isBevarageDetailPresented, detents: [.height(474)]) {
         AMDBeverageDetailView(productID: viewModel.selectedProductID)
       }

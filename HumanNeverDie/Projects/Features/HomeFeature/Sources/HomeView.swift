@@ -23,6 +23,7 @@ public struct HomeView: View {
   
   public var body: some View {
     contentView
+      .padding(.top, 4)
       .background(.white)
       .amdBottomSheet(
         isPresented: $viewModel.state.isMonthPickerPresented,
