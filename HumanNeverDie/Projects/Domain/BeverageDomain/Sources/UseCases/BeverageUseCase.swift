@@ -8,6 +8,7 @@ public protocol BeverageUseCaseProtocol: Sendable {
   func getBeverageDetail(productID: String) async throws -> BeverageDetail
   func getBeverageMonthCalender(dateInWeek: String) async throws -> [BeverageCalendar]
   func getBeverageWeeklyCalender(dateInWeek: String) async throws -> [BeverageCalendar]
+  func getBeveragDailyCalender(dailyDate: String) async throws -> BeverageCalendar
   func likeBeverage(productID: String) async throws -> BeverageLike
   func unLikeBeverage(productID: String) async throws -> BeverageLike
   func searchBeverage(keyword: String, sugarLevel: BeverageSugarLevelType?, onlyLiked: Bool) async throws -> BeverageList
@@ -116,6 +117,10 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
   
   public func getBeverageWeeklyCalender(dateInWeek: String) async throws -> [BeverageCalendar] {
       return try await beverageRepository.getBeverageWeeklyCalender(dateInWeek: dateInWeek)
+  }
+  
+  public func getBeveragDailyCalender(dailyDate: String) async throws -> BeverageCalendar {
+    return try await beverageRepository.getBeveragDailyCalender(dailyDate: dailyDate)
   }
 
   public func deleteBeverage(productID: String, intakeTime: String) async throws -> Bool {
