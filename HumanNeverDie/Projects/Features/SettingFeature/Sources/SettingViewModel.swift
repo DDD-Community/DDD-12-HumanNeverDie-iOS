@@ -21,6 +21,8 @@ public final class SettingViewModel: ViewModelable {
   @Dependency(\.toastClient) private var toastClient
   @ObservationIgnored
   @Dependency(\.alertClient) private var alertClient
+  @ObservationIgnored
+  @Dependency(\.userDefaultClient) private var userDefaultClient
   
   public struct State: Equatable {
     var userInfo: UserInfo
@@ -99,14 +101,16 @@ extension SettingViewModel {
       
       showToast(message: "저장이 완료되었어요", type: .success)
       setUserInfo(userInfo: result)
-      state.sugarMaxG = result.sugarMaxG
+      
+      await userDefaultClient.setValue(state.sugarMaxG, forKey: AMDUserDefaultKey.userMaxSugar)
+      
+      state.isLoading = false
       
     } catch {
       showToast(message: "저장에 실패하였습니다", type: .failure)
       state.isLoading = false
     }
   }
-  
   private func showToast(message: String, type: AMDToastType) {
     Task { @MainActor in
       await toastClient.showToast(.init(message: message, type: type))
