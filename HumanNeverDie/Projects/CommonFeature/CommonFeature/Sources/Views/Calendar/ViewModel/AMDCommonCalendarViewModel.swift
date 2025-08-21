@@ -39,9 +39,8 @@ class AMDCommonCalendarViewModel {
   }
   
   func getStateIcon(for value: Int) -> Image? {
-    let targetValue = userSugarTargetValue.wrappedValue  // 🎯 .wrappedValue로 실제 값 접근
+    let targetValue = userSugarTargetValue.wrappedValue
     let sugerValue = Double(value) / Double(targetValue) * 100
-    print("🍯 \(value) ÷ \(targetValue) × 100 = \(sugerValue)%")
     return AMDStateIcon(percentage: sugerValue).icon
   }
   
