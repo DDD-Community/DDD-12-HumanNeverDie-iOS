@@ -60,7 +60,7 @@ public struct HomeView: View {
     AMDCalendarFactory.createWeekly(
       currentDate: viewModel.currentDate,
       sugarIntakeRecordData: viewModel.sugarIntakeRecords,
-      userSugarTargetValue: 50,
+      userSugarTargetValue: $viewModel.state.baseSugar,
       selectedDate: $viewModel.state.selectedDate,
       onTapTitle: { viewModel.handleAction(.calendarChangeDateButtonTapped) },
       onWeekChanged: { viewModel.handleAction(.weekSlideGesture($0)) }

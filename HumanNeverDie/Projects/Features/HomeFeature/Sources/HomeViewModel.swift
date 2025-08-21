@@ -24,7 +24,6 @@ public final class HomeViewModel: ViewModelable {
     var sugarIntakeRecords: [SugarIntakeRecord] = []
     var weeklyHistories: [String: BeverageCalendar] = [:]
     
-    // 어디서 가져옴?
     var baseSugar: Int = 50
     var selectedDateCalendar: BeverageCalendar?
     var isSelectedDateEmpty: Bool = true
@@ -56,13 +55,19 @@ public final class HomeViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.beverageUseCase) private var beverageUseCase
   
+  @ObservationIgnored
+  @Dependency(\.userDefaultClient) private var userDefaultClient
+  
   public var state: State = .init()
   public init() {}
   
   public func handleAction(_ action: Action) {
     switch action {
     case .onViewDidLoad:
-      Task { await getWeeklyCalender() }
+      Task {
+        await loadBaseSugar()
+        await getWeeklyCalender()
+      }
       
     case .calendarChangeDateButtonTapped:
       state.isMonthPickerPresented = true
@@ -85,6 +90,11 @@ public final class HomeViewModel: ViewModelable {
     case .homeRefresh:
       Task { await getWeeklyCalender() }
     }
+  }
+  
+  private func loadBaseSugar() async {
+    let savedBaseSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.userMaxSugar) ?? 0
+    state.baseSugar = savedBaseSugar > 0 ? savedBaseSugar : 50
   }
   
   private func getWeeklyCalender() async {

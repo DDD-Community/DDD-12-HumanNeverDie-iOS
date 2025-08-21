@@ -24,6 +24,9 @@ public final class HistoryViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.toastClient) private var toastClient
   
+  @ObservationIgnored
+  @Dependency(\.userDefaultClient) private var userDefaultClient
+  
   public struct State: Equatable {
     var currentDate: Date = Date()
     var selectedDate: Date? = Date.now
@@ -40,7 +43,6 @@ public final class HistoryViewModel: ViewModelable {
     var sugarIntakeRecordData: [SugarIntakeRecord] = []
     var monthHistoryData: [String: BeverageCalendar] = [:]
     
-    // 어디서 가져옴?
     var baseSugar: Int = 50
     var selectedDateCalendar: BeverageCalendar?
     
@@ -123,8 +125,14 @@ extension HistoryViewModel {
   }
   
   private func refreshData() async {
+    await loadBaseSugar()
     await loadNetworkData()
     loadSelectedDateHistory()
+  }
+  
+  private func loadBaseSugar() async {
+    let savedBaseSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.userMaxSugar) ?? 0
+    state.baseSugar = savedBaseSugar > 0 ? savedBaseSugar : 50
   }
   
   nonisolated private func showDeleteAlert() async {

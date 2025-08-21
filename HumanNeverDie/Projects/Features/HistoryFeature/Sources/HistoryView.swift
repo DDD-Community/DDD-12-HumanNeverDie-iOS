@@ -77,7 +77,7 @@ extension HistoryView {
     AMDCalendarFactory.createMonth(
       currentDate: viewModel.currentDate,
       sugarIntakeRecordData: viewModel.sugarIntakeRecordData,
-      userSugarTargetValue: 50,
+      userSugarTargetValue: $viewModel.state.baseSugar,
       selectedDate: $viewModel.state.selectedDate,
       onTapTitle: {
         viewModel.handleAction(.updateisMonthPickerPresented(true))
