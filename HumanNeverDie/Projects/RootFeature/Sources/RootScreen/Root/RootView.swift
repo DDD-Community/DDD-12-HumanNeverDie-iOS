@@ -32,6 +32,9 @@ public struct RootView: View {
       }
       .id(router.rootViewId)
       .navigationBarBackButtonHidden(true)
+      .onReceive(NotificationCenter.default.publisher(for: .tokenRefreshFailed)) { _ in
+        withAnimation { router.rootRoute = .login }
+      }
       .navigationDestination(for: Route.self) { route in
         switch route {
         case let .beverageRecordList(date):

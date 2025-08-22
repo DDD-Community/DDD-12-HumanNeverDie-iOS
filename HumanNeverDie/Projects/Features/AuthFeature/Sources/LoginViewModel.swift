@@ -64,6 +64,8 @@ public final class LoginViewModel: ViewModelable {
         state.isLoading = false
       }
       
+      print(error.errorDescription )
+      
       await toastClient.showToast(
         AMDToastProperty(
           message: error.errorDescription ?? "로그인 중 오류가 발생했습니다",

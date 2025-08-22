@@ -65,6 +65,8 @@ private extension AuthUseCase {
       if let refreshToken = token.refreshToken {
         try await keychainClient.setValue(refreshToken, forKey: AMDKeychainKey.refreshToken)
       }
+      
+      try await keychainClient.setValue(String(token.expiresIn.timeIntervalSince1970), forKey: AMDKeychainKey.expiresIn)
     } catch {
       throw AuthError.keychainError(error.localizedDescription)
     }

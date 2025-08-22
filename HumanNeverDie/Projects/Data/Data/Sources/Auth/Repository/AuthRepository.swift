@@ -38,6 +38,8 @@ public final class AuthRepository: AuthRepositoryInterface, @unchecked Sendable 
         throw AuthError.tokenStorageFailed
       case AppleLoginError.unknown(let unknownError):
         throw AuthError.unknown(unknownError.localizedDescription)
+      default:
+        throw AuthError.unknown("알 수 없는 에러가 발생")
       }
     }
   }
