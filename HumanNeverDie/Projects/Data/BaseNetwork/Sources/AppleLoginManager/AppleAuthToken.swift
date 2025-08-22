@@ -7,6 +7,8 @@
 
 import Foundation
 
+import Alamofire
+
 public struct AppleAuthToken: Sendable {
   public let accessToken: String
   public let refreshToken: String?
@@ -23,5 +25,14 @@ public struct AppleAuthToken: Sendable {
     self.refreshToken = refreshToken
     self.idToken = idToken
     self.expiresIn = expiresIn
+  }
+}
+
+// MARK: - AuthenticationCredential
+
+extension AppleAuthToken: AuthenticationCredential {
+  public var requiresRefresh: Bool {
+    // 5분 이내 만료 시 갱신 필요
+    Date(timeIntervalSinceNow: 60 * 5) > expiresIn
   }
 }
