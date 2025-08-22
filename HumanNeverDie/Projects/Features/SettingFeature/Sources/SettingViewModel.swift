@@ -9,6 +9,7 @@ import Observation
 
 import Shared
 import UserDomain
+import AuthDomain
 import CommonFeature
 import DesignSystem
 
@@ -25,17 +26,19 @@ public final class SettingViewModel: ViewModelable {
   public struct State: Equatable {
     var userInfo: UserInfo
     var isLoading: Bool = false
-    let userID: String = "b5219141-afe3-46c6-8c5c-0f7e850a5bef"
+    var userID: String = ""
+    var isLogoutAndWithdrawal: Bool = false
     
     var sugarMaxG: Int = 0
   }
   
   public enum Action {
     case onAppear
-    case loadUserInfo
     case updateUserInfo(UserInfo)
     case logout
+    case logoutAlertButtonTapped
     case unsubscribe
+    case withdrawalAlertButtonTapped
     
   }
   
@@ -43,6 +46,10 @@ public final class SettingViewModel: ViewModelable {
   
   @ObservationIgnored
   @Dependency(\.userUseCase) private var userUseCase
+  @ObservationIgnored
+  @Dependency(\.authUseCase) private var authUseCase
+  @ObservationIgnored
+  @Dependency(\.keychainClient) private var keychainClient
   
   public init() {
     self.state = State(userInfo: UserInfo.defaultUserInfo)
@@ -51,25 +58,28 @@ public final class SettingViewModel: ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
-      handleAction(.loadUserInfo)
+      if let userID = keychainClient.getValue(forKey: AMDKeychainKey.userID) {
+        state.userID = userID
+      }
       
-    case .loadUserInfo:
-      Task {
-        await loadUserData()
-      }
-
-    case .updateUserInfo(let userInfo): // 추가
-      Task {
-        await updateUserInfo(userInfo: userInfo)
-      }
+      Task { await loadUserData()}
+      
+    case .updateUserInfo(let userInfo):
+      Task { await updateUserInfo(userInfo: userInfo) }
+      
     case .logout:
-      Task {
-        await showLogOutAlert()
-      }
+      Task { await showLogoutAlert() }
+      
+    case .logoutAlertButtonTapped:
+      Task { await logout() }
+      
     case .unsubscribe:
       Task {
         await showUnsubscribeAlert()
       }
+      
+    case .withdrawalAlertButtonTapped:
+      Task { await withdraw() }
     }
   }
 }
@@ -107,12 +117,30 @@ extension SettingViewModel {
     }
   }
   
-  private func showToast(message: String, type: AMDToastType) {
-    Task { @MainActor in
-      await toastClient.showToast(.init(message: message, type: type))
+  private func logout() async {
+    do {
+      _ = try await authUseCase.logout()
+      
+      await MainActor.run {
+        state.isLogoutAndWithdrawal = true
+      }
+    } catch {
+      showToast(message: "로그아웃에 실패했습니다", type: .failure)
     }
   }
-
+  
+  private func withdraw() async {
+    do {
+      _ = try await authUseCase.withdraw()
+      
+      await MainActor.run {
+        state.isLogoutAndWithdrawal = true
+      }
+    } catch {
+      showToast(message: "회원 탈퇴에 실패했습니다", type: .failure)
+    }
+  }
+  
   private func setUserInfo(userInfo: UserInfo) {
     state.userInfo = userInfo
     
@@ -121,19 +149,18 @@ extension SettingViewModel {
     
     print("서버 = \(state.sugarMaxG) == \(userSugerMaxG)")
     state.sugarMaxG = userSugerMaxG
-  
+    
   }
   
-  nonisolated private func showLogOutAlert() async {
-    await alertClient.showAlert(.init(
-      title: "정말 로그아웃 하시겠습니까?",
-      primaryButton: .init(title: "로그아웃", type: .delete) {
-        //성공
-      },
-      secondaryButton: .init(title: "취소", type: .secondary) {
-        //실패
-      }
-    ))
+  nonisolated private func showLogoutAlert() async {
+    await alertClient.showAlert(
+      .init(
+        title: "정말 로그아웃 하시겠습니까?",
+        primaryButton: .init(title: "로그아웃", type: .delete) { [weak self] in
+          await self?.handleAction(.logoutAlertButtonTapped)
+        }
+      )
+    )
   }
   
   nonisolated private func showUnsubscribeAlert() async {
@@ -143,12 +170,17 @@ extension SettingViewModel {
       primaryButton: .init(title: "취소", type: .secondary) {
         //취소
       },
-      secondaryButton: .init(title: "탈퇴하기", type: .delete) {
-        //탈퇴하기
+      secondaryButton: .init(title: "탈퇴하기", type: .delete) { [weak self] in
+        await self?.handleAction(.withdrawalAlertButtonTapped)
       }
     ))
   }
   
+  private func showToast(message: String, type: AMDToastType) {
+    Task { @MainActor in
+      await toastClient.showToast(.init(message: message, type: type))
+    }
+  }
 }
 
 // MARK: - Public Methods for Navigation
