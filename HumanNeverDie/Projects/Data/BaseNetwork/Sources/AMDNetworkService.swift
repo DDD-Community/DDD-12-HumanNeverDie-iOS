@@ -7,8 +7,9 @@
 
 import Foundation
 
-import Alamofire
 import Shared
+
+import Alamofire
 import Dependencies
 
 public protocol AMDNetworkServiceProtocol: Sendable {
@@ -19,7 +20,7 @@ public final class AMDNetworkService: AMDNetworkServiceProtocol, @unchecked Send
   private let session: Session
   private let decoder: JSONDecoder = JSONDecoder()
   
-  public init(timeout: TimeInterval = 5, withAuth: Bool = false) {
+  public init(timeout: TimeInterval = 5, withAuth: Bool = true) {
     let configuration = URLSessionConfiguration.default
     configuration.timeoutIntervalForRequest = timeout
     let logger = AMDNetworkLogger()

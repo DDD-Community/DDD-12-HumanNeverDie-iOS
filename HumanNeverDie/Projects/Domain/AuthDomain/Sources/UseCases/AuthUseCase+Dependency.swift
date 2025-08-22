@@ -21,10 +21,6 @@ public extension DependencyValues {
 // MARK: - MockAuthUseCase
 
 private struct MockAuthUseCase: AuthUseCaseProtocol {
-  func getUserID(accessToken: String) async throws(AuthError) -> String {
-    return ""
-  }
-  
   func loginWithApple() async throws(AuthError) -> Bool {
     print("Mock Login Success")
     return true 
@@ -33,5 +29,9 @@ private struct MockAuthUseCase: AuthUseCaseProtocol {
   func logout() async throws(AuthError) -> Bool { 
     print("Mock Logout Success")
     return true 
+  }
+  
+  func withdraw() async throws(AuthError) -> Bool {
+    return false
   }
 }
