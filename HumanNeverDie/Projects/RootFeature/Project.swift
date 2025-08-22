@@ -10,6 +10,7 @@ let project = Project.makeModule(
         .feature(module: .History),
         .feature(module: .BeverageRecordList),
         .feature(module: .Onboarding),
-        .feature(module: .Setting)
+        .feature(module: .Setting),
+        .feature(module: .Auth)
     ]
 )
