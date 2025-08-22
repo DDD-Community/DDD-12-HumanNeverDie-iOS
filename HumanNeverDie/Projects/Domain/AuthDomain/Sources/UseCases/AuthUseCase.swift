@@ -14,6 +14,7 @@ import Dependencies
 public protocol AuthUseCaseProtocol: Sendable {
   func loginWithApple() async throws(AuthError) -> Bool
   func logout() async throws(AuthError) -> Bool
+  func withdraw() async throws(AuthError) -> Bool
 }
 
 public final class AuthUseCase: AuthUseCaseProtocol, @unchecked Sendable {
@@ -26,10 +27,10 @@ public final class AuthUseCase: AuthUseCaseProtocol, @unchecked Sendable {
     do {
       let token = try await authRepository.loginWithApple()
       try await saveTokensToKeychain(token)
-            
+      
       let userID = try await getUserID()
       try await saveUserIDToKeychain(userID)
-
+      
       return true
     } catch {
       throw error
@@ -38,7 +39,19 @@ public final class AuthUseCase: AuthUseCaseProtocol, @unchecked Sendable {
   
   public func logout() async throws(AuthError) -> Bool {
     do {
+      try await clearKeychain()
       try await authRepository.logout()
+      return true
+    } catch {
+      throw error
+    }
+  }
+  
+  public func withdraw() async throws(AuthError) -> Bool {
+    do {
+      try await clearKeychain()
+      try await authRepository.logout()
+      try await authRepository.withdraw()
       return true
     } catch {
       throw error
@@ -75,6 +88,14 @@ private extension AuthUseCase {
   func saveUserIDToKeychain(_ userID: String) async throws(AuthError) {
     do {
       try await keychainClient.setValue(userID, forKey: AMDKeychainKey.userID)
+    } catch {
+      throw AuthError.keychainError(error.localizedDescription)
+    }
+  }
+  
+  func clearKeychain() async throws(AuthError) {
+    do {
+      try await keychainClient.removeAll()
     } catch {
       throw AuthError.keychainError(error.localizedDescription)
     }

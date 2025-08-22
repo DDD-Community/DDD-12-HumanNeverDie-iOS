@@ -69,4 +69,13 @@ public final class AuthRepository: AuthRepositoryInterface, @unchecked Sendable 
       throw AuthError.tokenValidationFailed(error.localizedDescription)
     }
   }
+  
+  public func withdraw() async throws(AuthError) -> Void {
+    do {
+      let target = AuthWithdrawTarget()
+      _ = try await networkService.requestDDD(target)
+    } catch {
+      throw AuthError.unknown(error.localizedDescription)
+    }
+  }
 }
