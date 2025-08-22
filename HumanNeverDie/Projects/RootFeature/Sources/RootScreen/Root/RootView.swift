@@ -1,9 +1,10 @@
 import SwiftUI
 
 import UserDomain
-import SplashFeature
-import OnboardingFeature
 import CommonFeature
+import SplashFeature
+import AuthFeature
+import OnboardingFeature
 import BeverageRecordListFeature
 import SettingFeature
 
@@ -16,11 +17,14 @@ public struct RootView: View {
     NavigationStack(path: $router.path) {
       ZStack {
         switch router.rootRoute {
-        case .onboarding:
-          OnboardingViewFactory.create()
-          
         case .splash:
           SplashViewFactory.create()
+          
+        case .login:
+          LoginViewFactory.create()
+          
+        case .onboarding:
+          OnboardingViewFactory.create()
           
         case .main:
           MainViewFactory.create()

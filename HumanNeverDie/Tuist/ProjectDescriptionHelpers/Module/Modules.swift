@@ -13,6 +13,7 @@ public extension Modules {
 public extension Modules {
     enum Feature: String {
         case Splash
+        case Auth
         case Onboarding
         case Home
         case History

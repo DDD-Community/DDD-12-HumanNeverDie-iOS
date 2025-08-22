@@ -9,6 +9,7 @@ import Foundation
 
 public enum RootRoute: Hashable {
   case splash
+  case login
   case onboarding
   case main
 }
