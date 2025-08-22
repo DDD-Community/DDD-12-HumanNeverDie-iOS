@@ -11,7 +11,9 @@ public enum AuthError: Error, LocalizedError, Equatable {
   case loginFailed(String)
   case logoutFailed(String)
   case tokenRefreshFailed(String)
+  case tokenValidationFailed(String)
   case tokenStorageFailed
+  case keychainError(String)
   case userCancelled
   case networkError
   case unknown(String)
@@ -24,8 +26,12 @@ public enum AuthError: Error, LocalizedError, Equatable {
       return "로그아웃에 실패했어요: \(message)"
     case .tokenRefreshFailed(let message):
       return "토큰 갱신에 실패했어요: \(message)"
+    case .tokenValidationFailed(let message):
+      return "토큰 검증에 실패했어요: \(message)"
     case .tokenStorageFailed:
       return "토큰 저장에 실패했어요"
+    case .keychainError(let message):
+      return "키체인 오류: \(message)"
     case .userCancelled:
       return "로그인이 취소되었어요"
     case .networkError:

@@ -24,7 +24,9 @@ public actor AppleLoginManager: AppleLoginManagerProtocol {
       let credentials = try await Auth0
         .webAuth()
         .connection("apple")
+        .scope("openid profile email offline_access")
         .useHTTPS()
+        .audience("https://ah-matdang/api")
         .start()
       
       let success = credentialsManager.store(credentials: credentials)

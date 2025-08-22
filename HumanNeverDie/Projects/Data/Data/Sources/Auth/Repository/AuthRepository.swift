@@ -14,6 +14,7 @@ import Dependencies
 
 public final class AuthRepository: AuthRepositoryInterface, @unchecked Sendable {
   @Dependency(\.appleLoginManager) private var appleLoginManager
+  @Dependency(\.networkService) private var networkService
   
   public init() {}
   
@@ -53,6 +54,17 @@ public final class AuthRepository: AuthRepositoryInterface, @unchecked Sendable 
       default:
         throw AuthError.logoutFailed(error.localizedDescription)
       }
+    }
+  }
+  
+  public func validateToken(accessToken: String) async throws(AuthError) -> String {
+    do {
+      let target = AuthValidationTarget(accessToken: accessToken)
+      let response = try await networkService.requestDDD(target)
+      
+      return response.data?.fakeId ?? ""
+    } catch {
+      throw AuthError.tokenValidationFailed(error.localizedDescription)
     }
   }
 }
