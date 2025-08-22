@@ -21,7 +21,7 @@ struct AuthValidationTarget: AMDAPIRequestable {
   }
   
   var headers: [String : String]? {
-    return ["Authorization": "Bearer \(accessToken)"]
+    return AMDHeader.authorization()
   }
   
   var queryParameters: [String : String]? {
@@ -30,11 +30,5 @@ struct AuthValidationTarget: AMDAPIRequestable {
   
   var body: Encodable? {
     return nil
-  }
-  
-  private let accessToken: String
-  
-  init(accessToken: String) {
-    self.accessToken = accessToken
   }
 }

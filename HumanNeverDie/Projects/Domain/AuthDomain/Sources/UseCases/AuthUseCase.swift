@@ -27,7 +27,7 @@ public final class AuthUseCase: AuthUseCaseProtocol, @unchecked Sendable {
       let token = try await authRepository.loginWithApple()
       try await saveTokensToKeychain(token)
             
-      let userID = try await getUserID(accessToken: token.accessToken)
+      let userID = try await getUserID()
       try await saveUserIDToKeychain(userID)
 
       return true
@@ -49,9 +49,9 @@ public final class AuthUseCase: AuthUseCaseProtocol, @unchecked Sendable {
 // MARK: - Private Methods
 
 private extension AuthUseCase {
-  func getUserID(accessToken: String) async throws(AuthError) -> String {
+  func getUserID() async throws(AuthError) -> String {
     do {
-      let userID = try await authRepository.validateToken(accessToken: accessToken)
+      let userID = try await authRepository.validateToken()
       return userID
     } catch {
       throw error

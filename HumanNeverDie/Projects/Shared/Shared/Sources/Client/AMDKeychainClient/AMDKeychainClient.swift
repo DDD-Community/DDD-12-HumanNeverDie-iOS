@@ -11,7 +11,7 @@ import Security
 import Dependencies
 
 public protocol AMDKeychainClientProtocol: Sendable {
-  func getValue(forKey key: String) async -> String?
+  func getValue(forKey key: String) -> String?
   func setValue(_ value: String, forKey key: String) async throws
   func removeValue(forKey key: String) async throws
   func removeAll() async throws
@@ -24,7 +24,7 @@ public actor AMDKeychainClient: AMDKeychainClientProtocol {
     self.serviceName = serviceName
   }
   
-  public func getValue(forKey key: String) async -> String? {
+  nonisolated public func getValue(forKey key: String) -> String? {
     let query: [String: Any] = [
       kSecClass as String: kSecClassGenericPassword,
       kSecAttrService as String: serviceName,

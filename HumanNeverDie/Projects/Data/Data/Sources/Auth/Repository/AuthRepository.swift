@@ -57,9 +57,9 @@ public final class AuthRepository: AuthRepositoryInterface, @unchecked Sendable 
     }
   }
   
-  public func validateToken(accessToken: String) async throws(AuthError) -> String {
+  public func validateToken() async throws(AuthError) -> String {
     do {
-      let target = AuthValidationTarget(accessToken: accessToken)
+      let target = AuthValidationTarget()
       let response = try await networkService.requestDDD(target)
       
       return response.data?.fakeId ?? ""
