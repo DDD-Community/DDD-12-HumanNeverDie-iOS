@@ -8,15 +8,19 @@
 import Foundation
 
 import Auth0
+import Shared
 import Dependencies
 
 public protocol AppleLoginManagerProtocol: Sendable {
   func loginWithApple() async throws(AppleLoginError) -> AppleAuthToken
   func logout() async throws(AppleLoginError) -> Void
+  func refreshCredentials() async throws(AppleLoginError) -> AppleAuthToken
 }
 
 public actor AppleLoginManager: AppleLoginManagerProtocol {
   private let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
+  @Dependency(\.keychainClient) private var keychainClient
+  
   public init() {}
   
   public func loginWithApple() async throws(AppleLoginError) -> AppleAuthToken {
@@ -58,6 +62,29 @@ public actor AppleLoginManager: AppleLoginManagerProtocol {
       try await Auth0
         .webAuth()
         .clearSession()
+      
+    } catch {
+      throw AppleLoginError.authenticationFailed(error)
+    }
+  }
+  
+  public func refreshCredentials() async throws(AppleLoginError) -> AppleAuthToken {
+    do {
+      guard let refreshToken = keychainClient.getValue(forKey: AMDKeychainKey.refreshToken) else {
+        throw AppleLoginError.invalidRefreshToken
+      }
+      
+      let credentials = try await Auth0
+        .authentication()
+        .renew(withRefreshToken: refreshToken)
+        .start()
+      
+      return AppleAuthToken(
+        accessToken: credentials.accessToken,
+        refreshToken: credentials.refreshToken,
+        idToken: credentials.idToken,
+        expiresIn: credentials.expiresIn
+      )
       
     } catch {
       throw AppleLoginError.authenticationFailed(error)
