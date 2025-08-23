@@ -10,7 +10,8 @@ let packageSettings = PackageSettings(
         "Nuke": .framework,
         "Alamofire": .framework,
         "Lottie": .framework,
-        "AsyncAlgorithms": .framework
+        "AsyncAlgorithms": .framework,
+        "Auth0": .framework
     ]
 )
 #endif
@@ -22,6 +23,7 @@ let package = Package(
         .package(url: "https://github.com/Alamofire/Alamofire", from: "5.10.2"),
         .package(url: "https://github.com/kean/Nuke", branch: "main"),
         .package(url: "https://github.com/airbnb/lottie-spm.git", from: "4.5.2"),
-        .package(url: "https://github.com/apple/swift-async-algorithms", from: "1.0.0")
+        .package(url: "https://github.com/apple/swift-async-algorithms", from: "1.0.0"),
+        .package(url: "https://github.com/auth0/Auth0.swift", from: "2.14.0")
     ]
 )

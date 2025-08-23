@@ -6,10 +6,17 @@
 //
 
 import Data
+import AuthDomain
 import BeverageDomain
 import UserDomain
 
 import Dependencies
+
+// MARK: - AuthRepository
+
+extension AuthRepositoryInterfaceKey: @retroactive DependencyKey {
+  public static let liveValue: AuthRepositoryInterface = AuthRepository()
+}
 
 // MARK: - BeverageRepository
 

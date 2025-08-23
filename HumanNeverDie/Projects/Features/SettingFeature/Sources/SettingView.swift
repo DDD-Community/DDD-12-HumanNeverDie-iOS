@@ -77,6 +77,11 @@ public struct SettingView: View {
       
       Spacer()
     }
+    .onChange(of: viewModel.state.isLogoutAndWithdrawal) { _, isLogoutAndWithdrawal in
+      if isLogoutAndWithdrawal {
+        withAnimation { router.rootRoute = .login }
+      }
+    }
     .onAppear {
       viewModel.handleAction(.onAppear)
     }

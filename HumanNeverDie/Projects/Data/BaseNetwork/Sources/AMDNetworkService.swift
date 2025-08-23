@@ -7,6 +7,8 @@
 
 import Foundation
 
+import Shared
+
 import Alamofire
 import Dependencies
 
@@ -14,16 +16,21 @@ public protocol AMDNetworkServiceProtocol: Sendable {
   func requestDDD<R: AMDAPIRequestable>(_ target: R) async throws(AMDNetworkError) -> R.Response
 }
 
-public final class AMDNetworkService: AMDNetworkServiceProtocol {
+public final class AMDNetworkService: AMDNetworkServiceProtocol, @unchecked Sendable {
   private let session: Session
   private let decoder: JSONDecoder = JSONDecoder()
   
-  public init(timeout: TimeInterval = 5) {
+  public init(timeout: TimeInterval = 5, withAuth: Bool = true) {
     let configuration = URLSessionConfiguration.default
     configuration.timeoutIntervalForRequest = timeout
     let logger = AMDNetworkLogger()
+    
+    @Dependency(\.keychainClient) var keychainClient
+    let interceptor = withAuth ? AMDNetworkService.createAuthInterceptor(keychainClient) : nil
+    
     self.session = Session(
       configuration: configuration,
+      interceptor: interceptor,
       eventMonitors: [logger]
     )
   }
@@ -46,9 +53,10 @@ public final class AMDNetworkService: AMDNetworkServiceProtocol {
       
     case .failure(let error):
       if let serverError = parseServerError(from: response.data) {
+        print(serverError)
         throw AMDNetworkError.api(serverError)
       }
-      
+            
       throw handleAMDNetworkError(error)
     }
   }
@@ -116,6 +124,30 @@ private extension AMDNetworkService {
     default:
       return .unknown(error)
     }
+  }
+}
+
+// MARK: - Private Methods
+
+private extension AMDNetworkService {
+  static func createAuthInterceptor(_ keychainClient: AMDKeychainClientProtocol) -> AuthenticationInterceptor<AMDAuthenticator> {
+    let authenticator = AMDAuthenticator()
+    
+    guard let accessToken = keychainClient.getValue(forKey: AMDKeychainKey.accessToken),
+          let refreshToken = keychainClient.getValue(forKey: AMDKeychainKey.refreshToken),
+          let expiresInString = keychainClient.getValue(forKey: AMDKeychainKey.expiresIn),
+          let expiresInTimeInterval = Double(expiresInString) else {
+      return AuthenticationInterceptor(authenticator: authenticator)
+    }
+    
+    let initialCredential = AppleAuthToken(
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      idToken: "",
+      expiresIn: Date(timeIntervalSince1970: expiresInTimeInterval)
+    )
+    
+    return AuthenticationInterceptor(authenticator: authenticator, credential: initialCredential)
   }
 }
 

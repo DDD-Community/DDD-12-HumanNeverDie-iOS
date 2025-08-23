@@ -5,10 +5,17 @@
 //  Created by 김규철 on 6/17/25.
 //
 
+import AuthDomain
 import BeverageDomain
 import UserDomain
 
 import Dependencies
+
+// MARK: - AuthUseCase
+
+extension AuthUseCaseKey: @retroactive DependencyKey {
+  public static let liveValue: AuthUseCaseProtocol = AuthUseCase()
+}
 
 // MARK: - BeverageUseCase
 

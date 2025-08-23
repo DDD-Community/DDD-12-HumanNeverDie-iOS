@@ -33,8 +33,16 @@ public struct InfoPlist {
         "CFBundleShortVersionString": .string(AppConfiguration.marketingVesion),
         "CFBundleVersion": .string(AppConfiguration.projectBuildVersion),
         "CFBundleDisplayName": "$(BUNDLE_DISPLAY_NAME)",
-        "CFBundleURLTypes": [],
-        "BASE_URL": "$(BASE_URL)"
+        "CFBundleURLTypes": [
+            [
+                "CFBundleTypeRole": "None",
+                "CFBundleURLName": "auth0",
+                "CFBundleURLSchemes": ["$(PRODUCT_BUNDLE_IDENTIFIER)"]
+            ]
+        ],
+        "BASE_URL": "$(BASE_URL)",
+        "ClientId": "$(AUTH0_CLIENT_ID)",
+        "Domain": "$(AUTH0_DOMAIN)"
     ]
 }
 

@@ -6,6 +6,7 @@ let project = Project.makeModule(
     product: .staticFramework,
     dependencies: [
         .SPM.alamofire,
+        .SPM.auth0,
         .shared
     ]
 )

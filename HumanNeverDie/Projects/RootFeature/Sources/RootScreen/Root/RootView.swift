@@ -1,9 +1,10 @@
 import SwiftUI
 
 import UserDomain
-import SplashFeature
-import OnboardingFeature
 import CommonFeature
+import SplashFeature
+import AuthFeature
+import OnboardingFeature
 import BeverageRecordListFeature
 import SettingFeature
 
@@ -16,11 +17,14 @@ public struct RootView: View {
     NavigationStack(path: $router.path) {
       ZStack {
         switch router.rootRoute {
-        case .onboarding:
-          OnboardingViewFactory.create()
-          
         case .splash:
           SplashViewFactory.create()
+          
+        case .login:
+          LoginViewFactory.create()
+          
+        case .onboarding:
+          OnboardingViewFactory.create()
           
         case .main:
           MainViewFactory.create()
@@ -28,6 +32,9 @@ public struct RootView: View {
       }
       .id(router.rootViewId)
       .navigationBarBackButtonHidden(true)
+      .onReceive(NotificationCenter.default.publisher(for: .tokenRefreshFailed)) { _ in
+        withAnimation { router.rootRoute = .login }
+      }
       .navigationDestination(for: Route.self) { route in
         switch route {
         case let .beverageRecordList(date):

@@ -13,6 +13,7 @@ public extension Modules {
 public extension Modules {
     enum Feature: String {
         case Splash
+        case Auth
         case Onboarding
         case Home
         case History
@@ -42,7 +43,9 @@ public extension Modules {
         public static let name: String = "BaseDomain"
     }
     
-    enum Domain: String {case Beverage
+    enum Domain: String {
+        case Auth
+        case Beverage
         case User
     
         

@@ -1,0 +1,110 @@
+//
+//  AppleLoginManager.swift
+//  BaseNetwork
+//
+//  Created by Claude on 8/20/25.
+//
+
+import Foundation
+
+import Auth0
+import Shared
+import Dependencies
+
+public protocol AppleLoginManagerProtocol: Sendable {
+  func loginWithApple() async throws(AppleLoginError) -> AppleAuthToken
+  func logout() async throws(AppleLoginError) -> Void
+  func refreshCredentials() async throws(AppleLoginError) -> AppleAuthToken
+}
+
+public actor AppleLoginManager: AppleLoginManagerProtocol {
+  private let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
+  @Dependency(\.keychainClient) private var keychainClient
+  
+  public init() {}
+  
+  public func loginWithApple() async throws(AppleLoginError) -> AppleAuthToken {
+    do {
+      let credentials = try await Auth0
+        .webAuth()
+        .connection("apple")
+        .scope("openid profile email offline_access")
+        .useHTTPS()
+        .audience("https://ah-matdang/api")
+        .start()
+      
+      let success = credentialsManager.store(credentials: credentials)
+      guard success else {
+        throw AppleLoginError.credentialStoreFailed
+      }
+      
+      return AppleAuthToken(
+        accessToken: credentials.accessToken,
+        refreshToken: credentials.refreshToken,
+        idToken: credentials.idToken,
+        expiresIn: credentials.expiresIn
+      )
+      
+    } catch let error as WebAuthError {
+      switch error {
+      case .userCancelled:
+        throw AppleLoginError.userCancelled
+      default:
+        throw AppleLoginError.authenticationFailed(error)
+      }
+    } catch {
+      throw AppleLoginError.unknown(error)
+    }
+  }
+  
+  public func logout() async throws(AppleLoginError) -> Void {
+    do {
+      try await Auth0
+        .webAuth()
+        .clearSession()
+      
+    } catch {
+      throw AppleLoginError.authenticationFailed(error)
+    }
+  }
+  
+  public func refreshCredentials() async throws(AppleLoginError) -> AppleAuthToken {
+    do {
+      guard let refreshToken = keychainClient.getValue(forKey: AMDKeychainKey.refreshToken) else {
+        throw AppleLoginError.invalidRefreshToken
+      }
+      
+      let credentials = try await Auth0
+        .authentication()
+        .renew(withRefreshToken: refreshToken)
+        .start()
+      
+      return AppleAuthToken(
+        accessToken: credentials.accessToken,
+        refreshToken: credentials.refreshToken,
+        idToken: credentials.idToken,
+        expiresIn: credentials.expiresIn
+      )
+      
+    } catch {
+      throw AppleLoginError.authenticationFailed(error)
+    }
+  }
+}
+
+// MARK: - TestDependencyKey
+
+public struct AppleLoginManagerKey: TestDependencyKey {
+  public static var testValue: AppleLoginManagerProtocol {
+    fatalError("\(AppleLoginManagerProtocol.self) Implementation not available")
+  }
+}
+
+// MARK: - DependencyValues
+
+public extension DependencyValues {
+  var appleLoginManager: AppleLoginManagerProtocol {
+    get { self[AppleLoginManagerKey.self] }
+    set { self[AppleLoginManagerKey.self] = newValue }
+  } 
+}

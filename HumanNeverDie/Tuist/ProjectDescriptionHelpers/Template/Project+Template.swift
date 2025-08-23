@@ -27,6 +27,7 @@ public extension Project {
             infoPlist: .extendingDefault(with: InfoPlist.appInfoPlist),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
+            entitlements: "../../XCConfig/AMatDang.entitlements",
             dependencies: dependencies,
             settings: .appSettings
         )
