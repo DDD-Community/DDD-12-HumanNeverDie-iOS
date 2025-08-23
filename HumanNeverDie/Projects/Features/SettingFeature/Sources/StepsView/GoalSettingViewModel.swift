@@ -23,6 +23,7 @@ public final class GoalSettingViewModel: ViewModelable {
   public struct State: Equatable, Sendable {
     var userInfo: UserInfo
     var selectedDailySugarGoal: SugarGoal
+    var isShowingSugarCalculationInfo: Bool = false
   }
   
   public enum Action {
@@ -30,6 +31,9 @@ public final class GoalSettingViewModel: ViewModelable {
     case updateDailySugarGoal(SugarGoal)
     
     case updateAccountInfoUserInfo
+    
+    case showSugarCalculationInfo
+    case hideSugarCalculationInfo
   }
   
   public var state: State
@@ -60,6 +64,11 @@ public final class GoalSettingViewModel: ViewModelable {
         await showSaveAlert()
       }
       break
+    case .showSugarCalculationInfo:
+      state.isShowingSugarCalculationInfo = true
+      
+    case .hideSugarCalculationInfo:
+      state.isShowingSugarCalculationInfo = false
     }
   }
 }
@@ -67,7 +76,7 @@ public final class GoalSettingViewModel: ViewModelable {
 // MARK: - Goal Setting Specific Methods
 extension GoalSettingViewModel {
   public func setRouter(_ router: Router) {
-      self.router = router
+    self.router = router
   }
   
   public func getSugarGoalAmount(for goal: SugarGoal) -> Int {
@@ -90,6 +99,9 @@ extension GoalSettingViewModel {
   }
   
   public var isChangedAccountInfo: Bool {
+    if (state.isShowingSugarCalculationInfo) {
+      return false
+    }
     return state != originalState
   }
   
@@ -98,34 +110,34 @@ extension GoalSettingViewModel {
   }
   
   nonisolated private func showSaveAlert() async {
-      await alertClient.showAlert(.init(
-        title: "목표를 정말 변경하시겠어요?",
-        message: "목표 설정 수정 시, 일일 당 섭취 목표가 즉시 변경될 예정이에요.",
-        primaryButton: .init(title: "저장", type: .default) {
-          Task { @MainActor in
-            // 🔵 수정: UserInfo 전체를 새로 생성해서 전달
-            let updatedUserInfo = UserInfo(
-              nickname: self.state.userInfo.nickname,
-              birthDate: self.state.userInfo.birthDate,
-              selectedGender: self.state.userInfo.selectedGender,
-              height: self.state.userInfo.height,
-              weight: self.state.userInfo.weight,
-              selectedActivity: self.state.userInfo.selectedActivity,
-              selectedDailySugarGoal: self.state.selectedDailySugarGoal
-            )
-            
-            await MainActor.run {
-              self.router?.onUserInfoUpdated?(updatedUserInfo)
-              self.router?.pop()
-            }
-          }
-        },
-        secondaryButton: .init(title: "취소", type: .secondary) {
-          // 취소 시 원래 값으로 되돌리기
-          Task { @MainActor in
-            self.state.selectedDailySugarGoal = self.originalState.selectedDailySugarGoal
+    await alertClient.showAlert(.init(
+      title: "목표를 정말 변경하시겠어요?",
+      message: "목표 설정 수정 시, 일일 당 섭취 목표가 즉시 변경될 예정이에요.",
+      primaryButton: .init(title: "저장", type: .default) {
+        Task { @MainActor in
+          // 🔵 수정: UserInfo 전체를 새로 생성해서 전달
+          let updatedUserInfo = UserInfo(
+            nickname: self.state.userInfo.nickname,
+            birthDate: self.state.userInfo.birthDate,
+            selectedGender: self.state.userInfo.selectedGender,
+            height: self.state.userInfo.height,
+            weight: self.state.userInfo.weight,
+            selectedActivity: self.state.userInfo.selectedActivity,
+            selectedDailySugarGoal: self.state.selectedDailySugarGoal
+          )
+          
+          await MainActor.run {
+            self.router?.onUserInfoUpdated?(updatedUserInfo)
+            self.router?.pop()
           }
         }
-      ))
-    }
+      },
+      secondaryButton: .init(title: "취소", type: .secondary) {
+        // 취소 시 원래 값으로 되돌리기
+        Task { @MainActor in
+          self.state.selectedDailySugarGoal = self.originalState.selectedDailySugarGoal
+        }
+      }
+    ))
+  }
 }
