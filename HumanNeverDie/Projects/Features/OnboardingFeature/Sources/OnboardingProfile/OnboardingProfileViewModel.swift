@@ -7,26 +7,21 @@
 
 import Foundation
 import UserNotifications
+
 import UserDomain
 import CommonFeature
 import DesignSystem
+import Shared
 
 import Dependencies
 
 @Observable
 @MainActor
 public final class OnboardingProfileViewModel: ViewModelable {
-  @ObservationIgnored
-  @Dependency(\.userUseCase) private var userUseCase
-  @ObservationIgnored
-  @Dependency(\.toastClient) private var toastClient
-  @ObservationIgnored
-  @Dependency(\.alertClient) private var alertClient
-  
   private(set) var currentStep: OnboardingStep = .basicInfo
   
   public struct State: Equatable {
-    let userID: String = "b5219141-afe3-46c6-8c5c-0f7e850a5bef"
+    var userID: String = ""
     var isLoading: Bool = false
     
     var userInfo: UserInfo = .defaultUserInfo
@@ -44,13 +39,29 @@ public final class OnboardingProfileViewModel: ViewModelable {
   
   public var state: State = .init()
   
-  public init() {}
+  @ObservationIgnored
+  @Dependency(\.userUseCase) private var userUseCase
+  
+  @ObservationIgnored
+  @Dependency(\.keychainClient) private var keychainClient
+  
+  @ObservationIgnored
+  @Dependency(\.toastClient) private var toastClient
+  
+  @ObservationIgnored
+  @Dependency(\.alertClient) private var alertClient
+  
+  public init() {
+    if let userID = keychainClient.getValue(forKey: AMDKeychainKey.userID) {
+      state.userID = userID
+    }
+  }
   
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
       break
-      
+
     case .moveToNextStep:
       moveToNextStep()
       
