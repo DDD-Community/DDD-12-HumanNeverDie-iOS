@@ -115,6 +115,17 @@ public final class BeverageRepository: BeverageRepositoryInterface, @unchecked S
     return response.map { $0.toDomain() }
   }
   
+  public func getBeveragDailyCalender(dailyDate: String) async throws -> BeverageCalendar {
+    let target = BeverageDailyCalenderTarget(dailyDate: dailyDate)
+    let result = try await networkService.requestDDD(target)
+    
+    guard let response = result.data else {
+      throw AMDNetworkError.emptyResponse
+    }
+    
+    return response.toDomain()
+  }
+  
   public func deleteBeverage(productID: String, intakeTime: String) async throws -> Int {
     let target = BeverageDelete(productID: productID, intakeTime: intakeTime)
     let result = try await networkService.requestDDD(target)

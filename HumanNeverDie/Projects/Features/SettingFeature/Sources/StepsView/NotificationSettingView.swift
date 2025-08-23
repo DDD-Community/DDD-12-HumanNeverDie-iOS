@@ -38,11 +38,20 @@ public struct NotificationSettingView: View {
       ) {
         viewModel.handleAction(.updateReminderTime($0))
       }
-
-    }.settingToolbar(item: .notificationSetting) {
+    }
+    .settingToolbar(item: .notificationSetting) {
       self.router.pop()
     }
-
+    .alert("알림 권한이 필요합니다", isPresented: $viewModel.state.showPermissionAlert) {
+      Button("설정으로 이동") {
+        viewModel.handleAction(.openSystemSettings)
+      }
+      Button("취소", role: .cancel) {
+        viewModel.handleAction(.dismissAlert)
+      }
+    } message: {
+      Text("알림 설정을 변경하려면 설정에서 알림 권한을 허용해주세요.")
+    }
   }
 }
 
@@ -146,8 +155,8 @@ private struct NotificationToggleRow: View {
         
         if let subtitle = subtitle {
           Text(subtitle)
-            .lineLimit(1)
-            .fixedSize(horizontal: true, vertical: false)
+            .lineLimit(nil)
+            .fixedSize(horizontal: false, vertical: true)
             .amdFont(.xsmallRegular)
             .foregroundColor(.gray60)
             .opacity(isEnabled ? 1.0 : 0.4)

@@ -121,7 +121,6 @@ extension OnboardingView {
     var body: some View {
       GeometryReader { geometry in
         VStack(spacing: 0) {
-          // 텍스트 영역 - 화면의 20-25%
           VStack {
             Text(title)
               .amdFont(.xxlargeBold)
@@ -129,8 +128,7 @@ extension OnboardingView {
               .multilineTextAlignment(.center)
           }
           .frame(height: geometry.size.height * 0.25)
-          
-          // 이미지 영역 - 화면의 75%
+      
           image.swiftUIImage
             .resizable()
             .scaledToFit()

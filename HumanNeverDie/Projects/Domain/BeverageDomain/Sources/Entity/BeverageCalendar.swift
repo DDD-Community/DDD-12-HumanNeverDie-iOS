@@ -37,6 +37,7 @@ public struct BeverageCalendar: Equatable, Sendable {
 
 public extension BeverageCalendar {
   static func mock() -> [BeverageCalendar] { mockData }
+  static func dailyMock() -> BeverageCalendar { mockData[0] }
   
   private static var mockData: [BeverageCalendar] {
     return [

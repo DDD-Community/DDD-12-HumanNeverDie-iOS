@@ -10,6 +10,7 @@ import Observation
 
 import CommonFeature
 import BeverageDomain
+import Shared
 
 import Dependencies
 
@@ -29,6 +30,9 @@ public final class SplashViewModel: ViewModelable {
   
   @ObservationIgnored
   @Dependency(\.beverageLocalLikeUseCase) private var beverageLocalLikeUseCase
+  
+  @ObservationIgnored
+  @Dependency(\.userDefaultClient) private var userDefaultClient
   
   public var state: State = .init()
   public init() {}

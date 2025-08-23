@@ -12,7 +12,7 @@ import CommonFeature
 @Observable
 @MainActor
 public final class PermissionViewModel: ViewModelable {
-  private var parentViewModel: OnboardingProfileViewModel?
+  private weak var parentViewModel: OnboardingProfileViewModel?
   
   public struct State: Equatable {
     var isPermissionGranted: Bool = false
@@ -59,14 +59,14 @@ public final class PermissionViewModel: ViewModelable {
         state.isPermissionGranted = granted
       }
       
-      await parentViewModel?.updateNotificationSetting(isEnabled: granted)
+      await parentViewModel?.updateUseNotiInfo(isEnabled: granted)
       
     } catch {
       await MainActor.run {
         state.isPermissionGranted = false
       }
       
-      await parentViewModel?.updateNotificationSetting(isEnabled: false)
+      await parentViewModel?.updateUseNotiInfo(isEnabled: false)
     }
   }
 }

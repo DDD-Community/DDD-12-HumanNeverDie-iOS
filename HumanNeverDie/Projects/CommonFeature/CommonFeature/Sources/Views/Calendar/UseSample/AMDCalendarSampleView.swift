@@ -28,7 +28,7 @@ public struct AMDCalendarSampleView: View {
         AMDCalendarFactory.createMonth(
           currentDate: viewModel.currentDate,
           sugarIntakeRecordData: viewModel.sugarIntakeRecordData,
-          userSugarTargetValue: 50,
+          userSugarTargetValue: $viewModel.sugerValue,
           selectedDate: $viewModel.selectedDate,
           onTapTitle: {
             tempDate = viewModel.selectedDate ?? Date()
@@ -56,7 +56,7 @@ public struct AMDCalendarSampleView: View {
         AMDCalendarFactory.createWeekly(
           currentDate: viewModel.currentDate,
           sugarIntakeRecordData: viewModel.sugarIntakeRecordData,
-          userSugarTargetValue: 50,
+          userSugarTargetValue: $viewModel.sugerValue,
           selectedDate: $viewModel.selectedDate,
           onTapTitle: {
             tempDate = viewModel.selectedDate ?? Date()

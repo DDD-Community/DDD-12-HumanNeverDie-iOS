@@ -18,6 +18,7 @@ public final class DailySugarGoalViewModel: ViewModelable {
     var selectedDailySugarGoal: SugarGoal = .none
     
     var showAlert: Bool = false
+    var isShowingSugarCalculationInfo: Bool = false
   }
   
   public enum Action {
@@ -25,6 +26,9 @@ public final class DailySugarGoalViewModel: ViewModelable {
     case updateDailySugarGoal(SugarGoal)
     case submitGoalInfo
     case showCalculationModal(Bool)
+    
+    case showSugarCalculationInfo
+    case hideSugarCalculationInfo
   }
   
   public var state: State = .init()
@@ -48,6 +52,11 @@ public final class DailySugarGoalViewModel: ViewModelable {
       parentViewModel?.proceedToNextStep()
     case .showCalculationModal(let isShow):
       state.showAlert = isShow
+    case .showSugarCalculationInfo:
+      state.isShowingSugarCalculationInfo = true
+      
+    case .hideSugarCalculationInfo:
+      state.isShowingSugarCalculationInfo = false
     }
   }
   

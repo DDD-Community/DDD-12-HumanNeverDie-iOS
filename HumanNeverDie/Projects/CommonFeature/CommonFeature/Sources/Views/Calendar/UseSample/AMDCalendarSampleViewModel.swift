@@ -12,6 +12,7 @@ import Observation
 public final class AMDCalendarSampleViewModel {
   private(set) var currentDate: Date = Date()
   private(set) var sugarIntakeRecordData: [SugarIntakeRecord] = AMDCalendarSampleViewModel.sampleData
+  var sugerValue: Int = 50
   var selectedDate: Date? = nil
   
   public struct State: Equatable {

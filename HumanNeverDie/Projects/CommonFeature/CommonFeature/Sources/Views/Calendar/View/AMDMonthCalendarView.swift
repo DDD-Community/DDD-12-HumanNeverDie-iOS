@@ -10,16 +10,16 @@ import SwiftUI
 struct AMDMonthCalendarView: View {
   @State private var viewModel: AMDMonthCalendarViewModel
   @Binding var selectedDate: Date?
+  @Binding var userSugarTargetValue: Int
   private let onTapTitle: () -> Void
   private let onMonthChanged: (Date) -> Void
   private let currentDate: Date
   private let sugarIntakeRecordData: [SugarIntakeRecord]
-  private let userSugarTargetValue: Int
   
   init(
     currentDate: Date,
     sugarIntakeRecordData: [SugarIntakeRecord],
-    userSugarTargetValue: Int,
+    userSugarTargetValue: Binding<Int>,
     selectedDate: Binding<Date?>,
     onTapTitle: @escaping () -> Void,
     onMonthChanged: @escaping (Date) -> Void
@@ -27,16 +27,16 @@ struct AMDMonthCalendarView: View {
     // 외부 데이터 저장
     self.currentDate = currentDate
     self.sugarIntakeRecordData = sugarIntakeRecordData
-    self.userSugarTargetValue = userSugarTargetValue
+    self._userSugarTargetValue = userSugarTargetValue
     self._selectedDate = selectedDate
     self.onTapTitle = onTapTitle
     self.onMonthChanged = onMonthChanged
     
-    // viewModel 초기 생성
+    // viewModel 초기 생성 (Binding을 넘겨줌)
     self._viewModel = State(initialValue: AMDMonthCalendarViewModel(
       currentDate: currentDate,
       sugarIntakeRecordData: sugarIntakeRecordData,
-      userSugarTargetValue: userSugarTargetValue
+      userSugarTargetValue: userSugarTargetValue  // 🎯 Binding 전달
     ))
   }
   
@@ -55,6 +55,10 @@ struct AMDMonthCalendarView: View {
     }
     .onChange(of: sugarIntakeRecordData) { _, newData in
       viewModel.updateSugarIntakeData(newData)
+    }
+    // 🎯 userSugarTargetValue 변경 감지 추가
+    .onChange(of: userSugarTargetValue) { _, _ in
+      viewModel.updateDayModels() // 캘린더 다시 그리기
     }
     .highPriorityGesture(
       

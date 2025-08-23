@@ -40,3 +40,14 @@ public extension DependencyValues {
     set { self[GlobalStateKey.self] = newValue }
   }
 }
+
+public func isTodayOrPastSelectedDate(_ selectedDate: Date?) -> Bool {
+  guard let selectedDate else {
+    return false
+  }
+  
+  let today = Calendar.current.startOfDay(for: Date())
+  let target = Calendar.current.startOfDay(for: selectedDate)
+  
+  return target <= today
+}

@@ -30,6 +30,7 @@ struct PhysicalInfoFormView: View {
     .onAppear {
       viewModel.handleAction(.onAppear)
     }
+    .toolbarVisibility(.hidden, for: .navigationBar)
   }
 }
 
@@ -78,7 +79,7 @@ extension PhysicalInfoFormView {
       contentActivitySection()
     }
     .padding(.horizontal, 20)
-    .padding(.top, 48)
+    .padding(.top, 28)
   }
   
   @ViewBuilder

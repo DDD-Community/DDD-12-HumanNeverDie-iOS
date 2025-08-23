@@ -41,6 +41,7 @@ public struct HistoryView: View {
           }
         }
       }
+      .padding(.top, 4)
       .amdBottomSheet(isPresented: $viewModel.state.isBevarageDetailPresented, detents: [.height(474)]) {
         AMDBeverageDetailView(productID: viewModel.selectedProductID)
       }
@@ -77,7 +78,7 @@ extension HistoryView {
     AMDCalendarFactory.createMonth(
       currentDate: viewModel.currentDate,
       sugarIntakeRecordData: viewModel.sugarIntakeRecordData,
-      userSugarTargetValue: 50,
+      userSugarTargetValue: $viewModel.state.baseSugar,
       selectedDate: $viewModel.state.selectedDate,
       onTapTitle: {
         viewModel.handleAction(.updateisMonthPickerPresented(true))
@@ -120,18 +121,20 @@ extension HistoryView {
           .foregroundColor(Color.gray40)
       )
     }
+    .opacity(viewModel.state.isTodayOrPastSelectedDate ? 1 : 0)
     .padding(.vertical, 10)
   }
   
   private var selectedHistoryDailylList: some View {
     VStack(alignment: .leading, spacing: 0) {
-      LazyVStack(spacing: 20) {
-        // 변수로 한 번 받아서 사용
+      LazyVStack(spacing: 10) {
+        
         let historyList = viewModel.selectedDateHistoryList
         
         ForEach(historyList, id: \.intakeHistoryId) { data in
           let sugarFreeVariant = AMDSugarFreeVariant.from(data.sugarLevel) ?? .none
-          let beverageIdString = String(data.productId)
+          let uniqueIdString = String(data.intakeHistoryId)
+          let productIdString = String(data.productId)
           
           AMDBeverageListView.medium(
             thumbnailURL: data.imgUrl,
@@ -142,13 +145,16 @@ extension HistoryView {
             kcal: Double(data.servingKcal),
             sugarFreeVariant: sugarFreeVariant,
             menuAction: {
-              viewModel.handleAction(.updateSelectedProductID(beverageIdString))
+              viewModel.handleAction(.updateSelectedProductID(
+                uniqueIdString,
+                productIdString
+              ))
             }
           )
           .padding(.horizontal, 20)
           .overlay(
             Group {
-              if viewModel.state.selectedProductID == beverageIdString {
+              if viewModel.state.selectedIntakeHistoryID == uniqueIdString {
                 HStack {
                   Spacer()
                   popupMenuDailylList()

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Shared
 
 import BaseNetwork
 
@@ -37,7 +38,8 @@ struct BeverageRecordTarget: AMDAPIRequestable {
   }
   
   var body: Encodable? {
-    let request = BeverageRecordRequest(productId: productID, intakeTime: recordDate.ISO8601Format())
+    let dateKtc = Date.toRequestDateKeyString(from: recordDate)
+    let request = BeverageRecordRequest(productId: productID, intakeTime: dateKtc)
     
     return request
   }

@@ -24,12 +24,13 @@ public final class HomeViewModel: ViewModelable {
     var sugarIntakeRecords: [SugarIntakeRecord] = []
     var weeklyHistories: [String: BeverageCalendar] = [:]
     
-    // 어디서 가져옴?
     var baseSugar: Int = 50
     var selectedDateCalendar: BeverageCalendar?
     var isSelectedDateEmpty: Bool = true
     
     var isMonthPickerPresented: Bool = false
+    
+    var isTodayOrPastSelectedDate: Bool { CommonFeature.isTodayOrPastSelectedDate(selectedDate) }
   }
   
   var sugarStatus: BeverageSugarStatusType {
@@ -60,7 +61,9 @@ public final class HomeViewModel: ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case .onViewDidLoad:
-      Task { await getWeeklyCalender() }
+      Task {
+        await getWeeklyCalender()
+      }
       
     case .calendarChangeDateButtonTapped:
       state.isMonthPickerPresented = true
@@ -90,6 +93,7 @@ public final class HomeViewModel: ViewModelable {
       let dateString = Date.toRequestDateKeyString(from: state.currentDate)
       let result = try await beverageUseCase.getBeverageWeeklyCalender(dateInWeek: dateString)
       
+      state.baseSugar = result[0].sugarMaxG
       let newSugarIntakeRecordData: [SugarIntakeRecord] = result.compactMap { dailyData in
         let dateKey = dailyData.date.toYMDFormat
         state.weeklyHistories[dateKey] = dailyData

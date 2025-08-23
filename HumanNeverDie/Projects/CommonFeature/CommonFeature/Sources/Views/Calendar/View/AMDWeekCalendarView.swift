@@ -10,16 +10,16 @@ import SwiftUI
 struct AMDWeekCalendarView: View {
   @State private var viewModel: AMDWeekCalendarViewModel
   @Binding var selectedDate: Date?
+  @Binding var userSugarTargetValue: Int
   private let onTapTitle: () -> Void
   private let onWeekChanged: (Date) -> Void
   private let currentDate: Date
   private let sugarIntakeRecordData: [SugarIntakeRecord]
-  private let userSugarTargetValue: Int
   
   init(
     currentDate: Date,
     sugarIntakeRecordData: [SugarIntakeRecord],
-    userSugarTargetValue: Int,
+    userSugarTargetValue: Binding<Int>,
     selectedDate: Binding<Date?>,
     onTapTitle: @escaping () -> Void,
     onWeekChanged: @escaping (Date) -> Void
@@ -27,7 +27,7 @@ struct AMDWeekCalendarView: View {
     // 외부 데이터 저장
     self.currentDate = currentDate
     self.sugarIntakeRecordData = sugarIntakeRecordData
-    self.userSugarTargetValue = userSugarTargetValue
+    self._userSugarTargetValue = userSugarTargetValue
     self._selectedDate = selectedDate
     self.onTapTitle = onTapTitle
     self.onWeekChanged = onWeekChanged
