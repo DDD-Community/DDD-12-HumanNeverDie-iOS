@@ -24,7 +24,7 @@ public struct CalendarTitleView: View {
       Spacer()
     }
     .frame(maxWidth: .infinity)
-    .padding(.vertical, 14)
+    .padding(.bottom, 14)
   }
 }
 

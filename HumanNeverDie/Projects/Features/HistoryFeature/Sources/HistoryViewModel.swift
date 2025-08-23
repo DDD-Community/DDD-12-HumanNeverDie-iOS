@@ -24,10 +24,14 @@ public final class HistoryViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.toastClient) private var toastClient
   
+//  @ObservationIgnored
+//  @Dependency(\.userDefaultClient) private var userDefaultClient
+  
   public struct State: Equatable {
     var currentDate: Date = Date()
-    var selectedDate: Date? = nil
+    var selectedDate: Date? = Date.now
     
+    var selectedIntakeHistoryID: String = ""
     var selectedProductID: String = ""
     var isMonthPickerPresented = false
     var isListPopupPresented: Bool { !selectedProductID.isEmpty }
@@ -39,13 +43,14 @@ public final class HistoryViewModel: ViewModelable {
     var sugarIntakeRecordData: [SugarIntakeRecord] = []
     var monthHistoryData: [String: BeverageCalendar] = [:]
     
-    // 어디서 가져옴?
     var baseSugar: Int = 50
     var selectedDateCalendar: BeverageCalendar?
     
     var totalSugarGrams = 0
     var totalCount = 0
     
+    var isTodayOrPastSelectedDate: Bool { CommonFeature.isTodayOrPastSelectedDate(selectedDate) }
+
     var sugarStatus: BeverageSugarStatusType {
       let totalSugar = selectedDateCalendar?.totalSugarGrams ?? 0
       return .init(baseSugar: baseSugar, totalSugar: totalSugar)
@@ -60,7 +65,7 @@ public final class HistoryViewModel: ViewModelable {
     case loadHistoryForSelectedDate
     case datePickeronConfirm
     case updateCurrentDate(Date)
-    case updateSelectedProductID(String)
+    case updateSelectedProductID( String, String)
     case updateisMonthPickerPresented(Bool)
     case applySelectedDate(Date)
     case clearSelectedBeverage
@@ -87,11 +92,12 @@ public final class HistoryViewModel: ViewModelable {
     case .updateCurrentDate(let newDate):
       state.currentDate = newDate
       
-    case .updateSelectedProductID(let newId):
-      state.selectedProductID = newId
+    case .updateSelectedProductID(let intakeHistoryId,let productId):
+      state.selectedIntakeHistoryID = intakeHistoryId
+      state.selectedProductID = productId
       
     case .clearSelectedBeverage:
-      clearSelectedProductID()
+      clearSelectedItemID()
       
     case .updateisMonthPickerPresented(let isPickerPresented):
       state.isMonthPickerPresented = isPickerPresented
@@ -119,9 +125,15 @@ extension HistoryViewModel {
   }
   
   private func refreshData() async {
+//    await loadBaseSugar()
     await loadNetworkData()
     loadSelectedDateHistory()
   }
+  
+//  private func loadBaseSugar() async {
+//    let savedBaseSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.userMaxSugar) ?? 0
+//    state.baseSugar = savedBaseSugar > 0 ? savedBaseSugar : 50
+//  }
   
   nonisolated private func showDeleteAlert() async {
     await alertClient.showAlert(.init(
@@ -131,7 +143,7 @@ extension HistoryViewModel {
         await self.deleteSelectedBeverage()
       },
       secondaryButton: .init(title: "취소", type: .secondary) {
-        await self.clearSelectedProductID()
+        await self.clearSelectedItemID()
       }
     ))
   }
@@ -149,7 +161,7 @@ extension HistoryViewModel {
       
       if result {
         showToast(message: "삭제가 완료되었어요.", type: .success)
-        clearSelectedProductID()
+        clearSelectedItemID()
         await refreshData()
       } else {
         showToast(message: "데이터를 삭제할 수 없습니다.", type: .failure)
@@ -169,11 +181,12 @@ extension HistoryViewModel {
     state.selectedDateHistoryList = []
     state.totalSugarGrams = 0
     state.totalCount = 0
-    clearSelectedProductID()
+    clearSelectedItemID()
   }
   
-  private func clearSelectedProductID() {
+  private func clearSelectedItemID() {
     state.selectedProductID = ""
+    state.selectedIntakeHistoryID = ""
   }
   
   private func loadNetworkData() async {
@@ -185,7 +198,8 @@ extension HistoryViewModel {
     do {
       let dateString = Date.toRequestDateKeyString(from:state.currentDate)
       let result = try await beverageUseCase.getBeverageMonthCalender(dateInWeek: dateString)
-      
+
+      state.baseSugar = result[0].sugarMaxG
       let newSugarIntakeRecordData: [SugarIntakeRecord] = result.compactMap { dailyData in
         
         state.selectedDateCalendar = dailyData

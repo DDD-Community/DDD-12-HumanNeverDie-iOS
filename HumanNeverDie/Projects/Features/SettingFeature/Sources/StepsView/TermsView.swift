@@ -20,11 +20,11 @@ public struct TermsView: View {
     List {
       Section {
         TermsRow(title: "이용약관") {
-          //페이지 이동
+          openURL("https://telling-abrosaurus-7ba.notion.site/24d0d89bf00580b08fcad69f40cf98ae")
         }
 
         TermsRow(title: "개인정보처리방침") {
-          //외부링크 이동
+          openURL("https://telling-abrosaurus-7ba.notion.site/24d0d89bf00580dc8277f6fa24888796?pvs=74")
         }
       }.padding(.horizontal, 20)
     }.settingToolbar(item: .notificationSetting) {
@@ -32,6 +32,11 @@ public struct TermsView: View {
     }
     .listStyle(.plain)
     .listRowSeparator(.hidden)
+  }
+  
+  private func openURL(_ urlString: String) {
+    guard let url = URL(string: urlString) else { return }
+    UIApplication.shared.open(url)
   }
 }
 

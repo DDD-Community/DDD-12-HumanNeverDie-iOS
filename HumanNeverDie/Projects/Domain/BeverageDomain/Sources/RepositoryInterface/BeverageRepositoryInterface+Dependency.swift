@@ -32,6 +32,7 @@ private struct MockBeverageRepository: BeverageRepositoryInterface {
   func getBeverageDetail(productID: String) async throws -> BeverageDetail { BeverageDetail.mock() }
   func getBeverageMonthCalender(dateInWeek: String) async throws -> [BeverageCalendar] { BeverageCalendar.mock() }
   func getBeverageWeeklyCalender(dateInWeek: String) async throws -> [BeverageCalendar] { BeverageCalendar.mock() }
+  func getBeveragDailyCalender(dailyDate: String) async throws -> BeverageCalendar { BeverageCalendar.dailyMock() }
   func likeBeverage(productID: String) async throws -> BeverageLike { BeverageLike.mock() }
   func unLikeBeverage(productID: String) async throws -> BeverageLike { BeverageLike.mock() }
   func searchBeverage(keyword: String, sugarLevel: String?, onlyLiked: Bool) async throws -> BeverageList { BeverageList.mock() }

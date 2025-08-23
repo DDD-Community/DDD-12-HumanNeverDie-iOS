@@ -17,6 +17,10 @@ struct UserRecordRequest: Encodable {
   let sugarIntakeLevel: String
 }
 
+struct NotificationsRequest: Encodable {
+  let isEnabled: Bool
+}
+
 
 struct UserNotificationsRequest: Encodable {
  let isEnabled: Bool

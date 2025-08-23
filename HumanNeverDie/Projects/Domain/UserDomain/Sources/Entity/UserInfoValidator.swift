@@ -42,31 +42,31 @@ public final class DefaultUserInfoValidationUseCase: UserInfoValidationUseCase {
   }
   
   public func isValidHeight(_ height: Int) -> Bool {
-    if (height > 0 || height <= 300) {
+    if (height > 0 && height <= 300) {
       return true
     }
     return false
   }
   
   public func heightErrorMessage(for height: Int) -> String? {
-    if ( height <= 0 || height > 300 ) {
-      return "키는 0-300 사이의 숫자를 입력해주세요"
+    if ( height >= 0 && height < 300 ) {
+      return nil
     }
-    return nil
+    return "키는 0-300 사이의 숫자를 입력해주세요"
   }
   
   public func isValidWeight(_ weight: Int) -> Bool {
-    if ( weight > 0 || weight <= 300 ) {
+    if ( weight > 0 && weight <= 300 ) {
       return true
     }
     return false
   }
   
   public func weightErrorMessage(for weight: Int) -> String? {
-    if ( weight <= 0 || weight > 300 ) {
-      return "몸무게는 0-300 사이의 숫자를 입력해주세요"
+    if ( weight >= 0 && weight < 300 ) {
+      return nil
     }
-    return nil
+    return "몸무게는 0-300 사이의 숫자를 입력해주세요"
   }
 }
 

@@ -109,7 +109,8 @@ extension SettingViewModel {
       
       showToast(message: "저장이 완료되었어요", type: .success)
       setUserInfo(userInfo: result)
-      state.sugarMaxG = result.sugarMaxG
+      
+      state.isLoading = false
       
     } catch {
       showToast(message: "저장에 실패하였습니다", type: .failure)

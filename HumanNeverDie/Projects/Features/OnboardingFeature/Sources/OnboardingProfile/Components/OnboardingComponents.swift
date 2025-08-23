@@ -27,6 +27,8 @@ public struct OnboardingTopHeaderView: View {
         .multilineTextAlignment(.trailing)
     }
     .padding(.horizontal, 20)
+    .padding(.top, 20)
+    
   }
 }
 

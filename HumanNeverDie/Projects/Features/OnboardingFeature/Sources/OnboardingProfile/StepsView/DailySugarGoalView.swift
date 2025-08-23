@@ -11,9 +11,9 @@ import DesignSystem
 import CommonFeature
 
 struct DailySugarGoalView: View {
-  @State private var viewModel: OnboardingProfileViewModel
+  @State private var viewModel: DailySugarGoalViewModel
   
-  public init(viewModel: OnboardingProfileViewModel) {
+  public init(viewModel: DailySugarGoalViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
@@ -27,6 +27,10 @@ struct DailySugarGoalView: View {
     }
     .background(Color.white)
     .ignoresSafeArea(edges: .bottom)
+    .onAppear {
+      viewModel.handleAction(.onAppear)
+    }
+    .toolbarVisibility(.hidden, for: .navigationBar)
   }
 }
 
@@ -49,7 +53,7 @@ extension DailySugarGoalView {
       goalSelectionView()
     }
     .padding(.horizontal, 20)
-    .padding(.top, 40)
+    .padding(.top, 20)
   }
   
   @ViewBuilder
@@ -70,18 +74,24 @@ extension DailySugarGoalView {
         .frame(width: 24, height: 22)
         .offset(y: -13)
       
-      HStack(spacing: 0) {
-        Text("\(viewModel.nickname)님의 일일 권장 당 섭취량은 ")
+      VStack(spacing: 0) {
+        Text("\(viewModel.nickname)님의 일일 권장")
           .amdFont(.largeRegular)
           .foregroundColor(baseTextColor)
         
-        Text("200g")
-          .amdFont(.largeBold)
-          .foregroundColor(baseTextColor)
-        
-        Text("이당!")
-          .amdFont(.largeRegular)
-          .foregroundColor(baseTextColor)
+        HStack(spacing: 0) {
+          Text("당 섭취량은 ")
+            .amdFont(.largeRegular)
+            .foregroundColor(baseTextColor)
+          
+          Text("\(viewModel.getSugarGoalAmount(for: .easy))g")
+            .amdFont(.largeBold)
+            .foregroundColor(baseTextColor)
+          
+          Text("이당!")
+            .amdFont(.largeRegular)
+            .foregroundColor(baseTextColor)
+        }
       }
       .padding(.horizontal, 20)
       .padding(.vertical, 12)
@@ -89,7 +99,6 @@ extension DailySugarGoalView {
       .cornerRadius(16)
     }
     .padding(.top, 12)
-    
   }
   
   private struct SpeechBubbleTriangle: Shape {
@@ -108,9 +117,9 @@ extension DailySugarGoalView {
     VStack(spacing: 10) {
       ForEach([SugarGoal.easy, SugarGoal.normal, SugarGoal.hard], id: \.self) { dailyGoal in
         AMDOptionButton(
-          title: dailyGoal.rawValue,
+          title: dailyGoal.descriptionTitle,
           subtitle: dailyGoal.description,
-          trailingText: dailyGoal.targetAmount,
+          trailingText: "하루 \(viewModel.getSugarGoalAmount(for: dailyGoal))g",
           isSelected: viewModel.state.selectedDailySugarGoal == dailyGoal
         ) {
           viewModel.handleAction(.updateDailySugarGoal(dailyGoal))
@@ -122,13 +131,27 @@ extension DailySugarGoalView {
   @ViewBuilder
   private func bottomInfoView() -> some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text("아맞당은 *WHO 세계 표준 권장 당류 가이드라인을 기준으로 일일 권장 당 섭취량을 산출하고 있어요.")
-        .amdFont(.xsmallRegular)
-        .foregroundColor(.gray50)
+      HStack(spacing: 4) {
+        Text("권장 당 섭취량 계산법이 궁금하다면?")
+          .amdFont(.xsmallRegular)
+          .foregroundColor(.gray85)
+          .underline()
+        
+        Image(systemName: "chevron.right")
+          .font(.system(size: 10))
+          .foregroundColor(.gray70)
+      }.onTapGesture {
+        viewModel.handleAction(.showSugarCalculationInfo)
+      }
+      .amdBottomSheet(isPresented: $viewModel.state.isShowingSugarCalculationInfo, detents: [.height(800)]) {
+        SugarCalculationInfoContent {
+          viewModel.handleAction(.hideSugarCalculationInfo)
+        }
+      }
       
-      Text("*WHO 세계 권장 당류 가이드라인: 1일 에너지 필요량의 10%")
+      Text("*아맞당은 카페 음료의 당류만 기록해요. 식사나 간식 등 다른 경로로 섭취 한 당류는 고려하지 않으니 참고해주세요.")
         .amdFont(.xsmallRegular)
-        .foregroundColor(.gray50)
+        .foregroundColor(.gray60)
     }
     .padding(.top, 24)
     .padding(.horizontal, 20)
@@ -139,10 +162,7 @@ extension DailySugarGoalView {
     OnboardingBottomButton(
       type: viewModel.isValidDailySugarGoal ? .default : .secondary
     ) {
-      guard viewModel.isValidDailySugarGoal else { return }
-      withAnimation(.easeInOut) {
-        viewModel.handleAction(.moveToNextStep)
-      }
+      viewModel.handleAction(.submitGoalInfo)
     }
   }
 }

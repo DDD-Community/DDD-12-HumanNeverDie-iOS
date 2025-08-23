@@ -60,5 +60,15 @@ public final class UserRepository: UserRepositoryInterface, @unchecked Sendable 
 
     return response.toDomain()
   }
-}
+  
+  public   func updateNotifications(userID: String, isEnabled: Bool) async throws -> UserNotifications {
+    let target = NotificationUpdateTarget(userID: userID, isEnabled: isEnabled)
+    let result = try await networkService.requestDDD(target)
 
+    guard let response = result.data else {
+      throw AMDNetworkError.emptyResponse
+    }
+
+    return response.toDomain()
+  }
+}

@@ -11,16 +11,14 @@ import DesignSystem
 import CommonFeature
 
 struct BasicInfoFormView: View {
-  @State private var viewModel: OnboardingProfileViewModel
-  @State private var showAlert = false
+  @State private var viewModel: BasicInfoFormViewModel
   
-  public init(viewModel: OnboardingProfileViewModel) {
+  public init(viewModel: BasicInfoFormViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
   var body: some View {
     VStack(spacing: 0) {
-      
       topHeaderView()
       contentView()
       Spacer()
@@ -28,11 +26,24 @@ struct BasicInfoFormView: View {
     }
     .background(Color.white)
     .ignoresSafeArea(edges: .bottom)
+    .amdBottomSheet(isPresented: $viewModel.state.showAlert, detents: [.height(310)]) {
+      AMDDatePickerView(
+        title: "생년월일",
+        isResetButtonHidden: true,
+        type: .yearMonthDay,
+        initialDate: viewModel.state.birthDate ?? Date()
+      ) {
+        viewModel.handleAction(.updateBirthDate($0))
+      }
+    }
+    .onAppear {
+      viewModel.handleAction(.onAppear)
+    }
+    .toolbarVisibility(.hidden, for: .navigationBar)
   }
 }
 
 extension BasicInfoFormView {
-  
   @ViewBuilder
   private func topHeaderView() -> some View {
     OnboardingTopHeaderView(
@@ -44,7 +55,6 @@ extension BasicInfoFormView {
   @ViewBuilder
   private func contentView() -> some View {
     VStack(spacing: 30) {
-      
       AMDTextField(
         text: Binding(
           get: { viewModel.state.nickname },
@@ -57,21 +67,22 @@ extension BasicInfoFormView {
       
       AMDTextField(
         text: Binding(
-          get: { viewModel.state.birthDate },
-          set: { viewModel.handleAction(.updateBirthDate($0)) }
+          get: { viewModel.getBirthDateConvertString },
+          set: { _ in }
         ),
         title: "생년월일",
         placeholder: "생년월일을 입력해 주세요",
-        rightButtonType: .date,
-        rightButtonAction: {
-          showAlert = true
-        }
+        rightButtonType: .date
       )
-      
+      .disabled(true)
+      .onTapGesture {
+        viewModel.state.showAlert = true
+      }
+
       contentGenderSection()
     }
     .padding(.horizontal, 20)
-    .padding(.top, 48)
+    .padding(.top, 28)
   }
   
   @ViewBuilder
@@ -82,10 +93,10 @@ extension BasicInfoFormView {
       HStack(spacing: 12) {
         ForEach([Gender.MALE, Gender.FEMALE], id: \.self) { gender in
           AMDChipButton(
-            title: gender.rawValue,
-            isSelected: viewModel.state.selectedGender  == gender
+            title: gender.description,
+            isSelected: viewModel.state.selectedGender == gender
           ) {
-            viewModel.state.selectedGender  = gender
+            viewModel.handleAction(.updateGender(gender))
           }
         }
       }
@@ -97,10 +108,7 @@ extension BasicInfoFormView {
     OnboardingBottomButton(
       type: viewModel.isValidBasicInfo ? .default : .secondary
     ) {
-      guard viewModel.isValidBasicInfo else { return }
-      withAnimation(.easeInOut) {
-        viewModel.handleAction(.moveToNextStep)
-      }
+      viewModel.handleAction(.submitBasicInfo)
     }
   }
 }

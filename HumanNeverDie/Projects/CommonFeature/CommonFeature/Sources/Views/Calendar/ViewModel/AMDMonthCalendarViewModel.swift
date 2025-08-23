@@ -15,7 +15,7 @@ class AMDMonthCalendarViewModel: AMDCommonCalendarViewModel {
   override init(
     currentDate: Date,
     sugarIntakeRecordData: [SugarIntakeRecord],
-    userSugarTargetValue: Int
+    userSugarTargetValue: Binding<Int>
   ) {
     super.init(
       currentDate: currentDate,

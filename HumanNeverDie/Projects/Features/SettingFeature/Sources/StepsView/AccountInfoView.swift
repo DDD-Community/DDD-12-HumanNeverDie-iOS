@@ -97,6 +97,10 @@ extension AccountInfoView {
         viewModel.state.showAlert = true
       }
     )
+    .disabled(true)
+    .onTapGesture {
+      viewModel.state.showAlert = true
+    }
   }
   
   @ViewBuilder
