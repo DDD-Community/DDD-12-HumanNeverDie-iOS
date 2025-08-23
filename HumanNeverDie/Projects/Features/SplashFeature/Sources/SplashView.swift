@@ -6,8 +6,9 @@
 //
 
 import SwiftUI
-import DesignSystem
+
 import CommonFeature
+import DesignSystem
 
 public struct SplashView: View {
   @State private var viewModel: SplashViewModel
@@ -24,12 +25,11 @@ public struct SplashView: View {
         .scaledToFill()
         .ignoresSafeArea(.all)
     }
-    .onChange(of: viewModel.isInitializationComplete) { _, isInitializationComplete in
-      if isInitializationComplete {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-          withAnimation {
-            router.setRoute(.main)
-          }
+    .onChange(of: viewModel.route) { _, route in
+      guard let route else { return }
+      DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        withAnimation {
+          router.setRoute(route)
         }
       }
     }
