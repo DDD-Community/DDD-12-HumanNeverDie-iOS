@@ -55,9 +55,6 @@ public final class HomeViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.beverageUseCase) private var beverageUseCase
   
-  @ObservationIgnored
-  @Dependency(\.userDefaultClient) private var userDefaultClient
-  
   public var state: State = .init()
   public init() {}
   
@@ -65,7 +62,6 @@ public final class HomeViewModel: ViewModelable {
     switch action {
     case .onViewDidLoad:
       Task {
-        await loadBaseSugar()
         await getWeeklyCalender()
       }
       
@@ -92,16 +88,12 @@ public final class HomeViewModel: ViewModelable {
     }
   }
   
-  private func loadBaseSugar() async {
-    let savedBaseSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.userMaxSugar) ?? 0
-    state.baseSugar = savedBaseSugar > 0 ? savedBaseSugar : 50
-  }
-  
   private func getWeeklyCalender() async {
     do {
       let dateString = Date.toRequestDateKeyString(from: state.currentDate)
       let result = try await beverageUseCase.getBeverageWeeklyCalender(dateInWeek: dateString)
       
+      state.baseSugar = result[0].sugarMaxG
       let newSugarIntakeRecordData: [SugarIntakeRecord] = result.compactMap { dailyData in
         let dateKey = dailyData.date.toYMDFormat
         state.weeklyHistories[dateKey] = dailyData

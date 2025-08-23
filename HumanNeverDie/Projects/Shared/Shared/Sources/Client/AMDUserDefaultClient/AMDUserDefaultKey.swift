@@ -7,5 +7,4 @@
 
 public enum AMDUserDefaultKey {
   public static let recentSearchList = "recentSearchList"
-  public static let userMaxSugar = "userMaxSugar"
 }

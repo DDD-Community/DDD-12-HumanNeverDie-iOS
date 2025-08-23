@@ -24,8 +24,8 @@ public final class HistoryViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.toastClient) private var toastClient
   
-  @ObservationIgnored
-  @Dependency(\.userDefaultClient) private var userDefaultClient
+//  @ObservationIgnored
+//  @Dependency(\.userDefaultClient) private var userDefaultClient
   
   public struct State: Equatable {
     var currentDate: Date = Date()
@@ -125,15 +125,15 @@ extension HistoryViewModel {
   }
   
   private func refreshData() async {
-    await loadBaseSugar()
+//    await loadBaseSugar()
     await loadNetworkData()
     loadSelectedDateHistory()
   }
   
-  private func loadBaseSugar() async {
-    let savedBaseSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.userMaxSugar) ?? 0
-    state.baseSugar = savedBaseSugar > 0 ? savedBaseSugar : 50
-  }
+//  private func loadBaseSugar() async {
+//    let savedBaseSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.userMaxSugar) ?? 0
+//    state.baseSugar = savedBaseSugar > 0 ? savedBaseSugar : 50
+//  }
   
   nonisolated private func showDeleteAlert() async {
     await alertClient.showAlert(.init(
@@ -198,7 +198,8 @@ extension HistoryViewModel {
     do {
       let dateString = Date.toRequestDateKeyString(from:state.currentDate)
       let result = try await beverageUseCase.getBeverageMonthCalender(dateInWeek: dateString)
-      
+
+      state.baseSugar = result[0].sugarMaxG
       let newSugarIntakeRecordData: [SugarIntakeRecord] = result.compactMap { dailyData in
         
         state.selectedDateCalendar = dailyData

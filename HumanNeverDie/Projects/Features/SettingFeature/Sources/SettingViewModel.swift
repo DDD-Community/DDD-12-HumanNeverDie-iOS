@@ -21,8 +21,6 @@ public final class SettingViewModel: ViewModelable {
   @Dependency(\.toastClient) private var toastClient
   @ObservationIgnored
   @Dependency(\.alertClient) private var alertClient
-  @ObservationIgnored
-  @Dependency(\.userDefaultClient) private var userDefaultClient
   
   public struct State: Equatable {
     var userInfo: UserInfo
@@ -101,8 +99,6 @@ extension SettingViewModel {
       
       showToast(message: "저장이 완료되었어요", type: .success)
       setUserInfo(userInfo: result)
-      
-      await userDefaultClient.setValue(state.sugarMaxG, forKey: AMDUserDefaultKey.userMaxSugar)
       
       state.isLoading = false
       
