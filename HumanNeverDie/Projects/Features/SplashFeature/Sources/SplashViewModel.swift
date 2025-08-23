@@ -10,6 +10,7 @@ import Observation
 
 import CommonFeature
 import BeverageDomain
+import AuthDomain
 import Shared
 
 import Dependencies
@@ -18,7 +19,7 @@ import Dependencies
 @MainActor
 public final class SplashViewModel: ViewModelable {
   public struct State: Equatable {
-    var isInitializationComplete: Bool = false
+    var route: RootRoute?
   }
   
   public enum Action {
@@ -32,7 +33,7 @@ public final class SplashViewModel: ViewModelable {
   @Dependency(\.beverageLocalLikeUseCase) private var beverageLocalLikeUseCase
   
   @ObservationIgnored
-  @Dependency(\.userDefaultClient) private var userDefaultClient
+  @Dependency(\.authUseCase) private var authUseCase
   
   public var state: State = .init()
   public init() {}
@@ -41,9 +42,37 @@ public final class SplashViewModel: ViewModelable {
     switch action {
     case .onAppear:
       Task {
+        guard await checkUserToken() else { return }
+        guard await refreshTokenAndContinue() else { return }
+        
         await syncLocalLikeToServer()
-        await setInitializationCompleted()
+        await navigateTo(.main)
       }
+    }
+  }
+  
+  private func checkUserToken() async -> Bool {
+    let hasToken = authUseCase.hasValidAccessToken()
+    
+    guard hasToken else {
+      print("❌ 토큰 없음 - 로그인 화면으로 이동")
+      await navigateTo(.login)
+      return false
+    }
+    
+    print("✅ 토큰 존재 - 토큰 재발급 시도")
+    return true
+  }
+  
+  private func refreshTokenAndContinue() async -> Bool {
+    do {
+      _ = try await authUseCase.refreshToken()
+      print("✅ 토큰 재발급 성공")
+      return true
+    } catch {
+      print("❌ 토큰 재발급 실패: \(error) - 로그인 화면으로 이동")
+      await navigateTo(.login)
+      return false
     }
   }
   
@@ -82,8 +111,12 @@ public final class SplashViewModel: ViewModelable {
       print("로컬 데이터 조회 실패")
     }
   }
-  
-  private func setInitializationCompleted() async {
-    state.isInitializationComplete = true
+}
+
+private extension SplashViewModel {
+  func navigateTo(_ route: RootRoute) async {
+    await MainActor.run {
+      state.route = route
+    }
   }
 }

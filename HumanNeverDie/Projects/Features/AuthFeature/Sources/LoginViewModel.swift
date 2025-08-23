@@ -18,8 +18,8 @@ import Dependencies
 @MainActor
 public final class LoginViewModel: ViewModelable {
   public struct State: Equatable {
-    public var isLoading: Bool = false
-    public var isLoginSuccess: Bool = false
+    var isLoading: Bool = false
+    var route: RootRoute?
   }
   
   public enum Action {
@@ -53,11 +53,11 @@ public final class LoginViewModel: ViewModelable {
     }
     
     do {
-      let success = try await authUseCase.loginWithApple()
+      let userInfo = try await authUseCase.loginWithApple()
       
       await MainActor.run {
-        state.isLoginSuccess = success
         state.isLoading = false
+        state.route = userInfo.isFirstLogin ? .onboarding : .main
       }
     } catch {
       await MainActor.run {

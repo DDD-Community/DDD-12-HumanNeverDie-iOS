@@ -12,6 +12,7 @@ import DesignSystem
 
 public struct LoginView: View {
   @State private var viewModel: LoginViewModel
+  @Environment(Router.self) private var router
   
   public init(viewModel: LoginViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -32,6 +33,12 @@ public struct LoginView: View {
     }
     .ignoresSafeArea()
     .background(.white)
+    .onChange(of: viewModel.route) { _, route in
+      guard let route else { return }
+      withAnimation {
+        router.setRoute(route)
+      }
+    }
     .onAppear {
       viewModel.handleAction(.onAppear)
     }

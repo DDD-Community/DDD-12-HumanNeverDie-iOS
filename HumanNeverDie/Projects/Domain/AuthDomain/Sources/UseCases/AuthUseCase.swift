@@ -12,9 +12,11 @@ import Shared
 import Dependencies
 
 public protocol AuthUseCaseProtocol: Sendable {
-  func loginWithApple() async throws(AuthError) -> Bool
+  func loginWithApple() async throws(AuthError) -> AuthUserInfo
   func logout() async throws(AuthError) -> Bool
   func withdraw() async throws(AuthError) -> Bool
+  func hasValidAccessToken() -> Bool
+  func refreshToken() async throws(AuthError) -> Bool
 }
 
 public final class AuthUseCase: AuthUseCaseProtocol, @unchecked Sendable {
@@ -23,15 +25,15 @@ public final class AuthUseCase: AuthUseCaseProtocol, @unchecked Sendable {
   
   public init() {}
   
-  public func loginWithApple() async throws(AuthError) -> Bool {
+  public func loginWithApple() async throws(AuthError) -> AuthUserInfo {
     do {
       let token = try await authRepository.loginWithApple()
       try await saveTokensToKeychain(token)
       
-      let userID = try await getUserID()
-      try await saveUserIDToKeychain(userID)
+      let userInfo = try await getUserInfo()
+      try await saveUserIDToKeychain(userInfo.userID)
       
-      return true
+      return userInfo
     } catch {
       throw error
     }
@@ -57,15 +59,30 @@ public final class AuthUseCase: AuthUseCaseProtocol, @unchecked Sendable {
       throw error
     }
   }
+  
+  public func hasValidAccessToken() -> Bool {
+    return keychainClient.getValue(forKey: AMDKeychainKey.accessToken) != nil
+  }
+  
+  public func refreshToken() async throws(AuthError) -> Bool {
+    do {
+      let token = try await authRepository.refreshToken()
+      try await saveTokensToKeychain(token)
+      
+      return true
+    } catch {
+      throw error
+    }
+  }
 }
 
 // MARK: - Private Methods
 
 private extension AuthUseCase {
-  func getUserID() async throws(AuthError) -> String {
+  func getUserInfo() async throws(AuthError) -> AuthUserInfo {
     do {
-      let userID = try await authRepository.validateToken()
-      return userID
+      let userInfo = try await authRepository.getUserInfo()
+      return userInfo
     } catch {
       throw error
     }

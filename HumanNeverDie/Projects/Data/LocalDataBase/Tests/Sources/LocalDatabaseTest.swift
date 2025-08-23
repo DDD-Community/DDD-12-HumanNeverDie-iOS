@@ -1,7 +1,1 @@
-import Testing
-@testable import LocalDatabase
-
-@Test
-func testLocalDatabase() {
-    #expect(true)
-}
+@testable import LocalDataBase
