@@ -8,6 +8,5 @@
 import Foundation
 
 struct AuthWithdrawResponse: Decodable {
-  let ok: Bool
   let message: String
 }
