@@ -112,6 +112,9 @@ public struct AMDTextField: View {
     .padding(.horizontal, 12)
     .background(.gray10)
     .amdCornerRadius(.medium)
+    .onTapGesture {
+      (isFocused ?? $internalFocus).wrappedValue = true
+    }
   }
   
   private var textField: some View {
@@ -151,6 +154,7 @@ public struct AMDTextField: View {
       .foregroundColor(.clear)
       .accentColor(.black)
       .padding(.trailing, 30)
+      .background(Color.clear.contentShape(Rectangle()))
 
       HStack(spacing: 0) {
         if text.isEmpty {

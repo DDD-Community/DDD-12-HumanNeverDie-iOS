@@ -18,28 +18,39 @@ struct BasicInfoFormView: View {
   }
   
   var body: some View {
-    VStack(spacing: 0) {
-      topHeaderView()
-      contentView()
-      Spacer()
-      bottomButtonView()
-    }
-    .background(Color.white)
-    .ignoresSafeArea(edges: .bottom)
-    .amdBottomSheet(isPresented: $viewModel.state.showAlert, detents: [.height(310)]) {
-      AMDDatePickerView(
-        title: "생년월일",
-        isResetButtonHidden: true,
-        type: .yearMonthDay,
-        initialDate: viewModel.state.birthDate ?? Date()
-      ) {
-        viewModel.handleAction(.updateBirthDate($0))
+    ZStack {
+      Color.clear
+        .contentShape(Rectangle())
+        .onTapGesture {
+          hideKeyboard()
+        }
+      
+      VStack(spacing: 0) {
+        topHeaderView()
+        contentView()
+        Spacer()
+        bottomButtonView()
       }
+      .background(Color.white)
+      .ignoresSafeArea(edges: .bottom)
+      .amdBottomSheet(isPresented: $viewModel.state.showAlert, detents: [.height(310)]) {
+        AMDDatePickerView(
+          title: "생년월일",
+          isResetButtonHidden: true,
+          type: .yearMonthDay,
+          initialDate: viewModel.state.birthDate ?? Date()
+        ) {
+          viewModel.handleAction(.updateBirthDate($0))
+        }
+      }
+      .onAppear {
+        viewModel.handleAction(.onAppear)
+      }
+      .toolbarVisibility(.hidden, for: .navigationBar)
     }
-    .onAppear {
-      viewModel.handleAction(.onAppear)
+    .onTapGesture {
+      hideKeyboard()
     }
-    .toolbarVisibility(.hidden, for: .navigationBar)
   }
 }
 
@@ -76,7 +87,10 @@ extension BasicInfoFormView {
       )
       .disabled(true)
       .onTapGesture {
-        viewModel.state.showAlert = true
+        hideKeyboard()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+          viewModel.state.showAlert = true
+        }
       }
 
       contentGenderSection()
@@ -96,6 +110,8 @@ extension BasicInfoFormView {
             title: gender.description,
             isSelected: viewModel.state.selectedGender == gender
           ) {
+            hideKeyboard()
+            
             viewModel.handleAction(.updateGender(gender))
           }
         }
