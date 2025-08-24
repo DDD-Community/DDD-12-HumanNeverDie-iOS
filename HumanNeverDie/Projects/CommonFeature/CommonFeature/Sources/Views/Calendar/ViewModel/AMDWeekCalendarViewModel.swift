@@ -65,18 +65,21 @@ class AMDWeekCalendarViewModel: AMDCommonCalendarViewModel {
   }
   
   func updateDayModels() {
-      let extracted = extractDate()
-      dayModels = extracted.map { value in
-        let dateWithCurrentTime = value.date.applyingCurrentTime()
-       
-        return CalendarDayModel(
-          value: DateValue(day: value.day, date: dateWithCurrentTime),
-          isToday: isToday(dateWithCurrentTime),
-          isSelected: isSelected(dateWithCurrentTime),
-          textColor: textColor(for: dateWithCurrentTime),
-          stateIcon: matchingValue(for: dateWithCurrentTime).flatMap { getStateIcon(for: $0) }
-        )
-      }
+    let extracted = extractDate()
+    dayModels = extracted.map { value in
+      CalendarDayModel(
+        value: value,
+        isToday: isToday(value.date),
+        isSelected: isSelected(value.date),
+        textColor: textColor(for: value.date),
+        stateIcon: {
+          if let record = sugarIntakeRecordData.first(where: { calendar.isDate($0.date, inSameDayAs: value.date) }) {
+            return getStateIcon(for: record.value, recordCount: record.recordCount)
+          }
+          return nil
+        }()
+      )
+    }
   }
 
   

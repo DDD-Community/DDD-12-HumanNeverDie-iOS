@@ -12,10 +12,12 @@ import SwiftUICore
 public struct SugarIntakeRecord : Equatable {
   public let date: Date
   public let value: Int
+  public let recordCount: Int
   
-  public init(date: Date, value: Int) {
+  public init(date: Date, value: Int, recordCount: Int) {
     self.date = date
     self.value = value
+    self.recordCount = recordCount
   }
 }
 
@@ -31,10 +33,10 @@ public enum AMDStateIcon {
   case warning
   case danger
   
-  init(percentage: Double) {
+  init(percentage: Double, recordCount: Int) {
     switch percentage {
     case 0:
-      self = .none
+      self = recordCount > 0 ? .healthy : .none
     case ...33:
       self = .healthy
     case ...66:

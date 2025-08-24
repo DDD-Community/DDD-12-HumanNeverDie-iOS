@@ -97,13 +97,11 @@ public final class HomeViewModel: ViewModelable {
       let newSugarIntakeRecordData: [SugarIntakeRecord] = result.compactMap { dailyData in
         let dateKey = dailyData.date.toYMDFormat
         state.weeklyHistories[dateKey] = dailyData
+        let recordCount = dailyData.records.count
         
         guard let date = String.toDate(from: dailyData.date) else { return nil }
-        
-        return SugarIntakeRecord(
-          date: date,
-          value: dailyData.totalSugarGrams
-        )
+        return SugarIntakeRecord(date: date, value: dailyData.totalSugarGrams, recordCount:recordCount)
+
       }
       
       await MainActor.run {
