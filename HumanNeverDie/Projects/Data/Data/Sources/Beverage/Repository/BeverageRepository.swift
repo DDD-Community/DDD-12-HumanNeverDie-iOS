@@ -82,8 +82,8 @@ public final class BeverageRepository: BeverageRepositoryInterface, @unchecked S
     return response.toDomain()
   }
   
-  public func recordBeverage(productID: String, recordDate: Date) async throws -> Int {
-    let target = BeverageRecordTarget(productID: productID, recordDate: recordDate)
+  public func recordBeverage(productID: String, recordDate: Date, size: String) async throws -> Int {
+    let target = BeverageRecordTarget(productID: productID, recordDate: recordDate, size: size)
     let result = try await networkService.requestDDD(target)
     
     guard let statusCode = result.status else {
