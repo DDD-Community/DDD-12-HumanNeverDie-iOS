@@ -14,19 +14,33 @@ struct PhysicalInfoFormView: View {
   @State private var viewModel: PhysicalInfoFormViewModel
   @State private var showAlert = false
   
+  @FocusState private var heightFieldFocused: Bool
+  @FocusState private var weightFieldFocused: Bool
+  
   public init(viewModel: PhysicalInfoFormViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
   var body: some View {
-    VStack(spacing: 0) {
-      topHeaderView()
-      contentView()
-      Spacer()
-      bottomButtonView()
+    ZStack {
+      Color.clear
+        .contentShape(Rectangle())
+        .onTapGesture {
+          hideKeyboard()
+        }
+      
+      VStack(spacing: 0) {
+        topHeaderView()
+        contentView()
+        Spacer()
+        bottomButtonView()
+      }
+      .background(Color.white)
+      .ignoresSafeArea(edges: .bottom)
+      .onAppear {
+        viewModel.handleAction(.onAppear)
+      }
     }
-    .background(Color.white)
-    .ignoresSafeArea(edges: .bottom)
     .onAppear {
       viewModel.handleAction(.onAppear)
     }
@@ -51,6 +65,7 @@ extension PhysicalInfoFormView {
           get: { viewModel.getIntConvertString(viewModel.state.height) },
           set: { viewModel.handleAction(.updateHeight($0)) }
         ),
+        isFocused:$heightFieldFocused,
         title: "키",
         titleSuffix: "cm",
         placeholder: "키를 입력해주세요",
@@ -66,6 +81,7 @@ extension PhysicalInfoFormView {
           get: { viewModel.getIntConvertString(viewModel.state.weight) },
           set: { viewModel.handleAction(.updateWeight($0)) }
         ),
+        isFocused:$weightFieldFocused,
         title: "몸무게",
         titleSuffix: "kg",
         placeholder: "몸무게를 입력해주세요",
@@ -94,6 +110,7 @@ extension PhysicalInfoFormView {
             subtitle: activity.subDescription,
             isSelected: viewModel.state.selectedActivity == activity
           ) {
+            hideKeyboard()
             viewModel.handleAction(.updateActivity(activity))
           }
         }

@@ -9,6 +9,7 @@ import Foundation
 import Observation
 
 import CommonFeature
+import UserDomain
 import BeverageDomain
 import AuthDomain
 import Shared
@@ -35,6 +36,12 @@ public final class SplashViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.authUseCase) private var authUseCase
   
+  @ObservationIgnored
+  @Dependency(\.keychainClient) private var keychainClient
+  
+  @ObservationIgnored
+  @Dependency(\.userUseCase) private var userUseCase
+  
   public var state: State = .init()
   public init() {}
   
@@ -44,9 +51,7 @@ public final class SplashViewModel: ViewModelable {
       Task {
         guard await checkUserToken() else { return }
         guard await refreshTokenAndContinue() else { return }
-        
-        await syncLocalLikeToServer()
-        await navigateTo(.main)
+        await checkUserDataAndNavigate()
       }
     }
   }
@@ -109,6 +114,33 @@ public final class SplashViewModel: ViewModelable {
       }
     } catch {
       print("로컬 데이터 조회 실패")
+    }
+  }
+  
+  private func checkUserDataAndNavigate() async {
+    let userID = keychainClient.getValue(forKey: AMDKeychainKey.userID)
+    
+    if let userID = userID, !userID.isEmpty {
+      print("✅ 유저 ID 존재: \(userID) - 유저정보 확인")
+      await loadUserData(userID: userID)
+
+    } else {
+      print("❌ 유저 ID 없음 - 로그인으로 이동")
+      await navigateTo(.login)
+    }
+  }
+  
+  private func loadUserData(userID: String) async {
+    do {
+      let result = try await userUseCase.getUserInfo(userID: userID)
+      
+      print("✅ 유저 정보 로딩 성공 닉네임 : \(result.nickname)")
+      await syncLocalLikeToServer()
+      await navigateTo(.main)
+    } catch {
+      
+      print("❌ 유저 정보 로딩 실패 & 정보없음: \(error)")
+      await navigateTo(.onboarding)
     }
   }
 }

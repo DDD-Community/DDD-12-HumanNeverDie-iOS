@@ -23,17 +23,25 @@ public struct AccountInfoView: View {
   }
   
   public var body: some View {
-    ScrollView {
-      contentView()
-        .padding(.bottom, 30)
+    ZStack {
+      Color.clear
+        .contentShape(Rectangle())
+        .onTapGesture {
+          hideKeyboard()
+        }
       
-      sectionDivider()
-      contentPhysicalInfoView()
-      Spacer()
-      bottomButtonView()
-        .padding(.top, 30)
-      
-    }.settingToolbar(item: .accountInfo) {
+      ScrollView {
+        contentView()
+          .padding(.bottom, 30)
+        
+        sectionDivider()
+        contentPhysicalInfoView()
+        Spacer()
+        bottomButtonView()
+          .padding(.top, 30)
+      }
+    }
+    .settingToolbar(item: .accountInfo) {
       self.router.pop()
     }
   }
@@ -94,12 +102,18 @@ extension AccountInfoView {
       placeholder: "생년월일을 입력해 주세요",
       rightButtonType: .date,
       rightButtonAction: {
-        viewModel.state.showAlert = true
+        hideKeyboard()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+          viewModel.state.showAlert = true
+        }
       }
     )
     .disabled(true)
     .onTapGesture {
-      viewModel.state.showAlert = true
+      hideKeyboard()
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        viewModel.state.showAlert = true
+      }
     }
   }
   
@@ -109,9 +123,10 @@ extension AccountInfoView {
       ForEach([Gender.MALE, Gender.FEMALE], id: \.self) { gender in
         AMDChipButton(
           title: gender.description,
-          isSelected: viewModel.state.selectedGender  == gender
+          isSelected: viewModel.state.selectedGender == gender
         ) {
-          viewModel.state.selectedGender  = gender
+          hideKeyboard()
+          viewModel.state.selectedGender = gender
         }
       }
     }
@@ -171,6 +186,7 @@ extension AccountInfoView {
             title: activity.description,
             isSelected: viewModel.state.selectedActivity == activity
           ) {
+            hideKeyboard()
             viewModel.handleAction(.updateActivity(activity))
           }
         }
