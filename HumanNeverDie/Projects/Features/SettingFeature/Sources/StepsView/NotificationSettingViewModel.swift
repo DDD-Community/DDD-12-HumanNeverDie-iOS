@@ -9,6 +9,7 @@ import Foundation
 import UserNotifications
 import UserDomain
 import UIKit
+import Combine
 
 import DesignSystem
 import CommonFeature
@@ -22,6 +23,9 @@ public final class NotificationSettingViewModel: ViewModelable {
   @Dependency(\.toastClient) private var toastClient
   @ObservationIgnored
   @Dependency(\.userUseCase) private var userUseCase
+  
+  private var cancellables = Set<AnyCancellable>()
+  private var didOpenSettings = false
   
   private enum NotiSettingType {
     case isEnabled(Bool)
@@ -39,6 +43,7 @@ public final class NotificationSettingViewModel: ViewModelable {
 
     var systemPermissionGranted: Bool = false
     var showPermissionAlert: Bool = false
+    var showPermissionDeniedAlert: Bool = false
   }
   
   public var state: State
@@ -51,9 +56,12 @@ public final class NotificationSettingViewModel: ViewModelable {
   
   public enum Action {
     case onAppear
+    case onDisappear
     case loadUserInfo
     case openSystemSettings
     case dismissAlert
+    case dismissPermissionDeniedAlert
+    case appDidBecomeActive
     
     case toggleIsEnabled(Bool)
     case toggleRemindersEnabled(Bool)
@@ -65,12 +73,16 @@ public final class NotificationSettingViewModel: ViewModelable {
   public init(userID: String) {
     let initialState = State(userID: userID)
     self.state = initialState
+    setupAppLifecycleObservers()
   }
   
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
       handleAction(.loadUserInfo)
+      
+    case .onDisappear:
+      cleanup()
       
     case .loadUserInfo:
       Task {
@@ -84,6 +96,17 @@ public final class NotificationSettingViewModel: ViewModelable {
       
     case .dismissAlert:
       state.showPermissionAlert = false
+      
+    case .dismissPermissionDeniedAlert:
+      state.showPermissionDeniedAlert = false
+      
+    case .appDidBecomeActive:
+      // 설정에서 돌아온 경우에만 권한 재확인
+      if didOpenSettings {
+        Task {
+          await handleReturnFromSettings()
+        }
+      }
       
     case .toggleIsEnabled(let isEnabled):
       Task {
@@ -115,6 +138,35 @@ public final class NotificationSettingViewModel: ViewModelable {
 }
 
 extension NotificationSettingViewModel {
+  private func setupAppLifecycleObservers() {
+    NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)
+      .sink { [weak self] _ in
+        Task { @MainActor in
+          self?.handleAction(.appDidBecomeActive)
+        }
+      }
+      .store(in: &cancellables)
+  }
+  
+  private func cleanup() {
+    cancellables.removeAll()
+    didOpenSettings = false
+  }
+  
+  private func handleReturnFromSettings() async {
+    didOpenSettings = false
+    
+    await checkSystemNotificationPermission()
+    
+    if !state.systemPermissionGranted {
+      state.showPermissionDeniedAlert = true
+
+      if state.notiInfo.isEnabled {
+        await updateUseNotiInfo(isEnabled: false)
+      }
+    }
+  }
+  
   private func loadUserData() async {
     guard !state.isLoading else { return }
     
@@ -122,7 +174,8 @@ extension NotificationSettingViewModel {
     
     do {
       let result = try await userUseCase.getUserNotificationInfo(userID: state.userID)
-      if (!state.systemPermissionGranted && result.isEnabled) {
+      
+      if !state.systemPermissionGranted && result.isEnabled {
         await updateUseNotiInfo(isEnabled: false)
       } else {
         state.notiInfo = result
@@ -132,7 +185,6 @@ extension NotificationSettingViewModel {
       
     } catch {
       print("❌ 노티 정보 로딩 실패: \(error)")
-      
       setLoading(false)
     }
   }
@@ -140,59 +192,98 @@ extension NotificationSettingViewModel {
   nonisolated private func checkSystemNotificationPermission() async {
     let center = UNUserNotificationCenter.current()
     let settings = await center.notificationSettings()
-    let isAuthorized = settings.authorizationStatus == .authorized
     
+    let isAuthorized = settings.authorizationStatus == .authorized
+
     await MainActor.run {
       state.systemPermissionGranted = isAuthorized
+      
+      print("알림 권한 상태: \(settings.authorizationStatus.rawValue)")
+      print("권한 허용됨: \(isAuthorized)")
     }
   }
   
   private func openSystemSettings() {
     guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
-      showToast(message: "설정을 열 수 없습니다.", type: .failure)
       return
     }
     
     if UIApplication.shared.canOpenURL(settingsUrl) {
-      UIApplication.shared.open(settingsUrl) { [weak self] success in
-        if success {
-          // 설정에서 돌아왔을 때 권한 상태 다시 확인
+      didOpenSettings = true
+      UIApplication.shared.open(settingsUrl) { success in
+        if !success {
           Task { @MainActor in
-            await self?.checkSystemNotificationPermission()
+            self.didOpenSettings = false
           }
         }
       }
-    } else {
-      showToast(message: "설정을 열 수 없습니다.", type: .failure)
     }
   }
   
   private func updateNotiSetting(_ settingType: NotiSettingType) async {
-    if (state.systemPermissionGranted == false) {
-      state.showPermissionAlert = true
-    }else {
-      
-      var current = state.notiInfo
-      
+    
+    if !state.systemPermissionGranted {
       switch settingType {
       case .isEnabled(let isEnabled):
-        await updateUseNotiInfo(isEnabled: isEnabled)
+        if isEnabled {
+          await requestNotificationPermission()
+        } else {
+          await updateUseNotiInfo(isEnabled: false)
+        }
         return
         
-      case .remindersEnabled(let isEnabled):
-        current.remindersEnabled = isEnabled
+      case .remindersEnabled(let isEnabled),
+           .riskWarningsEnabled(let isEnabled),
+           .newsUpdatesEnabled(let isEnabled):
+        if isEnabled {
+          state.showPermissionAlert = true
+          return
+        }
         
-      case .riskWarningsEnabled(let isEnabled):
-        current.riskWarningsEnabled = isEnabled
-        
-      case .newsUpdatesEnabled(let isEnabled):
-        current.newsUpdatesEnabled = isEnabled
-        
-      case .reminderTime(let time):
-        current.reminderTime = current.convertDateToTimeString(time)
+      case .reminderTime(_):
+        state.showPermissionAlert = true
+        return
       }
+    }
+    
+    var current = state.notiInfo
+    
+    switch settingType {
+    case .isEnabled(let isEnabled):
+      await updateUseNotiInfo(isEnabled: isEnabled)
+      return
       
-      await updateNotiInfo(notiInfo: current)
+    case .remindersEnabled(let isEnabled):
+      current.remindersEnabled = isEnabled
+      
+    case .riskWarningsEnabled(let isEnabled):
+      current.riskWarningsEnabled = isEnabled
+      
+    case .newsUpdatesEnabled(let isEnabled):
+      current.newsUpdatesEnabled = isEnabled
+      
+    case .reminderTime(let time):
+      current.reminderTime = current.convertDateToTimeString(time)
+    }
+    
+    await updateNotiInfo(notiInfo: current)
+  }
+  
+  private func requestNotificationPermission() async {
+    let center = UNUserNotificationCenter.current()
+    
+    do {
+      let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
+      
+      await checkSystemNotificationPermission()
+      
+      if granted {
+        await updateUseNotiInfo(isEnabled: true)
+      } else {
+        state.showPermissionAlert = true
+      }
+    } catch {
+      print("❌ 알림 권한 요청 실패: \(error)")
     }
   }
   
@@ -207,7 +298,6 @@ extension NotificationSettingViewModel {
       
     } catch {
       showToast(message: "오류가 발생했어요. 다시 시도해주세요.", type: .failure)
-      
       setLoading(false)
     }
   }
@@ -223,7 +313,6 @@ extension NotificationSettingViewModel {
       
     } catch {
       showToast(message: "오류가 발생했어요. 다시 시도해주세요.", type: .failure)
-      
       setLoading(false)
     }
   }
