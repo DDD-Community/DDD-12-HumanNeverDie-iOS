@@ -15,8 +15,8 @@ public final class PermissionViewModel: ViewModelable {
   private weak var parentViewModel: OnboardingProfileViewModel?
   
   public struct State: Equatable {
-    var isPermissionGranted: Bool = false
     var isPermissionRequested: Bool = false
+    var isPermissionCompleted: Bool = false
   }
   
   public enum Action {
@@ -56,14 +56,14 @@ public final class PermissionViewModel: ViewModelable {
       let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
       
       await MainActor.run {
-        state.isPermissionGranted = granted
+        state.isPermissionCompleted = true
       }
       
       await parentViewModel?.updateUseNotiInfo(isEnabled: granted)
       
     } catch {
       await MainActor.run {
-        state.isPermissionGranted = false
+        state.isPermissionCompleted = true
       }
       
       await parentViewModel?.updateUseNotiInfo(isEnabled: false)

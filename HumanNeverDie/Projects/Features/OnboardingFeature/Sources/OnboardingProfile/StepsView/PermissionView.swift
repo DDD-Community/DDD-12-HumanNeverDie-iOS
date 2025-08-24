@@ -25,10 +25,13 @@ struct PermissionView: View {
     .ignoresSafeArea(edges: .all)
     .onAppear {
       viewModel.handleAction(.onAppear)
+    
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+        viewModel.handleAction(.requestPermission)
+      }
     }
-    .onTapGesture {
-      // 권한 요청이 완료된 후에만 온보딩 완료 처리
-      if viewModel.canCompleteOnboarding {
+    .onChange(of: viewModel.state.isPermissionCompleted) { _, newValue in
+      if newValue {
         withAnimation(.easeInOut) {
           viewModel.handleAction(.completeOnboarding)
           router.setRoute(.main)
