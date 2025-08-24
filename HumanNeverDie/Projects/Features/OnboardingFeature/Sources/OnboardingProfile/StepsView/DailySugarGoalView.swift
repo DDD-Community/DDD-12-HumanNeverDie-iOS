@@ -74,7 +74,7 @@ extension DailySugarGoalView {
         .frame(width: 24, height: 22)
         .offset(y: -13)
       
-      VStack(spacing: 0) {
+      VStack(spacing: 2) {
         Text("\(viewModel.nickname)님의 일일 권장")
           .amdFont(.largeRegular)
           .foregroundColor(baseTextColor)
