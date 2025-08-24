@@ -51,9 +51,9 @@ public final class AuthUseCase: AuthUseCaseProtocol, @unchecked Sendable {
   
   public func withdraw() async throws(AuthError) -> Bool {
     do {
+      try await authRepository.withdraw()
       try await clearKeychain()
       try await authRepository.logout()
-      try await authRepository.withdraw()
       return true
     } catch {
       throw error
