@@ -8,6 +8,7 @@
 import SwiftUI
 import AsyncAlgorithms
 
+import BeverageDomain
 import CommonFeature
 import DesignSystem
 import Shared
@@ -93,8 +94,8 @@ public struct BeverageSearchView: View {
 
   private var sugarProgressView: some View {
     AMDSugarStatusView(
-      variant: .healthy,
-      style: .main(sugar: 50, baseSugar: 100)
+      variant: BeverageSugarStatusType(baseSugar: viewModel.state.baseSugar, totalSugar: viewModel.state.totalSugar).statusVariant,
+      style: .main(sugar: viewModel.state.totalSugar, baseSugar: viewModel.state.baseSugar)
     )
     .frame(minHeight: Constants.sugarStatusViewHeight, maxHeight: Constants.sugarStatusViewHeight, alignment: .top)
   }

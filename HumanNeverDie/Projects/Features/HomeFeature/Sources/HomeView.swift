@@ -87,7 +87,7 @@ public struct HomeView: View {
   private var sugarStatusCard: some View {
     AMDCard(
       totalSugar: viewModel.selectedDateCalendar?.totalSugarGrams ?? 0,
-      baseSugar: viewModel.baseSugar,
+      baseSugar: viewModel.selectedDateCalendar?.sugarMaxG ?? 0,
       variant: viewModel.sugarStatus.statusVariant
     )
     .amdFlipCard(

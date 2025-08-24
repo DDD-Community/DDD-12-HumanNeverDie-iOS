@@ -18,15 +18,6 @@ import Dependencies
 @Observable
 @MainActor
 public final class HistoryViewModel: ViewModelable {
-  @ObservationIgnored
-  @Dependency(\.alertClient) private var alertClient
-  
-  @ObservationIgnored
-  @Dependency(\.toastClient) private var toastClient
-  
-//  @ObservationIgnored
-//  @Dependency(\.userDefaultClient) private var userDefaultClient
-  
   public struct State: Equatable {
     var currentDate: Date = Date()
     var selectedDate: Date? = Date.now
@@ -72,10 +63,20 @@ public final class HistoryViewModel: ViewModelable {
     case deleteSelectedBeverage
   }
   
-  public var state: State = .init()
-  
   @ObservationIgnored
   @Dependency(\.beverageUseCase) private var beverageUseCase
+  
+  @ObservationIgnored
+  @Dependency(\.alertClient) private var alertClient
+  
+  @ObservationIgnored
+  @Dependency(\.toastClient) private var toastClient
+  
+  @ObservationIgnored
+  @Dependency(\.userDefaultClient) private var userDefaultClient
+  
+  public var state: State = .init()
+  public init() {}
   
   public func handleAction(_ action: Action) {
     switch action {
@@ -228,7 +229,12 @@ extension HistoryViewModel {
     let dateKey = Date.toDateKeyString(from: selectedDate)
     guard let dailyData = state.monthHistoryData[dateKey] else { return }
     
-    // 유효한 데이터 있으면 세팅
+    
+    Task {
+      await userDefaultClient.setValue(dailyData.totalSugarGrams, forKey: AMDUserDefaultKey.totalSugar)
+      await userDefaultClient.setValue(dailyData.sugarMaxG, forKey: AMDUserDefaultKey.baseSugar)
+    }
+    
     state.totalSugarGrams = dailyData.totalSugarGrams
     state.totalCount = dailyData.records.count
     state.selectedDateHistoryList = dailyData.records

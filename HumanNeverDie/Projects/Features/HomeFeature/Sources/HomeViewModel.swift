@@ -55,6 +55,9 @@ public final class HomeViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.beverageUseCase) private var beverageUseCase
   
+  @ObservationIgnored
+  @Dependency(\.userDefaultClient) private var userDefaultClient
+  
   public var state: State = .init()
   public init() {}
   
@@ -126,6 +129,11 @@ public final class HomeViewModel: ViewModelable {
     
     if let selectedDateCalendar = state.selectedDateCalendar {
       state.isSelectedDateEmpty = selectedDateCalendar.records.isEmpty
+      
+      Task {
+        await userDefaultClient.setValue(selectedDateCalendar.totalSugarGrams, forKey: AMDUserDefaultKey.totalSugar)
+        await userDefaultClient.setValue(selectedDateCalendar.sugarMaxG, forKey: AMDUserDefaultKey.baseSugar)
+      }
     } else {
       state.isSelectedDateEmpty = true
     }

@@ -42,6 +42,11 @@ public struct AMDProgress: View {
     }
   }
   
+  private var safeGlucose: Double {
+    guard glucose.isFinite else { return 0.0 }
+    return min(max(glucose, 0.0), 1.0)
+  }
+  
   private var progressGradient: LinearGradient {
     switch variant {
     case .healthy:
@@ -71,7 +76,7 @@ public struct AMDProgress: View {
         type.baseProgress
         
         progressGradient
-          .frame(width: geometry.size.width * CGFloat(min(glucose, 1.0)))
+          .frame(width: geometry.size.width * CGFloat(safeGlucose))
           .amdCornerRadius(.large)
           .animation(.easeInOut(duration: 0.3), value: glucose)
         

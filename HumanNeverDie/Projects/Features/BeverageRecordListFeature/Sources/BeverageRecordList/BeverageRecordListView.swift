@@ -75,8 +75,8 @@ public struct BeverageRecordListView: View {
 
   private var sugarProgressView: some View {
     AMDSugarStatusView(
-      variant: .healthy,
-      style: .main(sugar: 50, baseSugar: 100)
+      variant: BeverageSugarStatusType(baseSugar: viewModel.baseSugar, totalSugar: viewModel.totalSugar).statusVariant,
+      style: .main(sugar: viewModel.totalSugar, baseSugar: viewModel.baseSugar)
     )
     .frame(minHeight: Constants.sugarStatusViewHeight, maxHeight: Constants.sugarStatusViewHeight, alignment: .top)
   }
