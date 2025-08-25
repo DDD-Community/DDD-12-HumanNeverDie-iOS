@@ -19,6 +19,8 @@ import Dependencies
 @MainActor
 public final class HistoryViewModel: ViewModelable {
   public struct State: Equatable {
+    var isViewDidLoad: Bool = false
+    
     var currentDate: Date = Date()
     var selectedDate: Date? = Date.now
     
@@ -40,7 +42,7 @@ public final class HistoryViewModel: ViewModelable {
     var totalSugarGrams = 0
     var totalCount = 0
     
-    var isTodayOrPastSelectedDate: Bool { CommonFeature.isTodayOrPastSelectedDate(selectedDate) }
+    var isTodayOrPastSelectedDate: Bool { selectedDate.isTodayOrPastSelectedDate }
 
     var sugarStatus: BeverageSugarStatusType {
       let totalSugar = selectedDateCalendar?.totalSugarGrams ?? 0
@@ -50,6 +52,7 @@ public final class HistoryViewModel: ViewModelable {
   
   public enum Action {
     case onAppear
+    case historyRefresh
     case beverageListFavoriteTapped(Bool, String)
     case beverageListInfoTapped
     case loadHistorDailyList
@@ -75,15 +78,26 @@ public final class HistoryViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.userDefaultClient) private var userDefaultClient
   
+  @ObservationIgnored
+  @Dependency(\.globalState) private var globalState
+  
   public var state: State = .init()
   public init() {}
   
   public func handleAction(_ action: Action) {
     switch action {
-    case .onAppear, .loadHistorDailyList, .datePickeronConfirm:
+    case .onAppear:
+      guard !state.isViewDidLoad else { return }
+      state.isViewDidLoad = true
+      
       Task { await refreshData() }
+      
+    case .loadHistorDailyList, .datePickeronConfirm, .historyRefresh:
+      Task { await refreshData() }
+      
     case .beverageListFavoriteTapped(_, _):
       break
+      
     case .beverageListInfoTapped:
       state.isBevarageDetailPresented = true
       
@@ -126,15 +140,9 @@ extension HistoryViewModel {
   }
   
   private func refreshData() async {
-//    await loadBaseSugar()
     await loadNetworkData()
     loadSelectedDateHistory()
   }
-  
-//  private func loadBaseSugar() async {
-//    let savedBaseSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.userMaxSugar) ?? 0
-//    state.baseSugar = savedBaseSugar > 0 ? savedBaseSugar : 50
-//  }
   
   nonisolated private func showDeleteAlert() async {
     await alertClient.showAlert(.init(
@@ -161,6 +169,7 @@ extension HistoryViewModel {
       )
       
       if result {
+        await globalState.sendEvent(.homeRefresh)
         showToast(message: "삭제가 완료되었어요.", type: .success)
         clearSelectedItemID()
         await refreshData()

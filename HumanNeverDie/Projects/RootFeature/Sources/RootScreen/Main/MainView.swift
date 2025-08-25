@@ -49,16 +49,28 @@ public struct MainView: View {
     Group {
       switch viewModel.selectedTab {
       case .home:
-        HomeViewFactory.create()
+        homeView
         
       case .history:
-        HistoryViewFactory.create()
+        historyView
         
       case .myPage:
-        SettingViewFactory.create()
+        myPageView
       }
     }
     .padding(.bottom, 92)
+  }
+  
+  private var homeView: some View {
+    HomeView(viewModel: viewModel.homeViewModel)
+  }
+  
+  private var historyView: some View {
+    HistoryView(viewModel: viewModel.historyViewModel)
+  }
+  
+  private var myPageView: some View {
+    SettingView(viewModel: viewModel.settingViewModel)
   }
   
   private var tabBar: some View {
@@ -81,21 +93,14 @@ public struct MainView: View {
     Button {
       viewModel.handleAction(.tabBarItemTapped(tab))
     } label: {
-      VStack(spacing: 2) {
-        Group {
-          if viewModel.selectedTab == tab {
-            tab.selectedIcon
-          } else {
-            tab.icon
-          }
+      Group {
+        if viewModel.selectedTab == tab {
+          tab.selectedIcon
+        } else {
+          tab.icon
         }
-        
-        Text(tab.rawValue)
-          .amdFont(.xxsmallRegular)
-          .foregroundStyle(viewModel.selectedTab == tab ? .gray95 : .gray60)
       }
-      .padding(.vertical, 8)
-      .padding(.horizontal, 16)
+      .padding(16)
     }
     .frame(maxWidth: .infinity)
   }

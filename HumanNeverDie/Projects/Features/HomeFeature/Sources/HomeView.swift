@@ -15,7 +15,6 @@ import Dependencies
 public struct HomeView: View {
   @State private var viewModel: HomeViewModel
   @Environment(Router.self) private var router
-  @Dependency(\.globalState) private var globalState
   
   public init(viewModel: HomeViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -23,26 +22,17 @@ public struct HomeView: View {
   
   public var body: some View {
     contentView
-      .padding(.top, 4)
-      .background(.white)
       .amdBottomSheet(
         isPresented: $viewModel.state.isMonthPickerPresented,
         detents: [.height(310)]
       ) {
         datePickerBottomSheet
       }
+      .onGlobalEvent(.homeRefresh) {
+        viewModel.handleAction(.homeRefresh)
+      }
       .onViewDidLoad {
         viewModel.handleAction(.onViewDidLoad)
-      }
-      .onAppear {
-        Task {
-          for await event in globalState.eventStream {
-            switch event {
-            case .homeRefresh:
-              viewModel.handleAction(.homeRefresh)
-            }
-          }
-        }
       }
   }
   
@@ -55,6 +45,8 @@ public struct HomeView: View {
       Spacer()
       beverageRecordButton
     }
+    .padding(.top, 4)
+    .background(.white)
   }
   
   private var weeklyCalendarView: some View {

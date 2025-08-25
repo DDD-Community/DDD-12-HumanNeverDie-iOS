@@ -8,6 +8,9 @@
 import Foundation
 import Observation
 
+import HomeFeature
+import HistoryFeature
+import SettingFeature
 import CommonFeature
 
 @Observable
@@ -20,6 +23,15 @@ public final class MainViewModel: ViewModelable {
   public enum Action {
     case tabBarItemTapped(AMDTabBarType)
   }
+  
+  @ObservationIgnored
+  var homeViewModel: HomeViewModel = .init()
+  
+  @ObservationIgnored
+  var historyViewModel: HistoryViewModel = .init()
+  
+  @ObservationIgnored
+  var settingViewModel: SettingViewModel = .init()
   
   public var state: State = .init()
   public init() {}

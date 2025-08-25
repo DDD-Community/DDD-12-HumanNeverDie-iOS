@@ -142,6 +142,7 @@ public struct BeverageRecordCompletedView: View {
       action: {
         Task {
           await globalState.sendEvent(.homeRefresh)
+          await globalState.sendEvent(.historyRefresh)
           await MainActor.run { router.popToRoot() }
         }
       }
