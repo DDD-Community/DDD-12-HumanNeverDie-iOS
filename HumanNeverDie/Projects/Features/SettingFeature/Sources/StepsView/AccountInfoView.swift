@@ -63,7 +63,8 @@ extension AccountInfoView {
         title: "생년월일",
         isResetButtonHidden: true,
         type: .yearMonthDay,
-        initialDate: viewModel.birthDate
+        initialDate: viewModel.birthDate,
+        isAgeRestricted: true
       ) {
         viewModel.handleAction(.updateBirthDate($0))
       }

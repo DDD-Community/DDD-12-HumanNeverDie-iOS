@@ -38,7 +38,8 @@ struct BasicInfoFormView: View {
           title: "생년월일",
           isResetButtonHidden: true,
           type: .yearMonthDay,
-          initialDate: viewModel.state.birthDate ?? Date()
+          initialDate: viewModel.state.birthDate ?? Date(),
+          isAgeRestricted: true
         ) {
           viewModel.handleAction(.updateBirthDate($0))
         }
