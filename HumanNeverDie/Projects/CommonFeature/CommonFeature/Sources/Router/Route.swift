@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 import UserDomain
 
 public enum Route: Hashable {
@@ -18,5 +19,4 @@ public enum Route: Hashable {
   case SettingGoalSetting(userInfo: UserInfo)
   case SettingNotificationSetting(userID: String)
   case SettingTerms
-  
 }

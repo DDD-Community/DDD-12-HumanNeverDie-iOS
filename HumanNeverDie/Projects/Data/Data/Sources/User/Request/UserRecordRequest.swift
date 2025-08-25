@@ -21,7 +21,6 @@ struct NotificationsRequest: Encodable {
   let isEnabled: Bool
 }
 
-
 struct UserNotificationsRequest: Encodable {
  let isEnabled: Bool
  let remindersEnabled: Bool
