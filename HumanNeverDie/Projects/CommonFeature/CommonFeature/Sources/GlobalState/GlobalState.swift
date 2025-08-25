@@ -3,24 +3,36 @@ import Foundation
 import Dependencies
 
 public protocol GlobalStateProtocol: Sendable {
-  var eventStream: AsyncStream<GlobalEvent> { get }
+  var homeEventStream: AsyncStream<Void> { get }
+  var historyEventStream: AsyncStream<Void> { get }
   func sendEvent(_ event: GlobalEvent) async
 }
 
 public actor GlobalState: GlobalStateProtocol  {
   public static let shared = GlobalState()
   
-  private let eventContinuation: AsyncStream<GlobalEvent>.Continuation
-  public let eventStream: AsyncStream<GlobalEvent>
+  private let homeContinuation: AsyncStream<Void>.Continuation
+  private let historyContinuation: AsyncStream<Void>.Continuation
+  public let homeEventStream: AsyncStream<Void>
+  public let historyEventStream: AsyncStream<Void>
   
   public init() {
-    let (stream, continuation) = AsyncStream<GlobalEvent>.makeStream()
-    self.eventStream = stream
-    self.eventContinuation = continuation
+    let (homeStream, homeCont) = AsyncStream<Void>.makeStream()
+    let (historyStream, historyCont) = AsyncStream<Void>.makeStream()
+    
+    self.homeEventStream = homeStream
+    self.historyEventStream = historyStream
+    self.homeContinuation = homeCont
+    self.historyContinuation = historyCont
   }
   
   public func sendEvent(_ event: GlobalEvent) async {
-    eventContinuation.yield(event)
+    switch event {
+    case .homeRefresh:
+      homeContinuation.yield()
+    case .historyRefresh:
+      historyContinuation.yield()
+    }
   }
 }
 
@@ -39,15 +51,4 @@ public extension DependencyValues {
     get { self[GlobalStateKey.self] }
     set { self[GlobalStateKey.self] = newValue }
   }
-}
-
-public func isTodayOrPastSelectedDate(_ selectedDate: Date?) -> Bool {
-  guard let selectedDate else {
-    return false
-  }
-  
-  let today = Calendar.current.startOfDay(for: Date())
-  let target = Calendar.current.startOfDay(for: selectedDate)
-  
-  return target <= today
 }
