@@ -84,8 +84,10 @@ class AMDMonthCalendarViewModel: AMDCommonCalendarViewModel {
         isToday: isToday(value.date),
         isSelected: isSelected(value.date),
         textColor: textColor(for: value.date),
-        stateIcon: matchingValue(for: value.date).flatMap { getStateIcon(for: $0)}
-
+        stateIcon: {
+          guard let record = sugarIntakeRecordData.first(where: { calendar.isDate($0.date, inSameDayAs: value.date) }) else { return nil }
+          return getStateIcon(for: record.value, recordCount: record.recordCount)
+        }()
       )
     }
   }

@@ -70,18 +70,24 @@ extension GoalSettingView {
         .frame(width: 24, height: 22)
         .offset(y: -13)
       
-      HStack(spacing: 0) {
-        Text("\(viewModel.userInfo.nickname)님의 일일 권장 당 섭취량은 ")
+      VStack(spacing: 2) {
+        Text("\(viewModel.userInfo.nickname)님의 일일 권장")
           .amdFont(.largeRegular)
           .foregroundColor(baseTextColor)
         
-        Text("\(viewModel.normalSugarAmount)g")
-          .amdFont(.largeBold)
-          .foregroundColor(baseTextColor)
-        
-        Text("이당!")
-          .amdFont(.largeRegular)
-          .foregroundColor(baseTextColor)
+        HStack(spacing: 0) {
+          Text("당 섭취량은 ")
+            .amdFont(.largeRegular)
+            .foregroundColor(baseTextColor)
+          
+          Text("\(viewModel.normalSugarAmount)g")
+            .amdFont(.largeBold)
+            .foregroundColor(baseTextColor)
+          
+          Text("이당!")
+            .amdFont(.largeRegular)
+            .foregroundColor(baseTextColor)
+        }
       }
       .padding(.horizontal, 20)
       .padding(.vertical, 12)
@@ -89,7 +95,6 @@ extension GoalSettingView {
       .cornerRadius(16)
     }
     .padding(.top, 12)
-    
   }
   
   private struct SpeechBubbleTriangle: Shape {

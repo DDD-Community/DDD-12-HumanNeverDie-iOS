@@ -38,10 +38,11 @@ class AMDCommonCalendarViewModel {
     DateFormatter.calendarTitleFormat.string(from: titleDate)
   }
   
-  func getStateIcon(for value: Int) -> Image? {
+  func getStateIcon(for value: Int, recordCount: Int) -> Image? {
     let targetValue = userSugarTargetValue.wrappedValue
-    let sugerValue = Double(value) / Double(targetValue) * 100
-    return AMDStateIcon(percentage: sugerValue).icon
+    let sugarValue = Double(value) / Double(targetValue) * 100
+    
+    return AMDStateIcon(percentage: sugarValue, recordCount: recordCount).icon
   }
   
   func isToday(_ date: Date) -> Bool {

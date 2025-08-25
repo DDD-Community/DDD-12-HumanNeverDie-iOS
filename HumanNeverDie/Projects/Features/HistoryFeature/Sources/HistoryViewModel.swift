@@ -206,9 +206,10 @@ extension HistoryViewModel {
         
         let dateKey = dailyData.date.toYMDFormat
         state.monthHistoryData[dateKey] = dailyData
+        let recordCount = dailyData.records.count
         
         guard let date = String.toDate(from: dailyData.date) else { return nil }
-        return SugarIntakeRecord(date: date, value: dailyData.totalSugarGrams)
+        return SugarIntakeRecord(date: date, value: dailyData.totalSugarGrams, recordCount:recordCount)
       }
       
       state.sugarIntakeRecordData = newSugarIntakeRecordData
