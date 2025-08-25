@@ -1,3 +1,10 @@
+//
+//  AMDOnViewDidLoadModifier.swift
+//  CommonFeature
+//
+//  Created by 김규철 on 8/25/25.
+//
+
 import SwiftUI
 
 public struct AMDOnViewDidLoadModifier: ViewModifier {

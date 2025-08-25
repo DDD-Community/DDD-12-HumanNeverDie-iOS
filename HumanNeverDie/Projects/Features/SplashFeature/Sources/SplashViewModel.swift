@@ -20,6 +20,7 @@ import Dependencies
 @MainActor
 public final class SplashViewModel: ViewModelable {
   public struct State: Equatable {
+    var userID: String = ""
     var route: RootRoute?
   }
   
@@ -37,10 +38,10 @@ public final class SplashViewModel: ViewModelable {
   @Dependency(\.authUseCase) private var authUseCase
   
   @ObservationIgnored
-  @Dependency(\.keychainClient) private var keychainClient
+  @Dependency(\.userUseCase) private var userUseCase
   
   @ObservationIgnored
-  @Dependency(\.userUseCase) private var userUseCase
+  @Dependency(\.keychainClient) private var keychainClient
   
   public var state: State = .init()
   public init() {}
@@ -51,7 +52,10 @@ public final class SplashViewModel: ViewModelable {
       Task {
         guard await checkUserToken() else { return }
         guard await refreshTokenAndContinue() else { return }
-        await checkUserDataAndNavigate()
+        guard await checkUserID() else { return }
+        guard await checkUserInfo() else { return }
+        await syncLocalLikeToServer()
+        await navigateTo(.main)
       }
     }
   }
@@ -76,6 +80,37 @@ public final class SplashViewModel: ViewModelable {
       return true
     } catch {
       print("❌ 토큰 재발급 실패: \(error) - 로그인 화면으로 이동")
+      await navigateTo(.login)
+      return false
+    }
+  }
+  
+  private func checkUserID() async -> Bool {
+    guard let userID = keychainClient.getValue(forKey: AMDKeychainKey.userID) else {
+      print("❌ 유저아이디 없음 - 로그인 화면으로 이동")
+      await navigateTo(.login)
+      return false
+    }
+    
+    print("✅ 유저아이디 존재")
+    state.userID = userID
+    return true
+  }
+  
+  private func checkUserInfo() async -> Bool {
+    do {
+      let userInfo = try await userUseCase.getUserInfo(userID: state.userID)
+      
+      guard !userInfo.nickname.isEmpty ||
+            !userInfo.birthDate.isEmpty ||
+            userInfo.selectedGender != .none else {
+        await navigateTo(.onboarding)
+        return false
+      }
+      
+      return true
+    } catch {
+      print("❌ 유저 정보 로딩 실패 & 정보없음: \(error)")
       await navigateTo(.login)
       return false
     }
@@ -114,33 +149,6 @@ public final class SplashViewModel: ViewModelable {
       }
     } catch {
       print("로컬 데이터 조회 실패")
-    }
-  }
-  
-  private func checkUserDataAndNavigate() async {
-    let userID = keychainClient.getValue(forKey: AMDKeychainKey.userID)
-    
-    if let userID = userID, !userID.isEmpty {
-      print("✅ 유저 ID 존재: \(userID) - 유저정보 확인")
-      await loadUserData(userID: userID)
-
-    } else {
-      print("❌ 유저 ID 없음 - 로그인으로 이동")
-      await navigateTo(.login)
-    }
-  }
-  
-  private func loadUserData(userID: String) async {
-    do {
-      let result = try await userUseCase.getUserInfo(userID: userID)
-      
-      print("✅ 유저 정보 로딩 성공 닉네임 : \(result.nickname)")
-      await syncLocalLikeToServer()
-      await navigateTo(.main)
-    } catch {
-      
-      print("❌ 유저 정보 로딩 실패 & 정보없음: \(error)")
-      await navigateTo(.onboarding)
     }
   }
 }

@@ -9,6 +9,6 @@ import Foundation
 
 public enum AMDLottieAsset: String, CaseIterable {
   case honeyEffect = "HoneyEffect"
-  case splash = "LoadingSpinner"
-  case loadingSpinner = "Splash"
+  case loadingSpinner = "LoadingSpinner"
+  case splash = "Splash"
 }

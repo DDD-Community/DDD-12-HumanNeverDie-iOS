@@ -31,6 +31,9 @@ public final class BeverageSearchViewModel: ViewModelable {
     var beverageRecordDate: Date
 
     var recentSearchList: [String] = []
+    
+    var baseSugar: Int = 0
+    var totalSugar: Int = 0
 
     var route: Route?
   }
@@ -63,12 +66,19 @@ public final class BeverageSearchViewModel: ViewModelable {
   @Dependency(\.beverageLocalSearchUseCase) private var beverageLocalSearchUseCase
 
   @ObservationIgnored
+  @Dependency(\.userDefaultClient) private var userDefaultClient
+
+  @ObservationIgnored
   var listViewModel: BeverageListViewModel = .init()
 
   public var state: State
   public init(beverageRecordDate: Date) {
     self.state = .init(beverageRecordDate: beverageRecordDate)
     delegate()
+    
+    Task {
+      await getUserSugar()
+    }
   }
 
   deinit {
@@ -180,6 +190,18 @@ public final class BeverageSearchViewModel: ViewModelable {
     await beverageLocalSearchUseCase.removeRecentSearch(keyword)
     await MainActor.run {
       state.recentSearchList = beverageLocalSearchUseCase.getRecentSearchList()
+    }
+  }
+  
+  private func getUserSugar() async {
+    guard let baseSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.baseSugar),
+          let totalSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.totalSugar) else {
+      return
+    }
+    
+    await MainActor.run {
+      state.baseSugar = baseSugar
+      state.totalSugar = totalSugar
     }
   }
 }

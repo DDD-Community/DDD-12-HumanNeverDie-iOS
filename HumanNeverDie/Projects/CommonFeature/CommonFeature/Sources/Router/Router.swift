@@ -7,12 +7,10 @@
 
 import SwiftUI
 import Observation
-import UserDomain
 
 @Observable
 public final class Router {
   public var path = NavigationPath()
-  public var onUserInfoUpdated: ((UserInfo) -> Void)?
   public var rootRoute: RootRoute {
     didSet {
       self.rootViewId = UUID()
@@ -20,6 +18,7 @@ public final class Router {
   }
   
   public private(set) var rootViewId = UUID()
+  private var resultHandler: ((any Equatable) -> Void)?
   
   public init(rootRoute: RootRoute = .splash) {
     print("root route: \(rootRoute)")
@@ -35,6 +34,21 @@ public final class Router {
     path.removeLast()
   }
   
+  public func popWithResult<T: Equatable>(_ result: T) {
+    let handler = resultHandler
+    resultHandler = nil
+    handler?(result)
+    pop()
+  }
+  
+  public func setResultHandler<T: Equatable>(_ handler: @escaping (T) -> Void) {
+    resultHandler = { result in
+      if let typedResult = result as? T {
+        handler(typedResult)
+      }
+    }
+  }
+  
   public func popToRoot() {
     path.removeLast(path.count)
   }
@@ -43,9 +57,5 @@ public final class Router {
     print("set root route: \(route)")
     path.removeLast(path.count)
     rootRoute = route
-  }
-  
-  public func setUserInfoUpdateHandler(_ handler: @escaping (UserInfo) -> Void) {
-    onUserInfoUpdated = handler
   }
 }

@@ -13,7 +13,6 @@ import UserDomain
 import Dependencies
 
 public final class UserRepository: UserRepositoryInterface, @unchecked Sendable {
-  
   @Dependency(\.networkService) private var networkService
   public init() {}
   

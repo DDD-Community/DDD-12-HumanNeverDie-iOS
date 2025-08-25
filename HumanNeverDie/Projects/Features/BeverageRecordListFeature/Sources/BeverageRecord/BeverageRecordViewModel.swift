@@ -114,9 +114,14 @@ public final class BeverageRecordViewModel: ViewModelable {
   
   private func recordBeverage() async {
     do {
+      guard let selectedSize = state.selectedSizeType else {
+        throw BeverageRecordError.noSizeSelected
+      }
+      
       let success = try await beverageUseCase.recordBeverage(
         productID: state.productID,
-        recordDate: state.beverageRecordDate
+        recordDate: state.beverageRecordDate,
+        size: selectedSize.sizeType
       )
       
       if success {

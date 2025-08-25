@@ -13,10 +13,12 @@ import BaseNetwork
 struct BeverageRecordTarget: AMDAPIRequestable {
   private let productID: String
   private let recordDate: Date
+  private let size: String
   
-  init(productID: String, recordDate: Date) {
+  init(productID: String, recordDate: Date, size: String) {
     self.productID = productID
     self.recordDate = recordDate
+    self.size = size
   }
   
   typealias Response = AMDAPIResponse<AMDEmptyResponse>
@@ -39,7 +41,7 @@ struct BeverageRecordTarget: AMDAPIRequestable {
   
   var body: Encodable? {
     let dateKtc = Date.toRequestDateKeyString(from: recordDate)
-    let request = BeverageRecordRequest(productId: productID, intakeTime: dateKtc)
+    let request = BeverageRecordRequest(productId: productID, intakeTime: dateKtc, size: size)
     
     return request
   }

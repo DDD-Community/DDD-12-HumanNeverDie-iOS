@@ -17,7 +17,7 @@ struct AuthWithdrawTarget: AMDAPIRequestable {
   }
   
   var method: AMDHTTPMethod {
-    return .GET
+    return .DELETE
   }
   
   var headers: [String : String]? {

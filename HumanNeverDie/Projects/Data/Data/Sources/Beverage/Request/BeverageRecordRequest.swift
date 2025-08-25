@@ -10,6 +10,7 @@ import Foundation
 struct BeverageRecordRequest: Encodable {
   let productId: String
   let intakeTime: String
+  let size: String
 }
 
 struct BeverageDeleteRequest: Encodable {

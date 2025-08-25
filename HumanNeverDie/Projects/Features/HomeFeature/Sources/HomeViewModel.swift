@@ -18,6 +18,8 @@ import Dependencies
 @MainActor
 public final class HomeViewModel: ViewModelable {
   public struct State: Equatable {
+    var isViewDidLoad: Bool = false
+    
     var currentDate: Date = Date()
     var selectedDate: Date? = Date()
     
@@ -30,7 +32,7 @@ public final class HomeViewModel: ViewModelable {
     
     var isMonthPickerPresented: Bool = false
     
-    var isTodayOrPastSelectedDate: Bool { CommonFeature.isTodayOrPastSelectedDate(selectedDate) }
+    var isTodayOrPastSelectedDate: Bool { selectedDate.isTodayOrPastSelectedDate }
   }
   
   var sugarStatus: BeverageSugarStatusType {
@@ -55,15 +57,19 @@ public final class HomeViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.beverageUseCase) private var beverageUseCase
   
+  @ObservationIgnored
+  @Dependency(\.userDefaultClient) private var userDefaultClient
+  
   public var state: State = .init()
   public init() {}
   
   public func handleAction(_ action: Action) {
     switch action {
     case .onViewDidLoad:
-      Task {
-        await getWeeklyCalender()
-      }
+      guard !state.isViewDidLoad else { return }
+      state.isViewDidLoad = true
+      
+      Task { await getWeeklyCalender() }
       
     case .calendarChangeDateButtonTapped:
       state.isMonthPickerPresented = true
@@ -124,6 +130,11 @@ public final class HomeViewModel: ViewModelable {
     
     if let selectedDateCalendar = state.selectedDateCalendar {
       state.isSelectedDateEmpty = selectedDateCalendar.records.isEmpty
+      
+      Task {
+        await userDefaultClient.setValue(selectedDateCalendar.totalSugarGrams, forKey: AMDUserDefaultKey.totalSugar)
+        await userDefaultClient.setValue(selectedDateCalendar.sugarMaxG, forKey: AMDUserDefaultKey.baseSugar)
+      }
     } else {
       state.isSelectedDateEmpty = true
     }

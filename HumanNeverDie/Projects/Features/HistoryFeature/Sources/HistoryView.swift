@@ -10,9 +10,11 @@ import SwiftUI
 import DesignSystem
 import CommonFeature
 
+import Dependencies
+
 public struct HistoryView: View {
-  @Environment(Router.self) private var router
   @State private var viewModel: HistoryViewModel
+  @Environment(Router.self) private var router
   
   public init(viewModel: HistoryViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -45,6 +47,7 @@ public struct HistoryView: View {
       .amdBottomSheet(isPresented: $viewModel.state.isBevarageDetailPresented, detents: [.height(474)]) {
         AMDBeverageDetailView(productID: viewModel.selectedProductID)
       }
+      .animation(.default, value: viewModel.selectedDateHistoryList)
       .onChange(of: viewModel.state.isBevarageDetailPresented) { _, isPresented in
         if !isPresented {
           viewModel.handleAction(.clearSelectedBeverage)
@@ -59,7 +62,10 @@ public struct HistoryView: View {
           }
       }
     }
-    .onAppear {
+    .onGlobalEvent(.historyRefresh) {
+      viewModel.handleAction(.historyRefresh)
+    }
+    .onViewDidLoad {
       viewModel.handleAction(.onAppear)
     }
   }

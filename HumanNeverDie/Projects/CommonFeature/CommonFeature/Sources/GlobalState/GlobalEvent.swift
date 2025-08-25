@@ -9,4 +9,5 @@ import Foundation
 
 public enum GlobalEvent: Sendable {
   case homeRefresh
+  case historyRefresh
 }

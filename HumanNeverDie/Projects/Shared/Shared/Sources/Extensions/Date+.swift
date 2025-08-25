@@ -55,3 +55,16 @@ extension Date {
     return koreaFormatter.date(from: dateString) ?? utcDate
   }
 }
+
+extension Date? {
+  public var isTodayOrPastSelectedDate: Bool {
+    guard let self else {
+      return false
+    }
+    
+    let today = Calendar.current.startOfDay(for: Date())
+    let target = Calendar.current.startOfDay(for: self)
+    
+    return target <= today
+  }
+}

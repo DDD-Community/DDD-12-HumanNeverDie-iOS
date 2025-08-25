@@ -39,7 +39,7 @@ struct HomeCardBeverageListView: View {
       
       AMDGlucoseValueLabel(
         consumedGlucose: Double(beverageCalendar?.totalSugarGrams ?? 0),
-        baseGlucose: 50,
+        baseGlucose: Double(beverageCalendar?.sugarMaxG ?? 0),
         variant: sugarStatusVariant
       )
     }
@@ -74,7 +74,7 @@ struct HomeCardBeverageListView: View {
   
   private var sugarStatusVariant: AMDStatusVariant {
     BeverageSugarStatusType(
-      baseSugar: 50,
+      baseSugar: beverageCalendar?.sugarMaxG ?? 0,
       totalSugar: beverageCalendar?.totalSugarGrams ?? 0
     ).statusVariant
   }

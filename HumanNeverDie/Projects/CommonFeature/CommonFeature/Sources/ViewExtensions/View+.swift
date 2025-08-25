@@ -1,14 +1,14 @@
 //
 //  View+.swift
-//  Shared
+//  CommonFeature
 //
-//  Created by Seulki Lee on 8/24/25.
+//  Created by 김규철 on 8/25/25.
 //
 
 import SwiftUI
 
-extension View {
-  public func hideKeyboard() {
+public extension View {  
+  func hideKeyboard() {
     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
   }
 }

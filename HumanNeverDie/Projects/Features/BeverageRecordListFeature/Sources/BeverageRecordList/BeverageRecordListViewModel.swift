@@ -20,6 +20,9 @@ public final class BeverageRecordListViewModel: ViewModelable {
   public struct State: Equatable {
     var beverageRecordDate: Date
     
+    var baseSugar: Int = 0
+    var totalSugar: Int = 0
+    
     var sugarLevelType: BeverageSugarLevelType?
     var isOnlyLiked: Bool = false
     
@@ -34,6 +37,9 @@ public final class BeverageRecordListViewModel: ViewModelable {
 
   @ObservationIgnored
   @Dependency(\.beverageUseCase) private var beverageUseCase
+  
+  @ObservationIgnored
+  @Dependency(\.userDefaultClient) private var userDefaultClient
 
   @ObservationIgnored
   var listViewModel: BeverageListViewModel = .init()
@@ -42,7 +48,11 @@ public final class BeverageRecordListViewModel: ViewModelable {
   public init(beverageRecordDate: Date) {
     self.state = .init(beverageRecordDate: beverageRecordDate)
     delegate()
-    Task { await self.getBeverage() }
+    
+    Task {
+      await getBeverage()
+      await getUserSugar()
+    }
   }
 
   deinit {
@@ -84,6 +94,18 @@ public final class BeverageRecordListViewModel: ViewModelable {
       }
     } catch {
       print("로컬 좋아요 동기화 실패: \(error)")
+    }
+  }
+  
+  private func getUserSugar() async {
+    guard let baseSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.baseSugar),
+          let totalSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.totalSugar) else {
+      return
+    }
+    
+    await MainActor.run {
+      state.baseSugar = baseSugar
+      state.totalSugar = totalSugar
     }
   }
 
