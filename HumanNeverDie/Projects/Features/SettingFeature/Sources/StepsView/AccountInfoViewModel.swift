@@ -164,8 +164,7 @@ extension AccountInfoViewModel {
         let updatedUserInfo = await self.getCurrentUserInfo()
         // Router를 통해 전달
         await MainActor.run {
-          self.router?.onUserInfoUpdated?(updatedUserInfo)
-          self.router?.pop()
+          self.router?.popWithResult(updatedUserInfo)
         }
       },
       secondaryButton: .init(title: "취소", type: .secondary) {

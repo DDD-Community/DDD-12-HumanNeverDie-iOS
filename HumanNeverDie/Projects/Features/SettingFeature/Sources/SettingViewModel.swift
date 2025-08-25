@@ -18,12 +18,9 @@ import Dependencies
 @Observable
 @MainActor
 public final class SettingViewModel: ViewModelable {
-  @ObservationIgnored
-  @Dependency(\.toastClient) private var toastClient
-  @ObservationIgnored
-  @Dependency(\.alertClient) private var alertClient
-  
   public struct State: Equatable {
+    var isViewDidLoad: Bool = false
+    
     var userInfo: UserInfo
     var isLoading: Bool = false
     var userID: String = ""
@@ -33,7 +30,7 @@ public final class SettingViewModel: ViewModelable {
   }
   
   public enum Action {
-    case onAppear
+    case onViewDidLoad
     case updateUserInfo(UserInfo)
     case logout
     case logoutAlertButtonTapped
@@ -42,22 +39,32 @@ public final class SettingViewModel: ViewModelable {
     
   }
   
-  public var state: State
-  
   @ObservationIgnored
   @Dependency(\.userUseCase) private var userUseCase
+  
   @ObservationIgnored
   @Dependency(\.authUseCase) private var authUseCase
+  
   @ObservationIgnored
   @Dependency(\.keychainClient) private var keychainClient
   
+  @ObservationIgnored
+  @Dependency(\.toastClient) private var toastClient
+  
+  @ObservationIgnored
+  @Dependency(\.alertClient) private var alertClient
+  
+  public var state: State
   public init() {
     self.state = State(userInfo: UserInfo.defaultUserInfo)
   }
   
   public func handleAction(_ action: Action) {
     switch action {
-    case .onAppear:
+    case .onViewDidLoad:
+      guard !state.isViewDidLoad else { return }
+      state.isViewDidLoad = true
+      
       if let userID = keychainClient.getValue(forKey: AMDKeychainKey.userID) {
         state.userID = userID
       }

@@ -127,8 +127,7 @@ extension GoalSettingViewModel {
           )
           
           await MainActor.run {
-            self.router?.onUserInfoUpdated?(updatedUserInfo)
-            self.router?.pop()
+            self.router?.popWithResult(updatedUserInfo)
           }
         }
       },

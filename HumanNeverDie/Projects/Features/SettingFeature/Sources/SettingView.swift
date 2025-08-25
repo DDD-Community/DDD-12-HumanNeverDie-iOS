@@ -9,6 +9,7 @@ import SwiftUI
 
 import DesignSystem
 import CommonFeature
+import UserDomain
 
 import Dependencies
 
@@ -82,8 +83,8 @@ public struct SettingView: View {
         withAnimation { router.rootRoute = .login }
       }
     }
-    .onAppear {
-      viewModel.handleAction(.onAppear)
+    .onViewDidLoad {
+      viewModel.handleAction(.onViewDidLoad)
     }
   }
 }
@@ -104,14 +105,14 @@ extension SettingView {
   private func handleItemTap(_ item: SettingItem) {
     switch item {
     case .accountInfo:
-      router.setUserInfoUpdateHandler { [weak viewModel] updatedUserInfo in
-        viewModel?.handleAction(.updateUserInfo(updatedUserInfo))
+      router.setResultHandler { updatedUserInfo in
+        viewModel.handleAction(.updateUserInfo(updatedUserInfo))
       }
       router.push(to: .SettingAccountInfo(userInfo: viewModel.userInfo))
       
     case .goalSetting:
-      router.setUserInfoUpdateHandler { [weak viewModel] updatedUserInfo in
-        viewModel?.handleAction(.updateUserInfo(updatedUserInfo))
+      router.setResultHandler { updatedUserInfo in
+        viewModel.handleAction(.updateUserInfo(updatedUserInfo))
       }
       router.push(to: .SettingGoalSetting(userInfo: viewModel.userInfo))
       
@@ -143,7 +144,6 @@ extension SettingView {
   }
   
   private func sectionDivider() -> some View {
-    // sectionDivider 구현이 필요합니다
     Divider()
       .background(.gray40)
   }
