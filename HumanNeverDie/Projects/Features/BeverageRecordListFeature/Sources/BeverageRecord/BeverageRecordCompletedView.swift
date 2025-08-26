@@ -132,7 +132,7 @@ public struct BeverageRecordCompletedView: View {
       beverageTitle: beverageDetail.name,
       glucose: Double(selectedSizeType?.nutrition.sugar ?? 0),
       kcal: Double(selectedSizeType?.nutrition.kcal ?? 0),
-      sugarFreeVariant: BeverageSugarFreeType(sugar: selectedSizeType?.nutrition.sugar ?? 0)?.sugarFreeVariant
+      sugarFreeVariant: BeverageSugarFreeType(sugar: Double(selectedSizeType?.nutrition.sugar ?? 0))?.sugarFreeVariant
     )
   }
   

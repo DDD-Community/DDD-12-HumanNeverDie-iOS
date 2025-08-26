@@ -103,7 +103,7 @@ public struct BeverageRecordView: View {
     VStack(spacing: 10) {
       if !viewModel.beverageDetail.sizes.isEmpty {
         ForEach(viewModel.beverageDetail.sizes, id: \.sizeType) { size in
-          let sugarFreeType = BeverageSugarFreeType(sugar: size.nutrition.sugar)
+          let sugarFreeType = BeverageSugarFreeType(sugar: Double(size.nutrition.sugar))
           
           AMDOptionButton(
             title: size.sizeType,
