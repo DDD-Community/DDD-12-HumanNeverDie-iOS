@@ -30,7 +30,6 @@ struct BeverageListView: View {
       beverageFilterChipView
       beverageList
     }
-    .padding(.horizontal, 20)
     .amdBottomSheet(isPresented: $viewModel.state.isBeverageDetailPresented, detents: [.height(474)]) {
       AMDBeverageDetailView(productID: viewModel.beverageProductID)
     }
@@ -58,6 +57,7 @@ struct BeverageListView: View {
     }
     .frame(minHeight: 40, maxHeight: 40)
     .padding(.top, 4)
+    .padding(.horizontal, 20)
   }
 
   private var beverageFilterChipView: some View {
@@ -79,6 +79,7 @@ struct BeverageListView: View {
       }
     }
     .padding(.vertical, 16)
+    .padding(.horizontal, 20)
     .frame(maxWidth: .infinity, minHeight: Constants.beverageFilterChipViewHeight, maxHeight: Constants.beverageFilterChipViewHeight, alignment: .leading)
   }
 
