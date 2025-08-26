@@ -154,7 +154,13 @@ public final class BeverageListViewModel: ViewModelable {
     case let .beverageListFavoriteTapped(index, beverage):
       let originalIsLiked = beverage.isLiked
       let newLikedState = !beverage.isLiked
-      state.beverageList[index].isLiked = newLikedState
+      
+      if state.isOnlyLiked && !newLikedState {
+        state.beverageList.remove(at: index)
+      } else {
+        state.beverageList[index].isLiked = newLikedState
+      }
+      
       state.filterCount.like = newLikedState ? state.filterCount.like + 1 : state.filterCount.like - 1
 
       Task {
