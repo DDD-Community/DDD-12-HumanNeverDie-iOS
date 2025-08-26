@@ -45,6 +45,9 @@ public final class BeverageRecordViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.beverageLocalLikeUseCase) private var beverageLocalLikeUseCase
   
+  @ObservationIgnored
+  @Dependency(\.globalState) private var globalState
+  
   public var state: State
   public init(
     productID: String,
@@ -71,11 +74,13 @@ public final class BeverageRecordViewModel: ViewModelable {
       let newLikedState = !state.isLiked
       state.isLiked = newLikedState
       
-      handleBeverageLike(
-        state.beverageDetail.toBeverage(isLiked: originalIsLiked),
-        newIsLiked: newLikedState,
-        originalIsLiked: originalIsLiked
-      )
+      Task {
+        await handleBeverageLike(
+          state.beverageDetail.toBeverage(isLiked: originalIsLiked),
+          newIsLiked: newLikedState,
+          originalIsLiked: originalIsLiked
+        )
+      }
       
     case .recordButtonTapped:
       Task { await recordBeverage() }
@@ -98,11 +103,26 @@ public final class BeverageRecordViewModel: ViewModelable {
     }
   }
   
-  private func handleBeverageLike(_ beverage: Beverage, newIsLiked: Bool, originalIsLiked: Bool) {
+  private func handleBeverageLike(_ beverage: Beverage, newIsLiked: Bool, originalIsLiked: Bool) async {
+    do {
+      if newIsLiked {
+        _ = try await beverageUseCase.likeBeverage(productID: beverage.productID)
+      } else {
+        _ = try await beverageUseCase.unLikeBeverage(productID: beverage.productID)
+      }
+      
+      await MainActor.run {
+        globalState.beverageLikeUpdatePublisher.send((productID: beverage.productID, isLiked: newIsLiked))
+      }
+    } catch {
+      saveToLocalStorage(beverage, newIsLiked: newIsLiked, originalIsLiked: originalIsLiked)
+    }
+  }
+  
+  private func saveToLocalStorage(_ beverage: Beverage, newIsLiked: Bool, originalIsLiked: Bool) {
     do {
       var updatedBeverage = beverage
       updatedBeverage.isLiked = newIsLiked
-      
       try beverageLocalLikeUseCase.handleBeverageLike(
         beverage: updatedBeverage,
         originalIsLiked: originalIsLiked

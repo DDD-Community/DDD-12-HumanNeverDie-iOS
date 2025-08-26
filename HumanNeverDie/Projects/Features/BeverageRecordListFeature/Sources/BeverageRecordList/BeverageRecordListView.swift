@@ -11,9 +11,13 @@ import CommonFeature
 import DesignSystem
 import BeverageDomain
 
+import Dependencies
+
 public struct BeverageRecordListView: View {
   @State private var viewModel: BeverageRecordListViewModel
   @Environment(Router.self) private var router
+  @Dependency(\.globalState) private var globalState
+
 
   private enum Constants {
     static let navigationBarHeight: CGFloat = 56
@@ -35,6 +39,12 @@ public struct BeverageRecordListView: View {
     .ignoresSafeArea([.keyboard, .container], edges: .bottom)
     .toolbarVisibility(.hidden, for: .navigationBar)
     .amdSwipeBackEnabled()
+    .onReceive(globalState.beverageLikeUpdatePublisher) { likeUpdate in
+      viewModel.handleAction(.beverageLikeStatusChanged(
+        productID: likeUpdate.productID,
+        isLiked: likeUpdate.isLiked
+      ))
+    }
     .onChange(of: viewModel.route) { _, route in
       guard let route else { return }
       router.push(to: route)

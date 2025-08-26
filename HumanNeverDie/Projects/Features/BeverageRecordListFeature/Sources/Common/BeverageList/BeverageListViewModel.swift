@@ -79,6 +79,9 @@ public final class BeverageListViewModel: ViewModelable {
   
   @ObservationIgnored
   @Dependency(\.alertClient) private var alertClient
+  
+  @ObservationIgnored
+  @Dependency(\.globalState) private var globalState
 
   var delegateAction: ((DelegateAction?) -> Void)?
   public var state: State = .init()
@@ -154,7 +157,9 @@ public final class BeverageListViewModel: ViewModelable {
       state.beverageList[index].isLiked = newLikedState
       state.filterCount.like = newLikedState ? state.filterCount.like + 1 : state.filterCount.like - 1
 
-      handleBeverageLike(beverage, newIsLiked: newLikedState, originalIsLiked: originalIsLiked)
+      Task {
+        await handleBeverageLike(beverage, newIsLiked: newLikedState, originalIsLiked: originalIsLiked)
+      }
 
     case let .beverageListInfoTapped(productID):
       state.beverageProductID = productID
@@ -210,11 +215,26 @@ public final class BeverageListViewModel: ViewModelable {
     }
   }
 
-  private func handleBeverageLike(_ beverage: Beverage, newIsLiked: Bool, originalIsLiked: Bool) {
+  private func handleBeverageLike(_ beverage: Beverage, newIsLiked: Bool, originalIsLiked: Bool) async {
+    do {
+      if newIsLiked {
+        _ = try await beverageUseCase.likeBeverage(productID: beverage.productID)
+      } else {
+        _ = try await beverageUseCase.unLikeBeverage(productID: beverage.productID)
+      }
+      
+      await MainActor.run {
+        globalState.beverageLikeUpdatePublisher.send((productID: beverage.productID, isLiked: newIsLiked))
+      }
+    } catch {
+      saveToLocalStorage(beverage, newIsLiked: newIsLiked, originalIsLiked: originalIsLiked)
+    }
+  }
+  
+  private func saveToLocalStorage(_ beverage: Beverage, newIsLiked: Bool, originalIsLiked: Bool) {
     do {
       var updatedBeverage = beverage
       updatedBeverage.isLiked = newIsLiked
-
       try beverageLocalLikeUseCase.handleBeverageLike(
         beverage: updatedBeverage,
         originalIsLiked: originalIsLiked

@@ -33,6 +33,7 @@ public final class BeverageRecordListViewModel: ViewModelable {
     case onAppear
     case delegateAction(BeverageListViewModel.DelegateAction?)
     case clearRoute
+    case beverageLikeStatusChanged(productID: String, isLiked: Bool)
   }
 
   @ObservationIgnored
@@ -40,7 +41,7 @@ public final class BeverageRecordListViewModel: ViewModelable {
   
   @ObservationIgnored
   @Dependency(\.userDefaultClient) private var userDefaultClient
-
+  
   @ObservationIgnored
   var listViewModel: BeverageListViewModel = .init()
 
@@ -62,7 +63,7 @@ public final class BeverageRecordListViewModel: ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
-      Task { await syncBeverageLike() }
+      break
 
     case let .delegateAction(action):
       switch action {
@@ -81,20 +82,22 @@ public final class BeverageRecordListViewModel: ViewModelable {
 
     case .clearRoute:
       state.route = nil
+      
+    case let .beverageLikeStatusChanged(productID, isLiked):
+      syncBeverageLikeStatusFromGlobalEvent(productID: productID, isLiked: isLiked)
     }
   }
 
-  private func syncBeverageLike() async {
-    do {
-      let (syncedBeverages, localLikeCount) = try beverageUseCase.syncBeverageLike(beverages: listViewModel.state.beverageList)
 
-      await MainActor.run {
-        listViewModel.state.beverageList = syncedBeverages
-        listViewModel.state.filterCount.like += localLikeCount
-      }
-    } catch {
-      print("로컬 좋아요 동기화 실패: \(error)")
-    }
+  private func syncBeverageLikeStatusFromGlobalEvent(productID: String, isLiked: Bool) {
+    guard let update = beverageUseCase.getBeverageLikeUpdate(
+      from: listViewModel.state.beverageList,
+      productID: productID,
+      newLikeStatus: isLiked
+    ) else { return }
+    
+    listViewModel.state.beverageList[update.beverageIndex].isLiked = isLiked
+    listViewModel.state.filterCount.like += update.likeCountChange
   }
   
   private func getUserSugar() async {
