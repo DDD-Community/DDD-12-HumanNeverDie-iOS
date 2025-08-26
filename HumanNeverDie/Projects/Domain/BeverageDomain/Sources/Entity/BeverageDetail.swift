@@ -41,7 +41,7 @@ extension BeverageDetail {
       kcal: defaultNutrition.kcal,
       sugar: defaultNutrition.sugar,
       brandName: brandName,
-      sugarFreeType: BeverageSugarFreeType(sugar: defaultNutrition.sugar),
+      sugarFreeType: BeverageSugarFreeType(sugar: Double(defaultNutrition.sugar)),
       isLiked: isLiked
     )
   }

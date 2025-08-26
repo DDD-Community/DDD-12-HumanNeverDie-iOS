@@ -68,7 +68,7 @@ struct HomeCardBeverageListView: View {
       beverageTitle: item.beverageName,
       glucose: Double(item.sugarG),
       kcal: Double(item.servingKcal),
-      sugarFreeVariant: BeverageSugarFreeType(sugar: item.sugarG)?.sugarFreeVariant
+      sugarFreeVariant: BeverageSugarFreeType(sugar: Double(item.sugarG))?.sugarFreeVariant
     )
   }
   
