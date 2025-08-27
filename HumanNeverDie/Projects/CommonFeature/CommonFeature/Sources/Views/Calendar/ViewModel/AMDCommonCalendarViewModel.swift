@@ -83,7 +83,7 @@ class AMDCommonCalendarViewModel {
 extension DateFormatter {
   static let calendarTitleFormat: DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy.MM"
+    formatter.dateFormat = "yyyy년 MM월"
     return formatter
   }()
 }
