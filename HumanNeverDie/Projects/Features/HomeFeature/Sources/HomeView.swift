@@ -97,7 +97,10 @@ public struct HomeView: View {
   private var beverageRecordButton: some View {
     AMDFloatingButton(
       title: "음료 기록하기",
-      action: { router.push(to: .beverageRecordList(recordDate: viewModel.selectedDate ?? Date())) }
+      action: {
+        viewModel.handleAction(.beverageRecordButtonTapped)
+        router.push(to: .beverageRecordList(recordDate: viewModel.selectedDate ?? Date()))
+      }
     )
     .padding(.bottom, 20)
     .opacity(viewModel.state.isTodayOrPastSelectedDate ? 1 : 0)

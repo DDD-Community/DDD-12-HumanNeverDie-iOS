@@ -45,6 +45,8 @@ public final class HomeViewModel: ViewModelable {
     case weekSlideGesture(Date)
     /// 날짜 피커에서 날짜 선택 완료
     case datePickerConfirmed(Date)
+    /// 음료 기록 버튼 선택 시
+    case beverageRecordButtonTapped
     /// 음료 기록 완료
     case homeRefresh
   }
@@ -83,6 +85,12 @@ public final class HomeViewModel: ViewModelable {
       state.currentDate = date
       state.selectedDate = date
       Task { await getWeeklyCalender() }
+      
+    case .beverageRecordButtonTapped:
+      Task {
+        await userDefaultClient.setValue(state.selectedDateCalendar?.totalSugarGrams, forKey: AMDUserDefaultKey.totalSugar)
+        await userDefaultClient.setValue(state.selectedDateCalendar?.sugarMaxG, forKey: AMDUserDefaultKey.baseSugar)
+      }
       
     case .homeRefresh:
       Task { await getWeeklyCalender() }
@@ -125,11 +133,6 @@ public final class HomeViewModel: ViewModelable {
     
     if let selectedDateCalendar = state.selectedDateCalendar {
       state.isSelectedDateEmpty = selectedDateCalendar.records.isEmpty
-      
-      Task {
-        await userDefaultClient.setValue(selectedDateCalendar.totalSugarGrams, forKey: AMDUserDefaultKey.totalSugar)
-        await userDefaultClient.setValue(selectedDateCalendar.sugarMaxG, forKey: AMDUserDefaultKey.baseSugar)
-      }
     } else {
       state.isSelectedDateEmpty = true
     }
