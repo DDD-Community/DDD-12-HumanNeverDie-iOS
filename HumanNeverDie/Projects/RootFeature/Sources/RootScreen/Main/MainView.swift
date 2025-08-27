@@ -50,8 +50,8 @@ public struct MainView: View {
       }
     }
     .animation(.default, value: viewModel.isOnboardingPresented)
-    .onAppear {
-      viewModel.handleAction(.onAppear)
+    .onViewDidLoad {
+      viewModel.handleAction(.onViewDidLoad)
     }
   }
   
@@ -69,7 +69,7 @@ public struct MainView: View {
         myPageView
       }
     }
-    .padding(.bottom, 92)
+    .padding(.bottom, 82)
   }
   
   private var homeView: some View {

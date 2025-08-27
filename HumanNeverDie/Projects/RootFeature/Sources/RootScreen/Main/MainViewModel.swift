@@ -26,7 +26,7 @@ public final class MainViewModel: ViewModelable {
   
   public enum Action {
     case tabBarItemTapped(AMDTabBarType)
-    case onAppear
+    case onViewDidLoad
     case onboardingDismissButtonTapped(Bool)
   }
   
@@ -50,7 +50,7 @@ public final class MainViewModel: ViewModelable {
     case .tabBarItemTapped(let tab):
       state.selectedTab = tab
       
-    case .onAppear:
+    case .onViewDidLoad:
       Task { await checkOnboarding() }
       
     case let .onboardingDismissButtonTapped(isDontShow):
