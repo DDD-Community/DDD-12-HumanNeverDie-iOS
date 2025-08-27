@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+import CommonFeature
 import DesignSystem
 
 struct BeverageRecentSearchListView: View {
@@ -46,6 +47,7 @@ struct BeverageRecentSearchListView: View {
           action: { viewModel.handleAction(.recentSearchListItemDeleteButtonTapped(search)) }
         )
         .onTapGesture {
+          hideKeyboard()
           viewModel.handleAction(.recentSearchListItemTapped(search))
         }
       }
