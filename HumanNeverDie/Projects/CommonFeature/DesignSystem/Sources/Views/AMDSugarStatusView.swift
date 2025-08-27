@@ -212,6 +212,7 @@ public struct AMDSugarStatusView: View {
   private func contentRecordView(sugar: Int, baseSugar: Int) -> some View {
     speechBubbleContentView(sugar: sugar, baseSugar: baseSugar) {
       sugarStatusText(sugar: sugar, baseSugar: baseSugar, fontStyle: (.mediumBold, .mediumMedium))
+        .minimumScaleFactor(0.8)
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
     }
