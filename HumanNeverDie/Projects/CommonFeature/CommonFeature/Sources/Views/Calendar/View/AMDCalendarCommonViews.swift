@@ -59,13 +59,12 @@ public struct CalendarWeekdayTitleView: View {
     LazyVGrid(columns: columns, spacing: 15) {
       ForEach(items) { weekday in
         Text(weekday.label)
-          .amdFont(.mediumMedium)
-          .fontWeight(.semibold)
+          .amdFont(.smallRegular)
           .foregroundColor(weekday.color)
           .frame(width: 44, height: 20)
           .frame(maxWidth: .infinity)
       }
-    }
+    }.padding(.bottom, 8)
   }
 }
 
