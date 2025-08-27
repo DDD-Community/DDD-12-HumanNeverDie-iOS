@@ -29,22 +29,25 @@ struct PhysicalInfoFormView: View {
           hideKeyboard()
         }
       
-      VStack(spacing: 0) {
-        topHeaderView()
-        contentView()
-        Spacer()
-        bottomButtonView()
+      ScrollView {
+        VStack(spacing: 0) {
+          topHeaderView()
+          contentView()
+          Spacer()
+          bottomButtonView()
+        }
+        .background(Color.white)
+        .ignoresSafeArea(edges: .bottom)
+        .onAppear {
+          viewModel.handleAction(.onAppear)
+        }
       }
-      .background(Color.white)
-      .ignoresSafeArea(edges: .bottom)
-      .onAppear {
-        viewModel.handleAction(.onAppear)
-      }
+      .scrollIndicators(.hidden)
+        .scrollBounceBehavior(.basedOnSize)
+        .onAppear {
+          UIScrollView.appearance().bounces = false
+        }
     }
-    .onAppear {
-      viewModel.handleAction(.onAppear)
-    }
-    .toolbarVisibility(.hidden, for: .navigationBar)
   }
 }
 

@@ -23,7 +23,7 @@ public struct HistoryView: View {
   
   public var body: some View {
     ZStack(alignment: .top) {
-      ScrollView(.vertical, showsIndicators: false) {
+      ScrollView(.vertical) {
         ZStack {
           popupBackgroundOverlay()
           
@@ -44,6 +44,11 @@ public struct HistoryView: View {
           }
         }
       }
+      .scrollIndicators(.hidden)
+        .scrollBounceBehavior(.basedOnSize)
+        .onAppear {
+          UIScrollView.appearance().bounces = false
+        }
       .padding(.top, 4)
       .amdBottomSheet(isPresented: $viewModel.state.isBevarageDetailPresented, detents: [.height(474)]) {
         AMDBeverageDetailView(productID: viewModel.selectedProductID)
