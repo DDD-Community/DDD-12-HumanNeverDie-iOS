@@ -89,7 +89,7 @@ struct BeverageListView: View {
         ForEach(Array(viewModel.beverageList.enumerated()), id: \.element.id) { index, beverage in
           AMDBeverageListView.large(
             thumbnailURL: beverage.thumbnailURL,
-            brandTitle: beverage.brandName,
+            brandTitle: beverage.brandType?.koreanName ?? "",
             beverageTitle: beverage.name,
             glucose: Double(beverage.sugar),
             kcal: Double(beverage.kcal),

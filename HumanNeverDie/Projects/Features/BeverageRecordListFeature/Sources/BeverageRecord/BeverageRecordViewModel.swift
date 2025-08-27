@@ -27,7 +27,7 @@ public final class BeverageRecordViewModel: ViewModelable {
       thumbnailURL: "",
       defaultNutrition: BeverageNutrition(kcal: 0, sugar: 0, protein: 0, saturatedFat: 0, sodium: 0, caffeine: 0),
       sizes: [],
-      brandName: ""
+      brandType: nil
     )
     var selectedSizeType: BeverageSize?
     var isBeverageRecordCompleted: Bool = false

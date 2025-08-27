@@ -104,7 +104,7 @@ extension CalendarRecordResponse {
       intakeHistoryId: self.intakeHistoryId,
       productId: self.productId,
       beverageName: self.beverageName,
-      cafeBrand: self.cafeBrand,
+      brandType: BeverageBrandType(rawValue: self.cafeBrand),
       intakeTime: self.intakeTime,
       sugarLevel: self.sugarLevel,
       servingKcal: self.nutrition.servingKcal ?? 0,

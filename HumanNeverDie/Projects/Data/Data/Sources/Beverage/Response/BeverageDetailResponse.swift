@@ -57,7 +57,7 @@ extension BeverageDetailResponse {
       thumbnailURL: imgUrl ?? "",
       defaultNutrition: domainNutrition,
       sizes: domainSizes,
-      brandName: cafeStoreDto?.cafeBrand ?? ""
+      brandType: BeverageBrandType(rawValue: cafeStoreDto?.cafeBrand ?? "")
     )
   }
 }

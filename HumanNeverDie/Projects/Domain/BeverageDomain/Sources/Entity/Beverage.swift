@@ -14,7 +14,7 @@ public struct Beverage: Identifiable, Hashable, Sendable {
   public let thumbnailURL: String
   public let kcal: Int
   public let sugar: Int
-  public let brandName: String
+  public let brandType: BeverageBrandType?
   public let sugarFreeType: BeverageSugarFreeType?
   public var isLiked: Bool
   
@@ -24,7 +24,7 @@ public struct Beverage: Identifiable, Hashable, Sendable {
     thumbnailURL: String,
     kcal: Int,
     sugar: Int,
-    brandName: String,
+    brandType: BeverageBrandType?,
     sugarFreeType: BeverageSugarFreeType?,
     isLiked: Bool
   ) {
@@ -33,7 +33,7 @@ public struct Beverage: Identifiable, Hashable, Sendable {
     self.thumbnailURL = thumbnailURL
     self.kcal = kcal
     self.sugar = sugar
-    self.brandName = brandName
+    self.brandType = brandType
     self.sugarFreeType = sugarFreeType
     self.isLiked = isLiked
   }
@@ -48,7 +48,7 @@ public extension Beverage {
         thumbnailURL: "https://picsum.photos/200/300?random=15",
         kcal: 10,
         sugar: 0,
-        brandName: "스타벅스",
+        brandType: .starbucks,
         sugarFreeType: .zeroSugar,
         isLiked: true
       ),
@@ -58,7 +58,7 @@ public extension Beverage {
         thumbnailURL: "https://picsum.photos/200/300?random=42",
         kcal: 190,
         sugar: 14,
-        brandName: "스타벅스",
+        brandType: .starbucks,
         sugarFreeType: nil,
         isLiked: false
       ),
@@ -68,7 +68,7 @@ public extension Beverage {
         thumbnailURL: "https://picsum.photos/200/300?random=73",
         kcal: 240,
         sugar: 25,
-        brandName: "스타벅스",
+        brandType: .starbucks,
         sugarFreeType: nil,
         isLiked: true
       ),
@@ -78,7 +78,7 @@ public extension Beverage {
         thumbnailURL: "https://picsum.photos/200/300?random=128",
         kcal: 250,
         sugar: 35,
-        brandName: "스타벅스",
+        brandType: .starbucks,
         sugarFreeType: .lowSugar,
         isLiked: false
       ),
@@ -88,7 +88,7 @@ public extension Beverage {
         thumbnailURL: "https://picsum.photos/200/300?random=247",
         kcal: 440,
         sugar: 60,
-        brandName: "스타벅스",
+        brandType: .starbucks,
         sugarFreeType: nil,
         isLiked: true
       ),
@@ -98,7 +98,7 @@ public extension Beverage {
         thumbnailURL: "https://picsum.photos/200/300?random=356",
         kcal: 5,
         sugar: 0,
-        brandName: "스타벅스",
+        brandType: .starbucks,
         sugarFreeType: nil,
         isLiked: false
       ),
@@ -108,7 +108,7 @@ public extension Beverage {
         thumbnailURL: "https://picsum.photos/200/300?random=489",
         kcal: 150,
         sugar: 0,
-        brandName: "스타벅스",
+        brandType: .starbucks,
         sugarFreeType: .lowSugar,
         isLiked: true
       ),
@@ -118,7 +118,7 @@ public extension Beverage {
         thumbnailURL: "https://picsum.photos/200/300?random=512",
         kcal: 270,
         sugar: 32,
-        brandName: "스타벅스",
+        brandType: .starbucks,
         sugarFreeType: nil,
         isLiked: false
       ),
@@ -128,7 +128,7 @@ public extension Beverage {
         thumbnailURL: "https://picsum.photos/200/300?random=677",
         kcal: 30,
         sugar: 8,
-        brandName: "스타벅스",
+        brandType: .starbucks,
         sugarFreeType: nil,
         isLiked: false
       ),
@@ -138,7 +138,7 @@ public extension Beverage {
         thumbnailURL: "https://picsum.photos/200/300?random=894",
         kcal: 400,
         sugar: 53,
-        brandName: "스타벅스",
+        brandType: .starbucks,
         sugarFreeType: .lowSugar,
         isLiked: true
       )
