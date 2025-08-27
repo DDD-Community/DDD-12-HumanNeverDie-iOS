@@ -95,8 +95,12 @@ class AMDWeekCalendarViewModel: AMDCommonCalendarViewModel {
 
 extension Date {
   func startOfWeek(using calendar: Calendar = .current) -> Date {
-    let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self)
-    return calendar.date(from: components)!
+    // 일요일 시작으로 강제 설정
+    var cal = calendar
+    cal.firstWeekday = 1 // 일요일 강제
+    
+    let components = cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: self)
+    return cal.date(from: components)!
   }
   
   func applyingCurrentTime() -> Date {
