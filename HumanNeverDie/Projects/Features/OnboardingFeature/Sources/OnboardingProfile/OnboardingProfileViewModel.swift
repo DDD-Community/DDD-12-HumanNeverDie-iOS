@@ -46,6 +46,9 @@ public final class OnboardingProfileViewModel: ViewModelable {
   @Dependency(\.keychainClient) private var keychainClient
   
   @ObservationIgnored
+  @Dependency(\.userDefaultClient) private var userDefaultClient
+  
+  @ObservationIgnored
   @Dependency(\.toastClient) private var toastClient
   
   @ObservationIgnored
@@ -75,7 +78,10 @@ public final class OnboardingProfileViewModel: ViewModelable {
       updateUserInfo(userInfo)
       
     case .completeOnboarding:
-      Task { await completeOnboarding() }
+      Task {
+        await userDefaultClient.setValue(true, forKey: AMDUserDefaultKey.isFirstHome)
+        await completeOnboarding()
+      }
     }
   }
   

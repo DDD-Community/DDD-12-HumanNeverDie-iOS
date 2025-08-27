@@ -42,6 +42,17 @@ public struct MainView: View {
     }
     .toolbarVisibility(.hidden, for: .tabBar)
     .ignoresSafeArea(edges: .bottom)
+    .overlay {
+      if viewModel.isOnboardingPresented {
+        AMDOnboardingView(
+          onDismiss: { viewModel.handleAction(.onboardingDismissButtonTapped($0)) }
+        )
+      }
+    }
+    .animation(.default, value: viewModel.isOnboardingPresented)
+    .onAppear {
+      viewModel.handleAction(.onAppear)
+    }
   }
   
   @ViewBuilder

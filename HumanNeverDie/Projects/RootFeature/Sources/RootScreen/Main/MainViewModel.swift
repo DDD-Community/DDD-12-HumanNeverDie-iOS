@@ -12,17 +12,26 @@ import HomeFeature
 import HistoryFeature
 import SettingFeature
 import CommonFeature
+import Shared
+
+import Dependencies
 
 @Observable
 @MainActor
 public final class MainViewModel: ViewModelable {
   public struct State: Equatable {
     var selectedTab: AMDTabBarType  = .home
+    var isOnboardingPresented: Bool = false
   }
   
   public enum Action {
     case tabBarItemTapped(AMDTabBarType)
+    case onAppear
+    case onboardingDismissButtonTapped(Bool)
   }
+  
+  @ObservationIgnored
+  @Dependency(\.userDefaultClient) private var userDefaultClient
   
   @ObservationIgnored
   var homeViewModel: HomeViewModel = .init()
@@ -40,6 +49,27 @@ public final class MainViewModel: ViewModelable {
     switch action {
     case .tabBarItemTapped(let tab):
       state.selectedTab = tab
+      
+    case .onAppear:
+      Task { await checkOnboarding() }
+      
+    case let .onboardingDismissButtonTapped(isDontShow):
+      Task {
+        await userDefaultClient.setValue(!isDontShow, forKey: AMDUserDefaultKey.isFirstHome)
+        await MainActor.run {
+          state.isOnboardingPresented = false
+        }
+      }
+    }
+  }
+  
+  private func checkOnboarding() async {
+    guard let isFirstHome: Bool = userDefaultClient.getValue(forKey: AMDUserDefaultKey.isFirstHome) else {
+      return
+    }
+    
+    await MainActor.run {
+      state.isOnboardingPresented = isFirstHome
     }
   }
 }
