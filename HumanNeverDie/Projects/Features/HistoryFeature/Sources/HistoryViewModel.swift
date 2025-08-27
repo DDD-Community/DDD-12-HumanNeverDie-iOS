@@ -64,6 +64,7 @@ public final class HistoryViewModel: ViewModelable {
     case applySelectedDate(Date)
     case clearSelectedBeverage
     case deleteSelectedBeverage
+    case beverageRecordButtonTapped
   }
   
   @ObservationIgnored
@@ -121,9 +122,19 @@ public final class HistoryViewModel: ViewModelable {
       state.currentDate = newDate
       state.selectedDate = newDate
       state.isMonthPickerPresented = false
+      
     case .deleteSelectedBeverage:
       Task {
         await showDeleteAlert()
+      }
+      
+    case .beverageRecordButtonTapped:
+      Task {
+        let dateKey = Date.toDateKeyString(from: state.selectedDate ?? Date())
+        guard let dailyData = state.monthHistoryData[dateKey] else { return }
+        
+        await userDefaultClient.setValue(dailyData.totalSugarGrams, forKey: AMDUserDefaultKey.totalSugar)
+        await userDefaultClient.setValue(dailyData.sugarMaxG, forKey: AMDUserDefaultKey.baseSugar)
       }
     }
   }
@@ -238,12 +249,6 @@ extension HistoryViewModel {
     
     let dateKey = Date.toDateKeyString(from: selectedDate)
     guard let dailyData = state.monthHistoryData[dateKey] else { return }
-    
-    
-    Task {
-      await userDefaultClient.setValue(dailyData.totalSugarGrams, forKey: AMDUserDefaultKey.totalSugar)
-      await userDefaultClient.setValue(dailyData.sugarMaxG, forKey: AMDUserDefaultKey.baseSugar)
-    }
     
     state.totalSugarGrams = dailyData.totalSugarGrams
     state.totalCount = dailyData.records.count

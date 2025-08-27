@@ -54,6 +54,7 @@ public final class BeverageSearchViewModel: ViewModelable {
     case addBeverageButtonTapped
     case delegateAction(BeverageListViewModel.DelegateAction?)
     case clearRoute
+    case beverageLikeStatusChanged(productID: String, isLiked: Bool)
   }
 
   @ObservationIgnored
@@ -89,7 +90,6 @@ public final class BeverageSearchViewModel: ViewModelable {
     switch action {
     case .onAppear:
       state.recentSearchList = beverageLocalSearchUseCase.getRecentSearchList()
-      Task { await syncBeverageLike() }
 
     case let .searchTextChanged(searchText):
       state.searchType = searchText.isEmpty ? .search : .list
@@ -104,7 +104,10 @@ public final class BeverageSearchViewModel: ViewModelable {
       }
 
       lastSearchedText = searchText
-
+      state.sugarLevelType = nil
+      state.isOnlyLiked = false
+      listViewModel.state.filterType = .all
+      
       Task {
         await searchBeverage(searchText)
         await saveRecentSearch(searchText)
@@ -115,6 +118,7 @@ public final class BeverageSearchViewModel: ViewModelable {
       state.searchText = recentText
       state.sugarLevelType = nil
       state.isOnlyLiked = false
+      listViewModel.state.filterType = .all
       state.searchType = .list
 
       Task {
@@ -145,20 +149,21 @@ public final class BeverageSearchViewModel: ViewModelable {
 
     case .clearRoute:
       state.route = nil
+      
+    case let .beverageLikeStatusChanged(productID, isLiked):
+      syncBeverageLikeStatusFromGlobalEvent(productID: productID, isLiked: isLiked)
     }
   }
 
-  private func syncBeverageLike() async {
-    do {
-      let (syncedBeverages, localLikeCount) = try beverageUseCase.syncBeverageLike(beverages: listViewModel.state.beverageList)
-
-      await MainActor.run {
-        listViewModel.state.beverageList = syncedBeverages
-        listViewModel.state.filterCount.like += localLikeCount
-      }
-    } catch {
-      print("로컬 좋아요 동기화 실패: \(error)")
-    }
+  private func syncBeverageLikeStatusFromGlobalEvent(productID: String, isLiked: Bool) {
+    guard let update = beverageUseCase.getBeverageLikeUpdate(
+      from: listViewModel.state.beverageList,
+      productID: productID,
+      newLikeStatus: isLiked
+    ) else { return }
+    
+    listViewModel.state.beverageList[update.beverageIndex].isLiked = isLiked
+    listViewModel.state.filterCount.like += update.likeCountChange
   }
 
   private func searchBeverage(_ keyword: String) async {

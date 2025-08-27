@@ -13,13 +13,12 @@ public protocol BeverageUseCaseProtocol: Sendable {
   func unLikeBeverage(productID: String) async throws -> BeverageLike
   func searchBeverage(keyword: String, sugarLevel: BeverageSugarLevelType?, onlyLiked: Bool) async throws -> BeverageList
   func recordBeverage(productID: String, recordDate: Date, size: String) async throws -> Bool
-  func syncBeverageLike(beverages: [Beverage]) throws -> ([Beverage], Int)
   func deleteBeverage(productID: String, intakeTime: String) async throws -> Bool
+  func getBeverageLikeUpdate(from beverages: [Beverage], productID: String, newLikeStatus: Bool) -> (beverageIndex: Int, likeCountChange: Int)?
 }
 
 public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable {
   @Dependency(\.beverageRepository) private var beverageRepository
-  @Dependency(\.beverageLikeLocalRepository) private var beverageLikeLocalRepository
   public init() {}
   
   public func getBeverageCount() async throws -> BeverageCount {
@@ -27,18 +26,7 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
   }
   
   public func getBeverageList(cursor: String?, sugarLevel: BeverageSugarLevelType?, onlyLiked: Bool) async throws -> BeverageList {
-    let beverageList = try await beverageRepository.getBeverageList(cursor: cursor, sugarLevel: sugarLevel?.rawValue, onlyLiked: onlyLiked)
-    let (syncedBeverages, likeCountDiff) = try syncBeverageLike(beverages: beverageList.items)
-    
-    return BeverageList(
-      items: syncedBeverages,
-      nextCursor: beverageList.nextCursor,
-      hasNext: beverageList.hasNext,
-      likeCount: beverageList.likeCount + likeCountDiff,
-      totalCount: beverageList.totalCount,
-      zeroSugarCount: beverageList.zeroSugarCount,
-      lowSugarCount: beverageList.lowSugarCount
-    )
+    return try await beverageRepository.getBeverageList(cursor: cursor, sugarLevel: sugarLevel?.rawValue, onlyLiked: onlyLiked)
   }
   
   public func getBeverageDetail(productID: String) async throws -> BeverageDetail {
@@ -54,18 +42,7 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
   }
   
   public func searchBeverage(keyword: String, sugarLevel: BeverageSugarLevelType?, onlyLiked: Bool) async throws -> BeverageList {
-    let beverageList = try await beverageRepository.searchBeverage(keyword: keyword, sugarLevel: sugarLevel?.rawValue, onlyLiked: onlyLiked)
-    let (syncedBeverages, likeCountDiff) = try syncBeverageLike(beverages: beverageList.items)
-    
-    return BeverageList(
-      items: syncedBeverages,
-      nextCursor: beverageList.nextCursor,
-      hasNext: beverageList.hasNext,
-      likeCount: beverageList.likeCount + likeCountDiff,
-      totalCount: beverageList.totalCount,
-      zeroSugarCount: beverageList.zeroSugarCount,
-      lowSugarCount: beverageList.lowSugarCount
-    )
+    return try await beverageRepository.searchBeverage(keyword: keyword, sugarLevel: sugarLevel?.rawValue, onlyLiked: onlyLiked)
   }
   
   public func recordBeverage(productID: String, recordDate: Date, size: String) async throws -> Bool {
@@ -80,34 +57,6 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
     }
   }
   
-  /// 로컬 좋아요 상태를 음료 목록에 동기화하고 카운트 차이를 계산
-  public func syncBeverageLike(beverages: [Beverage]) throws -> ([Beverage], Int) {
-    // 로컬에 저장된 좋아요 변경사항 조회
-    let localLikedBeverages = try beverageLikeLocalRepository.fetchAllBeverageLike()
-    
-    guard !localLikedBeverages.isEmpty else { return (beverages, 0) }
-    
-    // 빠른 조회를 위한 Map 생성
-    let localLikeMap = Dictionary(uniqueKeysWithValues: localLikedBeverages.map { ($0.productID, $0.isLiked) })
-    var likeCountDiff = 0
-    
-    // 음료 목록에 로컬 좋아요 상태 적용 및 카운트 차이 계산
-    let syncedBeverages = beverages.map { beverage in
-      guard let localIsLiked = localLikeMap[beverage.productID] else { return beverage }
-      
-      // 서버 상태와 로컬 상태가 다르면 카운트 차이 계산
-      if localIsLiked != beverage.isLiked {
-        likeCountDiff += localIsLiked ? 1 : -1
-      }
-      
-      // 로컬 좋아요 상태로 업데이트
-      var synced = beverage
-      synced.isLiked = localIsLiked
-      return synced
-    }
-    
-    return (syncedBeverages, likeCountDiff)
-  }
   
   
   public func getBeverageMonthCalender(dateInWeek: String) async throws -> [BeverageCalendar] {
@@ -133,6 +82,18 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
     } catch {
       return false
     }
+  }
+  
+  public func getBeverageLikeUpdate(from beverages: [Beverage], productID: String, newLikeStatus: Bool) -> (beverageIndex: Int, likeCountChange: Int)? {
+    guard let beverageIndex = beverages.firstIndex(where: { $0.productID == productID }) else {
+      return nil
+    }
+    
+    let currentLikeStatus = beverages[beverageIndex].isLiked
+    guard currentLikeStatus != newLikeStatus else { return nil }
+    
+    let likeCountChange = newLikeStatus ? 1 : -1
+    return (beverageIndex: beverageIndex, likeCountChange: likeCountChange)
   }
 }
 

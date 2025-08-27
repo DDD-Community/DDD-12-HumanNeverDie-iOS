@@ -47,7 +47,7 @@ public struct AMDAlert: View {
   }
   
   private var messageView: some View {
-    VStack(spacing: 0) {
+    VStack(spacing: 12) {
       if let message = property.message {
         Text(message)
           .amdFont(.smallRegular)

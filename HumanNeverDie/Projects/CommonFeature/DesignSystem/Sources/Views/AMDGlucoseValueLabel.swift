@@ -84,7 +84,7 @@ public struct AMDGlucoseValueLabel: View {
   }
   
   private var slashText: some View {
-    Text("\\")
+    Text("/")
       .amdFont(type.slashFont)
       .foregroundStyle(.gray40)
   }

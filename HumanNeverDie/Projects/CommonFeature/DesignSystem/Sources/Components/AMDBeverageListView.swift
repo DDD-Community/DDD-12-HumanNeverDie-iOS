@@ -178,7 +178,8 @@ public struct AMDBeverageListView: View {
           beverageInfoView
         }
       }
-      .padding(type.padding)
+      .padding(type == .large ? .vertical : .all, type.padding)
+      .padding(.horizontal, type == .large ? 20 : 0)
       .frame(minHeight: type.height, maxHeight: type.height)
       .background(type.backgroundColor)
       .if(type == .medium || type == .completed) {
@@ -309,13 +310,13 @@ private extension AMDBeverageListView {
     switch type {
     case .large:
       HStack {
-        HStack(spacing: 4) {
-          glucoseText
-          sugarBadge
-        }
-        
+        sugarBadge
         Spacer()
-        kcalText
+        
+        HStack(alignment: .bottom, spacing: 0) {
+          sugarText
+          sugarGuideText
+        }
       }
       
     case .medium, .small, .completed, .card:
@@ -328,7 +329,7 @@ private extension AMDBeverageListView {
         Spacer()
         
         HStack(spacing: 4) {
-          glucoseText
+          sugarText
           
           Divider()
             .frame(width: 1)
@@ -346,10 +347,16 @@ private extension AMDBeverageListView {
       .foregroundStyle(.gray85)
   }
   
-  private var glucoseText: some View {
+  private var sugarText: some View {
     Text("\(Int(glucose))g")
       .amdFont(type.glucoseFont)
       .foregroundStyle(.gray85)
+  }
+  
+  private var sugarGuideText: some View {
+    Text("부터")
+      .amdFont(.xsmallRegular)
+      .foregroundStyle(.gray70)
   }
   
   @ViewBuilder

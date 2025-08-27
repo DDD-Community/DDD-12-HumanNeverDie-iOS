@@ -16,24 +16,29 @@ import NukeUI
 public struct BeverageRecordView: View {
   @State private var viewModel: BeverageRecordViewModel
   @Environment(Router.self) private var router
-  
+    
   public init(viewModel: BeverageRecordViewModel) {
     self._viewModel = .init(initialValue: viewModel)
   }
   
   public var body: some View {
-    VStack(alignment: .center, spacing: 40) {
+    VStack(alignment: .center, spacing: 0) {
       navigationBar
       titleView
       beverageView
       beverageSizeView
       Spacer()
+      Spacer()
+      sugarProgressView
       recordButton
     }
-    .padding(.horizontal, 24)
+    .padding(.horizontal, 20)
     .toolbarVisibility(.hidden, for: .navigationBar)
     .overlay {
-      beverageRecordCompletedView
+      if viewModel.isBeverageRecordCompleted {
+        beverageRecordCompletedView
+          .transition(.opacity)
+      }
     }
     .animation(.easeOut(duration: 0.4).delay(0.2), value: viewModel.isBeverageRecordCompleted)
   }
@@ -55,6 +60,7 @@ public struct BeverageRecordView: View {
     Text("음료 사이즈를 선택해주세요")
       .amdFont(.xlargeBold)
       .foregroundStyle(.gray80)
+      .padding(.top, 40)
   }
   
   private var beverageView: some View {
@@ -68,7 +74,7 @@ public struct BeverageRecordView: View {
       }
       
       VStack(alignment: .leading, spacing: 4) {
-        Text(viewModel.beverageDetail.brandName)
+        Text(viewModel.beverageDetail.brandType?.koreanName ?? "")
           .amdFont(.smallRegular)
           .foregroundStyle(.gray60)
           .frame(maxWidth: .infinity, alignment: .leading)
@@ -97,13 +103,14 @@ public struct BeverageRecordView: View {
     .padding(.horizontal, 20)
     .background(.gray10)
     .amdCornerRadius(.large)
+    .padding(.top, 40)
   }
   
   private var beverageSizeView: some View {
     VStack(spacing: 10) {
       if !viewModel.beverageDetail.sizes.isEmpty {
         ForEach(viewModel.beverageDetail.sizes, id: \.sizeType) { size in
-          let sugarFreeType = BeverageSugarFreeType(sugar: size.nutrition.sugar)
+          let sugarFreeType = BeverageSugarFreeType(sugar: Double(size.nutrition.sugar))
           
           AMDOptionButton(
             title: size.sizeType,
@@ -121,6 +128,15 @@ public struct BeverageRecordView: View {
         }
       }
     }
+    .padding(.top, 20)
+  }
+  
+  private var sugarProgressView: some View {
+    AMDSugarStatusView(
+      variant: BeverageSugarStatusType(baseSugar: viewModel.baseSugar, totalSugar: viewModel.totalSugar).statusVariant,
+      style: .record(sugar: viewModel.totalSugar, baseSugar: viewModel.baseSugar)
+    )
+    .frame(minHeight: 110, maxHeight: 110, alignment: .top)
   }
   
   private var recordButton: some View {
@@ -128,6 +144,7 @@ public struct BeverageRecordView: View {
       title: "기록하기",
       action: { viewModel.handleAction(.recordButtonTapped) }
     )
+    .padding(.vertical, 10)
   }
   
   private var beverageRecordCompletedView: some View {
@@ -135,6 +152,5 @@ public struct BeverageRecordView: View {
       beverageDetail: viewModel.beverageDetail,
       selectedSizeType: viewModel.selectedSizeType
     )
-      .opacity(viewModel.isBeverageRecordCompleted ? 1 : 0)
   }
 }

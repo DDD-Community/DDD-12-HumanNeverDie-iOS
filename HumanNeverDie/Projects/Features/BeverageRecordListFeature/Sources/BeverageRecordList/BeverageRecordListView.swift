@@ -11,9 +11,13 @@ import CommonFeature
 import DesignSystem
 import BeverageDomain
 
+import Dependencies
+
 public struct BeverageRecordListView: View {
   @State private var viewModel: BeverageRecordListViewModel
   @Environment(Router.self) private var router
+  @Dependency(\.globalState) private var globalState
+
 
   private enum Constants {
     static let navigationBarHeight: CGFloat = 56
@@ -35,6 +39,12 @@ public struct BeverageRecordListView: View {
     .ignoresSafeArea([.keyboard, .container], edges: .bottom)
     .toolbarVisibility(.hidden, for: .navigationBar)
     .amdSwipeBackEnabled()
+    .onReceive(globalState.beverageLikeUpdatePublisher) { likeUpdate in
+      viewModel.handleAction(.beverageLikeStatusChanged(
+        productID: likeUpdate.productID,
+        isLiked: likeUpdate.isLiked
+      ))
+    }
     .onChange(of: viewModel.route) { _, route in
       guard let route else { return }
       router.push(to: route)
@@ -70,7 +80,32 @@ public struct BeverageRecordListView: View {
   }
 
   private var contentView: some View {
-    BeverageListView(viewModel: viewModel.listViewModel)
+    VStack(spacing: 0) {
+      filterinfoView
+      BeverageListView(viewModel: viewModel.listViewModel)
+    }
+  }
+  
+  private var filterinfoView: some View {
+    VStack {
+      HStack(spacing: 0) {
+        Text("저당/무당 기준이 궁금하다면?")
+          .amdFont(.smallRegular)
+          .foregroundStyle(.gray60)
+        
+        AMDImage.arrowRight18.swiftUIImage
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(.vertical, 10)
+      .onTapGesture {
+        viewModel.handleAction(.filterinfoViewTapped)
+      }
+      .padding(.horizontal, 20)
+      
+      AMDDevider()
+    }
+    .frame(minHeight: 40, maxHeight: 40)
+    .padding(.top, 4)
   }
 
   private var sugarProgressView: some View {

@@ -12,5 +12,5 @@ import Dependencies
 // MARK: - GlobalState
 
 extension GlobalStateKey: @retroactive DependencyKey {
-  public static let liveValue: GlobalStateProtocol = GlobalState.shared
+  public static let liveValue: GlobalStateProtocol = GlobalState()
 }

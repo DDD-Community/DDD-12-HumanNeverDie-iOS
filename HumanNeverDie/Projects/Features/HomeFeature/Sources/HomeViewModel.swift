@@ -26,7 +26,7 @@ public final class HomeViewModel: ViewModelable {
     var sugarIntakeRecords: [SugarIntakeRecord] = []
     var weeklyHistories: [String: BeverageCalendar] = [:]
     
-    var baseSugar: Int = 50
+    var baseSugar: Int = 0
     var selectedDateCalendar: BeverageCalendar?
     var isSelectedDateEmpty: Bool = true
     
@@ -34,12 +34,7 @@ public final class HomeViewModel: ViewModelable {
     
     var isTodayOrPastSelectedDate: Bool { selectedDate.isTodayOrPastSelectedDate }
   }
-  
-  var sugarStatus: BeverageSugarStatusType {
-    let totalSugar = state.selectedDateCalendar?.totalSugarGrams ?? 0
-    return .init(baseSugar: state.baseSugar, totalSugar: totalSugar)
-  }
-  
+    
   public enum Action {
     case onViewDidLoad
     /// 캘린더 헤더 Date 뷰 선택
@@ -50,6 +45,8 @@ public final class HomeViewModel: ViewModelable {
     case weekSlideGesture(Date)
     /// 날짜 피커에서 날짜 선택 완료
     case datePickerConfirmed(Date)
+    /// 음료 기록 버튼 선택 시
+    case beverageRecordButtonTapped
     /// 음료 기록 완료
     case homeRefresh
   }
@@ -88,6 +85,12 @@ public final class HomeViewModel: ViewModelable {
       state.currentDate = date
       state.selectedDate = date
       Task { await getWeeklyCalender() }
+      
+    case .beverageRecordButtonTapped:
+      Task {
+        await userDefaultClient.setValue(state.selectedDateCalendar?.totalSugarGrams, forKey: AMDUserDefaultKey.totalSugar)
+        await userDefaultClient.setValue(state.selectedDateCalendar?.sugarMaxG, forKey: AMDUserDefaultKey.baseSugar)
+      }
       
     case .homeRefresh:
       Task { await getWeeklyCalender() }
@@ -130,11 +133,6 @@ public final class HomeViewModel: ViewModelable {
     
     if let selectedDateCalendar = state.selectedDateCalendar {
       state.isSelectedDateEmpty = selectedDateCalendar.records.isEmpty
-      
-      Task {
-        await userDefaultClient.setValue(selectedDateCalendar.totalSugarGrams, forKey: AMDUserDefaultKey.totalSugar)
-        await userDefaultClient.setValue(selectedDateCalendar.sugarMaxG, forKey: AMDUserDefaultKey.baseSugar)
-      }
     } else {
       state.isSelectedDateEmpty = true
     }

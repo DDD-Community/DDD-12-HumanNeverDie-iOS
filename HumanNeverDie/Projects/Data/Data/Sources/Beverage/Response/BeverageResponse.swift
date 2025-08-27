@@ -95,8 +95,8 @@ extension BeverageResponse {
       thumbnailURL: imgUrl ?? "",
       kcal: beverageNutrition?.servingKcal ?? 0,
       sugar: beverageNutrition?.sugarG ?? 0,
-      brandName: cafeStoreDto?.cafeBrand ?? "",
-      sugarFreeType: BeverageSugarFreeType(sugar: beverageNutrition?.sugarG ?? 0),
+      brandType: BeverageBrandType(rawValue: cafeStoreDto?.cafeBrand ?? ""),
+      sugarFreeType: BeverageSugarFreeType(sugar: Double(beverageNutrition?.sugarG ?? 0)),
       isLiked: isLiked ?? false
     )
   }

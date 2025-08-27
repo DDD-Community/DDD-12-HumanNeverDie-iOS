@@ -10,6 +10,7 @@ import Observation
 
 import CommonFeature
 import BeverageDomain
+import Shared
 
 import Dependencies
 
@@ -27,10 +28,13 @@ public final class BeverageRecordViewModel: ViewModelable {
       thumbnailURL: "",
       defaultNutrition: BeverageNutrition(kcal: 0, sugar: 0, protein: 0, saturatedFat: 0, sodium: 0, caffeine: 0),
       sizes: [],
-      brandName: ""
+      brandType: nil
     )
     var selectedSizeType: BeverageSize?
     var isBeverageRecordCompleted: Bool = false
+    
+    var baseSugar: Int = 0
+    var totalSugar: Int = 0
   }
   
   public enum Action {
@@ -45,6 +49,12 @@ public final class BeverageRecordViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.beverageLocalLikeUseCase) private var beverageLocalLikeUseCase
   
+  @ObservationIgnored
+  @Dependency(\.globalState) private var globalState
+  
+  @ObservationIgnored
+  @Dependency(\.userDefaultClient) private var userDefaultClient
+  
   public var state: State
   public init(
     productID: String,
@@ -57,7 +67,10 @@ public final class BeverageRecordViewModel: ViewModelable {
       beverageRecordDate: beverageRecordDate
     )
     
-    Task { await getBeverageDetail(productID) }
+    Task { 
+      await getBeverageDetail(productID)
+      await getUserSugar()
+    }
   }
   
   deinit {
@@ -71,17 +84,23 @@ public final class BeverageRecordViewModel: ViewModelable {
       let newLikedState = !state.isLiked
       state.isLiked = newLikedState
       
-      handleBeverageLike(
-        state.beverageDetail.toBeverage(isLiked: originalIsLiked),
-        newIsLiked: newLikedState,
-        originalIsLiked: originalIsLiked
-      )
+      Task {
+        await handleBeverageLike(
+          state.beverageDetail.toBeverage(isLiked: originalIsLiked),
+          newIsLiked: newLikedState,
+          originalIsLiked: originalIsLiked
+        )
+      }
       
     case .recordButtonTapped:
       Task { await recordBeverage() }
       
     case let .beverageSizeButtonTapped(sizeType):
+      let previousSugar = state.selectedSizeType?.nutrition.sugar ?? 0
+      let newSugar = sizeType.nutrition.sugar
+      
       state.selectedSizeType = sizeType
+      state.totalSugar = state.totalSugar - previousSugar + newSugar
     }
   }
   
@@ -98,11 +117,38 @@ public final class BeverageRecordViewModel: ViewModelable {
     }
   }
   
-  private func handleBeverageLike(_ beverage: Beverage, newIsLiked: Bool, originalIsLiked: Bool) {
+  private func getUserSugar() async {
+    guard let baseSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.baseSugar),
+          let totalSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.totalSugar) else {
+      return
+    }
+    
+    await MainActor.run {
+      state.baseSugar = baseSugar
+      state.totalSugar = totalSugar + (state.selectedSizeType?.nutrition.sugar ?? 0)
+    }
+  }
+  
+  private func handleBeverageLike(_ beverage: Beverage, newIsLiked: Bool, originalIsLiked: Bool) async {
+    do {
+      if newIsLiked {
+        _ = try await beverageUseCase.likeBeverage(productID: beverage.productID)
+      } else {
+        _ = try await beverageUseCase.unLikeBeverage(productID: beverage.productID)
+      }
+      
+      await MainActor.run {
+        globalState.beverageLikeUpdatePublisher.send((productID: beverage.productID, isLiked: newIsLiked))
+      }
+    } catch {
+      saveToLocalStorage(beverage, newIsLiked: newIsLiked, originalIsLiked: originalIsLiked)
+    }
+  }
+  
+  private func saveToLocalStorage(_ beverage: Beverage, newIsLiked: Bool, originalIsLiked: Bool) {
     do {
       var updatedBeverage = beverage
       updatedBeverage.isLiked = newIsLiked
-      
       try beverageLocalLikeUseCase.handleBeverageLike(
         beverage: updatedBeverage,
         originalIsLiked: originalIsLiked
@@ -121,7 +167,7 @@ public final class BeverageRecordViewModel: ViewModelable {
       let success = try await beverageUseCase.recordBeverage(
         productID: state.productID,
         recordDate: state.beverageRecordDate,
-        size: selectedSize.sizeType
+        size: selectedSize.sizeType.uppercased()
       )
       
       if success {

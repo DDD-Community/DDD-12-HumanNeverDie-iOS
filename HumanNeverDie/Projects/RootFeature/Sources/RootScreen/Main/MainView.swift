@@ -42,6 +42,17 @@ public struct MainView: View {
     }
     .toolbarVisibility(.hidden, for: .tabBar)
     .ignoresSafeArea(edges: .bottom)
+    .overlay {
+      if viewModel.isOnboardingPresented {
+        AMDOnboardingView(
+          onDismiss: { viewModel.handleAction(.onboardingDismissButtonTapped($0)) }
+        )
+      }
+    }
+    .animation(.default, value: viewModel.isOnboardingPresented)
+    .onViewDidLoad {
+      viewModel.handleAction(.onViewDidLoad)
+    }
   }
   
   @ViewBuilder
@@ -58,7 +69,7 @@ public struct MainView: View {
         myPageView
       }
     }
-    .padding(.bottom, 92)
+    .padding(.bottom, 82)
   }
   
   private var homeView: some View {
@@ -84,7 +95,7 @@ public struct MainView: View {
       }
       .padding(.vertical, 5)
     }
-    .frame(minHeight: 92, maxHeight: 92, alignment: .top)
+    .frame(minHeight: 82, maxHeight: 82, alignment: .top)
     .background(.white)
     .amdShadow(.tabbar)
   }
