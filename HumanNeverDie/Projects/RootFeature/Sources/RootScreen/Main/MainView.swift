@@ -95,7 +95,7 @@ public struct MainView: View {
       }
       .padding(.vertical, 5)
     }
-    .frame(minHeight: 92, maxHeight: 92, alignment: .top)
+    .frame(minHeight: 82, maxHeight: 82, alignment: .top)
     .background(.white)
     .amdShadow(.tabbar)
   }
