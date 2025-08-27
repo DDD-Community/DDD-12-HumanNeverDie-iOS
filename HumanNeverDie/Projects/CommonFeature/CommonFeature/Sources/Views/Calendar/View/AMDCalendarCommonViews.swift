@@ -63,6 +63,7 @@ public struct CalendarWeekdayTitleView: View {
           .fontWeight(.semibold)
           .foregroundColor(weekday.color)
           .frame(width: 44, height: 20)
+          .frame(maxWidth: .infinity)
       }
     }
   }
