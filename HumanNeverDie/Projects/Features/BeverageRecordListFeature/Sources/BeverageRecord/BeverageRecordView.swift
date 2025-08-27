@@ -35,7 +35,10 @@ public struct BeverageRecordView: View {
     .padding(.horizontal, 20)
     .toolbarVisibility(.hidden, for: .navigationBar)
     .overlay {
-      beverageRecordCompletedView
+      if viewModel.isBeverageRecordCompleted {
+        beverageRecordCompletedView
+          .transition(.opacity)
+      }
     }
     .animation(.easeOut(duration: 0.4).delay(0.2), value: viewModel.isBeverageRecordCompleted)
   }
@@ -149,6 +152,5 @@ public struct BeverageRecordView: View {
       beverageDetail: viewModel.beverageDetail,
       selectedSizeType: viewModel.selectedSizeType
     )
-      .opacity(viewModel.isBeverageRecordCompleted ? 1 : 0)
   }
 }

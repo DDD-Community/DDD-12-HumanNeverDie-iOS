@@ -55,9 +55,12 @@ public struct BeverageRecordCompletedView: View {
   }
   
   private var lottieEffectView: some View {
-    AMDLottieView(asset: .honeyEffect)
-      .allowsHitTesting(false)
-      .frame(maxWidth: .infinity, maxHeight: .infinity)
+    AMDLottieView(
+      asset: .honeyEffect,
+      isLoopMode: false
+    )
+    .allowsHitTesting(false)
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
   }
   
   private var topSpacerArea: some View {
