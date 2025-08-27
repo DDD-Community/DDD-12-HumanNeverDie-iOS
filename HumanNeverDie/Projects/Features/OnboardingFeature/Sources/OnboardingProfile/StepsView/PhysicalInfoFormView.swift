@@ -22,31 +22,34 @@ struct PhysicalInfoFormView: View {
   }
   
   var body: some View {
-    ZStack {
-      Color.clear
-        .contentShape(Rectangle())
-        .onTapGesture {
-          hideKeyboard()
-        }
-      
-      ScrollView {
+    GeometryReader { geometry in
+      ZStack {
+        Color.clear
+          .contentShape(Rectangle())
+          .onTapGesture {
+            hideKeyboard()
+          }
+        
         VStack(spacing: 0) {
-          topHeaderView()
-          contentView()
-          Spacer()
+          ScrollView {
+            VStack(spacing: 0) {
+              topHeaderView()
+              contentView()
+            }
+            .background(Color.white)
+          }
+          .scrollIndicators(.hidden)
+          .scrollBounceBehavior(.basedOnSize)
+          
           bottomButtonView()
-        }
-        .background(Color.white)
-        .ignoresSafeArea(edges: .bottom)
-        .onAppear {
-          viewModel.handleAction(.onAppear)
+            .background(Color.white)
         }
       }
-      .scrollIndicators(.hidden)
-        .scrollBounceBehavior(.basedOnSize)
-        .onAppear {
-          UIScrollView.appearance().bounces = false
-        }
+    }
+    .ignoresSafeArea(edges: .bottom)
+    .onAppear {
+      viewModel.handleAction(.onAppear)
+      UIScrollView.appearance().bounces = false
     }
   }
 }
