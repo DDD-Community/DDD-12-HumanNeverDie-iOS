@@ -104,7 +104,10 @@ public final class BeverageSearchViewModel: ViewModelable {
       }
 
       lastSearchedText = searchText
-
+      state.sugarLevelType = nil
+      state.isOnlyLiked = false
+      listViewModel.state.filterType = .all
+      
       Task {
         await searchBeverage(searchText)
         await saveRecentSearch(searchText)
@@ -115,6 +118,7 @@ public final class BeverageSearchViewModel: ViewModelable {
       state.searchText = recentText
       state.sugarLevelType = nil
       state.isOnlyLiked = false
+      listViewModel.state.filterType = .all
       state.searchType = .list
 
       Task {

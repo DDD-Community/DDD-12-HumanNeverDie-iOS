@@ -26,7 +26,7 @@ struct BeverageRecentSearchListView: View {
       recentSearchTitleView
       recentSearchListView
     }
-    .frame(maxWidth: .infinity, alignment: .leading)
+    .frame(maxWidth: .infinity, alignment: .topLeading)
     .animation(.default, value: viewModel.recentSearchList)
   }
   
@@ -52,6 +52,6 @@ struct BeverageRecentSearchListView: View {
         }
       }
     }
-    .frame(maxWidth: .infinity, alignment: .leading)
+    .frame(maxWidth: .infinity, alignment: .topLeading)
   }
 }

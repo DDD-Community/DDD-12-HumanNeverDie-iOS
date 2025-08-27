@@ -143,7 +143,7 @@ private extension BeverageSearchView {
 private extension BeverageSearchView {
   private func beverageSearchListView(_ height: CGFloat) -> some View {
     Group {
-      if !viewModel.isBeverageListEmpty {
+      if !viewModel.isBeverageListEmpty || viewModel.sugarLevelType != nil || viewModel.isOnlyLiked {
         beverageListView
       } else {
         beverageListEmptyView
