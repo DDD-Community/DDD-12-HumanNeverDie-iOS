@@ -125,7 +125,7 @@ private extension BeverageSearchView {
 
   private var recentSearchListView: some View {
     VStack(spacing: 0) {
-      BevergeRecentSearchListView(viewModel: viewModel)
+      BeverageRecentSearchListView(viewModel: viewModel)
       Spacer()
       Spacer()
       Spacer()
