@@ -10,6 +10,7 @@ import Observation
 
 import CommonFeature
 import BeverageDomain
+import Shared
 
 import Dependencies
 
@@ -31,6 +32,9 @@ public final class BeverageRecordViewModel: ViewModelable {
     )
     var selectedSizeType: BeverageSize?
     var isBeverageRecordCompleted: Bool = false
+    
+    var baseSugar: Int = 0
+    var totalSugar: Int = 0
   }
   
   public enum Action {
@@ -48,6 +52,9 @@ public final class BeverageRecordViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.globalState) private var globalState
   
+  @ObservationIgnored
+  @Dependency(\.userDefaultClient) private var userDefaultClient
+  
   public var state: State
   public init(
     productID: String,
@@ -60,7 +67,10 @@ public final class BeverageRecordViewModel: ViewModelable {
       beverageRecordDate: beverageRecordDate
     )
     
-    Task { await getBeverageDetail(productID) }
+    Task { 
+      await getBeverageDetail(productID)
+      await getUserSugar()
+    }
   }
   
   deinit {
@@ -86,7 +96,11 @@ public final class BeverageRecordViewModel: ViewModelable {
       Task { await recordBeverage() }
       
     case let .beverageSizeButtonTapped(sizeType):
+      let previousSugar = state.selectedSizeType?.nutrition.sugar ?? 0
+      let newSugar = sizeType.nutrition.sugar
+      
       state.selectedSizeType = sizeType
+      state.totalSugar = state.totalSugar - previousSugar + newSugar
     }
   }
   
@@ -100,6 +114,18 @@ public final class BeverageRecordViewModel: ViewModelable {
       }
     } catch {
       print(error)
+    }
+  }
+  
+  private func getUserSugar() async {
+    guard let baseSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.baseSugar),
+          let totalSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.totalSugar) else {
+      return
+    }
+    
+    await MainActor.run {
+      state.baseSugar = baseSugar
+      state.totalSugar = totalSugar + (state.selectedSizeType?.nutrition.sugar ?? 0)
     }
   }
   
