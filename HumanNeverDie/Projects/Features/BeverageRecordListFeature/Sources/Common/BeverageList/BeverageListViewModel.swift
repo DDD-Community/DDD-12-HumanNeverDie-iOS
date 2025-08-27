@@ -56,7 +56,6 @@ public final class BeverageListViewModel: ViewModelable {
   }
 
   public enum Action {
-    case filterinfoViewTapped
     case beverageFilterChipItemTapped(BeverageFilterType)
     case loadNextBeverageList([Beverage.ID])
     case beverageListFavoriteTapped(Int, Beverage)
@@ -93,30 +92,6 @@ public final class BeverageListViewModel: ViewModelable {
 
   public func handleAction(_ action: Action) {
     switch action {
-    case .filterinfoViewTapped:
-      let alertProperty = AMDAlertProperty(
-        title: "저당/무당 기준이 어떻게 되나요?",
-        message: """
-                 무당
-                 - 0g (제조 과정에서 당류를 첨가하지 않음)
-                 - 예: 아메리카노, 에스프레소 
-                 
-                 저당 
-                 - 액체: 100ml당 2.5g 이하
-                 - 예: 스타벅스 톨(355ml) × 2.5g = 약 8.9g 이하의 음료 모두 해당
-                 """,
-        subMessage: "아맞당은 한국 식품의약품안전처 공식 당류 표기 기준\n(식품 등의 표시·광고에 관한 법률)을 준수하고 있어요.",
-        primaryButton: .init(
-          title: "닫기",
-          type: .secondary,
-          action: {}
-        )
-      )
-      
-      Task { @MainActor in
-        await alertClient.showAlert(alertProperty)
-      }
-      
     case let .beverageFilterChipItemTapped(filterType):
       state.isFilteringInProgress = true
       state.filterType = filterType
