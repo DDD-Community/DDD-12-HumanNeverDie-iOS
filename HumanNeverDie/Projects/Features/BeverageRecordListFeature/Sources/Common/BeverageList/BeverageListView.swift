@@ -51,13 +51,12 @@ struct BeverageListView: View {
       .onTapGesture {
         viewModel.handleAction(.filterinfoViewTapped)
       }
+      .padding(.horizontal, 20)
       
       AMDDevider()
-        .padding(.horizontal, -20)
     }
     .frame(minHeight: 40, maxHeight: 40)
     .padding(.top, 4)
-    .padding(.horizontal, 20)
   }
 
   private var beverageFilterChipView: some View {

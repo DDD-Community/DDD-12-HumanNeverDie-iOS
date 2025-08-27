@@ -9,6 +9,7 @@ import SwiftUI
 
 import DesignSystem
 import CommonFeature
+import BeverageDomain
 
 import Dependencies
 
@@ -103,7 +104,7 @@ extension HistoryView {
   
   private func contentSugerStatusView() -> some View {
     AMDSugarStatusView(
-      variant: viewModel.sugarStatus.statusVariant,
+      variant: BeverageSugarStatusType(baseSugar: viewModel.baseSugar, totalSugar: viewModel.totalSugarGrams).statusVariant,
       style: .history(drinkCount:viewModel.totalCount , sugar: viewModel.totalSugarGrams, baseSugar: viewModel.baseSugar)
     )
   }

@@ -26,7 +26,7 @@ public final class HomeViewModel: ViewModelable {
     var sugarIntakeRecords: [SugarIntakeRecord] = []
     var weeklyHistories: [String: BeverageCalendar] = [:]
     
-    var baseSugar: Int = 50
+    var baseSugar: Int = 0
     var selectedDateCalendar: BeverageCalendar?
     var isSelectedDateEmpty: Bool = true
     
@@ -34,12 +34,7 @@ public final class HomeViewModel: ViewModelable {
     
     var isTodayOrPastSelectedDate: Bool { selectedDate.isTodayOrPastSelectedDate }
   }
-  
-  var sugarStatus: BeverageSugarStatusType {
-    let totalSugar = state.selectedDateCalendar?.totalSugarGrams ?? 0
-    return .init(baseSugar: state.baseSugar, totalSugar: totalSugar)
-  }
-  
+    
   public enum Action {
     case onViewDidLoad
     /// 캘린더 헤더 Date 뷰 선택

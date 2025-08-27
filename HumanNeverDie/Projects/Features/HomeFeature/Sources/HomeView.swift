@@ -9,6 +9,7 @@ import SwiftUI
 
 import CommonFeature
 import DesignSystem
+import BeverageDomain
 
 import Dependencies
 
@@ -80,7 +81,7 @@ public struct HomeView: View {
     AMDCard(
       totalSugar: viewModel.selectedDateCalendar?.totalSugarGrams ?? 0,
       baseSugar: viewModel.selectedDateCalendar?.sugarMaxG ?? 0,
-      variant: viewModel.sugarStatus.statusVariant
+      variant: BeverageSugarStatusType(baseSugar: viewModel.baseSugar, totalSugar: viewModel.selectedDateCalendar?.totalSugarGrams ?? 0).statusVariant
     )
     .amdFlipCard(
       backView: HomeCardBeverageListView(beverageCalendar: viewModel.selectedDateCalendar),

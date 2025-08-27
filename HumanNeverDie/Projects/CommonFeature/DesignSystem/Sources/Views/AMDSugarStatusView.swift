@@ -16,31 +16,8 @@ public struct AMDSugarStatusView: View {
   private let variant: AMDStatusVariant
   private let style: Style
   
-  private var calculatedVariant: AMDStatusVariant {
-    let (sugar, baseSugar) = getSugarValues()
-    let percentage = baseSugar > 0 ? Double(sugar) / Double(baseSugar) : 0
-    
-    switch percentage {
-    case 0.0..<0.33:
-      return .healthy
-    case 0.34..<0.66:
-      return .warning
-    default:
-      return .danger
-    }
-  }
-  
-  private func getSugarValues() -> (sugar: Int, baseSugar: Int) {
-    switch style {
-    case .main(let sugar, let baseSugar):
-      return (sugar, baseSugar)
-    case .history(_, let sugar, let baseSugar):
-      return (sugar, baseSugar)
-    }
-  }
-  
   private var characterImage: Image {
-    switch calculatedVariant {
+    switch variant {
     case .healthy:
       return AMDImage.healthyCharacter.swiftUIImage
     case .warning:
@@ -84,14 +61,19 @@ public struct AMDSugarStatusView: View {
     .amdShadow(.tabbar)
   }
   
+  @ViewBuilder
   private func contentMainView(sugar: Int, baseSugar: Int) -> some View {
+    let isExceeded = sugar > baseSugar
+    
     HStack {
       HStack(spacing: 4) {
-        Text("\(baseSugar - sugar)g")
-          .amdFont(.largeBold)
-          .foregroundStyle(.gray85)
+        if !isExceeded {
+          Text("\(baseSugar - sugar)g")
+            .amdFont(.largeBold)
+            .foregroundStyle(.gray85)
+        }
         
-        Text("더 마실 수 있당!")
+        Text(isExceeded ? "윽,, 더 이상 마실 수 없당!" : "더 마실 수 있당!")
           .amdFont(.largeRegular)
           .foregroundStyle(.gray70)
       }
@@ -102,7 +84,7 @@ public struct AMDSugarStatusView: View {
         consumedGlucose: Double(sugar),
         baseGlucose: Double(baseSugar),
         type: .progress,
-        variant: calculatedVariant // variant 대신 calculatedVariant 사용
+        variant: variant
       )
     }
   }
@@ -139,9 +121,7 @@ public struct AMDSugarStatusView: View {
   
   private func contentHistoryView(drinkCount: Int, sugar: Int, baseSugar: Int) -> some View {
     HStack(spacing: 4.5) {
-      // 말풍선 + 삼각형 꼬리
       ZStack(alignment: .bottomLeading) {
-        // 말풍선 본체
         HStack(spacing: 2) {
           Text("총 ")
             .amdFont(.largeRegular)
@@ -160,11 +140,10 @@ public struct AMDSugarStatusView: View {
         .background(Color.gray10)
         .cornerRadius(16)
         
-        // 원래 말풍선 꼬리
         characterSpeechTail()
           .fill(Color.gray10)
           .frame(width: 20, height: 10)
-          .offset(x: -5, y: -2) // 말풍선 밖으로 나오도록 조정
+          .offset(x: -5, y: -2)
       }
       
       Spacer()
@@ -178,7 +157,7 @@ public struct AMDSugarStatusView: View {
           consumedGlucose: Double(sugar),
           baseGlucose: Double(baseSugar),
           type: .progress,
-          variant: calculatedVariant // variant 대신 calculatedVariant 사용
+          variant: variant
         )
       }
     }
@@ -189,7 +168,7 @@ public struct AMDSugarStatusView: View {
       glucose: Double(sugar) / Double(baseSugar),
       isStatusLabelHidden: isStatusLavbledHidden,
       type: .small,
-      variant: calculatedVariant // variant 대신 calculatedVariant 사용
+      variant: variant
     )
   }
 }
