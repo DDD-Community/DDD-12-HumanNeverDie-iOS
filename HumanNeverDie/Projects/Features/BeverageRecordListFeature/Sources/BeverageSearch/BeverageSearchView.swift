@@ -13,9 +13,12 @@ import CommonFeature
 import DesignSystem
 import Shared
 
+import Dependencies
+
 public struct BeverageSearchView: View {
   @State private var viewModel: BeverageSearchViewModel
   @Environment(Router.self) private var router
+  @Dependency(\.globalState) private var globalState
 
   @FocusState private var isFocus: Bool
   private let searchChannel = AsyncChannel<String>()
@@ -42,6 +45,12 @@ public struct BeverageSearchView: View {
     .ignoresSafeArea([.keyboard, .container], edges: .bottom)
     .toolbarVisibility(.hidden, for: .navigationBar)
     .animation(.default, value: viewModel.searchType)
+    .onReceive(globalState.beverageLikeUpdatePublisher) { likeUpdate in
+      viewModel.handleAction(.beverageLikeStatusChanged(
+        productID: likeUpdate.productID,
+        isLiked: likeUpdate.isLiked
+      ))
+    }
     .onChange(of: viewModel.route) { _, route in
       guard let route else { return }
       router.push(to: route)
@@ -116,7 +125,7 @@ private extension BeverageSearchView {
 
   private var recentSearchListView: some View {
     VStack(spacing: 0) {
-      BevergeRecentSearchListView(viewModel: viewModel)
+      BeverageRecentSearchListView(viewModel: viewModel)
       Spacer()
       Spacer()
       Spacer()
@@ -134,7 +143,7 @@ private extension BeverageSearchView {
 private extension BeverageSearchView {
   private func beverageSearchListView(_ height: CGFloat) -> some View {
     Group {
-      if !viewModel.isBeverageListEmpty {
+      if !viewModel.isBeverageListEmpty || viewModel.sugarLevelType != nil || viewModel.isOnlyLiked {
         beverageListView
       } else {
         beverageListEmptyView

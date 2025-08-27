@@ -11,42 +11,31 @@ public struct AMDSugarStatusView: View {
   public enum Style {
     case main(sugar: Int, baseSugar: Int)
     case history(drinkCount: Int, sugar: Int, baseSugar: Int)
+    case record(sugar: Int, baseSugar: Int)
   }
   
   private let variant: AMDStatusVariant
   private let style: Style
   
-  private var calculatedVariant: AMDStatusVariant {
-    let (sugar, baseSugar) = getSugarValues()
-    let percentage = baseSugar > 0 ? Double(sugar) / Double(baseSugar) : 0
-    
-    switch percentage {
-    case 0.0..<0.33:
-      return .healthy
-    case 0.34..<0.66:
-      return .warning
-    default:
-      return .danger
-    }
-  }
-  
-  private func getSugarValues() -> (sugar: Int, baseSugar: Int) {
-    switch style {
-    case .main(let sugar, let baseSugar):
-      return (sugar, baseSugar)
-    case .history(_, let sugar, let baseSugar):
-      return (sugar, baseSugar)
-    }
-  }
-  
   private var characterImage: Image {
-    switch calculatedVariant {
+    switch variant {
     case .healthy:
       return AMDImage.healthyCharacter.swiftUIImage
     case .warning:
       return AMDImage.warningCharacter.swiftUIImage
     case .danger:
       return AMDImage.dangerCharacter.swiftUIImage
+    }
+  }
+  
+  private var color: Color {
+    switch variant {
+    case .healthy:
+      return .primaryBackground
+    case .warning:
+      return .yellowBackground
+    case .danger:
+      return .redBackground
     }
   }
   
@@ -65,6 +54,9 @@ public struct AMDSugarStatusView: View {
       
     case .history(let drinkCount, let sugar, let baseSugar):
       historyStyleBody(drinkCount: drinkCount, sugar: sugar, baseSugar: baseSugar)
+      
+    case .record(sugar: let sugar, baseSugar: let baseSugar):
+      recordStyleBody(sugar: sugar, baseSugar: baseSugar)
     }
   }
   
@@ -84,17 +76,10 @@ public struct AMDSugarStatusView: View {
     .amdShadow(.tabbar)
   }
   
+  @ViewBuilder
   private func contentMainView(sugar: Int, baseSugar: Int) -> some View {
     HStack {
-      HStack(spacing: 4) {
-        Text("\(baseSugar - sugar)g")
-          .amdFont(.largeBold)
-          .foregroundStyle(.gray85)
-        
-        Text("더 마실 수 있당!")
-          .amdFont(.largeRegular)
-          .foregroundStyle(.gray70)
-      }
+      sugarStatusText(sugar: sugar, baseSugar: baseSugar, fontStyle: (.largeBold, .largeRegular))
       
       Spacer()
       
@@ -102,17 +87,29 @@ public struct AMDSugarStatusView: View {
         consumedGlucose: Double(sugar),
         baseGlucose: Double(baseSugar),
         type: .progress,
-        variant: calculatedVariant // variant 대신 calculatedVariant 사용
+        variant: variant
       )
     }
   }
   
   private func historyStyleBody(drinkCount: Int, sugar: Int, baseSugar: Int) -> some View {
+    verticalStyleBody(sugar: sugar, baseSugar: baseSugar) {
+      contentHistoryView(drinkCount: drinkCount, sugar: sugar, baseSugar: baseSugar)
+    }
+  }
+  
+  private func recordStyleBody(sugar: Int, baseSugar: Int) -> some View {
+    verticalStyleBody(sugar: sugar, baseSugar: baseSugar) {
+      contentRecordView(sugar: sugar, baseSugar: baseSugar)
+    }
+  }
+  
+  private func verticalStyleBody<Content: View>(sugar: Int, baseSugar: Int, @ViewBuilder content: () -> Content) -> some View {
     VStack(spacing: 0) {
       VStack(alignment: .center, spacing: 4) {
         HStack(spacing: 10) {
           characterImage
-          contentHistoryView(drinkCount: drinkCount, sugar: sugar, baseSugar: baseSugar)
+          content()
         }
         progressBar(sugar: sugar, baseSugar: baseSugar, isStatusLavbledHidden: false)
       }
@@ -122,65 +119,102 @@ public struct AMDSugarStatusView: View {
     .background(Color.white)
   }
   
-  private struct characterSpeechTail: Shape {
-    func path(in rect: CGRect) -> Path {
-      var path = Path()
-      
-      let offset: CGFloat = rect.width * 0.4
-      path.move(to: CGPoint(x: rect.minX + offset, y: rect.minY))
-      path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
-      path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-      path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
-      path.closeSubpath()
-      
-      return path
-    }
-  }
+  // MARK: - Helper Views
   
-  private func contentHistoryView(drinkCount: Int, sugar: Int, baseSugar: Int) -> some View {
+  @ViewBuilder
+  private func speechBubbleContentView<Content: View>(
+    sugar: Int, 
+    baseSugar: Int, 
+    @ViewBuilder content: () -> Content
+  ) -> some View {
     HStack(spacing: 4.5) {
-      // 말풍선 + 삼각형 꼬리
-      ZStack(alignment: .bottomLeading) {
-        // 말풍선 본체
-        HStack(spacing: 2) {
-          Text("총 ")
-            .amdFont(.largeRegular)
-            .foregroundStyle(.gray70)
-          
-          Text("\(drinkCount)잔")
-            .amdFont(.largeBold)
-            .foregroundStyle(.gray85)
-          
-          Text("이당!")
-            .amdFont(.largeRegular)
-            .foregroundStyle(.gray70)
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
-        .background(Color.gray10)
-        .cornerRadius(16)
-        
-        // 원래 말풍선 꼬리
-        characterSpeechTail()
-          .fill(Color.gray10)
-          .frame(width: 20, height: 10)
-          .offset(x: -5, y: -2) // 말풍선 밖으로 나오도록 조정
+      speechBubbleView {
+        content()
       }
       
       Spacer()
       
-      VStack {
-        Text("총 당 섭취량")
-          .amdFont(.xsmallRegular)
-          .foregroundStyle(.gray50)
-        
-        AMDGlucoseValueLabel(
-          consumedGlucose: Double(sugar),
-          baseGlucose: Double(baseSugar),
-          type: .progress,
-          variant: calculatedVariant // variant 대신 calculatedVariant 사용
-        )
+      totalSugarIntakeView(sugar: sugar, baseSugar: baseSugar)
+    }
+  }
+  
+  @ViewBuilder
+  private func speechBubbleView<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+    ZStack(alignment: .bottomLeading) {
+      content()
+        .background(Color.gray10)
+        .cornerRadius(16)
+      
+      CharacterSpeechTail()
+        .fill(color)
+        .frame(width: 20, height: 10)
+        .offset(x: -5, y: -2)
+    }
+  }
+  
+  private func totalSugarIntakeView(sugar: Int, baseSugar: Int) -> some View {
+    VStack(spacing: 2) {
+      Text("총 당 섭취량")
+        .amdFont(.xsmallRegular)
+        .foregroundStyle(.gray50)
+      
+      AMDGlucoseValueLabel(
+        consumedGlucose: Double(sugar),
+        baseGlucose: Double(baseSugar),
+        type: .progress,
+        variant: variant
+      )
+    }
+  }
+  
+  @ViewBuilder
+  private func sugarStatusText(
+    sugar: Int, 
+    baseSugar: Int, 
+    fontStyle: (AMDFont, AMDFont)
+  ) -> some View {
+    let isExceeded = sugar > baseSugar
+    
+    HStack(spacing: 4) {
+      if !isExceeded {
+        Text("\(baseSugar - sugar)g")
+          .amdFont(fontStyle.0)
+          .foregroundStyle(.gray85)
       }
+      
+      Text(isExceeded ? "윽,, 더 이상 마실 수 없당!" : "더 마실 수 있당!")
+        .amdFont(fontStyle.1)
+        .foregroundStyle(.gray70)
+    }
+  }
+    
+  private func contentHistoryView(drinkCount: Int, sugar: Int, baseSugar: Int) -> some View {
+    speechBubbleContentView(sugar: sugar, baseSugar: baseSugar) {
+      HStack(spacing: 2) {
+        Text("총 ")
+          .amdFont(.largeRegular)
+          .foregroundStyle(.gray70)
+        
+        Text("\(drinkCount)잔")
+          .amdFont(.largeBold)
+          .foregroundStyle(.gray85)
+        
+        Text("이당!")
+          .amdFont(.largeRegular)
+          .foregroundStyle(.gray70)
+      }
+      .padding(.horizontal, 20)
+      .padding(.vertical, 12)
+    }
+  }
+    
+  @ViewBuilder
+  private func contentRecordView(sugar: Int, baseSugar: Int) -> some View {
+    speechBubbleContentView(sugar: sugar, baseSugar: baseSugar) {
+      sugarStatusText(sugar: sugar, baseSugar: baseSugar, fontStyle: (.mediumBold, .mediumMedium))
+        .minimumScaleFactor(0.8)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
     }
   }
   
@@ -189,7 +223,22 @@ public struct AMDSugarStatusView: View {
       glucose: Double(sugar) / Double(baseSugar),
       isStatusLabelHidden: isStatusLavbledHidden,
       type: .small,
-      variant: calculatedVariant // variant 대신 calculatedVariant 사용
+      variant: variant
     )
+  }
+}
+
+private struct CharacterSpeechTail: Shape {
+  func path(in rect: CGRect) -> Path {
+    var path = Path()
+    
+    let offset: CGFloat = rect.width * 0.4
+    path.move(to: CGPoint(x: rect.minX + offset, y: rect.minY))
+    path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+    path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+    path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+    path.closeSubpath()
+    
+    return path
   }
 }

@@ -26,11 +26,9 @@ struct BeverageListView: View {
 
   var body: some View {
     VStack(spacing: 0) {
-      filterinfoView
       beverageFilterChipView
       beverageList
     }
-    .padding(.horizontal, 20)
     .amdBottomSheet(isPresented: $viewModel.state.isBeverageDetailPresented, detents: [.height(474)]) {
       AMDBeverageDetailView(productID: viewModel.beverageProductID)
     }
@@ -38,27 +36,6 @@ struct BeverageListView: View {
     .animation(.default, value: viewModel.beverageList)
   }
   
-  private var filterinfoView: some View {
-    VStack {
-      HStack(spacing: 0) {
-        Text("저당/무당 기준이 궁금하다면?")
-          .amdFont(.smallRegular)
-          .foregroundStyle(.gray60)
-        
-        AMDImage.arrowRight18.swiftUIImage
-      }
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .padding(.vertical, 10)
-      .onTapGesture {
-        viewModel.handleAction(.filterinfoViewTapped)
-      }
-      
-      AMDDevider()
-        .padding(.horizontal, -20)
-    }
-    .frame(minHeight: 40, maxHeight: 40)
-    .padding(.top, 4)
-  }
 
   private var beverageFilterChipView: some View {
     HStack(spacing: 4) {
@@ -79,6 +56,7 @@ struct BeverageListView: View {
       }
     }
     .padding(.vertical, 16)
+    .padding(.horizontal, 20)
     .frame(maxWidth: .infinity, minHeight: Constants.beverageFilterChipViewHeight, maxHeight: Constants.beverageFilterChipViewHeight, alignment: .leading)
   }
 
@@ -88,7 +66,7 @@ struct BeverageListView: View {
         ForEach(Array(viewModel.beverageList.enumerated()), id: \.element.id) { index, beverage in
           AMDBeverageListView.large(
             thumbnailURL: beverage.thumbnailURL,
-            brandTitle: beverage.brandName,
+            brandTitle: beverage.brandType?.koreanName ?? "",
             beverageTitle: beverage.name,
             glucose: Double(beverage.sugar),
             kcal: Double(beverage.kcal),

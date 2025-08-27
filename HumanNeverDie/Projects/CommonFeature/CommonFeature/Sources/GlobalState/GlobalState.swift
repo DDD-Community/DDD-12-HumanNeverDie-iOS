@@ -1,20 +1,22 @@
 import Foundation
+import Combine
 
 import Dependencies
 
 public protocol GlobalStateProtocol: Sendable {
   var homeEventStream: AsyncStream<Void> { get }
   var historyEventStream: AsyncStream<Void> { get }
+  var beverageLikeUpdatePublisher: PassthroughSubject<(productID: String, isLiked: Bool), Never> { get }
   func sendEvent(_ event: GlobalEvent) async
 }
 
-public actor GlobalState: GlobalStateProtocol  {
-  public static let shared = GlobalState()
-  
+public final class GlobalState: GlobalStateProtocol, @unchecked Sendable  {
   private let homeContinuation: AsyncStream<Void>.Continuation
   private let historyContinuation: AsyncStream<Void>.Continuation
+  
   public let homeEventStream: AsyncStream<Void>
   public let historyEventStream: AsyncStream<Void>
+  public var beverageLikeUpdatePublisher = PassthroughSubject<(productID: String, isLiked: Bool), Never>()
   
   public init() {
     let (homeStream, homeCont) = AsyncStream<Void>.makeStream()

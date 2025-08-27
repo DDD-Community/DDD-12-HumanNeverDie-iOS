@@ -56,7 +56,6 @@ public final class BeverageListViewModel: ViewModelable {
   }
 
   public enum Action {
-    case filterinfoViewTapped
     case beverageFilterChipItemTapped(BeverageFilterType)
     case loadNextBeverageList([Beverage.ID])
     case beverageListFavoriteTapped(Int, Beverage)
@@ -79,6 +78,9 @@ public final class BeverageListViewModel: ViewModelable {
   
   @ObservationIgnored
   @Dependency(\.alertClient) private var alertClient
+  
+  @ObservationIgnored
+  @Dependency(\.globalState) private var globalState
 
   var delegateAction: ((DelegateAction?) -> Void)?
   public var state: State = .init()
@@ -90,30 +92,6 @@ public final class BeverageListViewModel: ViewModelable {
 
   public func handleAction(_ action: Action) {
     switch action {
-    case .filterinfoViewTapped:
-      let alertProperty = AMDAlertProperty(
-        title: "저당/무당 기준이 어떻게 되나요?",
-        message: """
-                 무당
-                 - 0g (제조 과정에서 당류를 첨가하지 않음)
-                 - 예: 아메리카노, 에스프레소 
-                 
-                 저당 
-                 - 액체: 100ml당 2.5g 이하
-                 - 예: 스타벅스 톨(355ml) × 2.5g = 약 8.9g 이하의 음료 모두 해당
-                 """,
-        subMessage: "아맞당은 한국 식품의약품안전처 공식 당류 표기 기준\n(식품 등의 표시·광고에 관한 법률)을 준수하고 있어요.",
-        primaryButton: .init(
-          title: "닫기",
-          type: .secondary,
-          action: {}
-        )
-      )
-      
-      Task { @MainActor in
-        await alertClient.showAlert(alertProperty)
-      }
-      
     case let .beverageFilterChipItemTapped(filterType):
       state.isFilteringInProgress = true
       state.filterType = filterType
@@ -151,10 +129,18 @@ public final class BeverageListViewModel: ViewModelable {
     case let .beverageListFavoriteTapped(index, beverage):
       let originalIsLiked = beverage.isLiked
       let newLikedState = !beverage.isLiked
-      state.beverageList[index].isLiked = newLikedState
+      
+      if state.isOnlyLiked && !newLikedState {
+        state.beverageList.remove(at: index)
+      } else {
+        state.beverageList[index].isLiked = newLikedState
+      }
+      
       state.filterCount.like = newLikedState ? state.filterCount.like + 1 : state.filterCount.like - 1
 
-      handleBeverageLike(beverage, newIsLiked: newLikedState, originalIsLiked: originalIsLiked)
+      Task {
+        await handleBeverageLike(beverage, newIsLiked: newLikedState, originalIsLiked: originalIsLiked)
+      }
 
     case let .beverageListInfoTapped(productID):
       state.beverageProductID = productID
@@ -210,11 +196,26 @@ public final class BeverageListViewModel: ViewModelable {
     }
   }
 
-  private func handleBeverageLike(_ beverage: Beverage, newIsLiked: Bool, originalIsLiked: Bool) {
+  private func handleBeverageLike(_ beverage: Beverage, newIsLiked: Bool, originalIsLiked: Bool) async {
+    do {
+      if newIsLiked {
+        _ = try await beverageUseCase.likeBeverage(productID: beverage.productID)
+      } else {
+        _ = try await beverageUseCase.unLikeBeverage(productID: beverage.productID)
+      }
+      
+      await MainActor.run {
+        globalState.beverageLikeUpdatePublisher.send((productID: beverage.productID, isLiked: newIsLiked))
+      }
+    } catch {
+      saveToLocalStorage(beverage, newIsLiked: newIsLiked, originalIsLiked: originalIsLiked)
+    }
+  }
+  
+  private func saveToLocalStorage(_ beverage: Beverage, newIsLiked: Bool, originalIsLiked: Bool) {
     do {
       var updatedBeverage = beverage
       updatedBeverage.isLiked = newIsLiked
-
       try beverageLocalLikeUseCase.handleBeverageLike(
         beverage: updatedBeverage,
         originalIsLiked: originalIsLiked

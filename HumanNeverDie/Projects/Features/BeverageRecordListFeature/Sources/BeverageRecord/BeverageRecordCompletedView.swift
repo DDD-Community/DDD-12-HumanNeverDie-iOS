@@ -55,9 +55,12 @@ public struct BeverageRecordCompletedView: View {
   }
   
   private var lottieEffectView: some View {
-    AMDLottieView(asset: .honeyEffect)
-      .allowsHitTesting(false)
-      .frame(maxWidth: .infinity, maxHeight: .infinity)
+    AMDLottieView(
+      asset: .honeyEffect,
+      isLoopMode: false
+    )
+    .allowsHitTesting(false)
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
   }
   
   private var topSpacerArea: some View {
@@ -127,12 +130,12 @@ public struct BeverageRecordCompletedView: View {
   private var beverageCardView: some View {
     AMDBeverageListView.completed(
       thumbnailURL: beverageDetail.thumbnailURL,
-      brandTitle: beverageDetail.brandName,
+      brandTitle: beverageDetail.brandType?.koreanName ?? "",
       beverageSize: selectedSizeType?.sizeType ?? "",
       beverageTitle: beverageDetail.name,
       glucose: Double(selectedSizeType?.nutrition.sugar ?? 0),
       kcal: Double(selectedSizeType?.nutrition.kcal ?? 0),
-      sugarFreeVariant: BeverageSugarFreeType(sugar: selectedSizeType?.nutrition.sugar ?? 0)?.sugarFreeVariant
+      sugarFreeVariant: BeverageSugarFreeType(sugar: Double(selectedSizeType?.nutrition.sugar ?? 0))?.sugarFreeVariant
     )
   }
   

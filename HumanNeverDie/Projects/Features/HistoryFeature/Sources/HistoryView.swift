@@ -9,6 +9,7 @@ import SwiftUI
 
 import DesignSystem
 import CommonFeature
+import BeverageDomain
 
 import Dependencies
 
@@ -103,15 +104,16 @@ extension HistoryView {
   
   private func contentSugerStatusView() -> some View {
     AMDSugarStatusView(
-      variant: viewModel.sugarStatus.statusVariant,
+      variant: BeverageSugarStatusType(baseSugar: viewModel.baseSugar, totalSugar: viewModel.totalSugarGrams).statusVariant,
       style: .history(drinkCount:viewModel.totalCount , sugar: viewModel.totalSugarGrams, baseSugar: viewModel.baseSugar)
     )
   }
   
   private var contentDrinkButton: some View {
-    Button(action: {
+    Button {
+      viewModel.handleAction(.beverageRecordButtonTapped)
       router.push(to: .beverageRecordList(recordDate: viewModel.selectedDate ?? Date()))
-    }) {
+    } label: {
       HStack(spacing: 8) {
         Image(systemName: "plus.circle")
           .font(.system(size: 16))
@@ -144,7 +146,7 @@ extension HistoryView {
           
           AMDBeverageListView.medium(
             thumbnailURL: data.imgUrl,
-            brandTitle: data.cafeBrand,
+            brandTitle: data.brandType?.koreanName ?? "",
             beverageSize: data.beverageSize,
             beverageTitle: data.beverageName,
             glucose: Double(data.sugarG),
