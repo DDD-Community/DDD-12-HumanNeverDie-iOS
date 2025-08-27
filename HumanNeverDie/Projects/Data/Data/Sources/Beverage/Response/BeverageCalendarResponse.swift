@@ -114,7 +114,7 @@ extension CalendarRecordResponse {
       sugarG: self.nutrition.sugarG ?? 0,
       caffeineMg: self.nutrition.caffeineMg ?? 0,
       imgUrl: self.imgUrl,
-      beverageSize: self.beverageSize,
+      beverageSize: self.beverageSize.capitalized,
       sugarMaxG: sugarMaxG,
       sugarIdealG: sugarIdealG
     )

@@ -78,7 +78,7 @@ struct BeverageDetailSizeResponse: Decodable {
 extension BeverageDetailSizeResponse {
   func toDomain() -> BeverageSize {
     return BeverageSize(
-      sizeType: sizeType ?? "",
+      sizeType: (sizeType ?? "").capitalized,
       nutrition: nutrition?.toDomain() ?? BeverageNutrition(kcal: 0, sugar: 0, protein: 0, saturatedFat: 0, sodium: 0, caffeine: 0)
     )
   }

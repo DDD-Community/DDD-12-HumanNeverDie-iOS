@@ -141,7 +141,7 @@ public final class BeverageRecordViewModel: ViewModelable {
       let success = try await beverageUseCase.recordBeverage(
         productID: state.productID,
         recordDate: state.beverageRecordDate,
-        size: selectedSize.sizeType
+        size: selectedSize.sizeType.uppercased()
       )
       
       if success {
