@@ -20,6 +20,9 @@ public final class BasicInfoFormViewModel: ViewModelable {
     var birthDate: Date? = nil
     var showAlert = false
     var selectedGender: Gender = .none
+    var defaultMinorBirthDate: Date {
+      return birthDate ?? Calendar.current.date(byAdding: .year, value: -14, to: Date()) ?? Date()
+    }
   }
   
   public enum Action {
