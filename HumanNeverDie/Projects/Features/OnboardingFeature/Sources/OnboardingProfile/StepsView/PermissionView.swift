@@ -24,9 +24,7 @@ struct PermissionView: View {
     .background(Color.white)
     .ignoresSafeArea(edges: .all)
     .onAppear {
-      viewModel.handleAction(.onAppear)
-    
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
         viewModel.handleAction(.requestPermission)
       }
     }
