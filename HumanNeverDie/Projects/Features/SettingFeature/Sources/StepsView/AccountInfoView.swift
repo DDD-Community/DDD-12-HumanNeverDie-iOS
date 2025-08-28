@@ -198,7 +198,7 @@ extension AccountInfoView {
   @ViewBuilder
   private func bottomButtonView() -> some View {
     SettingBottomButton(
-      type: viewModel.isChangedAccountInfo ? .default : .secondary
+      type: viewModel.isChangedAccountInfo ?  .default : .teriary
     ) {
       guard viewModel.isChangedAccountInfo else {
         self.router.pop()

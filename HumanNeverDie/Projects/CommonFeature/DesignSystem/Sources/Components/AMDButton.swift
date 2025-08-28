@@ -14,6 +14,7 @@ public struct AMDButton: View {
   
   public enum AMDButtonType {
     case `default`
+    case teriary
     case secondary
     case delete
   }
@@ -103,6 +104,9 @@ fileprivate struct AMDButtonStyle: ButtonStyle {
       
     case (.delete, _):
       return .dangerBackground
+    case (.teriary, _):
+      
+      return .gray50
     }
   }
 }
