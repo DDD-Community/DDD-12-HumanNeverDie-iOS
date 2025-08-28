@@ -57,21 +57,18 @@ public final class BeverageUseCase: BeverageUseCaseProtocol, @unchecked Sendable
     }
   }
   
-  
-  
   public func getBeverageMonthCalender(dateInWeek: String) async throws -> [BeverageCalendar] {
-    //1
-      return try await beverageRepository.getBeverageMonthCalender(dateInWeek: dateInWeek)
+    return try await beverageRepository.getBeverageMonthCalender(dateInWeek: dateInWeek)
   }
   
   public func getBeverageWeeklyCalender(dateInWeek: String) async throws -> [BeverageCalendar] {
-      return try await beverageRepository.getBeverageWeeklyCalender(dateInWeek: dateInWeek)
+    return try await beverageRepository.getBeverageWeeklyCalender(dateInWeek: dateInWeek)
   }
   
   public func getBeveragDailyCalender(dailyDate: String) async throws -> BeverageCalendar {
     return try await beverageRepository.getBeveragDailyCalender(dailyDate: dailyDate)
   }
-
+  
   public func deleteBeverage(productID: String, intakeTime: String) async throws -> Bool {
     do {
       let statusCode = try await beverageRepository.deleteBeverage(productID: productID, intakeTime: intakeTime)

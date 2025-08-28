@@ -45,7 +45,7 @@ public struct MainView: View {
     .overlay {
       if viewModel.isOnboardingPresented {
         AMDOnboardingView(
-          onDismiss: { viewModel.handleAction(.onboardingDismissButtonTapped($0)) }
+          onDismiss: { viewModel.handleAction(.onboardingDismissButtonTapped) }
         )
       }
     }

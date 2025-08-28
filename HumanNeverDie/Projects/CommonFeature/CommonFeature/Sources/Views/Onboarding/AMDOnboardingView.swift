@@ -10,11 +10,10 @@ import SwiftUI
 import DesignSystem
 
 public struct AMDOnboardingView: View {
-  @State private var isDontShowAgain: Bool = false
+  private let onDismiss: () -> Void
+  @State private var isFirstContentVisible: Bool = true
   
-  private let onDismiss: (Bool) -> Void
-  
-  public init(onDismiss: @escaping (Bool) -> Void) {
+  public init(onDismiss: @escaping () -> Void) {
     self.onDismiss = onDismiss
   }
   
@@ -32,95 +31,110 @@ public struct AMDOnboardingView: View {
   
   private var contentView: some View {
     VStack(spacing: 0) {
-      titleSection
-      characterIconsSection
-      mainContentSection
-      actionSection
+      closeButtonSection
+      Spacer()
+      contentSection
+      Spacer()
       Spacer()
     }
-    .padding(.horizontal, 20)
+    .ignoresSafeArea()
+    .animation(.default, value: isFirstContentVisible)
   }
   
-  private var titleSection: some View {
-    VStack(alignment: .leading, spacing: 0) {
-      HStack(spacing: 0) {
-        Text("고미당씨는 ")
-          .amdFont(.largeBold)
-          .foregroundStyle(.white)
-        
-        Text("당 섭취량")
-          .amdFont(.largeBold)
-          .foregroundStyle(.amdPrimary)
-        
-        Text("에 따라서")
-          .amdFont(.largeBold)
-          .foregroundStyle(.white)
-      }
+  private var closeButtonSection: some View {
+    HStack {
+      Spacer()
       
-      HStack(spacing: 0) {
-        Text("3단 변화")
-          .amdFont(.largeBold)
-          .foregroundStyle(.amdPrimary)
-        Text("해요")
-          .amdFont(.largeBold)
+      Button {
+        if isFirstContentVisible {
+          isFirstContentVisible = false
+        } else {
+          onDismiss()
+        }
+      } label: {
+        AMDImage.delete24.swiftUIImage
+          .renderingMode(.template)
           .foregroundStyle(.white)
       }
     }
     .padding(.top, 60)
-    .frame(maxWidth: .infinity, alignment: .leading)
+    .padding(.horizontal, 20)
   }
   
-  private var characterIconsSection: some View {
-    HStack {
-      AMDImage.homeOnboardingIcons.swiftUIImage
-      Spacer()
-    }
-    .padding(.top, 12)
-  }
-  
-  private var mainContentSection: some View {
-    AMDImage.homeOnboarding.swiftUIImage
-      .resizable()
-      .scaledToFit()
-      .frame(maxHeight: 450)
-      .padding(.top, 35)
-  }
-  
-  private var actionSection: some View {
-    HStack {
-      dontShowAgainCheckbox
-      Spacer()
-      closeButton
-    }
-    .padding(.top, 35)
-  }
-  
-  private var dontShowAgainCheckbox: some View {
-    Button {
-      isDontShowAgain.toggle()
-    } label: {
-      HStack(spacing: 4) {
-        Image(systemName: isDontShowAgain ? "checkmark.circle.fill" : "circle")
-          .foregroundStyle(.white)
-          .font(.system(size: 20))
-        
-        Text("다시 보지 않기")
-          .amdFont(.mediumRegular)
-          .foregroundStyle(.white)
+  private var contentSection: some View {
+    Group {
+      if isFirstContentVisible {
+        firstContentSection
+      } else {
+        secondContentSection
       }
     }
+    .animation(.default, value: isFirstContentVisible)
   }
   
-  private var closeButton: some View {
-    Button {
-      onDismiss(isDontShowAgain)
-    } label: {
-      Text("닫기")
-        .amdFont(.smallRegular)
-        .foregroundStyle(.white)
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .amdStrokeBorder(.white, radius: .small, linewidth: 1)
+  private var firstContentSection: some View {
+    VStack(alignment: .center, spacing: 20) {
+      VStack(alignment: .center, spacing: 0) {
+        Text("고미당씨는 그 날의")
+          .amdFont(.largeBold)
+          .foregroundStyle(.white)
+        
+        HStack(spacing: 0) {
+          Text("당 섭취량")
+            .amdFont(.largeBold)
+            .foregroundStyle(.amdPrimary)
+          
+          Text("에 따라")
+            .amdFont(.largeBold)
+            .foregroundStyle(.white)
+          
+          Text("3단 변화")
+            .amdFont(.largeBold)
+            .foregroundStyle(.amdPrimary)
+          Text("해요")
+            .amdFont(.largeBold)
+            .foregroundStyle(.white)
+        }
+      }
+      .frame(maxWidth: .infinity, alignment: .center)
+      
+      AMDImage.homeOnboarding.swiftUIImage
+        .resizable()
+        .scaledToFit()
+        .frame(maxHeight: 450)
     }
+    .padding(.horizontal, 45)
+  }
+  
+  private var secondContentSection: some View {
+    ZStack(alignment: .bottom) {
+      AMDImage.homeOnboarding2.swiftUIImage
+        .resizable()
+        .scaledToFit()
+        .frame(maxHeight: 384)
+      
+      VStack(alignment: .center, spacing: 30) {
+        AMDImage.homeOnboarding2Icon.swiftUIImage
+        
+        VStack(alignment: .center, spacing: 0) {
+          Text("카드를 뒤집어")
+            .amdFont(.largeBold)
+            .foregroundStyle(.white)
+          
+          HStack(spacing: 0) {
+            Text("오늘 마신 음료")
+              .amdFont(.largeBold)
+              .foregroundStyle(.amdPrimary)
+            
+            Text("를 확인해보세요")
+              .amdFont(.largeBold)
+              .foregroundStyle(.white)
+          }
+        }
+        .frame(maxWidth: .infinity, alignment: .center)
+      }
+      .padding(.bottom, 60)
+    }
+    .padding(.horizontal, 45)
   }
 }

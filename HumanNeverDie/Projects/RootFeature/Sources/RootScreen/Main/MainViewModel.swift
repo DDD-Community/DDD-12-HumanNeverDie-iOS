@@ -27,7 +27,7 @@ public final class MainViewModel: ViewModelable {
   public enum Action {
     case tabBarItemTapped(AMDTabBarType)
     case onViewDidLoad
-    case onboardingDismissButtonTapped(Bool)
+    case onboardingDismissButtonTapped
   }
   
   @ObservationIgnored
@@ -53,9 +53,9 @@ public final class MainViewModel: ViewModelable {
     case .onViewDidLoad:
       Task { await checkOnboarding() }
       
-    case let .onboardingDismissButtonTapped(isDontShow):
+    case .onboardingDismissButtonTapped:
       Task {
-        await userDefaultClient.setValue(!isDontShow, forKey: AMDUserDefaultKey.isFirstHome)
+        await userDefaultClient.setValue(false, forKey: AMDUserDefaultKey.isFirstHome)
         await MainActor.run {
           state.isOnboardingPresented = false
         }

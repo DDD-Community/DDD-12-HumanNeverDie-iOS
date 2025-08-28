@@ -49,6 +49,9 @@ public final class SettingViewModel: ViewModelable {
   @Dependency(\.keychainClient) private var keychainClient
   
   @ObservationIgnored
+  @Dependency(\.globalState) private var globalState
+  
+  @ObservationIgnored
   @Dependency(\.toastClient) private var toastClient
   
   @ObservationIgnored
@@ -114,11 +117,13 @@ extension SettingViewModel {
     do {
       let result = try await userUseCase.updateUserInfo(userID: state.userID, userInfo: userInfo)
       
+      await globalState.sendEvent(.homeRefresh)
+      await globalState.sendEvent(.historyRefresh)
+      
       showToast(message: "저장이 완료되었어요", type: .success)
       setUserInfo(userInfo: result)
       
       state.isLoading = false
-      
     } catch {
       showToast(message: "저장에 실패하였습니다", type: .failure)
       state.isLoading = false
