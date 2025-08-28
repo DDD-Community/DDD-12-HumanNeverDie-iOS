@@ -173,7 +173,7 @@ extension AccountInfoView {
       contentActivitySection()
     }
     .padding(.horizontal, 20)
-    .padding(.top, 48)
+    .padding(.top, 10)
   }
   
   @ViewBuilder
