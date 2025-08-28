@@ -163,10 +163,11 @@ public final class BeverageRecordViewModel: ViewModelable {
       guard let selectedSize = state.selectedSizeType else {
         throw BeverageRecordError.noSizeSelected
       }
+      let recordDateWithCurrentTime = updateDateWithCurrentTime(state.beverageRecordDate)
       
       let success = try await beverageUseCase.recordBeverage(
         productID: state.productID,
-        recordDate: state.beverageRecordDate,
+        recordDate: recordDateWithCurrentTime,
         size: selectedSize.sizeType.uppercased()
       )
       
@@ -180,5 +181,21 @@ public final class BeverageRecordViewModel: ViewModelable {
     } catch {
       print("음료 기록 에러: \(error)")
     }
+  }
+  
+  private func updateDateWithCurrentTime(_ date: Date) -> Date {
+    let calendar = Calendar.current
+    let now = Date()
+    let dateComponents = calendar.dateComponents([.year, .month, .day], from: date)
+    let timeComponents = calendar.dateComponents([.hour, .minute, .second], from: now)
+    var newComponents = DateComponents()
+    newComponents.year = dateComponents.year
+    newComponents.month = dateComponents.month
+    newComponents.day = dateComponents.day
+    newComponents.hour = timeComponents.hour
+    newComponents.minute = timeComponents.minute
+    newComponents.second = timeComponents.second
+    
+    return calendar.date(from: newComponents) ?? date
   }
 }
