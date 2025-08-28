@@ -151,19 +151,20 @@ public final class BeverageSearchViewModel: ViewModelable {
       state.route = nil
       
     case let .beverageLikeStatusChanged(productID, isLiked):
-      syncBeverageLikeStatusFromGlobalEvent(productID: productID, isLiked: isLiked)
+      updateBeverageLikeStatus(productID: productID, isLiked: isLiked)
     }
   }
-
-  private func syncBeverageLikeStatusFromGlobalEvent(productID: String, isLiked: Bool) {
-    guard let update = beverageUseCase.getBeverageLikeUpdate(
-      from: listViewModel.state.beverageList,
-      productID: productID,
-      newLikeStatus: isLiked
-    ) else { return }
+  
+  private func getUserSugar() async {
+    guard let baseSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.baseSugar),
+          let totalSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.totalSugar) else {
+      return
+    }
     
-    listViewModel.state.beverageList[update.beverageIndex].isLiked = isLiked
-    listViewModel.state.filterCount.like += update.likeCountChange
+    await MainActor.run {
+      state.baseSugar = baseSugar
+      state.totalSugar = totalSugar
+    }
   }
 
   private func searchBeverage(_ keyword: String) async {
@@ -198,16 +199,15 @@ public final class BeverageSearchViewModel: ViewModelable {
     }
   }
   
-  private func getUserSugar() async {
-    guard let baseSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.baseSugar),
-          let totalSugar: Int = userDefaultClient.getValue(forKey: AMDUserDefaultKey.totalSugar) else {
-      return
-    }
+  private func updateBeverageLikeStatus(productID: String, isLiked: Bool) {
+    guard let update = beverageUseCase.getBeverageLikeUpdate(
+      from: listViewModel.state.beverageList,
+      productID: productID,
+      newLikeStatus: isLiked
+    ) else { return }
     
-    await MainActor.run {
-      state.baseSugar = baseSugar
-      state.totalSugar = totalSugar
-    }
+    listViewModel.state.beverageList[update.beverageIndex].isLiked = isLiked
+    listViewModel.state.filterCount.like += update.likeCountChange
   }
 }
 
