@@ -36,7 +36,7 @@ public final class DefaultUserInfoValidationUseCase: UserInfoValidationUseCase {
     if nickname.count < 2 { return "닉네임은 2자 이상 입력해주세요." }
     if nickname.count > 10 { return "닉네임은 10자 이하로 입력해주세요." }
     if !nickname.isValidNicknameFormat {
-      return "닉네임은 띄어쓰기 없이 한글, 영문, 숫자로 입력해주세요."
+      return "닉네임은 한글, 영문, 숫자만 입력 가능해요."
     }
     return nil
   }

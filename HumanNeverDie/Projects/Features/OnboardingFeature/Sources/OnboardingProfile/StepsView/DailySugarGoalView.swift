@@ -12,6 +12,7 @@ import CommonFeature
 
 struct DailySugarGoalView: View {
   @State private var viewModel: DailySugarGoalViewModel
+  @Environment(Router.self) private var router
   
   public init(viewModel: DailySugarGoalViewModel) {
     self._viewModel = .init(initialValue: viewModel)
@@ -133,8 +134,8 @@ extension DailySugarGoalView {
     VStack(alignment: .leading, spacing: 8) {
       HStack(spacing: 4) {
         Text("권장 당 섭취량 계산법이 궁금하다면?")
-          .amdFont(.xsmallRegular)
-          .foregroundColor(.gray85)
+          .amdFont(.smallRegular)
+          .foregroundColor(.gray70)
           .underline()
         
         Image(systemName: "chevron.right")
@@ -152,6 +153,7 @@ extension DailySugarGoalView {
       Text("*아맞당은 카페 음료의 당류만 기록해요. 식사나 간식 등 다른 경로로 섭취 한 당류는 고려하지 않으니 참고해주세요.")
         .amdFont(.xsmallRegular)
         .foregroundColor(.gray60)
+        .lineLimit(nil)
     }
     .padding(.top, 24)
     .padding(.horizontal, 20)

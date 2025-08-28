@@ -22,6 +22,7 @@ private struct AMDDatePickerConstants {
 public final class AMDDatePickerViewController: UIViewController {
   private let picker = UIPickerView()
   private let pickerType: AMDDatePicker.PickerType
+  private let isAgeRestricted: Bool
   
   var selectedDate: Date {
     didSet {
@@ -31,12 +32,36 @@ public final class AMDDatePickerViewController: UIViewController {
   
   var onDateChanged: ((Date) -> Void)?
   
+  private var maxSelectableYear: Int {
+    if isAgeRestricted == true {
+      let maxDate = Calendar.current.date(byAdding: .year, value: -14, to: Date()) ?? Date()
+      return Calendar.current.component(.year, from: maxDate)
+    }
+    return Date().year
+  }
+  
   public init(
     selectedDate: Date,
-    pickerType: AMDDatePicker.PickerType
+    pickerType: AMDDatePicker.PickerType,
+    isAgeRestricted: Bool
   ) {
-    self.selectedDate = selectedDate
     self.pickerType = pickerType
+    self.isAgeRestricted = isAgeRestricted
+    
+    // 14세 제한이 있는 경우 선택된 날짜가 유효한지 확인
+    if isAgeRestricted {
+      let maxDate = Calendar.current.date(byAdding: .year, value: -14, to: Date()) ?? Date()
+      
+      // 전달받은 날짜가 최대 선택 가능한 날짜보다 미래인 경우 최대 날짜로 조정
+      if selectedDate > maxDate {
+        self.selectedDate = maxDate
+      } else {
+        self.selectedDate = selectedDate
+      }
+    } else {
+      self.selectedDate = selectedDate
+    }
+    
     super.init(nibName: nil, bundle: nil)
   }
   
@@ -72,18 +97,109 @@ public final class AMDDatePickerViewController: UIViewController {
 
 // MARK: - Private Methods
 private extension AMDDatePickerViewController {
+  var availableYears: [Int] {
+    if isAgeRestricted == true {
+      return Array(1970...maxSelectableYear)
+    }
+    return AMDDatePickerConstants.years
+  }
+  
+  // 정확한 14세 제한 날짜
+  private var maxSelectableDate: Date {
+    if isAgeRestricted == true {
+      return Calendar.current.date(byAdding: .year, value: -14, to: Date()) ?? Date()
+    }
+    return Date()
+  }
+  
+  // 현재 선택된 년도에 따른 사용 가능한 월 배열
+  var availableMonths: [Int] {
+    guard isAgeRestricted == true else {
+      return AMDDatePickerConstants.months
+    }
+    
+    let selectedYear = getSelectedYear(picker)
+    let maxDate = maxSelectableDate
+    
+    if selectedYear < maxDate.year {
+      return AMDDatePickerConstants.months
+    } else if selectedYear == maxDate.year {
+      return Array(1...maxDate.month)
+    } else {
+      return [1]
+    }
+  }
+  
+  // 현재 선택된 년월에 따른 사용 가능한 일수
+  func availableDays(for year: Int, month: Int) -> Int {
+    guard isAgeRestricted == true else {
+      return daysInMonth(year: year, month: month)
+    }
+    
+    let maxDate = maxSelectableDate
+    let maxDayInMonth = daysInMonth(year: year, month: month)
+    
+    if year < maxDate.year {
+      return maxDayInMonth
+    } else if year == maxDate.year && month < maxDate.month {
+      return maxDayInMonth
+    } else if year == maxDate.year && month == maxDate.month {
+      return min(maxDayInMonth, maxDate.day)
+    } else {
+      return 1
+    }
+  }
+  
+  // 14세 제한에 맞는 유효한 날짜를 반환하는 헬퍼 메서드
+  private func getValidDateForAgeRestriction(_ date: Date) -> Date {
+    guard isAgeRestricted else { return date }
+    
+    let maxDate = maxSelectableDate
+    
+    // 전달받은 날짜가 최대 선택 가능한 날짜보다 미래면 최대 날짜 반환
+    if date > maxDate {
+      return maxDate
+    }
+    
+    // 전달받은 날짜가 1970년보다 이전이면 최대 날짜 반환
+    let minDate = Calendar.current.date(from: DateComponents(year: 1970, month: 1, day: 1)) ?? Date()
+    if date < minDate {
+      return maxDate
+    }
+    
+    return date
+  }
+
   func updatePickerValues() {
     let currentDate = selectedDate
     
     switch pickerType {
     case .yearMonth:
-      picker.selectRow(currentDate.year - 1970, inComponent: 0, animated: false)
-      picker.selectRow(currentDate.month - 1, inComponent: 1, animated: false)
+      // 14세 제한이 있는 경우 유효한 범위 내의 날짜로 조정
+      let validDate = getValidDateForAgeRestriction(currentDate)
+      
+      let yearIndex = availableYears.firstIndex(of: validDate.year) ?? (availableYears.count - 1)
+      picker.selectRow(yearIndex, inComponent: 0, animated: false)
+      
+      // 선택된 년도에 맞는 available months 다시 계산
+      let monthIndex = availableMonths.firstIndex(of: validDate.month) ?? (availableMonths.count - 1)
+      picker.selectRow(monthIndex, inComponent: 1, animated: false)
       
     case .yearMonthDay:
-      picker.selectRow(currentDate.year - 1970, inComponent: 0, animated: false)
-      picker.selectRow(currentDate.month - 1, inComponent: 1, animated: false)
-      picker.selectRow(currentDate.day - 1, inComponent: 2, animated: false)
+      // 14세 제한이 있는 경우 유효한 범위 내의 날짜로 조정
+      let validDate = getValidDateForAgeRestriction(currentDate)
+      
+      let yearIndex = availableYears.firstIndex(of: validDate.year) ?? (availableYears.count - 1)
+      picker.selectRow(yearIndex, inComponent: 0, animated: false)
+      
+      // 선택된 년도에 맞는 available months 다시 계산
+      let monthIndex = availableMonths.firstIndex(of: validDate.month) ?? (availableMonths.count - 1)
+      picker.selectRow(monthIndex, inComponent: 1, animated: false)
+      
+      // 유효한 일수 범위 내에서 선택
+      let maxDays = availableDays(for: validDate.year, month: validDate.month)
+      let dayIndex = min(validDate.day - 1, maxDays - 1)
+      picker.selectRow(dayIndex, inComponent: 2, animated: false)
       
     case .time:
       picker.selectRow(currentDate.isAM ? 0 : 1, inComponent: 0, animated: false)
@@ -102,8 +218,8 @@ private extension AMDDatePickerViewController {
     components.year = getSelectedYear(pickerView)
     components.month = getSelectedMonth(pickerView)
     
-    // 선택된 월의 최대 일수 확인
-    let maxDay = daysInMonth(year: components.year!, month: components.month!)
+    // 선택된 월의 최대 일수 확인 (14세 제한 고려)
+    let maxDay = availableDays(for: components.year!, month: components.month!)
     if let currentDay = components.day, currentDay > maxDay {
       components.day = maxDay
     }
@@ -115,24 +231,77 @@ private extension AMDDatePickerViewController {
   }
   
   func updateSelectedDate(_ pickerView: UIPickerView, changedComponent: Int) {
-    // 월이 변경되면 일수 업데이트
-    if changedComponent == 0 || changedComponent == 1 {
-      pickerView.reloadComponent(2)
+    // 년도나 월이 변경되면 월과 일 컴포넌트 업데이트
+    if changedComponent == 0 { // 년도 변경
+      let selectedYear = getSelectedYear(pickerView)
+      let maxDate = maxSelectableDate
       
-      let maxDay = daysInMonth(year: getSelectedYear(pickerView), month: getSelectedMonth(pickerView))
+      // 현재 날짜 기준으로 조정할지 결정
+      let shouldAdjustToCurrentDate = isAgeRestricted && selectedYear >= maxDate.year
+      
+      pickerView.reloadComponent(1) // 월 리로드
+      pickerView.reloadComponent(2) // 일 리로드
+      
+      if shouldAdjustToCurrentDate {
+        // 현재 날짜의 월과 일로 조정
+        let targetMonth = maxDate.month
+        let targetDay = maxDate.day
+        
+        // 사용 가능한 월 범위에서 현재 월 찾기
+        let availableMonthsArray = availableMonths
+        if let monthIndex = availableMonthsArray.firstIndex(of: targetMonth) {
+          pickerView.selectRow(monthIndex, inComponent: 1, animated: true)
+        } else {
+          // 현재 월이 없으면 마지막 사용 가능한 월 선택
+          pickerView.selectRow(availableMonthsArray.count - 1, inComponent: 1, animated: true)
+        }
+        
+        // 일 조정
+        let finalMonth = getSelectedMonth(pickerView)
+        let maxAvailableDay = availableDays(for: selectedYear, month: finalMonth)
+        let finalDay = min(targetDay, maxAvailableDay)
+        pickerView.selectRow(finalDay - 1, inComponent: 2, animated: true)
+      } else {
+        // 현재 선택된 월이 사용 가능한 범위를 벗어나면 조정
+        let availableMonthsArray = availableMonths
+        let currentMonthRow = pickerView.selectedRow(inComponent: 1)
+        if currentMonthRow >= availableMonthsArray.count {
+          pickerView.selectRow(availableMonthsArray.count - 1, inComponent: 1, animated: true)
+        }
+        
+        // 일수 조정
+        let selectedMonth = getSelectedMonth(pickerView)
+        let maxDay = availableDays(for: selectedYear, month: selectedMonth)
+        let currentDay = pickerView.selectedRow(inComponent: 2) + 1
+        if currentDay > maxDay {
+          pickerView.selectRow(maxDay - 1, inComponent: 2, animated: true)
+        }
+      }
+    } else if changedComponent == 1 { // 월 변경
+      pickerView.reloadComponent(2) // 일 리로드
+      
+      // 일수 조정
+      let selectedYear = getSelectedYear(pickerView)
+      let selectedMonth = getSelectedMonth(pickerView)
+      let maxDay = availableDays(for: selectedYear, month: selectedMonth)
       let currentDay = pickerView.selectedRow(inComponent: 2) + 1
       if currentDay > maxDay {
         pickerView.selectRow(maxDay - 1, inComponent: 2, animated: true)
       }
     }
     
-    // 날짜 업데이트
+    // 최종 날짜 업데이트
     let calendar = Calendar.current
     var components = calendar.dateComponents([.hour, .minute, .second], from: selectedDate)
     
-    components.year = getSelectedYear(pickerView)
-    components.month = getSelectedMonth(pickerView)
-    components.day = pickerView.selectedRow(inComponent: 2) + 1
+    let finalYear = getSelectedYear(pickerView)
+    let finalMonth = getSelectedMonth(pickerView)
+    let maxDay = availableDays(for: finalYear, month: finalMonth)
+    let finalDay = min(pickerView.selectedRow(inComponent: 2) + 1, maxDay)
+    
+    components.year = finalYear
+    components.month = finalMonth
+    components.day = finalDay
     
     if let newDate = calendar.date(from: components) {
       selectedDate = newDate
@@ -178,11 +347,19 @@ private extension AMDDatePickerViewController {
   
   func getSelectedYear(_ pickerView: UIPickerView) -> Int {
     let yearIndex = pickerView.selectedRow(inComponent: 0)
-    return AMDDatePickerConstants.years[yearIndex]
+    return availableYears[yearIndex]
   }
   
   func getSelectedMonth(_ pickerView: UIPickerView) -> Int {
-    return pickerView.selectedRow(inComponent: 1) + 1
+    let monthIndex = pickerView.selectedRow(inComponent: 1)
+    let availableMonthsArray = availableMonths
+    
+    // 인덱스가 유효한 범위를 벗어나지 않도록 보장
+    guard monthIndex < availableMonthsArray.count else {
+      return availableMonthsArray.last ?? 1
+    }
+    
+    return availableMonthsArray[monthIndex]
   }
   
   func daysInMonth(year: Int, month: Int) -> Int {
@@ -217,16 +394,27 @@ extension AMDDatePickerViewController: UIPickerViewDataSource, UIPickerViewDeleg
     switch pickerType {
     case .yearMonth:
       switch component {
-      case 0: return AMDDatePickerConstants.years.count
-      case 1: return AMDDatePickerConstants.months.count
+      case 0: return availableYears.count
+      case 1: return availableMonths.count
       default: return 0
       }
       
     case .yearMonthDay:
       switch component {
-      case 0: return AMDDatePickerConstants.years.count
-      case 1: return AMDDatePickerConstants.months.count
-      case 2: return daysInMonth(year: getSelectedYear(pickerView), month: getSelectedMonth(pickerView))
+      case 0: return availableYears.count
+      case 1: return availableMonths.count
+      case 2:
+        // 현재 선택된 년도와 월을 기준으로 일수 계산
+        let selectedYear = availableYears.indices.contains(pickerView.selectedRow(inComponent: 0)) ?
+          availableYears[pickerView.selectedRow(inComponent: 0)] :
+          (availableYears.last ?? Date().year)
+        
+        let availableMonthsArray = availableMonths
+        let selectedMonth = availableMonthsArray.indices.contains(pickerView.selectedRow(inComponent: 1)) ?
+          availableMonthsArray[pickerView.selectedRow(inComponent: 1)] :
+          (availableMonthsArray.last ?? Date().month)
+        
+        return availableDays(for: selectedYear, month: selectedMonth)
       default: return 0
       }
       
@@ -269,24 +457,62 @@ extension AMDDatePickerViewController: UIPickerViewDataSource, UIPickerViewDeleg
     switch pickerType {
     case .yearMonth:
       switch component {
-      case 0: label.text = "\(AMDDatePickerConstants.years[row])년"
-      case 1: label.text = "\(AMDDatePickerConstants.months[row])월"
+      case 0:
+        if row < availableYears.count {
+          label.text = "\(availableYears[row])년"
+        } else {
+          label.text = ""
+        }
+      case 1:
+        if row < availableMonths.count {
+          label.text = "\(availableMonths[row])월"
+        } else {
+          label.text = ""
+        }
       default: label.text = ""
       }
       
     case .yearMonthDay:
       switch component {
-      case 0: label.text = "\(AMDDatePickerConstants.years[row])년"
-      case 1: label.text = "\(AMDDatePickerConstants.months[row])월"
-      case 2: label.text = "\(row + 1)일"
+      case 0:
+        if row < availableYears.count {
+          label.text = "\(availableYears[row])년"
+        } else {
+          label.text = ""
+        }
+      case 1:
+        if row < availableMonths.count {
+          label.text = "\(availableMonths[row])월"
+        } else {
+          label.text = ""
+        }
+      case 2:
+        let selectedYear = getSelectedYear(pickerView)
+        let selectedMonth = getSelectedMonth(pickerView)
+        let maxDays = availableDays(for: selectedYear, month: selectedMonth)
+        if row < maxDays {
+          label.text = "\(row + 1)일"
+        } else {
+          label.text = ""
+        }
       default: label.text = ""
       }
       
     case .time:
       switch component {
-      case 0: label.text = AMDDatePickerConstants.amPmOptions[row]
+      case 0:
+        if row < AMDDatePickerConstants.amPmOptions.count {
+          label.text = AMDDatePickerConstants.amPmOptions[row]
+        } else {
+          label.text = ""
+        }
       case 1: label.text = "\(hourValueForRow(row))시"
-      case 2: label.text = String(format: "%02d분", AMDDatePickerConstants.minutes[row])
+      case 2:
+        if row < AMDDatePickerConstants.minutes.count {
+          label.text = String(format: "%02d분", AMDDatePickerConstants.minutes[row])
+        } else {
+          label.text = ""
+        }
       default: label.text = ""
       }
     }

@@ -11,6 +11,7 @@ public struct AMDDatePickerView: View {
   private let title: String
   private let isResetButtonHidden: Bool
   private let type: AMDDatePicker.PickerType
+  private let isAgeRestricted: Bool?
   private let action: (Date) -> Void
   
   @State private var date: Date = Date()
@@ -20,12 +21,14 @@ public struct AMDDatePickerView: View {
     isResetButtonHidden: Bool = true,
     type: AMDDatePicker.PickerType,
     initialDate: Date = Date(),
+    isAgeRestricted: Bool? = nil,
     action: @escaping (Date) -> Void
   ) {
     self.title = title
     self.type = type
     self.isResetButtonHidden = isResetButtonHidden
     self.action = action
+    self.isAgeRestricted = isAgeRestricted
     self._date = State(initialValue: initialDate)
     
   }
@@ -75,7 +78,8 @@ public struct AMDDatePickerView: View {
   private var datePickerView: some View {
     AMDDatePicker(
       selectedDate: $date,
-      pickerType: type
+      pickerType: type,
+      isAgeRestricted: isAgeRestricted ?? false
     )
     .frame(maxWidth: .infinity, minHeight: 184, maxHeight: 184)
   }

@@ -13,7 +13,11 @@ class AMDCommonCalendarViewModel {
   private(set) var currentDate: Date
   @ObservationIgnored private let userSugarTargetValue: Binding<Int> 
   var sugarIntakeRecordData: [SugarIntakeRecord]
-  let calendar = Calendar.current
+  var calendar: Calendar {
+      var cal = Calendar.current
+      cal.firstWeekday = 1 // 일요일 강제
+      return cal
+  }
   let dragThreshold: CGFloat = 50
   let weekdayItems: [AMDWeekdayTile] = AMDWeekdayTile.allCases
   var columns: [GridItem] {
@@ -79,7 +83,7 @@ class AMDCommonCalendarViewModel {
 extension DateFormatter {
   static let calendarTitleFormat: DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy.MM"
+    formatter.dateFormat = "yyyy년 M월"
     return formatter
   }()
 }

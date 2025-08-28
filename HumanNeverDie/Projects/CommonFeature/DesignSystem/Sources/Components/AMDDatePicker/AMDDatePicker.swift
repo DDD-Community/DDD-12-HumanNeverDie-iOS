@@ -10,13 +10,16 @@ import SwiftUI
 public struct AMDDatePicker: UIViewControllerRepresentable {
   @Binding private var selectedDate: Date
   private let pickerType: PickerType
+  private let isAgeRestricted: Bool?
   
   public init(
     selectedDate: Binding<Date>,
-    pickerType: PickerType
+    pickerType: PickerType,
+    isAgeRestricted: Bool
   ) {
     self._selectedDate = selectedDate
     self.pickerType = pickerType
+    self.isAgeRestricted = isAgeRestricted
   }
   
   public enum PickerType {
@@ -28,7 +31,8 @@ public struct AMDDatePicker: UIViewControllerRepresentable {
   public func makeUIViewController(context: Context) -> AMDDatePickerViewController {
     let viewController = AMDDatePickerViewController(
       selectedDate: selectedDate,
-      pickerType: pickerType
+      pickerType: pickerType,
+      isAgeRestricted: isAgeRestricted ?? false
     )
     
     viewController.onDateChanged = { newDate in

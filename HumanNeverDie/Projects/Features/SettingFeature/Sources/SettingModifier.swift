@@ -15,24 +15,24 @@ private struct SettingToolbarModifier: ViewModifier {
   public func body(content: Content) -> some View {
     VStack(spacing: 0) {
       HStack {
-        if let onBackTap = onBackTap {
-             Button(action: onBackTap) {
-               Image(systemName: "chevron.left")
-                 .foregroundColor(.gray70)
-             }
-           } else {
-             Color.clear
-               .frame(width: 24, height: 24)
-           }
-        Spacer()
+        HStack {
+          if let onBackTap = onBackTap {
+            Button(action: onBackTap) {
+              AMDImage.arrowLeft24.swiftUIImage
+            }
+          }
+          Spacer()
+        }
+        .frame(maxWidth: .infinity)
         
         Text(title)
           .amdFont(.mediumRegular)
           .foregroundStyle(.gray85)
-          .padding(.trailing, 24)
         
-        Spacer()
-      
+        HStack {
+          Spacer()
+        }
+        .frame(maxWidth: .infinity)
       }
       .padding(.horizontal, 20)
       .padding(.vertical, 17)
@@ -40,7 +40,7 @@ private struct SettingToolbarModifier: ViewModifier {
       // 기존 콘텐츠
       content
     }
-    .toolbar(.hidden, for: .navigationBar)  // 기본 네비게이션 완전 숨기기
+    .toolbar(.hidden, for: .navigationBar)
   }
 }
 

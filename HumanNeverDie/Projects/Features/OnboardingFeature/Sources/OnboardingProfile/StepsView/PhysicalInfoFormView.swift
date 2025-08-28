@@ -22,28 +22,28 @@ struct PhysicalInfoFormView: View {
   }
   
   var body: some View {
-    ZStack {
-      Color.clear
-        .contentShape(Rectangle())
-        .onTapGesture {
-          hideKeyboard()
+    GeometryReader { _ in
+      ZStack {
+        Color.clear
+          .contentShape(Rectangle())
+          .onTapGesture {
+            hideKeyboard()
+          }
+        
+        VStack(spacing: 0) {
+          topHeaderView()
+          contentView()
+          Spacer()
+          bottomButtonView()
         }
-      
-      VStack(spacing: 0) {
-        topHeaderView()
-        contentView()
-        Spacer()
-        bottomButtonView()
-      }
-      .background(Color.white)
-      .ignoresSafeArea(edges: .bottom)
-      .onAppear {
-        viewModel.handleAction(.onAppear)
+        .background(Color.white)
+        .ignoresSafeArea(edges: .bottom)
+        .onAppear {
+          viewModel.handleAction(.onAppear)
+        }
       }
     }
-    .onAppear {
-      viewModel.handleAction(.onAppear)
-    }
+    .ignoresSafeArea(.keyboard, edges: .bottom)
     .toolbarVisibility(.hidden, for: .navigationBar)
   }
 }

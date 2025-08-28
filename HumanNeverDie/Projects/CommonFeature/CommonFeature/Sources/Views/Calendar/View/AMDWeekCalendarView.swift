@@ -45,9 +45,9 @@ struct AMDWeekCalendarView: View {
     VStack(spacing: 0) {
       calendarHeaderView()
       
-      HStack(spacing: 0) {
-        calendarDayCellView()
-      }.highPriorityGesture(
+      LazyVGrid(columns: viewModel.columns, spacing: 15) {
+         calendarDayCellView()
+       }.highPriorityGesture(
         DragGesture()
           .onEnded { value in
             withAnimation(.easeInOut) {

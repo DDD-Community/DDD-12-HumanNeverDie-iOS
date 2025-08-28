@@ -78,7 +78,7 @@ extension HistoryView {
     Text(viewModel.getSelectedDateString())
       .amdFont(.smallRegular)
       .foregroundStyle(.gray60)
-      .padding(.top, 8)
+      .padding(.vertical, 8)
   }
   
   private func contentCalenderView() -> some View {

@@ -56,7 +56,7 @@ extension OnboardingView {
         Spacer()
         
         Button("건너뛰기") {
-          pushProfileView()
+          currentPage = totalPages - 1
         }
         .opacity(currentPage == totalPages - 1 ? 0 : 1)
         .foregroundColor(.primaryDarker)

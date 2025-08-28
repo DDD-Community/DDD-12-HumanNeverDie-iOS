@@ -27,7 +27,7 @@ public struct TermsView: View {
           openURL("https://telling-abrosaurus-7ba.notion.site/24d0d89bf00580dc8277f6fa24888796?pvs=74")
         }
       }.padding(.horizontal, 20)
-    }.settingToolbar(item: .notificationSetting) {
+    }.settingToolbar(item: .terms) {
       self.router.pop()
     }
     .listStyle(.plain)

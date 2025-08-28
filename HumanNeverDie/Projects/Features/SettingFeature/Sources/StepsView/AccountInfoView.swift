@@ -63,7 +63,8 @@ extension AccountInfoView {
         title: "생년월일",
         isResetButtonHidden: true,
         type: .yearMonthDay,
-        initialDate: viewModel.birthDate
+        initialDate: viewModel.birthDate,
+        isAgeRestricted: true
       ) {
         viewModel.handleAction(.updateBirthDate($0))
       }
@@ -197,7 +198,7 @@ extension AccountInfoView {
   @ViewBuilder
   private func bottomButtonView() -> some View {
     SettingBottomButton(
-      type: viewModel.isChangedAccountInfo ? .default : .secondary
+      type: viewModel.isChangedAccountInfo ?  .default : .teriary
     ) {
       guard viewModel.isChangedAccountInfo else {
         self.router.pop()
