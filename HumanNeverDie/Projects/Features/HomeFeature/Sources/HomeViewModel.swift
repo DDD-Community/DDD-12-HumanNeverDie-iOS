@@ -63,6 +63,8 @@ public final class HomeViewModel: ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case .onViewDidLoad:
+      state.selectedDate = Date.now
+      
       guard !state.isViewDidLoad else { return }
       state.isViewDidLoad = true
       

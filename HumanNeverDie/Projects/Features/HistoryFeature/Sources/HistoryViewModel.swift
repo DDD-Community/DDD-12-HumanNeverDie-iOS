@@ -22,7 +22,7 @@ public final class HistoryViewModel: ViewModelable {
     var isViewDidLoad: Bool = false
     
     var currentDate: Date = Date()
-    var selectedDate: Date? = Date.now
+    var selectedDate: Date? = Date()
     
     var selectedIntakeHistoryID: String = ""
     var selectedProductID: String = ""
@@ -88,6 +88,8 @@ public final class HistoryViewModel: ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
+      state.selectedDate = Date.now
+ 
       guard !state.isViewDidLoad else { return }
       state.isViewDidLoad = true
       
@@ -103,6 +105,8 @@ public final class HistoryViewModel: ViewModelable {
       state.isBevarageDetailPresented = true
       
     case .loadHistoryForSelectedDate:
+      print("selectedDate:\(state.selectedDate)")
+      
       loadSelectedDateHistory()
       
     case .updateCurrentDate(let newDate):
