@@ -13,7 +13,7 @@ private struct AMDDatePickerConstants {
   fileprivate static let months = Array(1...12)
   fileprivate static let amPmOptions = ["오전", "오후"]
   fileprivate static let hours12 = Array(1...12)
-  fileprivate static let minutes = Array(0...59)
+  fileprivate static let minutes = Array(stride(from: 0, to: 60, by: 5))
   
   fileprivate static let pickerViewRows = 10_000
   fileprivate static let pickerViewMiddle = ((pickerViewRows / hours12.count) / 2) * hours12.count
@@ -207,7 +207,11 @@ private extension AMDDatePickerViewController {
       let targetRow = rowForHourValue(currentDate.displayHour12)
       picker.selectRow(targetRow, inComponent: 1, animated: false)
       
-      picker.selectRow(currentDate.minute, inComponent: 2, animated: false)
+      // 현재 분을 5분 단위로 반올림해서 가장 가까운 값 선택
+      let currentMinute = currentDate.minute
+      let roundedMinute = (currentMinute / 5) * 5 // 5분 단위로 반올림
+      let minuteIndex = AMDDatePickerConstants.minutes.firstIndex(of: roundedMinute) ?? 0
+      picker.selectRow(minuteIndex, inComponent: 2, animated: false)
     }
   }
   
@@ -309,7 +313,7 @@ private extension AMDDatePickerViewController {
     }
   }
   
-  func updateSelectedTime(_ pickerView: UIPickerView) {
+  private func updateSelectedTime(_ pickerView: UIPickerView) {
     let calendar = Calendar.current
     
     // 기존 날짜 정보 유지
@@ -323,7 +327,7 @@ private extension AMDDatePickerViewController {
     let hourRow = pickerView.selectedRow(inComponent: 1)
     let hour12 = hourValueForRow(hourRow)
     
-    // 분
+    // 분 (5분 단위)
     let minuteRow = pickerView.selectedRow(inComponent: 2)
     let minute = AMDDatePickerConstants.minutes[minuteRow]
     
@@ -344,6 +348,7 @@ private extension AMDDatePickerViewController {
       onDateChanged?(newDate)
     }
   }
+
   
   func getSelectedYear(_ pickerView: UIPickerView) -> Int {
     let yearIndex = pickerView.selectedRow(inComponent: 0)
