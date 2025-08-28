@@ -142,7 +142,7 @@ public struct AMDSugarStatusView: View {
   private func speechBubbleView<Content: View>(@ViewBuilder content: () -> Content) -> some View {
     ZStack(alignment: .bottomLeading) {
       content()
-        .background(Color.gray10)
+        .background(color)
         .cornerRadius(16)
       
       CharacterSpeechTail()
