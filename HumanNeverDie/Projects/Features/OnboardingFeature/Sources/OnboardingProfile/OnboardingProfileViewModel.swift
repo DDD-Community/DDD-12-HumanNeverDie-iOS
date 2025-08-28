@@ -80,6 +80,7 @@ public final class OnboardingProfileViewModel: ViewModelable {
     case .completeOnboarding:
       Task {
         await userDefaultClient.setValue(true, forKey: AMDUserDefaultKey.isFirstHome)
+        await userDefaultClient.setValue(true, forKey: AMDUserDefaultKey.isFirstBeverageList)
         await completeOnboarding()
       }
     }
