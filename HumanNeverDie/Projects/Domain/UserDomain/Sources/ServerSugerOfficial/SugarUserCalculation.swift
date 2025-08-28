@@ -66,7 +66,7 @@ public class SugarUserCalculation {
       finalSugarGoal = 0
     }
     
-    return Int(finalSugarGoal.rounded(.up))
+    return Int(finalSugarGoal.rounded(.down))
   }
   
   public func calculate(for userInfo: UserInfo) -> RecommendedSugar {
