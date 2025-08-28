@@ -63,7 +63,9 @@ public final class HomeViewModel: ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case .onViewDidLoad:
+      //초기화
       state.selectedDate = Date.now
+      state.currentDate = Date.now
       
       guard !state.isViewDidLoad else { return }
       state.isViewDidLoad = true
