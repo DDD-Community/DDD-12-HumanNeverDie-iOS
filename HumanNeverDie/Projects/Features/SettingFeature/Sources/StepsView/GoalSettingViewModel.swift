@@ -16,8 +16,6 @@ import Dependencies
 @Observable
 @MainActor
 public final class GoalSettingViewModel: ViewModelable {
-  @ObservationIgnored
-  @Dependency(\.alertClient) private var alertClient
   private var router: Router?
   
   public struct State: Equatable, Sendable {
@@ -35,6 +33,9 @@ public final class GoalSettingViewModel: ViewModelable {
     case showSugarCalculationInfo
     case hideSugarCalculationInfo
   }
+  
+  @ObservationIgnored
+  @Dependency(\.alertClient) private var alertClient
   
   public var state: State
   private var originalState: State
