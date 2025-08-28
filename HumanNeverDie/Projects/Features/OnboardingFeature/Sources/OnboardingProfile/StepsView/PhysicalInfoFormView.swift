@@ -22,7 +22,7 @@ struct PhysicalInfoFormView: View {
   }
   
   var body: some View {
-    GeometryReader { geometry in
+    GeometryReader { _ in
       ZStack {
         Color.clear
           .contentShape(Rectangle())
@@ -31,26 +31,20 @@ struct PhysicalInfoFormView: View {
           }
         
         VStack(spacing: 0) {
-          ScrollView {
-            VStack(spacing: 0) {
-              topHeaderView()
-              contentView()
-            }
-            .background(Color.white)
-          }
-          .scrollIndicators(.hidden)
-          .scrollBounceBehavior(.basedOnSize)
-          
+          topHeaderView()
+          contentView()
+          Spacer()
           bottomButtonView()
-            .background(Color.white)
+        }
+        .background(Color.white)
+        .ignoresSafeArea(edges: .bottom)
+        .onAppear {
+          viewModel.handleAction(.onAppear)
         }
       }
     }
-    .ignoresSafeArea(edges: .bottom)
-    .onAppear {
-      viewModel.handleAction(.onAppear)
-      UIScrollView.appearance().bounces = false
-    }
+    .ignoresSafeArea(.keyboard, edges: .bottom)
+    .toolbarVisibility(.hidden, for: .navigationBar)
   }
 }
 
