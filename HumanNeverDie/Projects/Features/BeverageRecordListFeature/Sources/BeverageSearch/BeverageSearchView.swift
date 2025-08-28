@@ -56,6 +56,11 @@ public struct BeverageSearchView: View {
       router.push(to: route)
       viewModel.handleAction(.clearRoute)
     }
+    .sheet(isPresented: $viewModel.state.isPresentedAddBeverageWebView) {
+      if let url = AMDWebURL.addBeverageForm.url {
+        AMDWebView(url: url)
+      }
+    }
     .onAppear {
       isFocus = true
       viewModel.handleAction(.onAppear)

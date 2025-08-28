@@ -34,6 +34,8 @@ public final class BeverageSearchViewModel: ViewModelable {
     
     var baseSugar: Int = 0
     var totalSugar: Int = 0
+    
+    var isPresentedAddBeverageWebView: Bool = false
 
     var route: Route?
   }
@@ -130,7 +132,7 @@ public final class BeverageSearchViewModel: ViewModelable {
       Task { await removeRecentSearch(recentText) }
 
     case .addBeverageButtonTapped:
-      break
+      state.isPresentedAddBeverageWebView = true
 
     case let .delegateAction(action):
       switch action {
