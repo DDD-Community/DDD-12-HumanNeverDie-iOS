@@ -29,7 +29,6 @@ public actor AppleLoginManager: AppleLoginManagerProtocol {
         .webAuth()
         .connection("apple")
         .scope("openid profile email offline_access")
-        .useHTTPS()
         .audience("https://ah-matdang/api")
         .start()
       
