@@ -31,8 +31,6 @@ public struct AMDAmplitudeClient: AMDAmplitudeClientProtocol {
       apiKey: apiKey,
       autocapture: .all
     ))
-    
-    amplitude.setDeviceId(deviceId: NSUUID().uuidString)
     self.amplitude = amplitude
   }
   
