@@ -49,7 +49,7 @@ extension BeverageDetailResponse {
     )
     
     let domainNutrition = defaultNutrition?.toDomain() ?? defaultBeverageNutrition
-    let domainSizes = sizes?.map { $0.toDomain() } ?? []
+    let domainSizes = sizes?.map { $0.toDomain() }.sorted { $0.nutrition.kcal < $1.nutrition.kcal } ?? []
     
     return BeverageDetail(
       name: name ?? "",
