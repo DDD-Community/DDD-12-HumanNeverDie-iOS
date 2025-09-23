@@ -136,10 +136,9 @@ extension SettingView {
   }
   
   private func openAppStoreReviewPage() {
-    let appID = "6748367287"
-    
-    if let url = URL(string: "https://apps.apple.com/app/id\(appID)?action=write-review") {
-      UIApplication.shared.open(url)
+  
+    if let reviewURL = AMDWebURL.addReviewLink.url {
+      UIApplication.shared.open(reviewURL)
     }
   }
   
