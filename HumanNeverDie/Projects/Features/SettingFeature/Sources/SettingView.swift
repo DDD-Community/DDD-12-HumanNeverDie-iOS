@@ -119,22 +119,27 @@ extension SettingView {
     case .notificationSetting:
       router.push(to: .SettingNotificationSetting(userID: viewModel.userID))
       
-    case .feedback: break
-      //앱스토어 리뷰이동
-      
+    case .feedback:
+      openAppStoreReviewPage()
     case .terms:
       router.push(to: .SettingTerms)
-      
     case .settingTitle:
       break
     case .logout:
       viewModel.handleAction(.logout)
-      break
     case .unsubscribe:
       viewModel.handleAction(.unsubscribe)
-      break
+
     case .termsOfUse, .privacyPolicy:
       break
+    }
+  }
+  
+  private func openAppStoreReviewPage() {
+    let appID = "6748367287"
+    
+    if let url = URL(string: "https://apps.apple.com/app/id\(appID)?action=write-review") {
+      UIApplication.shared.open(url)
     }
   }
   
