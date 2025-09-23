@@ -9,6 +9,8 @@ import Foundation
 
 public enum AMDWebURL: String, CaseIterable {
   case addBeverageForm = "https://forms.gle/9sVcZGZRATALoCRZ6"
+  case addTermsOfUse = "https://telling-abrosaurus-7ba.notion.site/24d0d89bf00580b08fcad69f40cf98ae"
+  case addPrivacyPolicy = "https://telling-abrosaurus-7ba.notion.site/24d0d89bf00580dc8277f6fa24888796?pvs=74"
   
   public var url: URL? {
     return URL(string: self.rawValue)

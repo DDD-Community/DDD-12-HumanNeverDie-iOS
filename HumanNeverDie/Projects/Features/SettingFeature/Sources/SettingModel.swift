@@ -17,7 +17,8 @@ public enum SettingItem: String, CaseIterable, Hashable {
   case terms = "약관 및 정책"
   case logout = "로그아웃"
   case unsubscribe = "탈퇴하기"
-  
+  case termsOfUse = "이용약관"
+  case privacyPolicy = "개인정보처리방침"
   
   public var title: String {
     return rawValue

@@ -133,6 +133,8 @@ extension SettingView {
     case .unsubscribe:
       viewModel.handleAction(.unsubscribe)
       break
+    case .termsOfUse, .privacyPolicy:
+      break
     }
   }
   
