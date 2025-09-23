@@ -73,7 +73,7 @@ public struct SettingView: View {
       sectionDivider().padding(.vertical, 16)
       
       VStack(alignment: .leading, spacing:0) {
-        AppVersionRow(title: "앱 버전", value: "1.0.1") // 추후 appID발행 후 로직 개발진행
+        AppVersionRow(title: "앱 버전", value: Bundle.main.appVersion) 
       }.padding(.horizontal, 20)
       
       Spacer()
