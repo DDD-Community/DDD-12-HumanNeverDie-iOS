@@ -73,7 +73,7 @@ public struct SettingView: View {
       sectionDivider().padding(.vertical, 16)
       
       VStack(alignment: .leading, spacing:0) {
-        AppVersionRow(title: "앱 버전", value: "1.0.1") // 추후 appID발행 후 로직 개발진행
+        AppVersionRow(title: "앱 버전", value: Bundle.main.appVersion) 
       }.padding(.horizontal, 20)
       
       Spacer()
@@ -119,20 +119,26 @@ extension SettingView {
     case .notificationSetting:
       router.push(to: .SettingNotificationSetting(userID: viewModel.userID))
       
-    case .feedback: break
-      //앱스토어 리뷰이동
-      
+    case .feedback:
+      openAppStoreReviewPage()
     case .terms:
       router.push(to: .SettingTerms)
-      
     case .settingTitle:
       break
     case .logout:
       viewModel.handleAction(.logout)
-      break
     case .unsubscribe:
       viewModel.handleAction(.unsubscribe)
+
+    case .termsOfUse, .privacyPolicy:
       break
+    }
+  }
+  
+  private func openAppStoreReviewPage() {
+  
+    if let reviewURL = AMDWebURL.addReviewLink.url {
+      UIApplication.shared.open(reviewURL)
     }
   }
   

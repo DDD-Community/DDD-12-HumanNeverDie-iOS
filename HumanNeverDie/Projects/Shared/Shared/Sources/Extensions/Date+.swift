@@ -8,6 +8,14 @@
 import Foundation
 
 extension Date {
+  public static func toDateMonthString(from date: Date) -> String {
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "ko_KR")
+    formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+    formatter.dateFormat = "yyyy-MM"
+    return formatter.string(from: date)
+  }
+  
   public static func toDateKeyString(from date: Date) -> String {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "ko_KR")

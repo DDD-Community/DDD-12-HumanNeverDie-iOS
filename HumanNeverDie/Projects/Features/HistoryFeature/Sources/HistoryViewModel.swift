@@ -90,9 +90,13 @@ public final class HistoryViewModel: ViewModelable {
     case .onAppear:
       state.selectedDate = Date.now
  
-      guard !state.isViewDidLoad else { return }
-      state.isViewDidLoad = true
+      let needsReload = reloadDateHistory()
       
+      if state.isViewDidLoad && !needsReload {
+        return
+      }
+      
+      state.isViewDidLoad = true
       Task { await refreshData() }
       
     case .loadHistorDailyList, .datePickeronConfirm, .historyRefresh:
@@ -145,6 +149,15 @@ public final class HistoryViewModel: ViewModelable {
 }
 
 extension HistoryViewModel {
+  
+  func reloadDateHistory() -> Bool {
+    guard let selectedDate = state.selectedDate else { return false }
+    
+    let selectedDateString = Date.toDateMonthString(from: selectedDate)
+    let currentDateString = Date.toDateMonthString(from: state.currentDate)
+    
+    return selectedDateString != currentDateString
+  }
   
   func getSelectedDateString() -> String {
     if let selected = state.selectedDate {

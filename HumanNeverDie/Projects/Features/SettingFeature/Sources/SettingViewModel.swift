@@ -207,3 +207,10 @@ extension SettingViewModel {
     return state.userInfo
   }
 }
+
+extension Bundle {
+  var appVersion: String {
+    infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
+  }
+}
+

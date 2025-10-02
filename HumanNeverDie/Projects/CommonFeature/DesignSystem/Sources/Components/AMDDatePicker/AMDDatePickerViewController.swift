@@ -9,7 +9,7 @@ import SwiftUI
 import UIKit
 
 private struct AMDDatePickerConstants {
-  fileprivate static let years = Array(1970...Date().year)
+  fileprivate static let years = Array(1930...Date().year)
   fileprivate static let months = Array(1...12)
   fileprivate static let amPmOptions = ["오전", "오후"]
   fileprivate static let hours12 = Array(1...12)
@@ -99,7 +99,7 @@ public final class AMDDatePickerViewController: UIViewController {
 private extension AMDDatePickerViewController {
   var availableYears: [Int] {
     if isAgeRestricted == true {
-      return Array(1970...maxSelectableYear)
+      return Array(1930...maxSelectableYear)
     }
     return AMDDatePickerConstants.years
   }
@@ -161,8 +161,8 @@ private extension AMDDatePickerViewController {
       return maxDate
     }
     
-    // 전달받은 날짜가 1970년보다 이전이면 최대 날짜 반환
-    let minDate = Calendar.current.date(from: DateComponents(year: 1970, month: 1, day: 1)) ?? Date()
+    // 전달받은 날짜가 1930년보다 이전이면 최대 날짜 반환
+    let minDate = Calendar.current.date(from: DateComponents(year: 1930, month: 1, day: 1)) ?? Date()
     if date < minDate {
       return maxDate
     }
