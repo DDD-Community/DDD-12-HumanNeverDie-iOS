@@ -3,6 +3,7 @@ import ProjectDescriptionHelpers
 
 let project = Project.makeApp(
     dependencies: [
-        .rootFeature
+        .rootFeature,
+        .SPM.firebaseMessaging
     ]
 )

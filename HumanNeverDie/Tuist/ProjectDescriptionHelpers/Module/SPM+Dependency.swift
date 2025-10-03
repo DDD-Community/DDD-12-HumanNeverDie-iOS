@@ -12,5 +12,6 @@ public extension TargetDependency.SPM {
     static let asyncAlgorithms = TargetDependency.external(name: "AsyncAlgorithms", condition: .none)
     static let auth0 = TargetDependency.external(name: "Auth0", condition: .none)
     static let amplitude = TargetDependency.external(name: "AmplitudeSwift", condition: .none)
+    static let firebaseMessaging = TargetDependency.external(name: "FirebaseMessaging", condition: .none)
 }
 

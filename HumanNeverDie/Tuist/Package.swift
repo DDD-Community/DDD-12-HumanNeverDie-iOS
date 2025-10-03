@@ -12,7 +12,8 @@ let packageSettings = PackageSettings(
         "Lottie": .framework,
         "AsyncAlgorithms": .framework,
         "Auth0": .framework,
-        "AmplitudeSwift": .framework
+        "AmplitudeSwift": .framework,
+        "FirebaseMessaging": .staticFramework
     ]
 )
 #endif
@@ -26,6 +27,7 @@ let package = Package(
         .package(url: "https://github.com/airbnb/lottie-spm.git", from: "4.5.2"),
         .package(url: "https://github.com/apple/swift-async-algorithms", from: "1.0.0"),
         .package(url: "https://github.com/auth0/Auth0.swift", from: "2.14.0"),
-        .package(url: "https://github.com/amplitude/Amplitude-Swift", from: "1.15.0")
+        .package(url: "https://github.com/amplitude/Amplitude-Swift", from: "1.15.0"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "12.3.0")
     ]
 )
