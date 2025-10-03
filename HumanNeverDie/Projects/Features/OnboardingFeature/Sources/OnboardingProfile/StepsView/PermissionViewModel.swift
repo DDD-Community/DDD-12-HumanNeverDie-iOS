@@ -5,8 +5,9 @@
 //  Created by Seulki Lee on 8/20/25.
 //
 
-import Foundation
+import UIKit
 import UserNotifications
+
 import CommonFeature
 
 @Observable
@@ -49,11 +50,13 @@ public final class PermissionViewModel: ViewModelable {
   // MARK: - Private Methods
   private func requestNotificationPermission() async {
     state.isPermissionRequested = true
-    
-    let center = UNUserNotificationCenter.current()
-    
+        
     do {
-      let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
+      let granted = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
+      
+      await MainActor.run {
+        UIApplication.shared.registerForRemoteNotifications()
+      }
       
       await MainActor.run {
         state.isPermissionCompleted = true

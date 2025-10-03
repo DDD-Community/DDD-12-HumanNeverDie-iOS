@@ -5,8 +5,9 @@
 // Created by 김규철 on 2025.
 //
 
-import Foundation
+import UIKit
 import Observation
+import UserNotifications
 
 import CommonFeature
 import UserDomain
@@ -54,6 +55,7 @@ public final class SplashViewModel: ViewModelable {
         guard await refreshTokenAndContinue() else { return }
         guard await checkUserID() else { return }
         guard await checkUserInfo() else { return }
+        await checkNotification()
         await syncLocalLikeToServer()
         await navigateTo(.main)
       }
@@ -113,6 +115,24 @@ public final class SplashViewModel: ViewModelable {
       print("❌ 유저 정보 로딩 실패 & 정보없음: \(error)")
       await navigateTo(.login)
       return false
+    }
+  }
+  
+  private func checkNotification() async {
+    do {
+      let authorizationStatus = await UNUserNotificationCenter.current().authorizationStatus()
+      
+      if authorizationStatus == .notDetermined {
+        try await UNUserNotificationCenter.current().requestAuthorization(
+          options: [.alert, .badge, .sound]
+        )
+      }
+      
+      await MainActor.run {
+        UIApplication.shared.registerForRemoteNotifications()
+      }
+    } catch {
+     debugPrint(error)
     }
   }
   
