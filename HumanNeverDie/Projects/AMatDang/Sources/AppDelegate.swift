@@ -93,19 +93,5 @@ private extension AppDelegate {
   
   func configurePushNotification() {
     UNUserNotificationCenter.current().delegate = self
-    
-    Task { @MainActor in
-      let authorizationStatus = await UNUserNotificationCenter.current().authorizationStatus()
-      
-      if authorizationStatus == .notDetermined {
-        try await UNUserNotificationCenter.current().requestAuthorization(
-          options: [.alert, .badge, .sound]
-        )
-      }
-      
-      await MainActor.run {
-        UIApplication.shared.registerForRemoteNotifications()
-      }
-    }
   }
 }
