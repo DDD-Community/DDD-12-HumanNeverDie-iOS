@@ -5,14 +5,13 @@
 //  Created by Seulki Lee on 7/20/25.
 //
 
-import Foundation
-import UserNotifications
-import UserDomain
 import UIKit
 import Combine
 
-import DesignSystem
 import CommonFeature
+import UserDomain
+import DesignSystem
+import Shared
 
 import Dependencies
 
@@ -23,6 +22,8 @@ public final class NotificationSettingViewModel: ViewModelable {
   @Dependency(\.toastClient) private var toastClient
   @ObservationIgnored
   @Dependency(\.userUseCase) private var userUseCase
+  @ObservationIgnored
+  @Dependency(\.notificationClient) private var notificationClient
   
   private var cancellables = Set<AnyCancellable>()
   private var didOpenSettings = false
@@ -190,15 +191,13 @@ extension NotificationSettingViewModel {
   }
   
   nonisolated private func checkSystemNotificationPermission() async {
-    let center = UNUserNotificationCenter.current()
-    let settings = await center.notificationSettings()
-    
-    let isAuthorized = settings.authorizationStatus == .authorized
+    let isNotDetermined = await notificationClient.isNotDetermined()
+    let isAuthorized = !isNotDetermined
 
     await MainActor.run {
       state.systemPermissionGranted = isAuthorized
-      
-      print("알림 권한 상태: \(settings.authorizationStatus.rawValue)")
+
+      print("알림 권한 미결정 여부: \(isNotDetermined)")
       print("권한 허용됨: \(isAuthorized)")
     }
   }
@@ -270,13 +269,13 @@ extension NotificationSettingViewModel {
   }
   
   private func requestNotificationPermission() async {
-    let center = UNUserNotificationCenter.current()
-    
     do {
-      let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
-      
+      let granted = try await notificationClient.requestAuthorization()
+
+      await notificationClient.registerForRemoteNotifications()
+
       await checkSystemNotificationPermission()
-      
+
       if granted {
         await updateUseNotiInfo(isEnabled: true)
       } else {

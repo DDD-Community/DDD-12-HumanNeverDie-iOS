@@ -31,6 +31,12 @@ public final class MainViewModel: ViewModelable {
   }
   
   @ObservationIgnored
+  @Dependency(\.userUseCase) private var userUseCase
+  
+  @ObservationIgnored
+  @Dependency(\.keychainClient) private var keychainClient
+  
+  @ObservationIgnored
   @Dependency(\.userDefaultClient) private var userDefaultClient
   
   @ObservationIgnored
@@ -51,7 +57,10 @@ public final class MainViewModel: ViewModelable {
       state.selectedTab = tab
       
     case .onViewDidLoad:
-      Task { await checkOnboarding() }
+      Task {
+        await checkOnboarding()
+        await registerFCMToken()
+      }
       
     case .onboardingDismissButtonTapped:
       Task {
@@ -72,5 +81,19 @@ public final class MainViewModel: ViewModelable {
       state.isOnboardingPresented = isFirstHome
     }
   }
+  
+  private func registerFCMToken() async {
+    guard let fcmToken: String = userDefaultClient.getValue(forKey: AMDUserDefaultKey.fcmToken),
+          let userID = keychainClient.getValue(forKey: AMDKeychainKey.userID) else {
+      printIfDebug("❌ FCM 토큰 없음")
+      return
+    }
+    
+    do {
+      try await userUseCase.registerFCMToken(userID: userID, fcmToken: fcmToken)
+      printIfDebug("✅ FCM 토큰 서버 전송 성공")
+    } catch {
+      printIfDebug("❌ FCM 토큰 서버 전송 실패: \(error)")
+    }
+  }
 }
-

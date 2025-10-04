@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UserNotifications
 
 import UserDomain
 import CommonFeature
@@ -110,10 +109,6 @@ public final class OnboardingProfileViewModel: ViewModelable {
   
   private func moveToStep(_ step: OnboardingStep) {
     currentStep = step
-    
-    if step == .permission {
-      Task { await requestNotificationPermission() }
-    }
   }
   
   private func saveUserInfoAndMoveNext() async {
@@ -145,61 +140,11 @@ public final class OnboardingProfileViewModel: ViewModelable {
       state.isLoading = false
     }
   }
-  
-  public func updateUseNotiInfo(isEnabled: Bool) async {
-    do {
-      let result = try await userUseCase.updateNotifications(userID: state.userID, isEnabled: isEnabled)
-      print("✅ 알림 설정 업데이트 성공: \(result.isEnabled)")
-    } catch {
-      print("❌ 알림 설정 업데이트 실패: \(error)")
-    }
-  }
-  
+
   private func showToast(message: String, type: AMDToastType) {
     Task { @MainActor in
       await toastClient.showToast(.init(message: message, type: type))
     }
-  }
-}
-
-// MARK: - Permission
-extension OnboardingProfileViewModel {
-  private func requestNotificationPermission() async {
-    let center = UNUserNotificationCenter.current()
-    
-    do {
-      let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
-      
-      await MainActor.run {
-        state.isPermissionGranted = granted
-      }
-      
-      await updateUseNotiInfo(isEnabled: granted)
-      
-      if !granted {
-        await showPermissionDeniedAlert()
-      }
-    } catch {
-      await MainActor.run {
-        state.isPermissionGranted = false
-      }
-      await updateUseNotiInfo(isEnabled: false)
-      await showPermissionDeniedAlert()
-    }
-  }
-  
-  nonisolated private func showPermissionDeniedAlert() async {
-    await alertClient.showAlert(.init(
-      title: "알람이 거부되었어요",
-      message: "알림을 다시 받으려면 앱 설정에서 허용해야해요.",
-      primaryButton: .init(title: "확인", type: .secondary) {
-        Task {
-          await MainActor.run {
-            print("온보딩 완료 처리")
-          }
-        }
-      }
-    ))
   }
 }
 
