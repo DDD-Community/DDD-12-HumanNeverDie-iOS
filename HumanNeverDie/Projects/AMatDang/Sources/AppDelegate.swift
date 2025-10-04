@@ -78,6 +78,8 @@ extension AppDelegate: @preconcurrency MessagingDelegate {
   func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
     guard let fcmToken = fcmToken else { return }
     print("FCM registration token: \(fcmToken)")
+
+    UserDefaults.standard.set(fcmToken, forKey: AMDUserDefaultKey.fcmToken)
   }
 }
 
