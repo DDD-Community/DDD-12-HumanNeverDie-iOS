@@ -15,6 +15,7 @@ public protocol UserUseCaseProtocol: Sendable {
   func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserInfo
   func updateNotifications(userID: String, isEnabled: Bool) async throws -> UserNotifications
   func updateUserNotifications(userID: String, userNotifications: UserNotifications) async throws -> UserNotifications
+  func registerFCMToken(userID: String, fcmToken: String) async throws
 }
 
 public final class UserUseCase: UserUseCaseProtocol, @unchecked Sendable {
@@ -39,5 +40,9 @@ public final class UserUseCase: UserUseCaseProtocol, @unchecked Sendable {
   
   public func updateUserNotifications(userID: String, userNotifications: UserNotifications) async throws -> UserNotifications {
     return try await userRepository.updateUserNotifications(userID: userID, userNotificationsInfo: userNotifications)
+  }
+
+  public func registerFCMToken(userID: String, fcmToken: String) async throws {
+    try await userRepository.registerFCMToken(userID: userID, fcmToken: fcmToken)
   }
 }
