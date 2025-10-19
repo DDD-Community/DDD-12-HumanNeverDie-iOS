@@ -30,6 +30,7 @@ public actor AppleLoginManager: AppleLoginManagerProtocol {
         .connection("apple")
         .scope("openid profile email offline_access")
         .audience("https://ah-matdang/api")
+        .useHTTPS()
         .start()
       
       let success = credentialsManager.store(credentials: credentials)
