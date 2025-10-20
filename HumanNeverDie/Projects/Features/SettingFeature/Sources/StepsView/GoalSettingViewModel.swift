@@ -27,9 +27,7 @@ public final class GoalSettingViewModel: ViewModelable {
   public enum Action {
     case onAppear
     case updateDailySugarGoal(SugarGoal)
-    
     case updateAccountInfoUserInfo
-    
     case showSugarCalculationInfo
     case hideSugarCalculationInfo
   }
@@ -116,7 +114,6 @@ extension GoalSettingViewModel {
       message: "목표 설정 수정 시, 일일 당 섭취 목표가 즉시 변경될 예정이에요.",
       primaryButton: .init(title: "저장", type: .default) {
         Task { @MainActor in
-          // 🔵 수정: UserInfo 전체를 새로 생성해서 전달
           let updatedUserInfo = UserInfo(
             nickname: self.state.userInfo.nickname,
             birthDate: self.state.userInfo.birthDate,

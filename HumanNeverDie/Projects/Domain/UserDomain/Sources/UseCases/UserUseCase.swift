@@ -12,6 +12,7 @@ import Dependencies
 public protocol UserUseCaseProtocol: Sendable {
   func getUserInfo(userID:String) async throws -> UserInfo
   func getUserNotificationInfo(userID:String) async throws -> UserNotifications
+  func getUserSugarLavel(userID: String) async throws -> UserSugarLevel
   func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserInfo
   func updateNotifications(userID: String, isEnabled: Bool) async throws -> UserNotifications
   func updateUserNotifications(userID: String, userNotifications: UserNotifications) async throws -> UserNotifications
@@ -27,6 +28,10 @@ public final class UserUseCase: UserUseCaseProtocol, @unchecked Sendable {
   
   public func getUserNotificationInfo(userID: String) async throws -> UserNotifications {
     return try await userRepository.getUserNotificationInfo(userID: userID)
+  }
+  
+  public func getUserSugarLavel(userID: String) async throws -> UserSugarLevel {
+    return try await userRepository.getUserSugarLavel(userID: userID)
   }
   
   public func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserInfo {
