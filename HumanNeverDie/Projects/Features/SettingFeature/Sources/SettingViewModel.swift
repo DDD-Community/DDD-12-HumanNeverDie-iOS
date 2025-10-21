@@ -27,6 +27,7 @@ public final class SettingViewModel: ViewModelable {
     var isLogoutAndWithdrawal: Bool = false
     
     var sugarMaxG: Int = 0
+    var userSugarLevel: UserSugarLevel?
   }
   
   public enum Action {
@@ -103,6 +104,11 @@ extension SettingViewModel {
     do {
       let result = try await userUseCase.getUserInfo(userID: state.userID)
       setUserInfo(userInfo: result)
+      
+      // UserSugarLevel 데이터도 함께 가져오기
+      let userSugarLevel = await userUseCase.getUserSugarLavel(userID: state.userID)
+      state.userSugarLevel = userSugarLevel
+      
       state.isLoading = false
       
     } catch {
@@ -157,12 +163,26 @@ extension SettingViewModel {
   private func setUserInfo(userInfo: UserInfo) {
     state.userInfo = userInfo
     
-    let sugarService = SugarUserCalculation()
-    let userSugerMaxG = sugarService.calculateUserSugarGoal(for: userInfo)
-    
-    print("서버 = \(state.sugarMaxG) == \(userSugerMaxG)")
-    state.sugarMaxG = userSugerMaxG
-    
+    // UserSugarLevel에서 사용자 목표에 맞는 당분량 가져오기
+    if let userSugarLevel = state.userSugarLevel {
+      let userSugerMaxG = getSugarMaxGFromLevel(userSugarLevel: userSugarLevel, goal: userInfo.selectedDailySugarGoal)
+      state.sugarMaxG = userSugerMaxG
+      
+      print("서버 = \(state.sugarMaxG) == \(userSugerMaxG)")
+    }
+  }
+  
+  private func getSugarMaxGFromLevel(userSugarLevel: UserSugarLevel, goal: SugarGoal) -> Int {
+    switch goal {
+    case .easy:
+      return userSugarLevel.data.easy.sugarMaxG
+    case .normal:
+      return userSugarLevel.data.normal.sugarMaxG
+    case .hard:
+      return userSugarLevel.data.hard.sugarMaxG
+    case .none:
+      return 0
+    }
   }
   
   nonisolated private func showLogoutAlert() async {

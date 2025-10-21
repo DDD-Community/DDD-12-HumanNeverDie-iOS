@@ -36,18 +36,17 @@ public final class GoalSettingViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.alertClient) private var alertClient
   
-  @ObservationIgnored
-  @Dependency(\.userUseCase) private var userUseCase
-  
   public var state: State
   private var originalState: State
   
   public init(
-    userInfo: UserInfo
+    userInfo: UserInfo,
+    userSugarLevel: UserSugarLevel? = nil
   ) {
     let initialState = State(
       userInfo: userInfo,
-      selectedDailySugarGoal: userInfo.selectedDailySugarGoal
+      selectedDailySugarGoal: userInfo.selectedDailySugarGoal,
+      userSugarLevel: userSugarLevel
     )
     
     self.state = initialState
@@ -57,9 +56,7 @@ public final class GoalSettingViewModel: ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
-      Task {
-        await loadUserSugarLevel()
-      }
+      break
       
     case .updateDailySugarGoal(let sugarGoal):
       state.selectedDailySugarGoal = sugarGoal
@@ -82,13 +79,6 @@ public final class GoalSettingViewModel: ViewModelable {
 extension GoalSettingViewModel {
   public func setRouter(_ router: Router) {
     self.router = router
-  }
-  
-  private func loadUserSugarLevel() async {
-    let userSugarLevel = await userUseCase.getUserSugarLavel(userID: "")
-    await MainActor.run {
-      state.userSugarLevel = userSugarLevel
-    }
   }
 
   public func getSugarGoalAmount(for goal: SugarGoal) -> Int {

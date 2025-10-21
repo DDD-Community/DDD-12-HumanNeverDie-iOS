@@ -9,6 +9,7 @@ import Foundation
 import UserDomain
 import CommonFeature
 import Dependencies
+import Shared
 
 @Observable
 @MainActor
@@ -17,6 +18,9 @@ public final class DailySugarGoalViewModel: ViewModelable {
   
   @ObservationIgnored
   @Dependency(\.userUseCase) private var userUseCase
+  
+  @ObservationIgnored
+  @Dependency(\.keychainClient) private var keychainClient
   
   public struct State: Equatable {
     var selectedDailySugarGoal: SugarGoal = .none
@@ -90,7 +94,8 @@ public final class DailySugarGoalViewModel: ViewModelable {
 // MARK: - Public Interface
 extension DailySugarGoalViewModel {
   private func loadUserSugarLevel() async {
-    let userSugarLevel = await userUseCase.getUserSugarLavel(userID: "")
+    guard let userID = keychainClient.getValue(forKey: AMDKeychainKey.userID) else { return }
+    let userSugarLevel = await userUseCase.getUserSugarLavel(userID: userID)
     await MainActor.run {
       state.userSugarLevel = userSugarLevel
     }
