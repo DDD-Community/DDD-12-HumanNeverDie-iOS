@@ -102,9 +102,7 @@ extension DailySugarGoalViewModel {
   }
 
   public func getSugarGoalAmount(for goal: SugarGoal) -> Int {
-    guard let userSugarLevel = state.userSugarLevel else { 
-      return getSugarGoalAmountFromPreviousData(for: goal)
-    }
+    guard let userSugarLevel = state.userSugarLevel else { return 0 }
     
     switch goal {
     case .easy:
@@ -113,24 +111,6 @@ extension DailySugarGoalViewModel {
       return userSugarLevel.data.normal.sugarMaxG
     case .hard:
       return userSugarLevel.data.hard.sugarMaxG
-    case .none:
-      return 0
-    }
-  }
-  
-  private func getSugarGoalAmountFromPreviousData(for goal: SugarGoal) -> Int {
-    guard let parentViewModel = parentViewModel else { return 0 }
-    let currentUserInfo = parentViewModel.currentUserInfo
-    
-    guard currentUserInfo.selectedDailySugarGoal == .easy else { return 0 }
-    
-    switch goal {
-    case .easy:
-      return currentUserInfo.sugarMaxG
-    case .normal:
-      return currentUserInfo.sugarMaxG / 2
-    case .hard:
-      return currentUserInfo.sugarMaxG / 5
     case .none:
       return 0
     }

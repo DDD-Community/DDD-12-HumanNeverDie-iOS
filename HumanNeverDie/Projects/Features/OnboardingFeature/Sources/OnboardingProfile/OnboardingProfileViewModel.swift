@@ -100,9 +100,13 @@ public final class OnboardingProfileViewModel: ViewModelable {
     
     let nextStep = allSteps[currentIndex + 1]
     
-    // goalSetting 완료 시 서버 저장 후 다음 단계로
-    if currentStep == .goalSetting {
+    if currentStep == .physicalInfo {
+      state.userInfo.selectedDailySugarGoal = .normal
       Task { await saveUserInfoAndMoveNext() }
+      
+    } else if currentStep == .goalSetting {
+      Task { await saveUserInfoAndMoveNext() }
+   
     } else {
       moveToStep(nextStep)
     }
@@ -139,6 +143,7 @@ public final class OnboardingProfileViewModel: ViewModelable {
     
     do {
       _ = try await userUseCase.updateUserInfo(userID: state.userID, userInfo: userInfo)
+      state.userInfo = userInfo
       state.isLoading = false
     } catch {
       showToast(message: "저장에 실패하였습니다", type: .failure)
