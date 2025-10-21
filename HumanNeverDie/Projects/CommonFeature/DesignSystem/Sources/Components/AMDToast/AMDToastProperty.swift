@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct AMDToastProperty {
+public struct AMDToastProperty: Sendable {
   public let message: String
   public let type: AMDToastType
   
@@ -20,7 +20,7 @@ public struct AMDToastProperty {
   }
 }
 
-public enum AMDToastType {
+public enum AMDToastType: Sendable {
   case success
   case failure
 }
