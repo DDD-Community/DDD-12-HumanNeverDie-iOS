@@ -50,11 +50,11 @@ public final class SplashViewModel: ViewModelable {
     switch action {
     case .onAppear:
       Task {
-//        guard await checkUserToken() else { return }
-//        guard await refreshTokenAndContinue() else { return }
-//        guard await checkUserID() else { return }
-//        guard await checkUserInfo() else { return }
-//        await syncLocalLikeToServer()
+        guard await checkUserToken() else { return }
+        guard await refreshTokenAndContinue() else { return }
+        guard await checkUserID() else { return }
+        guard await checkUserInfo() else { return }
+        await syncLocalLikeToServer()
         await navigateTo(.main)
       }
     }
