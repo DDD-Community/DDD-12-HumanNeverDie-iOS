@@ -44,7 +44,7 @@ public struct SugarCalculationInfoContent: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 8) {
-                  Text("• 18-30세")
+                  Text("• 14-30세")
                     .amdFont(.smallRegular)
                     .foregroundColor(.gray70)
                   
