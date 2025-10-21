@@ -22,6 +22,7 @@ public final class GoalSettingViewModel: ViewModelable {
     var userInfo: UserInfo
     var selectedDailySugarGoal: SugarGoal
     var isShowingSugarCalculationInfo: Bool = false
+    var userSugarLevel: UserSugarLevel? = nil
   }
   
   public enum Action {
@@ -34,6 +35,9 @@ public final class GoalSettingViewModel: ViewModelable {
   
   @ObservationIgnored
   @Dependency(\.alertClient) private var alertClient
+  
+  @ObservationIgnored
+  @Dependency(\.userUseCase) private var userUseCase
   
   public var state: State
   private var originalState: State
@@ -53,7 +57,9 @@ public final class GoalSettingViewModel: ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
-      break
+      Task {
+        await loadUserSugarLevel()
+      }
       
     case .updateDailySugarGoal(let sugarGoal):
       state.selectedDailySugarGoal = sugarGoal
@@ -78,19 +84,43 @@ extension GoalSettingViewModel {
     self.router = router
   }
   
+  private func loadUserSugarLevel() async {
+    let userSugarLevel = await userUseCase.getUserSugarLavel(userID: "")
+    await MainActor.run {
+      state.userSugarLevel = userSugarLevel
+    }
+  }
+
   public func getSugarGoalAmount(for goal: SugarGoal) -> Int {
-    // 임시로 목표를 변경한 userInfo 생성
-    let tempUserInfo = UserInfo(
-      nickname: state.userInfo.nickname,
-      birthDate: state.userInfo.birthDate,
-      selectedGender: state.userInfo.selectedGender,
-      height: state.userInfo.height,
-      weight: state.userInfo.weight,
-      selectedActivity: state.userInfo.selectedActivity,
-      selectedDailySugarGoal: goal
-    )
+    guard let userSugarLevel = state.userSugarLevel else { 
+      return getSugarGoalAmountFromPreviousData(for: goal)
+    }
     
-    return sugarGoalCalculator(userInfo:tempUserInfo)
+    switch goal {
+    case .easy:
+      return userSugarLevel.data.easy.sugarMaxG
+    case .normal:
+      return userSugarLevel.data.normal.sugarMaxG
+    case .hard:
+      return userSugarLevel.data.hard.sugarMaxG
+    case .none:
+      return 0
+    }
+  }
+  
+  private func getSugarGoalAmountFromPreviousData(for goal: SugarGoal) -> Int {
+    guard state.userInfo.selectedDailySugarGoal == .easy else { return 0 }
+    
+    switch goal {
+    case .easy:
+      return state.userInfo.sugarMaxG
+    case .normal:
+      return state.userInfo.sugarMaxG / 2
+    case .hard:
+      return state.userInfo.sugarMaxG / 5
+    case .none:
+      return 0
+    }
   }
   
   public var normalSugarAmount: Int {
