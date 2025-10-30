@@ -14,7 +14,7 @@ public struct UserInfo: Equatable, Sendable, Hashable {
   public let height: Int
   public let weight: Int
   public let selectedActivity: ActivityLevel
-  public let selectedDailySugarGoal: SugarGoal
+  public var selectedDailySugarGoal: SugarGoal
   public var sugarMaxG : Int
   public var sugarIdealG : Int
   

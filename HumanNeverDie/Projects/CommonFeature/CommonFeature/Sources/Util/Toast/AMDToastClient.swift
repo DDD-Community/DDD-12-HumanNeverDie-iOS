@@ -18,8 +18,10 @@ public struct AMDToastClient: Sendable {
 extension AMDToastClient: DependencyKey {
   public static var liveValue: AMDToastClient {
     return Self(
-      showToast: { @MainActor property in
-        AMDToastManager.shared.showToast(property)
+      showToast: { property in
+        await MainActor.run {
+          AMDToastManager.shared.showToast(property)
+        }
       }
     )
   }

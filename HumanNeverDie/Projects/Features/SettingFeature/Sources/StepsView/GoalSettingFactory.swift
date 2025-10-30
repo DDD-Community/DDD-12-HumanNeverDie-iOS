@@ -10,8 +10,8 @@ import UserDomain
 
 @MainActor
 public struct GoalSettingFactory {
-  public static func create(userInfo: UserInfo) -> some View {
-    let viewModel = GoalSettingViewModel(userInfo: userInfo)
+  public static func create(userInfo: UserInfo, userSugarLevel: UserSugarLevel? = nil) -> some View {
+    let viewModel = GoalSettingViewModel(userInfo: userInfo, userSugarLevel: userSugarLevel)
     return GoalSettingView(viewModel: viewModel)
   }
 }

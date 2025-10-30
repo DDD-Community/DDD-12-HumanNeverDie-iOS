@@ -12,7 +12,7 @@ public struct AMDButton: View {
   private let title: String
   private let action: () -> Void
   
-  public enum AMDButtonType {
+  public enum AMDButtonType: Sendable {
     case `default`
     case teriary
     case secondary

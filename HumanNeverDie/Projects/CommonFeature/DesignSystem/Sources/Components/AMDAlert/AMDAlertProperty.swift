@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct AMDAlertProperty {
+public struct AMDAlertProperty: Sendable {
   public let title: String
   public let message: String?
   public let subMessage: String?
@@ -29,15 +29,15 @@ public struct AMDAlertProperty {
   }
 }
 
-public struct AMDAlertButtonProperty {
+public struct AMDAlertButtonProperty: Sendable {
   public let title: String
   public let type: AMDButton.AMDButtonType
-  public let action: () async -> Void
+  public let action: @Sendable () async -> Void
   
   public init(
     title: String,
     type: AMDButton.AMDButtonType,
-    action: @escaping () async -> Void
+    action: @escaping @Sendable () async -> Void
   ) {
     self.title = title
     self.type = type

@@ -8,17 +8,26 @@
 import Foundation
 import UserDomain
 import CommonFeature
+import Dependencies
+import Shared
 
 @Observable
 @MainActor
 public final class DailySugarGoalViewModel: ViewModelable {
   private weak var parentViewModel: OnboardingProfileViewModel?
   
+  @ObservationIgnored
+  @Dependency(\.userUseCase) private var userUseCase
+  
+  @ObservationIgnored
+  @Dependency(\.keychainClient) private var keychainClient
+  
   public struct State: Equatable {
     var selectedDailySugarGoal: SugarGoal = .none
     
     var showAlert: Bool = false
     var isShowingSugarCalculationInfo: Bool = false
+    var userSugarLevel: UserSugarLevel?
   }
   
   public enum Action {
@@ -40,7 +49,9 @@ public final class DailySugarGoalViewModel: ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
-      break
+      Task {
+        await loadUserSugarLevel()
+      }
       
     case .updateDailySugarGoal(let goal):
       state.selectedDailySugarGoal = goal
@@ -82,24 +93,27 @@ public final class DailySugarGoalViewModel: ViewModelable {
 
 // MARK: - Public Interface
 extension DailySugarGoalViewModel {
+  private func loadUserSugarLevel() async {
+    guard let userID = keychainClient.getValue(forKey: AMDKeychainKey.userID) else { return }
+    let userSugarLevel = await userUseCase.getUserSugarLavel(userID: userID)
+    await MainActor.run {
+      state.userSugarLevel = userSugarLevel
+    }
+  }
+
   public func getSugarGoalAmount(for goal: SugarGoal) -> Int {
-    guard let parentViewModel = parentViewModel else { return 0 }
-  
-    let currentUserInfo = parentViewModel.currentUserInfo
+    guard let userSugarLevel = state.userSugarLevel else { return 0 }
     
-    let tempUserInfo = UserInfo(
-      nickname: currentUserInfo.nickname,
-      birthDate: currentUserInfo.birthDate,
-      selectedGender: currentUserInfo.selectedGender,
-      height: currentUserInfo.height,
-      weight: currentUserInfo.weight,
-      selectedActivity: currentUserInfo.selectedActivity,
-      selectedDailySugarGoal: goal,
-      sugarMaxG: currentUserInfo.sugarMaxG,
-      sugarIdealG: currentUserInfo.sugarIdealG
-    )
-    
-    return sugarGoalCalculator(userInfo: tempUserInfo)
+    switch goal {
+    case .easy:
+      return userSugarLevel.data.easy.sugarMaxG
+    case .normal:
+      return userSugarLevel.data.normal.sugarMaxG
+    case .hard:
+      return userSugarLevel.data.hard.sugarMaxG
+    case .none:
+      return 0
+    }
   }
   
   public var isValidDailySugarGoal: Bool {

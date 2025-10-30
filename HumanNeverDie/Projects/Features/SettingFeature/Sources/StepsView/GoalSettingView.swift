@@ -33,6 +33,7 @@ public struct GoalSettingView: View {
     }
     .onAppear {
       viewModel.setRouter(router)
+      viewModel.handleAction(.onAppear)
     }
   }
 }
