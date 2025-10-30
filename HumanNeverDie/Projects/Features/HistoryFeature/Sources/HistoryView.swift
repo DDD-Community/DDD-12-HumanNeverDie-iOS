@@ -146,7 +146,7 @@ extension HistoryView {
           
           AMDBeverageListView.medium(
             thumbnailURL: data.imgUrl,
-            brandTitle: data.brandType?.koreanName ?? "",
+            brandTitle: data.brandType ?? "",
             beverageSize: data.beverageSize,
             beverageTitle: data.beverageName,
             glucose: Double(data.sugarG),

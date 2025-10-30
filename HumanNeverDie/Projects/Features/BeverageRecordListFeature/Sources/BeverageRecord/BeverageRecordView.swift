@@ -74,7 +74,7 @@ public struct BeverageRecordView: View {
       }
       
       VStack(alignment: .leading, spacing: 4) {
-        Text(viewModel.beverageDetail.brandType?.koreanName ?? "")
+        Text(viewModel.beverageDetail.brandType ?? "")
           .amdFont(.smallRegular)
           .foregroundStyle(.gray60)
           .frame(maxWidth: .infinity, alignment: .leading)
