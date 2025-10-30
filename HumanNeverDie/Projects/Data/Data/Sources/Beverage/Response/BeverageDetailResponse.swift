@@ -47,17 +47,17 @@ extension BeverageDetailResponse {
       sodium: 0,
       caffeine: 0
     )
-    
+
     let domainNutrition = defaultNutrition?.toDomain() ?? defaultBeverageNutrition
     let domainSizes = sizes?.map { $0.toDomain() }.sorted { $0.nutrition.kcal < $1.nutrition.kcal } ?? []
-    
+
     return BeverageDetail(
       name: name ?? "",
       productID: productId ?? "",
       thumbnailURL: imgUrl ?? "",
       defaultNutrition: domainNutrition,
       sizes: domainSizes,
-      brandType: BeverageBrandType(rawValue: cafeStoreDto?.cafeBrand ?? "")
+      brandType: cafeStoreDto?.cafeBrand
     )
   }
 }

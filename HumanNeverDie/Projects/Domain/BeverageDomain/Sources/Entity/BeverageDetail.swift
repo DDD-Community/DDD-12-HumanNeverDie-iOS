@@ -13,15 +13,15 @@ public struct BeverageDetail: Equatable, Sendable {
   public let thumbnailURL: String
   public let defaultNutrition: BeverageNutrition
   public let sizes: [BeverageSize]
-  public let brandType: BeverageBrandType?
-  
+  public let brandType: String?
+
   public init(
     name: String,
     productID: String,
     thumbnailURL: String,
     defaultNutrition: BeverageNutrition,
     sizes: [BeverageSize],
-    brandType: BeverageBrandType?
+    brandType: String?
   ) {
     self.name = name
     self.productID = productID
@@ -74,7 +74,7 @@ extension BeverageDetail {
           )
         )
       ],
-      brandType: .starbucks
+      brandType: "STARBUCKS"
     )
   }
 }

@@ -26,7 +26,7 @@ public struct AMDBeverageDetailView: View {
   private var contentView: some View {
     if let beverageDetail = viewModel.beverageDetail, let beverage = viewModel.state.selectedSize {
       VStack(spacing: 0) {
-        titleView(brandName: beverageDetail.brandType?.koreanName ?? "", name: beverageDetail.name)
+        titleView(brandName: beverageDetail.brandType ?? "", name: beverageDetail.name)
         sizeView
         infoView(beverage)
       }

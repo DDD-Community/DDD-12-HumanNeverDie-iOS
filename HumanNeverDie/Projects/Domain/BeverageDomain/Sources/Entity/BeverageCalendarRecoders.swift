@@ -12,7 +12,7 @@ public struct BeverageCalendarRecoders: Equatable, Sendable {
   public let intakeHistoryId: Int
   public let productId: String
   public let beverageName: String
-  public let brandType: BeverageBrandType?
+  public let brandType: String?
   public let intakeTime: String
   public let sugarLevel: String
   public let servingKcal: Int
@@ -25,12 +25,12 @@ public struct BeverageCalendarRecoders: Equatable, Sendable {
   public let beverageSize : String
   public let sugarMaxG: Int
   public let sugarIdealG: Int
-  
+
   public init(
     intakeHistoryId: Int,
     productId: String,
     beverageName: String,
-    brandType: BeverageBrandType?,
+    brandType: String?,
     intakeTime: String,
     sugarLevel: String,
     servingKcal: Int,
