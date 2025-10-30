@@ -31,5 +31,5 @@ private struct MockUserUseCase: UserUseCaseProtocol {
   func updateUserNotifications(userID: String, userNotifications: UserNotifications) async throws -> UserNotifications {
     UserNotifications.mock()
   }
-  
+  func registerFCMToken(userID: String, fcmToken: String) async throws { }
 }

@@ -63,7 +63,7 @@ struct HomeCardBeverageListView: View {
   private func beverageItemView(_ item: BeverageCalendarRecoders) -> some View {
     AMDBeverageListView.card(
       thumbnailURL: item.imgUrl,
-      brandTitle: item.brandType?.koreanName ?? "",
+      brandTitle: item.brandType ?? "",
       beverageSize: item.beverageSize,
       beverageTitle: item.beverageName,
       glucose: Double(item.sugarG),

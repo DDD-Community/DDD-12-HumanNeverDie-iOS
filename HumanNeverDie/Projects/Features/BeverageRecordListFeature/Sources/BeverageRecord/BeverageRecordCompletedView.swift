@@ -130,7 +130,7 @@ public struct BeverageRecordCompletedView: View {
   private var beverageCardView: some View {
     AMDBeverageListView.completed(
       thumbnailURL: beverageDetail.thumbnailURL,
-      brandTitle: beverageDetail.brandType?.koreanName ?? "",
+      brandTitle: beverageDetail.brandType ?? "",
       beverageSize: selectedSizeType?.sizeType ?? "",
       beverageTitle: beverageDetail.name,
       glucose: Double(selectedSizeType?.nutrition.sugar ?? 0),
