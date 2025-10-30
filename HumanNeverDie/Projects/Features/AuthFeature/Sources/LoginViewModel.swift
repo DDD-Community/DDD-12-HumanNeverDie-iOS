@@ -11,6 +11,7 @@ import Observation
 import AuthDomain
 import CommonFeature
 import DesignSystem
+import Shared
 
 import Dependencies
 
@@ -20,6 +21,10 @@ public final class LoginViewModel: ViewModelable {
   public struct State: Equatable {
     var isLoading: Bool = false
     var route: RootRoute?
+    
+    // 알림
+    var isNotDetermined: Bool = false
+    var requestAuthorization: Bool = false
   }
   
   public enum Action {
@@ -29,6 +34,13 @@ public final class LoginViewModel: ViewModelable {
   
   @ObservationIgnored
   @Dependency(\.authUseCase) private var authUseCase
+  
+  @ObservationIgnored
+  @Dependency(\.userUseCase) private var userUseCase
+  
+  @ObservationIgnored
+  @Dependency(\.notificationClient) private var notificationClient
+  
   @ObservationIgnored
   @Dependency(\.toastClient) private var toastClient
   
@@ -38,7 +50,9 @@ public final class LoginViewModel: ViewModelable {
   public func handleAction(_ action: Action) {
     switch action {
     case .onAppear:
-      break
+      Task.detached { [weak self] in
+        await self?.checkNotification()
+      }
       
     case .loginButtonTapped:
       Task.detached { [weak self] in
@@ -55,6 +69,10 @@ public final class LoginViewModel: ViewModelable {
     do {
       let userInfo = try await authUseCase.loginWithApple()
       
+      if state.isNotDetermined && !userInfo.isFirstLogin {
+        _ = try await userUseCase.updateNotifications(userID: userInfo.userID, isEnabled: state.requestAuthorization)
+      }
+      
       await MainActor.run {
         state.isLoading = false
         state.route = userInfo.isFirstLogin ? .onboarding : .main
@@ -63,15 +81,29 @@ public final class LoginViewModel: ViewModelable {
       await MainActor.run {
         state.isLoading = false
       }
-      
-      print(error.errorDescription )
-      
+            
       await toastClient.showToast(
         AMDToastProperty(
-          message: error.errorDescription ?? "로그인 중 오류가 발생했습니다",
+          message: error.localizedDescription,
           type: .failure
         )
       )
+    }
+  }
+  
+  private func checkNotification() async {
+    do {
+      let isNotDetermined = await notificationClient.isNotDetermined()
+      await MainActor.run { state.isNotDetermined = isNotDetermined }
+
+      if isNotDetermined {
+        let requestAuthorization = try await notificationClient.requestAuthorization()
+        await MainActor.run { state.requestAuthorization = requestAuthorization }
+      }
+      
+      await notificationClient.registerForRemoteNotifications()
+    } catch {
+      printIfDebug("❌ notification Register 실패 \(error)")
     }
   }
 }

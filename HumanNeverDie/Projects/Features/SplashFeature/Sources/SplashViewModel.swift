@@ -43,6 +43,12 @@ public final class SplashViewModel: ViewModelable {
   @ObservationIgnored
   @Dependency(\.keychainClient) private var keychainClient
   
+  @ObservationIgnored
+  @Dependency(\.userDefaultClient) private var userDefaultClient
+
+  @ObservationIgnored
+  @Dependency(\.notificationClient) private var notificationClient
+
   public var state: State = .init()
   public init() {}
   
@@ -54,6 +60,7 @@ public final class SplashViewModel: ViewModelable {
         guard await refreshTokenAndContinue() else { return }
         guard await checkUserID() else { return }
         guard await checkUserInfo() else { return }
+        await checkNotification()
         await syncLocalLikeToServer()
         await navigateTo(.main)
       }
@@ -64,22 +71,22 @@ public final class SplashViewModel: ViewModelable {
     let hasToken = authUseCase.hasValidAccessToken()
     
     guard hasToken else {
-      print("❌ 토큰 없음 - 로그인 화면으로 이동")
+      printIfDebug("❌ 토큰 없음 - 로그인 화면으로 이동")
       await navigateTo(.login)
       return false
     }
     
-    print("✅ 토큰 존재 - 토큰 재발급 시도")
+    printIfDebug("✅ 토큰 존재 - 토큰 재발급 시도")
     return true
   }
   
   private func refreshTokenAndContinue() async -> Bool {
     do {
       _ = try await authUseCase.refreshToken()
-      print("✅ 토큰 재발급 성공")
+      printIfDebug("✅ 토큰 재발급 성공")
       return true
     } catch {
-      print("❌ 토큰 재발급 실패: \(error) - 로그인 화면으로 이동")
+      printIfDebug("❌ 토큰 재발급 실패: \(error) - 로그인 화면으로 이동")
       await navigateTo(.login)
       return false
     }
@@ -87,12 +94,12 @@ public final class SplashViewModel: ViewModelable {
   
   private func checkUserID() async -> Bool {
     guard let userID = keychainClient.getValue(forKey: AMDKeychainKey.userID) else {
-      print("❌ 유저아이디 없음 - 로그인 화면으로 이동")
+      printIfDebug("❌ 유저아이디 없음 - 로그인 화면으로 이동")
       await navigateTo(.login)
       return false
     }
     
-    print("✅ 유저아이디 존재")
+    printIfDebug("✅ 유저아이디 존재")
     state.userID = userID
     return true
   }
@@ -110,9 +117,24 @@ public final class SplashViewModel: ViewModelable {
       
       return true
     } catch {
-      print("❌ 유저 정보 로딩 실패 & 정보없음: \(error)")
+      printIfDebug("❌ 유저 정보 로딩 실패 & 정보없음: \(error)")
       await navigateTo(.login)
       return false
+    }
+  }
+  
+  private func checkNotification() async {
+    do {
+      let isNotDetermined = await notificationClient.isNotDetermined()
+
+      if isNotDetermined {
+        let granted = try await notificationClient.requestAuthorization()
+        _ = try await userUseCase.updateNotifications(userID: state.userID, isEnabled: granted)
+      }
+
+      await notificationClient.registerForRemoteNotifications()
+    } catch {
+      printIfDebug("❌ notification Register 실패 \(error)")
     }
   }
   
@@ -131,7 +153,7 @@ public final class SplashViewModel: ViewModelable {
               }
               return localLike.productID
             } catch {
-              print("동기화 실패: \(localLike.productID)")
+              printIfDebug("❌ 동기화 실패: \(localLike.productID)")
               return nil
             }
           }
@@ -142,13 +164,13 @@ public final class SplashViewModel: ViewModelable {
             do {
               try beverageLocalLikeUseCase.removeBeverageLike(productID: productID)
             } catch {
-              print("로컬 삭제 실패: \(productID)")
+              printIfDebug("❌ 로컬 삭제 실패: \(productID)")
             }
           }
         }
       }
     } catch {
-      print("로컬 데이터 조회 실패")
+      printIfDebug("❌ 로컬 데이터 조회 실패")
     }
   }
 }

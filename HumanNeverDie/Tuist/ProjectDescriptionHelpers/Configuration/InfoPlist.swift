@@ -43,7 +43,8 @@ public struct InfoPlist {
         "BASE_URL": "$(BASE_URL)",
         "ClientId": "$(AUTH0_CLIENT_ID)",
         "Domain": "$(AUTH0_DOMAIN)",
-        "AMPLITUDE_API_KEY": "$(AMPLITUDE_API_KEY)"
+        "AMPLITUDE_API_KEY": "$(AMPLITUDE_API_KEY)",
+        "FirebaseAppDelegateProxyEnabled": false
     ]
 }
 

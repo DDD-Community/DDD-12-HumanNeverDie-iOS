@@ -70,4 +70,9 @@ public final class UserRepository: UserRepositoryInterface, @unchecked Sendable 
 
     return response.toDomain()
   }
+
+  public func registerFCMToken(userID: String, fcmToken: String) async throws {
+    let target = FCMTokenTarget(userID: userID, fcmToken: fcmToken)
+    _ = try await networkService.requestDDD(target)
+  }
 }
