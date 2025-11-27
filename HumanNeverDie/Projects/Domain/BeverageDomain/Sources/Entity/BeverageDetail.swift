@@ -40,7 +40,7 @@ extension BeverageDetail {
       thumbnailURL: thumbnailURL,
       kcal: defaultNutrition.kcal,
       sugar: defaultNutrition.sugar,
-      brandType: brandType,
+      koreanBrandName: "",
       sugarFreeType: BeverageSugarFreeType(sugar: Double(defaultNutrition.sugar)),
       isLiked: isLiked
     )

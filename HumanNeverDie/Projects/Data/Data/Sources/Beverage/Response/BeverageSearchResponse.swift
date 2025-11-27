@@ -12,21 +12,16 @@ import BeverageDomain
 struct BeverageSearchResponse: Decodable {
   let beverageSearchResults: [BeverageResponse]?
   let likeCount: Int?
-  let totalCount: Int?
-  let zeroSugarCount: Int?
-  let lowSugarCount: Int?
 }
 
 extension BeverageSearchResponse {
   public func toDomain() -> BeverageList {
+    let items = beverageSearchResults?.map { $0.toDomain() } ?? []
     return .init(
-      items: beverageSearchResults?.map { $0.toDomain() } ?? [],
+      items: items,
       nextCursor: nil,
       hasNext: false,
-      likeCount: likeCount ?? 0,
-      totalCount: totalCount ?? 0,
-      zeroSugarCount: zeroSugarCount ?? 0,
-      lowSugarCount: lowSugarCount ?? 0
+      likeCount: likeCount ?? 0
     )
   }
 }
