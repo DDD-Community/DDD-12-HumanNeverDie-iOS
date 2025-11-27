@@ -83,3 +83,11 @@ extension BeverageDetailSizeResponse {
     )
   }
 }
+
+struct CafeStoreResponse: Decodable {
+  let cafeBrand: String?
+
+  init(cafeBrand: String?) {
+    self.cafeBrand = cafeBrand
+  }
+}
