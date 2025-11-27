@@ -177,9 +177,6 @@ public final class BeverageSearchViewModel: ViewModelable {
         listViewModel.state.beverageList = beverageList.items
         listViewModel.state.cursor = beverageList.nextCursor
         listViewModel.state.hasNext = beverageList.hasNext
-        listViewModel.state.filterCount.total = beverageList.totalCount
-        listViewModel.state.filterCount.zero = beverageList.zeroSugarCount
-        listViewModel.state.filterCount.low = beverageList.lowSugarCount
         listViewModel.state.filterCount.like = beverageList.likeCount
       }
     } catch {
