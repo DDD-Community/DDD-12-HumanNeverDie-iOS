@@ -25,6 +25,10 @@ public struct AMDSlider: View {
     let percentage = Int(normalizedValue * 100)
     return "\(percentage)%"
   }
+
+  private var hapticTriggerValue: Int {
+    Int(normalizedValue * 100)
+  }
   
   public init(
     value: Binding<Double>,
@@ -46,6 +50,7 @@ public struct AMDSlider: View {
       }
     }
     .frame(height: showsPercentageLabel ? thumbSize + 38 : thumbSize)
+    .sensoryFeedback(.selection, trigger: hapticTriggerValue)
   }
   
   private func trackView(trackWidth: CGFloat, thumbOffset: CGFloat) -> some View {
