@@ -35,7 +35,8 @@ struct AMDDatePickerDemoView: View {
       VStack(spacing: 16) {
         AMDDatePicker(
           selectedDate: $yearMonthDate,
-          pickerType: .yearMonth
+          pickerType: .yearMonth,
+          isAgeRestricted: true
         )
         .frame(height: 200)
         
@@ -58,7 +59,8 @@ struct AMDDatePickerDemoView: View {
       VStack(spacing: 16) {
         AMDDatePicker(
           selectedDate: $yearMonthDayDate,
-          pickerType: .yearMonthDay
+          pickerType: .yearMonthDay,
+          isAgeRestricted: true
         )
         .frame(height: 200)
         
@@ -81,7 +83,8 @@ struct AMDDatePickerDemoView: View {
       VStack(spacing: 16) {
         AMDDatePicker(
           selectedDate: $timeDate,
-          pickerType: .time
+          pickerType: .time,
+          isAgeRestricted: true
         )
         .frame(height: 200)
         

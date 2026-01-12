@@ -67,6 +67,8 @@ private struct DesignSystemDetailView: View {
         AMDOptionButtonView()
       case .amdLottieView:
         AMDLottieViewDemoView()
+      case .amdSlider:
+        AMDSliderDemoView()
       }
     }
   }
