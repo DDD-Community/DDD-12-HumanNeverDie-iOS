@@ -11,6 +11,7 @@ import ProjectDescriptionHelpers
 let project = Project.makeDomain(
     name: Modules.Domain.Beverage.rawValue,
     dependencies: [
-        .shared
+        .shared,
+        .SPM.dependenciesMacros
     ]
-) 
+)

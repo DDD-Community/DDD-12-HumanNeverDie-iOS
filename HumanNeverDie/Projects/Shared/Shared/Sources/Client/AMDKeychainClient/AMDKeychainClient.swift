@@ -127,7 +127,7 @@ private extension AMDKeychainClient {
 
 public struct AMDKeychainClientKey: TestDependencyKey {
   public static var testValue: AMDKeychainClientProtocol {
-    fatalError("\(AMDKeychainClientProtocol.self) Implementation not available")
+    StubKeychainClient()
   }
 }
 

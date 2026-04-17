@@ -49,18 +49,19 @@ public struct RootView: View {
         case .onboardingProfile:
           OnboardingProfileFactory.create()
           
-        case .Setting:
+        case .setting:
           SettingViewFactory.create()
-          
-        case .SettingAccountInfo(userInfo: let userInfo):
+
+        case .settingAccountInfo(userInfo: let userInfo):
           AccountInfoFactory.create(userInfo: userInfo)
-          
-        case .SettingGoalSetting(userInfo: let userInfo):
+
+        case .settingGoalSetting(userInfo: let userInfo):
           GoalSettingFactory.create(userInfo: userInfo)
-          
-        case .SettingNotificationSetting(userID: let userID):
+
+        case .settingNotificationSetting(userID: let userID):
           NotificationSettingFactory.create(userID: userID)
-        case .SettingTerms:
+
+        case .settingTerms:
           TermsFactory.create()
         }
       }

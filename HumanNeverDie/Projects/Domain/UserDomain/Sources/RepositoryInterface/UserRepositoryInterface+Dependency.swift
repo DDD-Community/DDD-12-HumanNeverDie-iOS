@@ -9,30 +9,13 @@ import Foundation
 
 import Dependencies
 
-// MARK: - TestDependencyKey
-
-public struct UserRepositoryKey: TestDependencyKey, Sendable {
-  public static let testValue: UserRepositoryInterface = MockUserRepository()
+extension UserRepositoryInterface: TestDependencyKey {
+  public static let testValue = UserRepositoryInterface()
 }
 
-// MARK: - DependencyValues
-
-extension DependencyValues {
+public extension DependencyValues {
   var userRepository: UserRepositoryInterface {
-    get { self[UserRepositoryKey.self] }
-    set { self[UserRepositoryKey.self] = newValue }
+    get { self[UserRepositoryInterface.self] }
+    set { self[UserRepositoryInterface.self] = newValue }
   }
 }
-
-// MARK: - MockUserRepository
-
-private struct MockUserRepository: UserRepositoryInterface {
-  func getUserInfo(userID: String) async throws -> UserInfo { UserInfo.mock() }
-  func getUserNotificationInfo(userID: String) async throws -> UserNotifications { UserNotifications.mock()}
-  func getUserSugarLavel(userID: String) async throws -> UserSugarLevel { UserSugarLevel.mock()}
-  func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserInfo { UserInfo.mock()}
-  func updateNotifications(userID: String, isEnabled: Bool) async throws -> UserNotifications {UserNotifications.mock()}
-  func updateUserNotifications(userID: String, userNotificationsInfo: UserNotifications) async throws -> UserNotifications { UserNotifications.mock()}
-  func registerFCMToken(userID: String, fcmToken: String) async throws { }
-}
-

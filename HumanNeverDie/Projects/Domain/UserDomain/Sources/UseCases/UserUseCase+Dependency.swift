@@ -8,28 +8,13 @@
 import Foundation
 import Dependencies
 
-// MARK: - TestDependencyKey
-public struct UserUseCaseKey: TestDependencyKey {
-  public static let testValue: UserUseCaseProtocol = MockUserUseCase()
+extension UserUseCase: TestDependencyKey {
+  public static let testValue = UserUseCase()
 }
 
-// MARK: - DependencyValues
 public extension DependencyValues {
-  var userUseCase: UserUseCaseProtocol {
-    get { self[UserUseCaseKey.self] }
-    set { self[UserUseCaseKey.self] = newValue }
+  var userUseCase: UserUseCase {
+    get { self[UserUseCase.self] }
+    set { self[UserUseCase.self] = newValue }
   }
-}
-
-// MARK: - MockUserUseCase
-private struct MockUserUseCase: UserUseCaseProtocol {
-  func getUserInfo(userID: String) async throws -> UserInfo { UserInfo.mock()}
-  func getUserNotificationInfo(userID: String) async throws -> UserNotifications { UserNotifications.mock()}
-  func getUserSugarLavel(userID: String) async -> UserSugarLevel { UserSugarLevel.mock()}
-  func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserInfo { UserInfo.mock()}
-  func updateNotifications(userID: String, isEnabled: Bool) async throws -> UserNotifications { UserNotifications.mock()}
-  func updateUserNotifications(userID: String, userNotifications: UserNotifications) async throws -> UserNotifications {
-    UserNotifications.mock()
-  }
-  func registerFCMToken(userID: String, fcmToken: String) async throws { }
 }

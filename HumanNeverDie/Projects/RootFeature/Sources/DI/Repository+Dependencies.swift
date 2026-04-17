@@ -14,23 +14,24 @@ import Dependencies
 
 // MARK: - AuthRepository
 
-extension AuthRepositoryInterfaceKey: @retroactive DependencyKey {
-  public static let liveValue: AuthRepositoryInterface = AuthRepository()
+extension AuthRepositoryInterface: @retroactive DependencyKey {
+  public static var liveValue: AuthRepositoryInterface { .live }
 }
 
 // MARK: - BeverageRepository
 
-extension BeverageRepositoryKey: @retroactive DependencyKey {
-  public static let liveValue: BeverageRepositoryInterface = BeverageRepository()
+extension BeverageRepositoryInterface: @retroactive DependencyKey {
+  public static var liveValue: BeverageRepositoryInterface { .live }
 }
 
 // MARK: - BeverageLikeLocalRepository
 
-extension BeverageLikeLocalRepositoryKey: @retroactive DependencyKey {
-  public static let liveValue: BeverageLikeLocalRepositoryInterface = BeverageLikeLocalRepository()
+extension BeverageLikeLocalRepositoryInterface: @retroactive DependencyKey {
+  public static var liveValue: BeverageLikeLocalRepositoryInterface { .live }
 }
 
+// MARK: - UserRepository
 
-extension UserRepositoryKey: @retroactive DependencyKey {
-  public static let liveValue: UserRepositoryInterface = UserRepository()
+extension UserRepositoryInterface: @retroactive DependencyKey {
+  public static var liveValue: UserRepositoryInterface { .live }
 }

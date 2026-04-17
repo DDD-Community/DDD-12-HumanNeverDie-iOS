@@ -108,21 +108,21 @@ extension SettingView {
       router.setResultHandler { updatedUserInfo in
         viewModel.handleAction(.updateUserInfo(updatedUserInfo))
       }
-      router.push(to: .SettingAccountInfo(userInfo: viewModel.userInfo))
+      router.push(to: .settingAccountInfo(userInfo: viewModel.userInfo))
       
     case .goalSetting:
       router.setResultHandler { updatedUserInfo in
         viewModel.handleAction(.updateUserInfo(updatedUserInfo))
       }
-      router.push(to: .SettingGoalSetting(userInfo: viewModel.userInfo))
+      router.push(to: .settingGoalSetting(userInfo: viewModel.userInfo))
       
     case .notificationSetting:
-      router.push(to: .SettingNotificationSetting(userID: viewModel.userID))
+      router.push(to: .settingNotificationSetting(userID: viewModel.userID))
       
     case .feedback:
       openAppStoreReviewPage()
     case .terms:
-      router.push(to: .SettingTerms)
+      router.push(to: .settingTerms)
     case .settingTitle:
       break
     case .logout:

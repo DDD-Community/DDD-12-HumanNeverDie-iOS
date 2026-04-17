@@ -12,78 +12,66 @@ import UserDomain
 
 import Dependencies
 
-public final class UserRepository: UserRepositoryInterface, @unchecked Sendable {
-  @Dependency(\.networkService) private var networkService
-  public init() {}
-  
-  public func getUserInfo(userID: String) async throws -> UserDomain.UserInfo {
-    let target = UserInfoTarget(userID: userID)
-    let result = try await networkService.requestDDD(target)
-    
-    guard let response = result.data else {
-      throw AMDNetworkError.emptyResponse
+public extension UserRepositoryInterface {
+  static let live: UserRepositoryInterface = .init(
+    getUserInfo: { userID in
+      @Dependency(\.networkService) var networkService
+      let target = UserInfoTarget(userID: userID)
+      let result = try await networkService.requestDDD(target)
+      guard let response = result.data else {
+        throw AMDNetworkError.emptyResponse
+      }
+      return response.toDomain()
+    },
+    getUserNotificationInfo: { userID in
+      @Dependency(\.networkService) var networkService
+      let target = UserNotificationsTarget(userID: userID)
+      let result = try await networkService.requestDDD(target)
+      guard let response = result.data else {
+        throw AMDNetworkError.emptyResponse
+      }
+      return response.toDomain()
+    },
+    getUserSugarLavel: { userID in
+      @Dependency(\.networkService) var networkService
+      let target = UserSugarLevelTarget(userID: userID)
+      let result = try await networkService.requestDDD(target)
+      guard let response = result.data else {
+        throw AMDNetworkError.emptyResponse
+      }
+      return response.toDomain()
+    },
+    updateUserInfo: { userID, userInfo in
+      @Dependency(\.networkService) var networkService
+      let target = UserInfoUpdateTarget(userID: userID, userInfo: userInfo)
+      let result = try await networkService.requestDDD(target)
+      guard let response = result.data else {
+        throw AMDNetworkError.emptyResponse
+      }
+      return response.toDomain()
+    },
+    updateNotifications: { userID, isEnabled in
+      @Dependency(\.networkService) var networkService
+      let target = NotificationUpdateTarget(userID: userID, isEnabled: isEnabled)
+      let result = try await networkService.requestDDD(target)
+      guard let response = result.data else {
+        throw AMDNetworkError.emptyResponse
+      }
+      return response.toDomain()
+    },
+    updateUserNotifications: { userID, userNotificationsInfo in
+      @Dependency(\.networkService) var networkService
+      let target = UserNotificationsUpdateTarget(userID: userID, userNotifications: userNotificationsInfo)
+      let result = try await networkService.requestDDD(target)
+      guard let response = result.data else {
+        throw AMDNetworkError.emptyResponse
+      }
+      return response.toDomain()
+    },
+    registerFCMToken: { userID, fcmToken in
+      @Dependency(\.networkService) var networkService
+      let target = FCMTokenTarget(userID: userID, fcmToken: fcmToken)
+      _ = try await networkService.requestDDD(target)
     }
-    
-    return response.toDomain()
-  }
-  
-  public func getUserNotificationInfo(userID: String) async throws -> UserDomain.UserNotifications {
-    let target = UserNotificationsTarget(userID: userID)
-    let result = try await networkService.requestDDD(target)
-    
-    guard let response = result.data else {
-      throw AMDNetworkError.emptyResponse
-    }
-    
-    return response.toDomain()
-  }
-  
-  public func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserDomain.UserInfo {
-    let target = UserInfoUpdateTarget(userID: userID, userInfo: userInfo)
-    let result = try await networkService.requestDDD(target)
-    
-    guard let response = result.data else {
-      throw AMDNetworkError.emptyResponse
-    }
-    
-    return response.toDomain()
-  }
-  
-  public func updateUserNotifications(userID: String, userNotificationsInfo: UserNotifications) async throws -> UserNotifications {
-    let target = UserNotificationsUpdateTarget(userID: userID, userNotifications: userNotificationsInfo)
-    let result = try await networkService.requestDDD(target)
-    
-    guard let response = result.data else {
-      throw AMDNetworkError.emptyResponse
-    }
-    
-    return response.toDomain()
-  }
-  
-  public func updateNotifications(userID: String, isEnabled: Bool) async throws -> UserNotifications {
-    let target = NotificationUpdateTarget(userID: userID, isEnabled: isEnabled)
-    let result = try await networkService.requestDDD(target)
-    
-    guard let response = result.data else {
-      throw AMDNetworkError.emptyResponse
-    }
-    
-    return response.toDomain()
-  }
-  
-  public func getUserSugarLavel(userID: String) async throws -> UserDomain.UserSugarLevel {
-    let target = UserSugarLevelTarget(userID: userID)
-    let result = try await networkService.requestDDD(target)
-    
-    guard let response = result.data else {
-      throw AMDNetworkError.emptyResponse
-    }
-    
-    return response.toDomain()
-  }
-  
-  public func registerFCMToken(userID: String, fcmToken: String) async throws {
-    let target = FCMTokenTarget(userID: userID, fcmToken: fcmToken)
-    _ = try await networkService.requestDDD(target)
-  }
+  )
 }

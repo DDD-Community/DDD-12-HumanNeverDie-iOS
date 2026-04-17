@@ -9,15 +9,11 @@ import Foundation
 
 import Dependencies
 
-// MARK: - TestDependencyKey
-
 public struct AMDLocalDataBaseServiceKey: TestDependencyKey {
   public static var testValue: AMDLocalDataBaseServiceProtocol {
     fatalError("\(AMDLocalDataBaseServiceProtocol.self) Implementation not available")
   }
 }
-
-// MARK: - DependencyValues
 
 public extension DependencyValues {
   var localDataBaseService: AMDLocalDataBaseServiceProtocol {
