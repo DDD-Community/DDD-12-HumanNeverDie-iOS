@@ -104,7 +104,7 @@ public extension Project {
         let domainTarget =  Target.target(
             name: "\(name)Domain",
             destinations: AppConfiguration.destination,
-            product: .framework,
+            product: .staticFramework,
             bundleId: .appBundleID(name: "\(name)Domain"),
             deploymentTargets: AppConfiguration.deploymentTarget,
             sources: ["Sources/**"],
