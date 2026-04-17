@@ -17,27 +17,27 @@
 - **Swift Version**: 6.0
 - **Dependency Manager**: SPM (Tuist 통합)
 - **Project Generator**: Tuist 4.48.2
-- **Architecture**: SwiftUI · `@Observable` 기반 MVVM · `swift-dependencies` 1.9.2 DI · Swift Concurrency · Clean Architecture (Domain / Data 레이어 분리)
+- **Architecture**: SwiftUI · `@Observable` 기반 MVVM · `swift-dependencies` 1.9.2 DI · Swift Concurrency · Clean Architecture
 - **Networking**: Alamofire 5.10.2
 - **Local Persistence**: SwiftData (iOS 17+)
 - **Authentication**: Apple Sign-In · Auth0.swift 2.14.0
 - **Analytics**: Amplitude-Swift 1.15.0
 - **Push Notifications**: Firebase iOS SDK 12.3.0 (Messaging)
-- **Testing**: Swift Testing (`@Suite` · `@Test` · `#expect`)
+- **Testing**: Swift Testing
 - **3rd Party**: Lottie 4.5.2 · Nuke (NukeUI) · Swift Async Algorithms 1.0.4
 
 # 🧩 모듈 구조
 
 ![모듈 의존성 그래프](./HumanNeverDie/graph.png)
 
-**Tuist 기반 멀티 모듈 구조**에 **`swift-dependencies` 기반 `@DependencyClient` struct-of-closures 패턴**을 적용하여 Clean Architecture(Domain · Data · Feature) 레이어 분리를 엄격히 강제합니다.
+**Tuist 기반 멀티 모듈 구조**에 **`swift-dependencies` 기반 `@DependencyClient` struct-of-closures 패턴**을 적용하여 Clean Architecture(Domain · Data · Feature) 레이어 분리
 
 - **App (AMatDang)** — 앱 타겟
-- **RootFeature** — Composition Root. `@retroactive DependencyKey.liveValue` 확장을 한 곳에 모아 전체 DI 와이어링 담당
-- **Features** — SwiftUI `@Observable` ViewModel 기반 Feature 레이어 (`Splash` · `Auth` · `Onboarding` · `Home` · `History` · `BeverageRecordList` · `Setting`)
+- **RootFeature** — Composition Root. 전체 DI 의존성 조립
+- **Features** — SwiftUI `@Observable` ViewModel 기반 Feature 레이어
 - **CommonFeature / DesignSystem** — 공용 UI 컴포넌트 및 디자인 시스템
-- **Domain** — `@DependencyClient` struct UseCase + RepositoryInterface 선언 (`BaseDomain` · `AuthDomain` · `BeverageDomain` · `UserDomain`). `.live` 팩토리는 Domain 내부(`<X>UseCase+Live.swift`)에 함께 포함해 Data 의존 없이 컴포지션만 담당
-- **Data** — Domain RepositoryInterface의 `.live` 구현. BaseNetwork / LocalDataBase / Apple 로그인 연동
-  - **BaseNetwork** — Alamofire 기반 네트워크 추상화 (`AMDNetworkService`)
-  - **LocalDataBase** — SwiftData 기반 로컬 저장소 (`AMDLocalDataBaseService`)
-- **Shared / ThirdParty** — 값 타입·에러·플랫폼 클라이언트 프로토콜(Keychain, UserDefault, Amplitude, Network, AppleLogin) 및 외부 라이브러리 경계
+- **Domain** — UseCase · RepositoryInterface 선언 및 .live 팩토리
+- **Data** — Repository .live 구현 (네트워크·로컬DB·Apple 로그인)
+  - **BaseNetwork** — Alamofire 기반 네트워크 추상화
+  - **LocalDataBase** — SwiftData 기반 로컬 저장소
+- **Shared / ThirdParty** — 공용 모델·에러·플랫폼 클라이언트 프로토콜
