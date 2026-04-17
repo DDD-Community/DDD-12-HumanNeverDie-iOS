@@ -7,52 +7,22 @@
 
 import Foundation
 
-import Dependencies
+import DependenciesMacros
 
-public protocol UserUseCaseProtocol: Sendable {
-  func getUserInfo(userID:String) async throws -> UserInfo
-  func getUserNotificationInfo(userID:String) async throws -> UserNotifications
-  func getUserSugarLavel(userID: String) async -> UserSugarLevel
-  func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserInfo
-  func updateNotifications(userID: String, isEnabled: Bool) async throws -> UserNotifications
-  func updateUserNotifications(userID: String, userNotifications: UserNotifications) async throws -> UserNotifications
-  func registerFCMToken(userID: String, fcmToken: String) async throws
-}
-
-public final class UserUseCase: UserUseCaseProtocol, @unchecked Sendable {
-  @Dependency(\.userRepository) private var userRepository
-  public init() {}
-  
-  public func getUserInfo(userID: String) async throws -> UserInfo {
-    return try await userRepository.getUserInfo(userID: userID)
-  }
-  
-  public func getUserNotificationInfo(userID: String) async throws -> UserNotifications {
-    return try await userRepository.getUserNotificationInfo(userID: userID)
-  }
-  
-  public func getUserSugarLavel(userID: String) async -> UserSugarLevel {
-    do {
-      return try await userRepository.getUserSugarLavel(userID: userID)
-    } catch {
-      // 네트워크 실패 시 mock 데이터 반환 (비즈니스 로직)
-      return UserSugarLevel.mock()
-    }
-  }
-  
-  public func updateUserInfo(userID: String, userInfo: UserInfo) async throws -> UserInfo {
-    return try await userRepository.updateUserInfo(userID: userID, userInfo: userInfo)
-  }
-  
-  public func updateNotifications(userID: String, isEnabled: Bool) async throws -> UserNotifications {
-    return try await userRepository.updateNotifications(userID: userID, isEnabled: isEnabled)
-  }
-  
-  public func updateUserNotifications(userID: String, userNotifications: UserNotifications) async throws -> UserNotifications {
-    return try await userRepository.updateUserNotifications(userID: userID, userNotificationsInfo: userNotifications)
-  }
-
-  public func registerFCMToken(userID: String, fcmToken: String) async throws {
-    try await userRepository.registerFCMToken(userID: userID, fcmToken: fcmToken)
-  }
+@DependencyClient
+public struct UserUseCase: Sendable {
+  /// 사용자 프로필 조회
+  public var getUserInfo: @Sendable (_ userID: String) async throws -> UserInfo
+  /// 사용자 알림 설정 조회
+  public var getUserNotificationInfo: @Sendable (_ userID: String) async throws -> UserNotifications
+  /// 사용자 당 섭취 레벨 조회 — 네트워크 실패 시 mock 반환 (throws 없음)
+  public var getUserSugarLavel: @Sendable (_ userID: String) async -> UserSugarLevel = { _ in .mock() }
+  /// 사용자 프로필 업데이트
+  public var updateUserInfo: @Sendable (_ userID: String, _ userInfo: UserInfo) async throws -> UserInfo
+  /// 알림 수신 여부 단일 토글 업데이트
+  public var updateNotifications: @Sendable (_ userID: String, _ isEnabled: Bool) async throws -> UserNotifications
+  /// 알림 상세 설정 일괄 업데이트
+  public var updateUserNotifications: @Sendable (_ userID: String, _ userNotifications: UserNotifications) async throws -> UserNotifications
+  /// FCM 푸시 토큰 등록
+  public var registerFCMToken: @Sendable (_ userID: String, _ fcmToken: String) async throws -> Void
 }

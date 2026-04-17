@@ -200,7 +200,7 @@ public final class BeverageSearchViewModel: ViewModelable {
   
   private func updateBeverageLikeStatus(productID: String, isLiked: Bool) {
     guard let update = beverageUseCase.getBeverageLikeUpdate(
-      from: listViewModel.state.beverageList,
+      beverages: listViewModel.state.beverageList,
       productID: productID,
       newLikeStatus: isLiked
     ) else { return }

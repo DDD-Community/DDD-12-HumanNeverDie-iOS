@@ -7,15 +7,31 @@
 
 import Dependencies
 
-public struct AuthRepositoryInterfaceKey: TestDependencyKey {
+extension AuthRepositoryInterface: TestDependencyKey {
   public static var testValue: AuthRepositoryInterface {
-    fatalError("\(AuthRepositoryInterface.self) Implementation not available")
+    .init(
+      loginWithApple: { () async throws(AuthError) -> AuthToken in
+        throw AuthError.unknown("unimplemented: AuthRepositoryInterface.loginWithApple")
+      },
+      logout: { () async throws(AuthError) -> Void in
+        throw AuthError.unknown("unimplemented: AuthRepositoryInterface.logout")
+      },
+      getUserInfo: { () async throws(AuthError) -> AuthUserInfo in
+        throw AuthError.unknown("unimplemented: AuthRepositoryInterface.getUserInfo")
+      },
+      withdraw: { () async throws(AuthError) -> Void in
+        throw AuthError.unknown("unimplemented: AuthRepositoryInterface.withdraw")
+      },
+      refreshToken: { () async throws(AuthError) -> AuthToken in
+        throw AuthError.unknown("unimplemented: AuthRepositoryInterface.refreshToken")
+      }
+    )
   }
 }
 
-extension DependencyValues {
+public extension DependencyValues {
   var authRepository: AuthRepositoryInterface {
-    get { self[AuthRepositoryInterfaceKey.self] }
-    set { self[AuthRepositoryInterfaceKey.self] = newValue }
+    get { self[AuthRepositoryInterface.self] }
+    set { self[AuthRepositoryInterface.self] = newValue }
   }
 }

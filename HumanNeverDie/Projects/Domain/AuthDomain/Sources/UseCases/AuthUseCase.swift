@@ -7,114 +7,29 @@
 
 import Foundation
 
-import Shared
+public struct AuthUseCase: Sendable {
+  /// Apple 로그인 → 토큰/userID 키체인 저장 → 유저 정보 반환
+  public var loginWithApple: @Sendable () async throws(AuthError) -> AuthUserInfo
+  /// 키체인 clear + Apple 로그아웃
+  public var logout: @Sendable () async throws(AuthError) -> Bool
+  /// 서버 탈퇴 요청 + 키체인 clear + Apple 로그아웃
+  public var withdraw: @Sendable () async throws(AuthError) -> Bool
+  /// 키체인 내 accessToken 존재 여부 확인
+  public var hasValidAccessToken: @Sendable () -> Bool
+  /// 리프레시 토큰으로 갱신 후 키체인 저장
+  public var refreshToken: @Sendable () async throws(AuthError) -> Bool
 
-import Dependencies
-
-public protocol AuthUseCaseProtocol: Sendable {
-  func loginWithApple() async throws(AuthError) -> AuthUserInfo
-  func logout() async throws(AuthError) -> Bool
-  func withdraw() async throws(AuthError) -> Bool
-  func hasValidAccessToken() -> Bool
-  func refreshToken() async throws(AuthError) -> Bool
-}
-
-public final class AuthUseCase: AuthUseCaseProtocol, @unchecked Sendable {
-  @Dependency(\.authRepository) private var authRepository
-  @Dependency(\.keychainClient) private var keychainClient
-  
-  public init() {}
-  
-  public func loginWithApple() async throws(AuthError) -> AuthUserInfo {
-    do {
-      let token = try await authRepository.loginWithApple()
-      try await saveTokensToKeychain(token)
-      
-      let userInfo = try await getUserInfo()
-      try await saveUserIDToKeychain(userInfo.userID)
-      
-      return userInfo
-    } catch {
-      throw error
-    }
-  }
-  
-  public func logout() async throws(AuthError) -> Bool {
-    do {
-      try await clearKeychain()
-      try await authRepository.logout()
-      return true
-    } catch {
-      throw error
-    }
-  }
-  
-  public func withdraw() async throws(AuthError) -> Bool {
-    do {
-      try await authRepository.withdraw()
-      try await clearKeychain()
-      try await authRepository.logout()
-      return true
-    } catch {
-      throw error
-    }
-  }
-  
-  public func hasValidAccessToken() -> Bool {
-    return keychainClient.getValue(forKey: AMDKeychainKey.accessToken) != nil
-  }
-  
-  public func refreshToken() async throws(AuthError) -> Bool {
-    do {
-      let token = try await authRepository.refreshToken()
-      try await saveTokensToKeychain(token)
-      
-      return true
-    } catch {
-      throw error
-    }
-  }
-}
-
-// MARK: - Private Methods
-
-private extension AuthUseCase {
-  func getUserInfo() async throws(AuthError) -> AuthUserInfo {
-    do {
-      let userInfo = try await authRepository.getUserInfo()
-      return userInfo
-    } catch {
-      throw error
-    }
-  }
-  
-  func saveTokensToKeychain(_ token: AuthToken) async throws(AuthError) {
-    do {
-      try await keychainClient.setValue(token.accessToken, forKey: AMDKeychainKey.accessToken)
-      
-      if let refreshToken = token.refreshToken {
-        try await keychainClient.setValue(refreshToken, forKey: AMDKeychainKey.refreshToken)
-      }
-      
-      try await keychainClient.setValue(String(token.expiresIn.timeIntervalSince1970), forKey: AMDKeychainKey.expiresIn)
-    } catch {
-      throw AuthError.keychainError(error.localizedDescription)
-    }
-  }
-  
-  func saveUserIDToKeychain(_ userID: String) async throws(AuthError) {
-    do {
-      try await keychainClient.setValue(userID, forKey: AMDKeychainKey.userID)
-    } catch {
-      throw AuthError.keychainError(error.localizedDescription)
-    }
-  }
-  
-  func clearKeychain() async throws(AuthError) {
-    do {
-      try await keychainClient.removeAll()
-    } catch {
-      throw AuthError.keychainError(error.localizedDescription)
-    }
+  public init(
+    loginWithApple: @Sendable @escaping () async throws(AuthError) -> AuthUserInfo,
+    logout: @Sendable @escaping () async throws(AuthError) -> Bool,
+    withdraw: @Sendable @escaping () async throws(AuthError) -> Bool,
+    hasValidAccessToken: @Sendable @escaping () -> Bool,
+    refreshToken: @Sendable @escaping () async throws(AuthError) -> Bool
+  ) {
+    self.loginWithApple = loginWithApple
+    self.logout = logout
+    self.withdraw = withdraw
+    self.hasValidAccessToken = hasValidAccessToken
+    self.refreshToken = refreshToken
   }
 }

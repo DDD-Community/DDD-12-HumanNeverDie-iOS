@@ -13,30 +13,30 @@ import Dependencies
 
 // MARK: - AuthUseCase
 
-extension AuthUseCaseKey: @retroactive DependencyKey {
-  public static let liveValue: AuthUseCaseProtocol = AuthUseCase()
+extension AuthUseCase: @retroactive DependencyKey {
+  public static var liveValue: AuthUseCase { .live }
 }
 
 // MARK: - BeverageUseCase
 
-extension BeverageUseCaseKey: @retroactive DependencyKey {
-  public static let liveValue: BeverageUseCaseProtocol = BeverageUseCase()
+extension BeverageUseCase: @retroactive DependencyKey {
+  public static var liveValue: BeverageUseCase { .live }
 }
 
 // MARK: - BeverageLocalLikeUseCase
 
-extension BeverageLocalLikeUseCaseKey: @retroactive DependencyKey {
-  public static let liveValue: BeverageLocalLikeUseCaseProtocol = BeverageLocalLikeUseCase()
+extension BeverageLocalLikeUseCase: @retroactive DependencyKey {
+  public static var liveValue: BeverageLocalLikeUseCase { .live }
 }
 
 // MARK: - BeverageLocalSearchUseCase
 
-extension BeverageLocalSearchUseCaseKey: @retroactive DependencyKey {
-  public static let liveValue: BeverageLocalSearchUseCaseProtocol = BeverageLocalSearchUseCase()
+extension BeverageLocalSearchUseCase: @retroactive DependencyKey {
+  public static var liveValue: BeverageLocalSearchUseCase { .live }
 }
 
 // MARK: - UserUseCase
 
-extension UserUseCaseKey: @retroactive DependencyKey {
-  public static let liveValue: UserUseCaseProtocol = UserUseCase()
+extension UserUseCase: @retroactive DependencyKey {
+  public static var liveValue: UserUseCase { .live }
 }

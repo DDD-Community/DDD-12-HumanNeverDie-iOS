@@ -37,7 +37,7 @@ public actor AMDUserDefaultClient: AMDUserDefaultClientProtocol {
 
 public struct AMDUserDefaultClientKey: TestDependencyKey {
   public static var testValue: AMDUserDefaultClientProtocol {
-    fatalError("\(AMDUserDefaultClientProtocol.self) Implementation not available")
+    StubUserDefaultClient()
   }
 }
 
