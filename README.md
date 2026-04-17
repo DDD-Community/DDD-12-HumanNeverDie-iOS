@@ -1,6 +1,6 @@
 # 아맞당 (Amatdang)
 
-<img width="1920" alt="Amatdang Banner" src="">
+<img width="1080" alt="amatdang_banner" src="https://github.com/user-attachments/assets/2c830682-cb8e-47bf-bade-d0b98f9d2a20" />
 
 ### [📱 앱 설치하러 가기](https://apps.apple.com/kr/app/%EC%95%84%EB%A7%9E%EB%8B%B9-%EC%B9%B4%ED%8E%98-%EC%9D%8C%EB%A3%8C-%EB%8B%B9%EB%A5%98-%EA%B8%B0%EB%A1%9D/id6748367287)
 
