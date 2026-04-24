@@ -6,8 +6,8 @@ let project = Project.makeModule(
     product: .framework,
     dependencies: [
         .SPM.dependencies,
-        .SPM.asyncAlgorithms,
-        .SPM.amplitude
+        .SPM.dependenciesMacros,
+        .SPM.asyncAlgorithms
     ],
     hasTests: false
 )

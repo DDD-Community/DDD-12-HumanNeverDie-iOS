@@ -3,7 +3,7 @@ import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
     name: Modules.BaseDomain.name,
-    product: .framework,
+    product: .staticFramework,
     dependencies: [
         .domain(module: .Auth),
         .domain(module: .Beverage),

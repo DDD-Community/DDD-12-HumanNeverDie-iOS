@@ -6,15 +6,15 @@ import struct ProjectDescription.PackageSettings
 
 let packageSettings = PackageSettings(
     productTypes: [
-        "Dependencies": .framework,
+        "Dependencies": .staticFramework,
         "IssueReporting": .framework,
         "XCTestDynamicOverlay": .framework,
         "Nuke": .framework,
         "Alamofire": .framework,
         "Lottie": .framework,
-        "AsyncAlgorithms": .framework,
-        "Auth0": .framework,
-        "AmplitudeSwift": .framework,
+        "AsyncAlgorithms": .staticFramework,
+        "Auth0": .staticFramework,
+        "AmplitudeSwift": .staticFramework,
         "FirebaseMessaging": .staticFramework
     ]
 )
